@@ -7,14 +7,16 @@ title: Halo
 subtitle: A magic place for coding
 description: A blog for code, programme sharing.
 author: Leungyukshing
-language: English
+avatar: /images/avatar.jpg
+language: zh-Hans
 timezone: 
 
 # URL
 ## If your site is put in a subdirectory, set url as 'http://yoursite.com/child' and root as '/child/'
 url: https://leungyukshing.github.io
 root: /
-permalink: :year/:month/:day/:title/
+# permalink: :year/:month/:day/:title/
+permalink: archives/:title.html
 permalink_defaults:
 
 # Directory
@@ -76,3 +78,26 @@ sitemap:
   path: sitemap.xml
 baidusitemap:
   path: baidusitemap.xml
+# 站内搜索
+search:
+  path: search.xml
+  field: post
+  format: html
+  limit: 10000
+
+#添加搜索
+algolia:
+  applicationID: '52USYSYESX'
+  apiKey: '20b904c66f55b874f05edea4aca57780'
+  adminApiKey: 'ea7459daaa75578f208399851d0b2433'
+  indexName: 'blog'
+  chunkSize: 5000
+  fields:
+    -title
+    -slug
+    -path
+    -content:strip
+
+
+#百度统计
+baidu_analytics: '965af438a7a468f86f0d1ea53b68f936'

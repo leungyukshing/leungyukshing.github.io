@@ -1,7 +1,10 @@
 ---
 title: My first blog
+tags:
+  - C
+  - C++
+abbrlink: 11206
 date: 2017-06-19 20:58:00
-tags: [C,C++]
 ---
 
 

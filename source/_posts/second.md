@@ -1,8 +1,9 @@
 ---
 title: second
-date: 2017-06-19 21:08:46
 tags:
-- C
+  - C
+abbrlink: 55620
+date: 2017-06-19 21:08:46
 ---
 
 Today, I'd like to introduce you how to compile and execute a C program. As we known, C is an advanced programming language, there are four steps for producing a C program:Preprocess, Compile, Link and Execution.
