@@ -194,7 +194,7 @@ Error_code List<List_entry>::replace(int position, const List_entry &x)
 
 #### traverse(void (*visit)(List_entry &))
 *precondition*: None.
-*postcondition*: The action specified by function *visit has been performed on every entry of the List, beginning at position 0 and doing each in turn.
+*postcondition*: The action specified by function \*visit has been performed on every entry of the *List*, beginning at position 0 and doing each in turn.
 ```C++
 template <class List_entry>
 void List<List_entry>::traverse(void (*visit)(List_entry &)) {
