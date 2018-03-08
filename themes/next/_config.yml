@@ -193,9 +193,9 @@ sidebar:
   #  - always  expand for all pages automatically
   #  - hide    expand only when click on the sidebar toggle icon.
   #  - remove  Totally remove sidebar including sidebar toggle.
-  display: post
+  #display: post
   #display: always
-  #display: hide
+  display: hide
   #display: remove
 
   # Sidebar offset from top menubar in pixels.
@@ -315,7 +315,7 @@ disqus:
   count: true
 
 # Hypercomments
-#hypercomments_id:
+hypercomments_id: 102226
 
 # Gentie productKey
 #gentie_productKey:
@@ -333,6 +333,7 @@ changyan:
 # Support for LiveRe comments system.
 # You can get your uid from https://livere.com/insight/myCode (General web site)
 livere_uid: MTAyMC8zMzU0MC8xMDA5Ng
+
 
 # Baidu Share
 # Available value:
@@ -628,3 +629,8 @@ images: images
 
 # Theme version
 version: 5.1.1
+
+# 打赏功能
+reward_comment: 坚持原创技术分享，您的支持将鼓励我继续创作！
+wechatpay: /images/wechat_reward.jpg
+alipay: /images/alipay_reward.jpg
