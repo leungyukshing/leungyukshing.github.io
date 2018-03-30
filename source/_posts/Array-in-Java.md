@@ -55,4 +55,33 @@ arraycopy(sourceArray, src_pos, targetArray, tar_pos, length);
 System.arraycopy(sourceArray, 0, targetArray, 0, sourceArray.length);
 ```
 
-&emsp;关于java数组的一些基本用法就讲到这里了，谢谢！
+### The **Arrays** Class
+&emsp;java.util.Arrays类包含了一系列关于排序和查找的**静态方法**
+
+&emsp;首先我们来看一下`sort()`方法，该方法可用于对整个数组的排序或者对部分数组的排序。用法示例如下：
+```java
+double[] numbers = {6.0, 4.4, 1.9, 2.9, 3.4, 3.5};
+java.util.Arrays.sort(numbers); // Sort the whole array
+
+char[] chars = {'a', 'A', '4', 'F', 'D', 'P'};
+java.util.Arrays.sort(chars, 1, 3); // Sort part of the array
+```
+
+&emsp;然后我们来看一下`equals()`方法，该方法用于检查两个数组是否等价。用法示例如下：
+```Java
+int[] list1 = {2, 4, 7, 10};
+int[] list2 = {2, 4, 7, 10};
+int[] list3 = {4, 2, 7, 10};
+System.out.println(java.util.Arrays.equals(list1, list2)); // true
+System.out.println(java.util.Arrays.equals(list2, list3)); // false
+```
+
+&emsp;最后我们来了解一下`fill()`方法，该方法用于使用某个特定元素填充整个数组或者部分数组。用法示例如下：
+```java
+int[] list1 = {2, 4, 7, 10};
+int[] list2 = {2, 4, 7, 10};
+java.util.Arrays.fill(list1, 5); // Fill 5 to the whole array
+java.util.Arrays.fill(list2, 1, 3, 8); // Fill 8 to a partial array
+```
+
+&emsp;关于java数组以及Arrays类的一些基本用法就讲到这里了，谢谢！

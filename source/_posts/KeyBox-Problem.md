@@ -1,5 +1,5 @@
 ---
-title: 钥匙盒问题
+title: CCF--钥匙盒问题
 tags:
   - CCF
 abbrlink: 39430

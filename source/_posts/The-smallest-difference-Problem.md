@@ -1,5 +1,5 @@
 ---
-title: 最小差值问题
+title: CCF--最小差值问题
 tags:
   - CCF
 abbrlink: 64172

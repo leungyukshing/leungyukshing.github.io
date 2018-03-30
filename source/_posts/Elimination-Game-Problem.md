@@ -1,5 +1,5 @@
 ---
-title: 消除类游戏
+title: CCF--消除类游戏
 tags:
   - CCF
 abbrlink: 14145

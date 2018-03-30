@@ -1,5 +1,5 @@
 ---
-title: 分蛋糕问题
+title: CCF--分蛋糕问题
 tags:
   - CCF
 abbrlink: 35061

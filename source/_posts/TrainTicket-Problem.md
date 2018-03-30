@@ -1,5 +1,5 @@
 ---
-title: 火车购票问题
+title: CCF--火车购票问题
 tags:
   - CCF
 abbrlink: 51266

@@ -1,5 +1,5 @@
 ---
-title: 数字排序
+title: CCF--数字排序
 tags:
   - CCF
 abbrlink: 58423

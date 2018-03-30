@@ -1,5 +1,5 @@
 ---
-title: 游戏
+title: CCF--游戏
 tags:
   - CCF
 abbrlink: 61012

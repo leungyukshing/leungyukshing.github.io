@@ -1,5 +1,5 @@
 ---
-title: 俄罗斯方块
+title: CCF--俄罗斯方块
 tags:
   - CCF
 abbrlink: 11121
