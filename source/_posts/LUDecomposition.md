@@ -204,11 +204,141 @@ void LUDecomposition() {
 }
 ```
 按照上述的算法进行编程，最后输出LU矩阵和x。
+### 完整代码
+```C++
+#include <iostream>
+#include <iomanip>
+using namespace std;
+#define maxn 50
 
+int n;
+double A[maxn][maxn] = {0};
+double L[maxn][maxn] = {0};
+double U[maxn][maxn] = {0};
+double b[maxn] = {0};
+double y[maxn] = {0};
+double x[maxn] = {0};
+
+/*读取矩阵*/
+void read() {
+  cout << "Please input the scale of matrix n: ";
+  cin >> n;
+  cout << "|--------------------\n";
+  cout << "|Please input the data: " << endl;
+
+  for (int i = 1; i <= n; i++) {
+    for (int j = 1; j <= n; j++) {
+      cin >> A[i][j];
+    }
+  }
+
+  for (int i = 1; i <= n; i++) {
+    cin >> b[i];
+  }
+}
+
+/*打印矩阵*/
+void printLU() {
+  cout << "L matrix: " << endl;
+  for (int i = 1; i <= n; i++) {
+    for (int j = 1; j <= n; j++) {
+      cout <<  setw(10) << L[i][j] << " ";
+    }
+    cout << endl;
+  }
+
+  cout << "U matrix: " << endl;
+  for (int i = 1; i <= n; i++) {
+    for (int j = 1; j <= n; j++) {
+      cout << setw(10) << U[i][j] << " ";
+    }
+    cout << endl;
+  }
+}
+
+/*显示结果*/
+void print() {
+  cout << "|-------------------" << endl;
+  for (int i = 1; i <= n; i++) {
+    cout << "y[" << i << "] = " << y[i] << endl;
+  }
+  cout << "|-------------------" << endl;
+  for (int i = 1; i <= n; i++) {
+    cout << "x[" << i << "] = " << x[i] << endl;
+  }
+}
+
+
+
+void LUDecomposition() {
+  int i, r, k;
+  // 进行U的第一行的赋值
+  for (i = 1; i <= n; i++) {
+    U[1][i] = A[1][i];
+  }
+
+  // 进行L的第一列的赋值
+  for (i = 2; i <= n; i++) {
+    L[i][1] = A[i][1] / U[1][1];
+  }
+
+  // 计算U剩下的行数和L剩下的列数(分解过程)
+  for (r = 2; r <= n; r++) {
+    for (i = r; i <= n; i++) {
+      double sum1 = 0;
+      for (k = 1; k < r; k++) {
+        sum1 += L[r][k] * U[k][i];
+      }
+      U[r][i] = A[r][i] - sum1;
+    }
+
+    if (r != n) {
+      for (i = r + 1; i <= n; i++) {
+        double sum2 = 0;
+        for (k = 1; k < r; k++) {
+          sum2 += L[i][k] * U[k][r];
+        }
+        L[i][r] = (A[i][r] - sum2) / U[r][r];
+      }
+    }
+  }
+  for (int i = 1; i <= n; i++) {
+    L[i][i] = 1;
+  }
+
+  /*回代求解*/
+  y[1] = b[1];
+  for (i = 2; i <= n; i++) {
+    double sum3 = 0;
+    for (k = 1; k < i; k++) {
+      sum3 += L[i][k] * y[k];
+    }
+    y[i] = b[i] - sum3;
+  }
+
+
+  x[n] = y[n] / U[n][n];
+  for (i = n - 1; i >= 1; i--) {
+    double sum4 = 0;
+    for (k = i + 1; k <= n; k++) {
+      sum4 += U[i][k] * x[k];
+    }
+    x[i] = (y[i] - sum4) / U[i][i];
+  }
+  printLU();
+  print();
+}
+int main() {
+  while (1) {
+    read();
+    LUDecomposition();
+  }
+}
+```
 LU分解法求解$Ax = b$的**算法复杂度**大约是**O($\frac{1}{3} n^3$)**，但是如果对于不同**b**来说，一旦完成了分解，之后的每一次求解复杂度仅为**O($n^2$)**，这是LU分解相比起高斯消元法有优势的地方。
 
 至此，矩阵的LU分解算法及代码的讲解已经结束了，谢谢！
 
 ---
 #### 参考资料：
-1.数值分析（第5版）  李庆扬，王能超，易大义 *编*
+1.数值分析（第5版）  李庆扬，王能超，易大义 *编
