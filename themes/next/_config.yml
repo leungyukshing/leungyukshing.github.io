@@ -174,7 +174,7 @@ toc:
 
   # If true, all words will placed on next lines if header width longer then sidebar width.
   wrap: false
-  
+
 
 # Creative Commons 4.0 International License.
 # http://creativecommons.org/
@@ -315,7 +315,7 @@ disqus:
   count: true
 
 # Hypercomments
-hypercomments_id: 102226
+#hypercomments_id: 102226
 
 # Gentie productKey
 #gentie_productKey:
@@ -407,11 +407,11 @@ vkontakte_api:
 
 # Star rating support to each article.
 # To get your ID visit https://widgetpack.com
-rating: 
+rating:
   enable: false
   id:     #<app_id>
   color:  fc6423
-  
+
 
 # Show number of visitors to each article.
 # You can visit https://leancloud.cn get AppID and AppKey.
