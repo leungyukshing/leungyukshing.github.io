@@ -4,6 +4,7 @@ mathjax: true
 abbrlink: 32612
 date: 2018-04-02 13:23:52
 tags:
+  - 数值分析
 ---
 
 ## 前言

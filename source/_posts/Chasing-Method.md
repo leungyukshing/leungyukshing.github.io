@@ -1,8 +1,9 @@
 ---
-title: 追赶法
+title: 追赶法的详解与C++实现
 abbrlink: 10592
 date: 2018-03-23 10:36:05
 tags:
+  - 数值分析
 mathjax: true
 ---
 
