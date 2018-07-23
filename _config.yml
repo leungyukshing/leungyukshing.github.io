@@ -71,7 +71,9 @@ theme: next
 ## Docs: https://hexo.io/docs/deployment.html
 deploy:
   type: git
-  repository: https://git@github.com/leungyukshing/leungyukshing.github.io
+  repo: 
+    github: https://git@github.com/leungyukshing/leungyukshing.github.io.git
+    coding: https://git.coding.net/leungyukshing/leungyukshing.git
   branch: master
 
 sitemap: 
