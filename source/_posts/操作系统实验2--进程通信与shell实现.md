@@ -1,5 +1,5 @@
 ---
-title: 操作系统实验--进程通信与shell实现
+title: 操作系统实验2--进程通信与shell实现
 tags:
   - Operating System
 abbrlink: 2583
