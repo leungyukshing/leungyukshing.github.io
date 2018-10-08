@@ -144,6 +144,7 @@ font:
 social:
   #LinkLabel: Link
   GitHub: https://github.com/leungyukshing
+  Resume: https://leungyukshing.gitee.io/resume
 
 # Social Links Icons
 # Icon Mapping:
@@ -344,9 +345,9 @@ livere_uid: MTAyMC8zMzU0MC8xMDA5Ng
 ##  type: button
 
 # Share
-jiathis: true
+jiathis: false
 # Warning: JiaThis does not support https.
-add_this_id: 2156795
+# add_this_id: 2156795
 
 # Share
 #duoshuo_share: true
