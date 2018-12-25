@@ -4,6 +4,7 @@ mathjax: true
 abbrlink: 24867
 date: 2018-10-08 19:59:35
 tags:
+  - AI Algorithm
 ---
 
 ## 算法背景介绍
