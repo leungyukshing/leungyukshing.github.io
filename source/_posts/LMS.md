@@ -17,13 +17,65 @@ date: 2019-02-20 15:36:46
 
 ## LMS算法
 
+### loss function
+
 所谓**均方**，就是误差的平方的均值。LMS训练法则，可以简述为以下式子，通常也叫做**代价函数**（cost function）：
 $$
 J(w)=\frac12\sum^m_{i=1}\{h(x^{(i)})-y^{(i)}\}^2
 $$
 其中，$h(x^{(i)})$为学习网络的输出信号，$y^{(i)}$为导师信号。
 
-&emsp;&emsp;我们的目的就是要通过某种方法，来最小化这个代价函数。通常使用的方法是梯度下降法（gradient descent），这个在后续的博客中会和大家分享。在这里我们先用一个简单的例子来理解LMS。
+### Gradient Descent
+
+&emsp;&emsp;我们的目的就是要通过某种方法，来最小化这个代价函数。通常使用的方法是梯度下降法（gradient descent），因为对于凸优化问题而言，导数值为0的地方就是全局极小值。所以我们可以利用梯度来指引我们向极小值处走近。
+
+&emsp;&emsp;梯度下降法的更新规则为：
+$$
+\theta_j := \theta_j - \alpha\frac{\partial}{\partial\theta_j}J(\theta)
+$$
+&emsp;&emsp;**注意:**这里的$\theta_j$的更新是同步的（即是用相同的$J(\theta)$），也就是说，更新完所有的$\theta_j（j=0,\dots,n）$后，才算下一个梯度。
+
+&emsp;&emsp;然后我们推导梯度的计算：
+$$
+\begin{aligned}
+\frac{\partial}{\partial\theta_j}J(\theta) &= \frac{\partial}{\partial\theta_j}\frac{1}{2}(h_\theta(x) - y)^2 \\
+&=2 \cdot \frac{1}{2}(h_\theta(x) - y) \cdot \frac{\partial}{\partial\theta_j}(h_\theta(x) - y)
+\\
+&=(h_\theta(x) - y) \cdot\frac{\partial}{\partial\theta_j}(\sum^n_{i=0}\theta_ix_i-y) \\
+&=(h_\theta(x)-y)x_j
+\end{aligned}
+$$
+&emsp;&emsp;因此对于某一个样例来说，其更新规则为：
+$$
+\theta_j:=\theta_j+\alpha(y^{(i)}-h_\theta(x^{(i)}))x_j^{(i)}
+$$
+&emsp;&emsp;可以看出，当预测值$h_\theta(x^{(i)})$和真实值$y^{(i)}$相等时，该参数并不会更新；而当它们不相等时，参数会按照他们的difference来更新参数，这样从直观上来说也是合理的。
+
+&emsp;&emsp;梯度下降法给我们提供了一种求代价函数极小值的方法，它有很多变种，下面就介绍几种常用的方法。特别注意，仅当我们面对的是一个**凸优化问题**，梯度下降法才能够保证让我们找到全局最优解。
+
+### Batch Gradient Descent
+
+&emsp;&emsp;批梯度下降法，其本质是每一轮迭代使用**整个训练集**去更新权重，即考虑了整体样本的梯度。其算法伪代码为：
+
+$Repeat \;Until \;convergence\; \{$
+
+$ \quad \theta_j:=\theta_j+\alpha\sum^m_{i=1}(y^{(i)} - h_\theta(x^{(i)}))x_j^{(i)}\;\;(for \; every\; j)$
+
+$\}$
+
+### Stochastic Gradient Descent
+
+&emsp;&emsp;随机梯度下降法，其本质是每次迭代只用一个样例去计算梯度，更新参数。相比起批梯度下降法，随机梯度下降法大大提高了计算效率。从理论上说，SGD能让我们更快地找到最佳的参数，但是它有可能无法收敛到极小值，而是在极小值附近波动。但实际情况时，对于极小值附近的值也是对极小值的一个很好的近似，因此在数据集较大的情况下，SGD的实际效果是优于BGD的。其算法伪代码为：
+
+$Loop \; \{$
+
+$ \quad for \;i=1 \;to\;m, \; \{$
+
+$ \quad \quad \theta_j:=\theta_j+\alpha(y^{(i)} - h_\theta(x^{(i)}))x_j^{(i)}\;\;(for \; every\; j)$
+
+$ \quad \}$
+
+$ \} $
 
 ---
 

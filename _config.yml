@@ -9,7 +9,7 @@ description: A blog for code, programme sharing.
 author: Leungyukshing
 avatar: /images/avatar.jpg
 language: zh-Hans
-timezone: 
+timezone:
 
 # URL
 ## If your site is put in a subdirectory, set url as 'http://yoursite.com/child' and root as '/child/'
@@ -36,7 +36,7 @@ titlecase: false # Transform title into titlecase
 external_link: true # Open external links in new tab
 filename_case: 0
 render_drafts: false
-post_asset_folder: false
+post_asset_folder: True
 relative_link: false
 future: true
 highlight:
@@ -71,12 +71,12 @@ theme: next
 ## Docs: https://hexo.io/docs/deployment.html
 deploy:
   type: git
-  repo: 
+  repo:
     github: https://git@github.com/leungyukshing/leungyukshing.github.io.git
     coding: https://git.coding.net/leungyukshing/leungyukshing.git
   branch: master
 
-sitemap: 
+sitemap:
   path: sitemap.xml
 baidusitemap:
   path: baidusitemap.xml
