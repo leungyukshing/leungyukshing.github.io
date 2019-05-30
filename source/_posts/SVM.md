@@ -18,15 +18,17 @@ mathjax: true
 
 &emsp;&emsp;当我们面对一个二分类问题的时候，假设数据是**线性可分的**，以二维平面为例，也就是说，我们能够用一条直线来将数据分开为两部分。对于高维问题而言，这条**直线**我们成为**超平面**。这条直线的位置和两种类别的数据点分布的位置是相关的，两类数据点之间是有**间隔**的，我们最优化的过程就是去寻找这个最大的间隔。
 
-<img src="./images/svm1.png" width="400px">
+<img src="/images/svm1.png" width="400px">
 
-<img src="./images/svm2.png" width="400px">
+<img src="/images/svm2.png" width="400px">
 
 &emsp;&emsp;如图，对于同一个数据集，我们能够有很多种方法去找到一条直线去分隔开两类数据，而第一种不是我们最想要的是，第二种才是。为什么呢？我们可以通过对原始数据随机增加噪声的方法，去测试这个模型的**推广能力**。你会发现，如果两类数据之间的间隔特别小的话，随机增加噪声后，许多数据点就会被错误地分类；而如果间隔足够大的话，增加噪声后错误分类的个数明显变少。这也说明，SVM在构建模型的时候，已经将其推广能力考虑在内，甚至可以说，SVM是基于模型推广能力而构建起的一个分类模型。与之对比的是，逻辑回归是在后续操作中，通过正则项来增强模型推广能力。
 
 &emsp;&emsp;所以我们就可以大致总结一下SVM是在干什么。SVM就是要寻找一个用于分隔开两类数据的超平面，而这个**最优解就是那个具有最大间隔的超平面**。其中，位于这个最优解两侧的虚线所穿过的样本点，就叫做**支持向量（Support Vector）**。
 
-<img src="./images/svm3.png" width="400px">
+<img src="/images/svm3.png" width="400px">
+
+---
 
 ## 1.建立数学模型
 
@@ -252,6 +254,8 @@ s.t. \quad \alpha_i \ge0,i=1,2,\cdots,n \\
 $$
 &emsp;&emsp;至此，我们就将SVM复杂的优化问题转化为上面这个优化问题。可能你会疑问，上面这个问题同样地复杂，我们需要怎么求解呢？SMO算法为我们提供了很好的方法。
 
+---
+
 ## 2.SMO算法
 
 &emsp;&emsp;SMO算法（Sequential Minimal Optimization）是Platt发布的一个算法，它的思路是将大优化问题分解成为多个小的优化问题来求解。这些小的优化问题一般比较容易求解，并且它们顺序求解的结果与整体求解的结果是一样的。SMO算法的papaer链接在最后给出。
@@ -324,7 +328,7 @@ $$
   $$
   所以$L=\max(0, k-C)$，$H=\min(C,k)$
 
-<img src="./images/svm4.png" width="400px">
+<img src="/images/svm4.png" width="400px">
 
 &emsp;&emsp;以上就确定了$\alpha_i$的边界。接下来要推到用于更新$\alpha$的迭代式，还是不失一般性地选择$\alpha_1$和$\alpha_2$来推导：
 $$
@@ -388,7 +392,7 @@ $$
 $$
 &emsp;&emsp;详细推导过程：
 
-<img src="./images/svm5.jpg" width="400px">
+<img src="/images/svm5.jpg" width="400px">
 
 &emsp;&emsp;以上就是$\alpha_2$的更新迭代公式，考虑约束：$0 \lt \alpha_i \lt C$，作剪辑处理：
 $$
@@ -510,14 +514,34 @@ b_j , \quad 0 \lt \alpha_j^{new} \lt C\\
 \end{cases}
 $$
 
+---
+
 ## 小结
 
 &emsp;&emsp;如果你能够仔细阅读每一部分的推导，那么恭喜你已经基本掌握了SVM及SMO算法的原理。如果你是直接跳到这里的，那么我建议你静下心来慢慢看，我自己也是看了很多次才慢慢理解，这个过程是需要时间和耐心的。
 
-&emsp;&emsp;以上就是SVM和SMO算法的主要内容，推导过程中如果有不严谨或者不正确的地方，请大家指出！最后，谢谢您的支持！
+&emsp;&emsp;以上就是SVM和SMO算法的主要内容，推导过程中如果有不严谨或者不正确的地方，欢迎大家指出！最后，谢谢您的支持！
+
+---
+
+## 手写笔记
+
+| ![笔记1](/images/svm_notes1.jpg)   | ![笔记2](/images/svm_notes2.jpg)   |
+| ---------------------------------- | ---------------------------------- |
+| ![笔记3](/images/svm_notes3.jpg)   | ![笔记4](/images/svm_notes4.jpg)   |
+| ![笔记5](/images/svm_notes5.jpg)   | ![笔记6](/images/svm_notes6.jpg)   |
+| ![笔记7](/images/svm_notes7.jpg)   | ![笔记8](/images/svm_notes8.jpg)   |
+| ![笔记9](/images/svm_notes9.jpg)   | ![笔记10](/images/svm_notes10.jpg) |
+| ![笔记11](/images/svm_notes11.jpg) | ![笔记12](/images/svm_notes12.jpg) |
+| ![笔记13](/images/svm_notes13.jpg) | ![笔记14](/images/svm_notes14.jpg) |
+| ![笔记15](/images/svm_notes15.jpg) |                                    |
+
+---
 
 ## 参考文献
 
 1. [SMO by Platt](/download/SMO.pdf)
 
 2. [SVM classnotes by Andrew Ng](/download/cs229-notes3.pdf)
+
+3. [Class slides by Prof. Yan Pan](/download/ML-SVM.pdf)
