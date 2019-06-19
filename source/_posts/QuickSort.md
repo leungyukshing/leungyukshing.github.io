@@ -75,7 +75,7 @@ int main() {
 }
 ```
 
-运行结果：![quicksort](/images/quicksort.png)
+运行结果：![QuickSort](/images/quicksort.png)
 
 ---
 
