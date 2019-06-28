@@ -7,9 +7,13 @@ tags:
 
 ## 问题描述
 
-&emsp;&emsp;在测试PUT请求api的时候，遇到了很奇怪的403(Forbidden)错误，一下子就蒙了。后端明明写了接受PUT请求，但是却报了403错误。
+&emsp;&emsp;在测试PUT请求api的时候，遇到了很奇怪的405(Method Not Allowed)错误，一下子就蒙了。后端明明写了接受PUT请求，但是却报了405错误。
 
 <!-- more -->
+
+服务端LOG信息：
+
+![login_option_backend](/images/login_option_backend.png)
 
 ---
 

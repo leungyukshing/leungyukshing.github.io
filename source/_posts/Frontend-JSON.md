@@ -107,6 +107,6 @@ axios.get(url)
 ## Reference
 
 1. [JSON官网](http://json.com/)
-
 2. [JSON.parse()使用文档](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/JSON/parse)
 3. [JSON.stringify()使用文档](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/JSON/stringify)
+4. [JSON使用——单引号双引号问题](https://www.cnblogs.com/xianfangloveyangmei/p/4494597.html)
