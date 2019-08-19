@@ -18,7 +18,8 @@ cache:
 # 全局变量，为了安全，不要在这里设置，我这里设置只是示例，其实没有用到 
 env:
  global:
-   - GITHUB_XXX_URL: github.com/leungyukshing/leungyukshing.github.io.git
+   - GITHUB_URL: github.com/leungyukshing/leungyukshing.github.io.git
+   - CODING_URL: git.coding.net/leungyukshing/leungyukshing.coding.me.git
 # tarvis 生命周期执行顺序详见官网文档 
 before_install:
 # 更改时区 
@@ -26,8 +27,8 @@ before_install:
 - git config --global user.name ${USER_NAME}
 - git config --global user.email ${USER_EMAIL}
 # 由于使用了 yarn, 所以需要下载，不用 yarn 这两行可以删除 
-- curl -o- -L https://yarnpkg.com/install.sh | bash
-- export PATH=$HOME/.yarn/bin:$PATH
+#- curl -o- -L https://yarnpkg.com/install.sh | bash
+#- export PATH=$HOME/.yarn/bin:$PATH
 # hexo 基础工具 
 - npm install -g hexo-cli
 # 初始化所需模块，在 package.json 中配置的有，这样 node_modules 就不用提交到 GitHub 了 
@@ -36,7 +37,7 @@ before_install:
 # 本地搜索需要工具 
 - npm install hexo-generator-searchdb --save
 # 字数统计，时长统计需要工具，Node 版本 7.6.0 之前，请安装 2.x 版本，npm install hexo-wordcount@2 --save
-- npm install hexo-wordcount --save
+# - npm install hexo-wordcount --save
 # 站点地图，seo 优化使用 
 - npm install hexo-generator-sitemap --save
 - npm install hexo-generator-baidu-sitemap --save
@@ -46,21 +47,14 @@ before_install:
 # rss 订阅插件 
 - npm install hexo-generator-feed --save
 # 三维卡通人物 
-- npm install --save hexo-helper-live2d
+# - npm install --save hexo-helper-live2d
 # 三维卡通人物 - 小猫咪模型下载 (保险起见，把模型文件放到自己的文件夹里，不用每次下载)
 # - npm install --save live2d-widget-model-hijiki
 # 压缩文件 
 - npm install hexo-neat --save
 install:
 # 不用 yarn 的话这里改成 npm i 即可 
-- yarn
-# script
-# 以后把主题发布到 GitHub 中，先从官方 Fork 再更新自定义的，这里还需要更新子模块内容，示例:git submodule init,git submodule update
-# 新建.gitmodules 文件，内容 
-# [submodule "themes/next"]
-#    path = themes/next
-#    url = git://github.com/xin053/MyHexo_NexT_Theme
-# 此外，还有那个评论系统的升级，Valine, 思考怎么做 
+- npm install
 script:
 - hexo clean
 - hexo generate
@@ -80,7 +74,7 @@ after_success:
 - git commit -m "Travis CI Auto Builder at `date +"% Y-% m-% d % H:% M"`"
 # 推送到主分支 
 - git push --force --quiet "https://${REPO_TOKEN}@${GITHUB_URL}" master:master
-
+- git push --force --quiet "https://leungyukshing:${CO_TOKEN}@{CODING_URL}" master:master
 # 邮件通知机制，我在这里设置了成功 / 失败都会通知，这里不能使用环境变量 
 # configure notifications (email, IRC, campfire etc)
 # please update this section to your needs!
