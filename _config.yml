@@ -73,6 +73,7 @@ deploy:
   type: git
   repo:
     github: https://git@github.com/leungyukshing/leungyukshing.github.io.git
+    # github: git@github.com:leungyukshing/leungyukshing.github.io.git
     coding: https://git.coding.net/leungyukshing/leungyukshing.git
   branch: master
 
