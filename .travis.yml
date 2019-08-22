@@ -71,7 +71,7 @@ after_success:
 - echo "" > ./.gitignore
 - git add .
 # 提交记录包含时间，跟上面更改时区配合 
-- git commit -m "Travis CI Auto Builder at `date +"% Y-% m-% d % H:% M"`"
+- git commit -m "Travis CI Auto Builder at `date +"%Y-%m-%d %H:%M"`"
 # 推送到主分支 
 - git push --force --quiet "https://${REPO_TOKEN}@${GITHUB_URL}" master:master
 - git push --force --quiet "https://leungyukshing:${CO_TOKEN}@{CODING_URL}" master:master
