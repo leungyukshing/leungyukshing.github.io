@@ -58,11 +58,9 @@ $$
 > It characterizes the impurity of an arbitray collection of examples.
 
 &emsp;&emsp;直接来看公式理解（假设样本集为S，S只有一个属性，将所有样本划分为正样本和负样本）：
-
 $$
-Entropy(S)=-p_{\oplus}log_2{p_{\oplus}} - p_{\circleddash}log_2{\circleddash}
+Entropy(S)=-p_{\oplus}\log_{2}p_{\oplus} - p_{\circleddash}\log_{2}p{\circleddash}
 $$
-
 &emsp;&emsp;其中，符号的定义是：
 
 + $p_{\oplus}$：The proportion of **positive** examples in S
@@ -71,7 +69,7 @@ $$
 
 &emsp;&emsp;举例说明一下，令$S=14$，正样本为9，负样本为5，则：
 $$
-Entropy([9+,5-])=-\frac{9}{14}log_2\frac{9}{14} - \frac{5}{14}log_2\frac{5}{14} = 0.940
+Entropy([9+,5-])=-\frac{9}{14}log_c\frac{9}{14} - \frac{5}{14}log_2\frac{5}{14} = 0.940
 $$
 &emsp;&emsp;然后我们来解读一下这个信息熵实际的意义是什么？
 
@@ -96,9 +94,11 @@ $$
 &emsp;&emsp;前面提到，我们希望的划分是能够提升减少信息熵的，信息增益就是用于衡量划分前后信息纯度的提升的量。也就是说，信息增益越大，该划分导致的信息纯度提升越多，我们就认为这个划分越好。
 
 &emsp;&emsp;信息增益的计算公式如下：
+
 $$
 Gain(D, a) = Entropy(D) - \sum_{v\in Value(A)}\frac{|S_v|}{S}Entropy(S_v)
 $$
+
 &emsp;&emsp;其中$Value(A)$是属性$A$所有可能取值的集合。$S_v={s\in S|A(s) = v}$。
 
 &emsp;&emsp;怎么理解信息增益这条公式呢？前面提到这是计算划分前后信息熵的变化，那么划分前的信息熵就是$Entropy(D)$，划分后的则是一个期望——每个子划分的entropy的和求平均，权重由样本占比决定。
@@ -110,13 +110,16 @@ $$
 > 信息增益是当知道属性A的取值后，对该样本集S编码所需要的bits数量的减少。
 
 &emsp;&emsp;举例说明一下，已知：
+
 $$
 Values(Wind) = Weak, Strong \\
 S=[9+,5-] \\
 S_{Weak} = [6+, 2-] \\
 S_{Strong} = [3+, 3-]
 $$
+
 &emsp;&emsp;计算Information Gain，得到：
+
 $$
 \begin{aligned}
 Gain(S, Wind) &= Entropy(S) - \sum_{v\in \{Weak, Strong\}}\frac{|S_v|}{S}Entropy(S_v) \\
@@ -135,10 +138,12 @@ $$
 &emsp;&emsp;为什么呢？因为类别过多的话，说明我们分类的很细，分出来的子类可能包含的个数就很小，而他们的类别很可能都是一样的，因此他们的纯度就会很高。例如，我们使用索引来进行分类，每个子类都将只包含一个样例，每个子类的entropy都会是0，根据Information Gain，这种分类是最优的，但实质上这样的划分并不具有任何意义。
 
 &emsp;&emsp;为了减少这种natural bias，我们可以采用Gain Ratio来代替Information Gain。来看看Gain Ratio的计算公式：
+
 $$
 SplitInformation(S, A) = -\sum^c_{i=1}\frac{|S_i|}{|S|}log_2\frac{|S_i|}{|S|} \\
 GainRatio(S, A)=\frac{Gain(S, A)}{SplitInformation(S, A)}
 $$
+
 &emsp;&emsp;从上面看出，Gain Ration比Gain多了一个分母SpliteInformation，这个SplitInformation反映了属性$A$的取值多少。如果$A$取值很多，那么这个值就会很大（因为log一个接近于0的数是一个绝对值很大的数）。也就是说，The SplitInformation(S, A) term **discourages** the selection of attributes with many uniformly distributed values。这样就达到我们的目的了。
 
 #### 基尼指数（Gini Index）
@@ -146,18 +151,22 @@ $$
 &emsp;&emsp;这一部分是关于CART的内容，初学者可以跳过这一部分，不影响后续的阅读。
 
 &emsp;&emsp;选择划分特征，除了可以使用上面提到的Information Gain、Gain Ratio，还有这里要提到的[Gini Index](<https://en.wikipedia.org/wiki/Decision_tree_learning#Gini_impurity>)。**注意，这里用的是基尼指数（Gini Index），而不是基尼系数（Gini Coefficent）！**它同样表示的是信息的纯度。看看它的计算公式：
+
 $$
 \begin{aligned}
 GiniIndex(D) &= \sum_{k=1}\sum_{k^{'}\neq k}p_kp_{k^{'}} \\
 &= 1 - \sum_{k=1}p_k^2
 \end{aligned}
 $$
+
 &emsp;&emsp;通俗地说，基尼指数反映了从数据集$D$中随机抽取两个样本，其类别不一样的概率。所以基尼指数越小，数据集$D$的纯度越高。
 
 &emsp;&emsp;我们定义数据集$D$中属性$a$的基尼指数为：
+
 $$
 GiniIndex(D, a) = \sum^V_{v=1}\frac{|D^v|}{D}Gini(D^v)
 $$
+
 &emsp;&emsp;然后我们选择基尼指数最小的属性作为最优的划分属性。
 
 ## 实战
@@ -264,7 +273,7 @@ def chooseBestFeatureToSplit(dataset):
         if informationGain > bestInformationGain:
             bestInformationGain = informationGain
             bestFeature = i
-            
+
     return bestFeature
 ```
 
@@ -280,7 +289,7 @@ def chooseBestFeatureToSplit(dataset):
 '''
 def createTree(dataset, labels, featLabels):
     # print(dataset)
-    
+
     classList = [example[-1] for example in dataset] # 获取标签值数组
     # 类别相同则停止划分
     if classList.count(classList[0]) == len(classList):
@@ -288,23 +297,23 @@ def createTree(dataset, labels, featLabels):
     # 所有特征已经遍历完，返回出现次数最多的标签值
     if len(dataset[0]) == -1:
         return countMajority(classList)
-    
+
     # 获取最好的属性的下标
     bestFeat = chooseBestFeatureToSplit(dataset)
     print(bestFeat)
     # 获取最好的属性
     bestFeatLabel = labels[bestFeat]
-    
+
     # 添加入属性集合（已生成的）
     featLabels.append(bestFeatLabel)
-    
+
     # 加入到新的树中
     myTree = {bestFeatLabel: {}}
     print(myTree)
-    
+
     # 在label中删去（剩余的）
     del(labels[bestFeat])
-    
+
     # 为最佳属性的每个取值构造子树
     featValues = [example[bestFeat] for example in dataset]
     uniqueVals = set(featValues)
@@ -378,12 +387,12 @@ def getTreeDepth(myTree):
 def plotNode(nodeTxt, textPos, parentPos, nodeType):
     arrow_args = dict(arrowstyle='<-')
     createPlot.ax1.annotate(nodeTxt, xy=parentPos, xycoords='axes fraction', xytext=textPos, textcoords='axes fraction', va='center', ha='center', bbox=nodeType, arrowprops=arrow_args)
-    
+
 def plotEdgeText(currentPos, parentPos, text):
     xMid = (parentPos[0] - currentPos[0]) / 2.0 + currentPos[0]
     yMid = (parentPos[1] - currentPos[1]) / 2.0 + currentPos[1]
     createPlot.ax1.text(xMid, yMid, text, va='center', ha='center', rotation=30)
-    
+
 def plotTree(myTree, parentPos, nodeTxt):
     decisionNode = dict(boxstyle='sawtooth', fc='0.8') # 节点
     leafNode = dict(boxstyle='round4', fc='0.8') # 叶子节点
@@ -405,8 +414,8 @@ def plotTree(myTree, parentPos, nodeTxt):
             plotNode(secondDict[key], (plotTree.xOff, plotTree.yOff), currentPos, leafNode)
             plotEdgeText((plotTree.xOff, plotTree.yOff), currentPos, str(key))
     plotTree.yOff = plotTree.yOff + 1.0 / plotTree.totalD
-    
-    
+
+
 if __name__ == '__main__':
     dataset, labels = createDataset()
     featLabels = []
