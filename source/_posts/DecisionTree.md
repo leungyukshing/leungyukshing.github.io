@@ -58,9 +58,11 @@ $$
 > It characterizes the impurity of an arbitray collection of examples.
 
 &emsp;&emsp;直接来看公式理解（假设样本集为S，S只有一个属性，将所有样本划分为正样本和负样本）：
+
 $$
 Entropy(S)=-p_{\oplus}log_2{p_{\oplus}} - p_{\circleddash}log_2{\circleddash}
 $$
+
 &emsp;&emsp;其中，符号的定义是：
 
 + $p_{\oplus}$：The proportion of **positive** examples in S
