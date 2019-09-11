@@ -155,10 +155,10 @@ $$
 &emsp;&emsp;选择划分特征，除了可以使用上面提到的Information Gain、Gain Ratio，还有这里要提到的[Gini Index](<https://en.wikipedia.org/wiki/Decision_tree_learning#Gini_impurity>)。**注意，这里用的是基尼指数（Gini Index），而不是基尼系数（Gini Coefficent）！**它同样表示的是信息的纯度。看看它的计算公式：
 
 $$
-\begin{aligned}
-GiniIndex(D) &= \sum_{k=1}\sum_{k^{'}\neq k}p_kp_{k^{'}} \\
-&= 1 - \sum_{k=1}p_k^2
-\end{aligned}
+\begin{align}
+GiniIndex(D) &= \sum\_{k=1}\sum_{k^{'}\neq k}p\_kp\_{k^{'}} \\\\
+&= 1 - \sum\_{k=1}p\_k^2
+\end{align}
 $$
 
 &emsp;&emsp;通俗地说，基尼指数反映了从数据集$D$中随机抽取两个样本，其类别不一样的概率。所以基尼指数越小，数据集$D$的纯度越高。
