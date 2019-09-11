@@ -112,10 +112,12 @@ $$
 &emsp;&emsp;举例说明一下，已知：
 
 $$
+\begin{align}
 Values(Wind) = Weak, Strong \\\\
-S=[9+,5-] \\\\
-S\_{Weak} = [6+, 2-] \\\\
-S\_{Strong} = [3+, 3-]
+S&=[9+,5-] \\\\
+S\_{Weak} &= [6+, 2-] \\\\
+S\_{Strong} &= [3+, 3-]
+\end{align}
 $$
 
 &emsp;&emsp;计算Information Gain，得到：
