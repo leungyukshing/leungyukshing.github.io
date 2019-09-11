@@ -59,7 +59,7 @@ $$
 
 &emsp;&emsp;直接来看公式理解（假设样本集为S，S只有一个属性，将所有样本划分为正样本和负样本）：
 $$
-Entropy(S)=-p_{\oplus}\log_{2}p_{\oplus} - p_{\circleddash}\log_{2}p{\circleddash}
+Entropy(S)=-p\_{\oplus}\log\_{2}p_{\oplus} - p\_{\circleddash}\log\_{2}p{\circleddash}
 $$
 &emsp;&emsp;其中，符号的定义是：
 
@@ -69,7 +69,7 @@ $$
 
 &emsp;&emsp;举例说明一下，令$S=14$，正样本为9，负样本为5，则：
 $$
-Entropy([9+,5-])=-\frac{9}{14}log_c\frac{9}{14} - \frac{5}{14}log_2\frac{5}{14} = 0.940
+Entropy([9+,5-])=-\frac{9}{14}log_2\frac{9}{14} - \frac{5}{14}log_2\frac{5}{14} = 0.940
 $$
 &emsp;&emsp;然后我们来解读一下这个信息熵实际的意义是什么？
 
