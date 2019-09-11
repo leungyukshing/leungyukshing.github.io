@@ -113,7 +113,7 @@ $$
 
 $$
 \begin{align}
-Values(Wind) = Weak, Strong \\\\
+Values(Wind) &= Weak, Strong \\\\
 S&=[9+,5-] \\\\
 S\_{Weak} &= [6+, 2-] \\\\
 S\_{Strong} &= [3+, 3-]
@@ -123,12 +123,12 @@ $$
 &emsp;&emsp;计算Information Gain，得到：
 
 $$
-\begin{aligned}
-Gain(S, Wind) &= Entropy(S) - \sum_{v\in \{Weak, Strong\}}\frac{|S_v|}{S}Entropy(S_v) \\
-&= Entropy(S) - \frac{8}{14}Entropy(S_{Weak}) - \frac{6}{14}Entropy(S_{Strong}) \\
-&= 0.940 - \frac{8}{14} \times 0.811 - \frac{6}{14} \times 1.00 \\
+\begin{align}
+Gain(S, Wind) &= Entropy(S) - \sum_{v\in \{Weak, Strong\}}\frac{|S\_v|}{S}Entropy(S\_v) \\\\
+&= Entropy(S) - \frac{8}{14}Entropy(S\_{Weak}) - \frac{6}{14}Entropy(S\_{Strong}) \\\\
+&= 0.940 - \frac{8}{14} \times 0.811 - \frac{6}{14} \times 1.00 \\\\
 &= 0.048
-\end{aligned}
+\end{align}
 $$
 
 #### 增益率（Gain Ratio）
