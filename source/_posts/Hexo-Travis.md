@@ -1,5 +1,6 @@
 ---
 title: 为Hexo博客添加自动化部署Travis
+abbrlink: 36850
 date: 2019-08-20 01:42:22
 tags:
 ---
