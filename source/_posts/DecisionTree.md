@@ -114,8 +114,8 @@ $$
 $$
 Values(Wind) = Weak, Strong \\
 S=[9+,5-] \\
-S_{Weak} = [6+, 2-] \\
-S_{Strong} = [3+, 3-]
+S\_{Weak} = [6+, 2-] \\
+S\_{Strong} = [3+, 3-]
 $$
 
 &emsp;&emsp;计算Information Gain，得到：
