@@ -59,7 +59,7 @@ $$
 
 &emsp;&emsp;直接来看公式理解（假设样本集为S，S只有一个属性，将所有样本划分为正样本和负样本）：
 $$
-Entropy(S)=-p_{\oplus}\log_{2}p_{\oplus} - p_{\circleddash}\log\_{2}p_{\circleddash}
+Entropy(S)=-p\_{\oplus}\log\_{2}p\_{\oplus} - p\_{\circleddash}\log\_{2}p\_{\circleddash}
 $$
 &emsp;&emsp;其中，符号的定义是：
 
