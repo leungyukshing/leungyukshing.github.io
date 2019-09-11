@@ -112,9 +112,9 @@ $$
 &emsp;&emsp;举例说明一下，已知：
 
 $$
-Values(Wind) = Weak, Strong \\
-S=[9+,5-] \\
-S\_{Weak} = [6+, 2-] \\
+Values(Wind) = Weak, Strong \\\\
+S=[9+,5-] \\\\
+S\_{Weak} = [6+, 2-] \\\\
 S\_{Strong} = [3+, 3-]
 $$
 
