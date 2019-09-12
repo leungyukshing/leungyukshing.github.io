@@ -34,7 +34,7 @@ tags:
 
 ## Usage
 
-&emsp;&emsp;首先到这里下载对应的版本：[传送门](<http://vision.middlebury.edu/stereo/code/>)。下载后解压安装即可使用。可以配置环境变量，将`cvkit/bin`路径添加到系统变量中，这样我们在任何一个地方都可以使用sv命令。
+&emsp;&emsp;首先到这里下载对应的版本：[传送门](http://vision.middlebury.edu/stereo/code/)。下载后解压安装即可使用。可以配置环境变量，将`cvkit/bin`路径添加到系统变量中，这样我们在任何一个地方都可以使用sv命令。
 
 &emsp;&emsp;这里我需要使用这个工具预览一张pfm文件，打开命令行，进入到pmf文件所在的文件夹，输入如下命令：
 
@@ -48,6 +48,6 @@ $ sv dispnet-pred-0000002.pfm
 
 ## Reference
 
-1. [wikipedia](<http://fileformats.archiveteam.org/wiki/PFM_(Portable_Float_Map)>)
-2. [pfm文件格式](<https://blog.csdn.net/dragondog/article/details/81433511>)
+1. [wikipedia](http://fileformats.archiveteam.org/wiki/PFM)
+2. [pfm文件格式](https://blog.csdn.net/dragondog/article/details/81433511)
 

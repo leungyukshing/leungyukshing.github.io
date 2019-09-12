@@ -59,7 +59,7 @@ $$
 
 &emsp;&emsp;直接来看公式理解（假设样本集为S，S只有一个属性，将所有样本划分为正样本和负样本）：
 $$
-Entropy(S)=-p_{\oplus}log_2p_{\oplus} - p_{\circleddash}log_2{\circleddash}
+Entropy(S)=-p\_{\oplus}\log\_{2}p\_{\oplus} - p\_{\circleddash}\log\_{2}p\_{\circleddash}
 $$
 &emsp;&emsp;其中，符号的定义是：
 
@@ -69,7 +69,7 @@ $$
 
 &emsp;&emsp;举例说明一下，令$S=14$，正样本为9，负样本为5，则：
 $$
-Entropy([9+,5-])=-\frac{9}{14}log_c\frac{9}{14} - \frac{5}{14}log_2\frac{5}{14} = 0.940
+Entropy([9+,5-])=-\frac{9}{14}log_2\frac{9}{14} - \frac{5}{14}log_2\frac{5}{14} = 0.940
 $$
 &emsp;&emsp;然后我们来解读一下这个信息熵实际的意义是什么？
 
@@ -112,21 +112,23 @@ $$
 &emsp;&emsp;举例说明一下，已知：
 
 $$
-Values(Wind) = Weak, Strong \\
-S=[9+,5-] \\
-S_{Weak} = [6+, 2-] \\
-S_{Strong} = [3+, 3-]
+\begin{align}
+Values(Wind) &= Weak, Strong \\\\
+S&=[9+,5-] \\\\
+S\_{Weak} &= [6+, 2-] \\\\
+S\_{Strong} &= [3+, 3-]
+\end{align}
 $$
 
 &emsp;&emsp;计算Information Gain，得到：
 
 $$
-\begin{aligned}
-Gain(S, Wind) &= Entropy(S) - \sum_{v\in \{Weak, Strong\}}\frac{|S_v|}{S}Entropy(S_v) \\
-&= Entropy(S) - \frac{8}{14}Entropy(S_{Weak}) - \frac{6}{14}Entropy(S_{Strong}) \\
-&= 0.940 - \frac{8}{14} \times 0.811 - \frac{6}{14} \times 1.00 \\
+\begin{align}
+Gain(S, Wind) &= Entropy(S) - \sum_{v\in \{Weak, Strong\}}\frac{|S\_v|}{S}Entropy(S\_v) \\\\
+&= Entropy(S) - \frac{8}{14}Entropy(S\_{Weak}) - \frac{6}{14}Entropy(S\_{Strong}) \\\\
+&= 0.940 - \frac{8}{14} \times 0.811 - \frac{6}{14} \times 1.00 \\\\
 &= 0.048
-\end{aligned}
+\end{align}
 $$
 
 #### 增益率（Gain Ratio）
@@ -153,10 +155,10 @@ $$
 &emsp;&emsp;选择划分特征，除了可以使用上面提到的Information Gain、Gain Ratio，还有这里要提到的[Gini Index](<https://en.wikipedia.org/wiki/Decision_tree_learning#Gini_impurity>)。**注意，这里用的是基尼指数（Gini Index），而不是基尼系数（Gini Coefficent）！**它同样表示的是信息的纯度。看看它的计算公式：
 
 $$
-\begin{aligned}
-GiniIndex(D) &= \sum_{k=1}\sum_{k^{'}\neq k}p_kp_{k^{'}} \\
-&= 1 - \sum_{k=1}p_k^2
-\end{aligned}
+\begin{align}
+GiniIndex(D) &= \sum\_{k=1}\sum_{k^{'}\neq k}p\_kp\_{k^{'}} \\\\
+&= 1 - \sum\_{k=1}p\_k^2
+\end{align}
 $$
 
 &emsp;&emsp;通俗地说，基尼指数反映了从数据集$D$中随机抽取两个样本，其类别不一样的概率。所以基尼指数越小，数据集$D$的纯度越高。
