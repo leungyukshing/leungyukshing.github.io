@@ -48,6 +48,6 @@ $ sv dispnet-pred-0000002.pfm
 
 ## Reference
 
-1. [wikipedia](http://fileformats.archiveteam.org/wiki/PFM_(Portable_Float_Map))
+1. [wikipedia](http://fileformats.archiveteam.org/wiki/PFM)
 2. [pfm文件格式](https://blog.csdn.net/dragondog/article/details/81433511)
 
