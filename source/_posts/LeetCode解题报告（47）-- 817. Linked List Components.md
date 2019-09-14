@@ -1,5 +1,5 @@
 ---
-title: LeetCode解题报告（47）-- 817. Linked List Components.md
+title: LeetCode解题报告（47）-- 817. Linked List Components
 tags:
   - LeetCode
 date: 2019-09-14 18:58:23
