@@ -1,15 +1,12 @@
 ---
-title: LeetCode解题报告（57）-- 62. Unique Paths
+title: LeetCode解题报告（58）-- 63. Unique Paths II
 tags:
   - LeetCode
 date: 2019-09-25 13:10:49
 
-
-
 ---
 
 ## Problem
-
 
 A robot is located at the top-left corner of a *m* x *n* grid (marked 'Start' in the diagram below).
 
@@ -54,7 +51,12 @@ There are two ways to reach the bottom-right corner:
 
 &emsp;&emsp;初始化$f[0][0] = 1$，其余的推导公式为：
 $$
-f[i][j] = \left\{\begin{aligned}f[i][j - 1] &, i = 0 \\\\f[i - 1][j] &, j = 0 \\\\f[i][j - 1] + f[i - 1][j] &, otherwise\end{aligned}\right.
+f[i][j] = \left\{\begin{aligned}
+f[i][j - 1] &, i = 0 \\\\
+f[i - 1][j] &, j = 0 \\\\
+f[i][j - 1] + f[i - 1][j] &, otherwise
+\end{aligned}
+\right.
 $$
 然后添加限制条件，我们可以直接设置$f[i][j] = 0$，意思是没有办法到该空格。这个和不能从该空格出发到其他空格是等价的，因为我们只要从起点到终点的路径，中间的过程只要一个空格断了，该路径就可以不用考虑。
 
