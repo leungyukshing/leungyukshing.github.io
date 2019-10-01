@@ -16,8 +16,6 @@ Given an array of integers `arr`, write a function that returns `true` if and on
 
 **Example 1:**
 
-**Example 1:**
-
 ```
 Input: arr = [1,2,2,1,1,3]
 Output: true
