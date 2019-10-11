@@ -1,5 +1,5 @@
 ---
-title: LeetCode解题报告（70）-- 1002. Find Common Characters
+title: LeetCode解题报告（71）-- 1200. Minimum Absolute Difference
 tags:
   - LeetCode
 date: 2019-10-11 17:59:12
