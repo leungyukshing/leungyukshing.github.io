@@ -1,7 +1,7 @@
 ---
 title: cmder设置alias
 tags:
-date: 2018-10-19 01:06:52
+date: 2019-10-19 01:06:52
 ---
 
 ## cmder设置alias
