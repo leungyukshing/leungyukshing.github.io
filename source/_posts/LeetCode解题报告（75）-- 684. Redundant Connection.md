@@ -3,6 +3,7 @@ title: LeetCode解题报告（75）-- 684. Redundant Connection
 tags:
   - LeetCode
 date: 2019-11-19 10:52:33
+mathjax: true
 ---
 
 ## Problem
