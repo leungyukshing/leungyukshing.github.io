@@ -48,6 +48,8 @@ Output: "Sunday"
 
 &emsp;&emsp;这道题是与日期有关的题目，题目给出一个日期，要求我们给出改日期是当周的哪一天。我的做法比较直接，直接从1970年1月1号（Friday）开始算，算到给定的日期，再对7进行取余，这样我们就能够得到相对于Friday隔了多少天。
 
+&emsp;&emsp;另外还有一个非常巧妙的方法，使用[蔡勒公式](https://www.cnblogs.com/igaoshang/articles/Zeller.html)。具体用法参考链接就可以，这里不再赘述。
+
 ------
 
 ## Solution
