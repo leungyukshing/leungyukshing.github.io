@@ -8,6 +8,8 @@ tags:
 
 &emsp;&emsp;最近在做一个项目，前端使用Vue-cli搭建，想把静态的页面部署到GitHub Pages上展示。之前我的[个人博客](http://leungyukshing.cn/)使用的是hexo的部署模式，结合Travis CI实现了自动部署（[传送门](http://leungyukshing.cn/archives/Hexo-Travis.html)）。但是整个配置还是比较麻烦的，部署分支需要自己管理，编写`travis.yml`也花费了大量的时间。这次我想换一种简单直接的方法，把静态页面部署到Github Pages上。
 
+<!-- more -->
+
 ---
 
 ## Github Action
