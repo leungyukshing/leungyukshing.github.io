@@ -1,7 +1,6 @@
 ---
 title: 浅谈oracle和mysql的区别
-date: 2020--01-12 00:00:11
-
+date: 2020-01-12 00:00:11
 ---
 
 ## 浅谈oracle与mysql的区别
