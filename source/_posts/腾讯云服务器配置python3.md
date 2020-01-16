@@ -1,6 +1,7 @@
 ---
 title: 腾讯云服务器配置Python3环境
 date: 2020-01-10 00:03:18
+
 ---
 
 ## Introduction
@@ -9,8 +10,8 @@ date: 2020-01-10 00:03:18
 
 <!-- more -->
 
-+ 服务器环境：Centos7.3
-+ 目标Python版本：Python3.6.5
+- 服务器环境：Centos7.3
+- 目标Python版本：Python3.6.5
 
 ## Steps
 
@@ -109,6 +110,51 @@ source ~/.bashrc
 
 &emsp;&emsp;再次输入`python --version`，显示的就是python3.6.5版本了。如果想用python2，直接输入`python2`即可。
 
+## SSL包缺失
 
+&emsp;&emsp;因为centos7默认的openssl版本过低，或者服务器本身就缺失这个包，所以当用到了网络访问的时候（比如数据库），就会报错`ImportError: No module named _ssl`。这个时候我们需要手动安装openssl包，然后重新编译python3.
+
+1. 安装openssl
+
+   ```bash
+   # Download SSL package
+   wget https://www.openssl.org/source/openssl-1.0.2o.tar.gz
+   tar -zvxf openssl-1.0.2o.tar.gz
+   cd openssll-1.0.2o
+   
+   # compile and install openssl
+   ./config --prefix=/usr/local/openssl --openssldir=/usr/local/openssl
+   make
+   make install
+   ```
+
+2. 重新编译Python，先修改编译文件
+
+   ```bash
+   vi Python-3.6.5/Modules/Setup.dist
+   ```
+
+   找到一下部分并修改为：
+
+   ```dist
+   # Socket module helper for SSL support; you must comment out the other
+   # socket line above, and possibly edit the SSL variable:
+   SSL=/usr/local/openssl
+   _ssl _ssl.c \
+          -DUSE_SSL -I$(SSL)/include -I$(SSL)/include/openssl \
+          -L$(SSL)/lib -lssl -lcrypto
+   ```
+
+   SSL指向刚刚openssl安装的路径
+
+   然后重新安装python
+
+   ```bash
+   ./configure --prefix=/usr/local/python3 --with-openssl=/usr/local/openssl
+   make
+   make install
+   ```
+
+   至此，我们重新打开python，输入`import ssl`就可以使用了。
 
 &emsp;&emsp;本次分享到这里结束了，希望本文能对你有帮助。欢迎评论、转发，谢谢您的支持！
