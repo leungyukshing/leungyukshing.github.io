@@ -4,8 +4,6 @@ date: 2020-01-30 18:42:27
 
 ---
 
-## NumPy安装
-
 # Redis环境搭建
 
 **Platform**： Windows10
