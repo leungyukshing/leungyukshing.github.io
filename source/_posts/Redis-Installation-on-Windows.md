@@ -4,7 +4,7 @@ date: 2020-01-30 18:42:27
 
 ---
 
-# Redis环境搭建
+# Redis环境搭建--Windows
 
 **Platform**： Windows10
 
