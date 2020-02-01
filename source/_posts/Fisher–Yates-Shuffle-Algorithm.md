@@ -1,5 +1,5 @@
 ---
-title: Fisher Yates洗牌算法
+title: Fisher-Yates洗牌算法
 date: 2020-02-01 12:05:40
 mathjax: true
 ---
