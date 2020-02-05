@@ -126,7 +126,9 @@ date: 2020-02-04 11:41:53
 
 ## 日志收集
 
-&emsp;&emsp;搭建好Graylog服务后，我们运行一个demo来测试一下graylog是否能够真正地收集到服务运行的日志。这里我用redis服务作为例子，为了方便起见，redis的启动也是在docker中。
+### 收集docker容器内的日志
+
+&emsp;&emsp;搭建好Graylog服务后，我们运行一个demo来测试一下graylog是否能够真正地收集到服务运行的日志。这里我用redis服务作为例子，展示如何使用Graylog收集docker容器的日志。
 
 1. 编写redis容器的启动文件`docker-compose.yml`（与上面的分开地方放）：
 
@@ -152,6 +154,48 @@ date: 2020-02-04 11:41:53
 3. 然后再回到Graylog中，点击Search就能看到系统运行的日志了，当然这里只有启动的日志。
 
    ![Graylog Collect Log from Redis](/images/graylog5.png)
+
+### 收集非docker容器的日志
+
+&emsp;&emsp;上面看到收集docker容器的日志是非常简单的，在运行docker的时候配置就可以了。如果要收集非docker容器的日志，那么通常需要使用第三方的插件。这里我以一个flask应用为例（Python），展示如何手机非docker容器的日志。
+
+1. 在一个已有的`flask`项目中安装[graypy](https://pypi.org/project/graypy/)插件:
+
+   ```bash
+   pip install graypy
+   ```
+
+2. 然后在代码中使用，这里我把log的初始化封装成一个函数，返回一个logger，方便全局使用：
+
+   ```python
+   import logging
+   import graypy
+   
+   def init_logger():
+       # init logger for Graylog
+       logger = logging.getLogger()
+       logger.setLevel(logging.INFO)
+       handler = graypy.GELFUDPHandler('localhost', 12201)
+       logger.addHandler(handler)
+       return logger
+   ```
+
+   其实原理就是在logging的基础上，添加了一个handler，这里使用到了`graypy.GELFUDPHandler`，指定了以UDP的方式向Graylog发送GELF类型的日志，后面的参数是host主机和端口号，与Graylog服务中设置的要保持一致。
+
+3. 简单的使用例子：
+
+   ```python
+   logger = init_logger()
+   logger.info('this is a log')
+   ```
+
+4. 然后运行这个flask服务，打开Graylog就能看到日志的输出了。
+
+   ![Graylog Flask](/images/graylog6.png)
+
+## 总结
+
+&emsp;&emsp;以上就是有关在win10上graylog的搭建以及简单的使用，我们还可以在graylog中进行审计、展现和预警，这些之后有时间我会一一分享。本篇博文长期更新，欢迎订阅，谢谢您的支持！
 
 ---
 
