@@ -3,8 +3,6 @@ title: CentOS下安装Docker
 date: 2020-02-05 14:33:12
 ---
 
-# 环境搭建--CentOS
-
 # Docker安装--CentOS
 
 **Platform**： CentOS7.5
