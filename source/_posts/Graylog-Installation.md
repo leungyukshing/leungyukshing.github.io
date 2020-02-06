@@ -1,5 +1,5 @@
 ---
-title: Windows下搭建Graylog环境
+title: Graylog环境搭建
 date: 2020-02-04 11:41:53
 ---
 
@@ -25,7 +25,7 @@ date: 2020-02-04 11:41:53
 
 **Environment:** Docker for Windows
 
-&emsp;&emsp;在这篇博客我将分享如何在windows上搭建起graylog环境来收集日志。首先要有windows上的docker环境（如果没有配置，请参考[传送门](https://www.jianshu.com/p/3a339072ca7d)），因为我们使用docker来运行graylog。
+&emsp;&emsp;在这一部分，我将分享如何在windows上搭建起graylog环境来收集日志。首先要有windows上的docker环境（如果没有配置，请参考[传送门](https://www.jianshu.com/p/3a339072ca7d)），因为我们使用docker来运行graylog。
 
 ### 步骤
 
@@ -193,9 +193,61 @@ date: 2020-02-04 11:41:53
 
    ![Graylog Flask](/images/graylog6.png)
 
+---
+
+## Graylog环境搭建--CentOS
+
+**Platform:** CentOS 7.5
+
+**Environment:** Docker 19.03.5
+
+&emsp;&emsp;CentOS下的搭建原理与步骤与windows下基本一致，我们只需要对个别地方稍作修改。
+
+1. 修改`docker-compose.yml`中graylog的`GRAYLOG_WEB_ENDPOINT_URI`：
+
+   ```yaml
+   graylog:
+       restart: always
+       image: graylog/graylog:2.4.5-2
+       container_name: graylog
+       environment:
+         # password pepper
+         - GRAYLOG_PASSWORD_SECRET=gr8r3hbnvfs73b8wefhweufpokdnc
+         - GRAYLOG_ROOT_USERNAME=admin
+         # Password: admin
+         - GRAYLOG_ROOT_PASSWORD_SHA2=8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918
+         # elasticsearch host
+         - GRAYLOG_ELASTICSEARCH_HOSTS=http://graylog-elasticsearch:9200
+         # mongo host
+         - GRAYLOG_MONGODB_URI=mongodb://graylog-mongo/graylog
+         # time zone
+         - GRAYLOG_ROOT_TIMEZONE=Asia/Shanghai
+         - GRAYLOG_WEB_ENDPOINT_URI=http://x.x.x.x:9000/api # x.x.x.x为服务器IP地址
+         - GRAYLOG_WEB_LISTEN_URI=http://0.0.0.0:9000/
+         - GRAYLOG_REST_LISTEN_URI=http://0.0.0.0:9000/api
+       depends_on:
+         - graylog-mongo
+         - graylog-elasticsearch
+       ports:
+         # Graylog web interface and REST API
+         - 9000:9000
+         # Syslog TCP
+         - 514:514
+         # Syslog UDP
+         - 514:514/udp
+         # GELF TCP
+         - 12201:12201
+         # GELF UDP
+         - 12201:12201/udp
+   ```
+
+2. 运行后我们在浏览器访问的地址为：`x.x.x.x:9000`（同样地，`x.x.x.x`为服务器IP地址）。
+
+3. 其他的操作与上面一致，我们就能在Search中看到log输出了。
+
 ## 总结
 
-&emsp;&emsp;以上就是有关在win10上graylog的搭建以及简单的使用，我们还可以在graylog中进行审计、展现和预警，这些之后有时间我会一一分享。本篇博文长期更新，欢迎订阅，谢谢您的支持！
+&emsp;&emsp;以上就是有关graylog的搭建以及简单的使用，我们还可以在graylog中进行审计、展现和预警，这些之后有时间我会一一分享。本篇博文长期更新，欢迎订阅，谢谢您的支持！
 
 ---
 
