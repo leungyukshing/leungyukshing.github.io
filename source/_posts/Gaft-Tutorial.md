@@ -132,7 +132,170 @@ engine.run(ng=100)
 1. 自定义个体，直接使用chromosome，而跳过solution的编码过程，这样用起来更加直接。同时在初始化的时候加入新的参数。
 2. 修复在轮盘赌时，所以个体fitness一样时出现的异常。
 
+### 1.自定义个体
 
+```python
+class PizzaIndividual(IndividualBase):
+    def __init__(self, ranges, eps=0.001, size=None):
+        super(self.__class__, self).__init__(ranges, eps)
+        self.size = size
+        chromsome = np.random.randint(0, 2, size).tolist()
+        self.init(chromsome=chromsome)
+        
+    def encode(self):
+        '''
+        Encode solution to gene sequence in individual using different encoding.
+        '''
+        return int(self.solution[0])
+    def decode(self):
+        ''' 
+        Decode gene sequence to solution of target function.
+        '''
+        return self.chromsome
+        
+```
+
++ 自定义的个体都需要继承基类`IndividualBase`，其中在`init`方法中，对个体进行初始化。这个类中有两个变量`solution`和`chromsome`。在初始化的时候，如果两个参数都传入，则使用`chromsome`。如果都没有传入参数，则随机初始化`solution`。
++ `solution`和`chromsome`的关系：`solution`->`encode()`->`chromsome`；`chromsome`->`decode()`->`solution`。
++ 这里我初始化的时候直接传入了`chromsome`，所以不需要从`solution`调用encode，所以encode随便写就好了。decode的时候是我们获取`solution`的时候用的，直接返回`chromsome`本身。
+
+### 2.修改Population中的初始化函数
+
+&emsp;&emsp;注意到上面初始化的参数，前两个是必须提供的，而第三个`size`是我新加上去的。前面提到，在初始化种群的时候，会逐个调用个体的初始化函数，这个框架的兼容性做的实在不怎么好，只能进去源码中修改。路径是`gaft/components/population.py`。在Population的初始化函数加上对应的参数即可。
+
+```python
+def init(self, indvs=None):
+        ''' Initialize current population with individuals.
+
+        :param indvs: Initial individuals in population, randomly initialized
+                      individuals are created if not provided.
+        :type indvs: list of Individual object
+        '''
+        IndvType = self.indv_template.__class__
+
+        if indvs is None:
+            for _ in range(self.size):
+                indv = IndvType(ranges=self.indv_template.ranges,
+                                eps=self.indv_template.eps,
+                                size=self.indv_template.size)
+                self.individuals.append(indv)
+        else:
+            # Check individuals.
+            if len(indvs) != self.size:
+                raise ValueError('Invalid individuals number')
+            for indv in indvs:
+                if not isinstance(indv, IndividualBase):
+                    raise ValueError('individual class must be subclass of IndividualBase')
+            self.individuals = indvs
+
+        self._updated = True
+
+        return self
+
+```
+
+### 3.定义运算子
+
+```python
+class PizzaMutation(Mutation):
+    def __init__(self, pm):
+        if pm <= 0.0 or pm > 1.0:
+            raise ValueError('Invalid mutation probability')
+        
+        self.pm = pm
+    def mutate(self, individual, engine):
+        ''' Mutate the individual.
+
+        :param individual: The individual on which crossover operation occurs
+        :type individual: :obj:`gaft.components.IndividualBase`
+
+        :param engine: Current genetic algorithm engine
+        :type engine: :obj:`gaft.engine.GAEngine`
+
+        :return: A mutated individual
+        :rtype: :obj:`gaft.components.IndividualBase`
+        '''
+        do_mutation = True if random() <= self.pm else False
+
+        if do_mutation:
+            for i, genome in enumerate(individual.chromsome):
+                no_flip = True if random() > self.pm else False
+                if no_flip:
+                    continue
+
+                if type(individual) is PizzaIndividual:
+                    individual.chromsome[i] = genome^1
+                else:
+                    raise TypeError('Wrong individual type: {}'.format(type(individual)))
+
+            # Update solution.
+            individual.solution = individual.decode()
+
+        return individual
+```
+
++ 原有的FlipBitMutation中在执行mutate操作时会严格地检查个体类型，我们自定义的类型当然不包括在里面。我们既可以修改源码，也可以新写一个Mutation操作。这里我直接新写一个，后续也方便增加东西。
+
+### 4.解决轮盘赌除0的异常
+
+&emsp;&emsp;我们使用的是轮盘赌选择方法，但是原来的代码有个问题，当所有的个体的fitness都是一样的时候，会出现除0的异常情况。而实际上，当这种情况出现的时候，我们应该随机地选择一个个体，让算法继续运行下去，为了解决这个问题，我们需要修改源码。路径为：`gaft/operators/selection/roulette_wheel_selection.py`
+
+```python
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
+''' Roulette Wheel Selection implementation. '''
+
+from random import random
+from bisect import bisect_right
+from itertools import accumulate
+
+from ...plugin_interfaces.operators.selection import Selection
+
+class RouletteWheelSelection(Selection):
+    ''' Selection operator with fitness proportionate selection(FPS) or
+    so-called roulette-wheel selection implementation.
+    '''
+    def __init__(self):
+        pass
+
+    def select(self, population, fitness):
+        ''' Select a pair of parent using FPS algorithm.
+
+        :param population: Population where the selection operation occurs.
+        :type population: :obj:`gaft.components.Population`
+
+        :return: Selected parents (a father and a mother)
+        :rtype: list of :obj:`gaft.components.IndividualBase`
+        '''
+        # Normalize fitness values for all individuals.
+        fit = population.all_fits(fitness)
+        min_fit = min(fit)
+        fit = [(i - min_fit) for i in fit]
+
+        # Create roulette wheel.
+        ## HERE!
+        sum_fit = sum(fit)
+        if sum_fit != 0.0:
+            wheel = list(accumulate([i/sum_fit for i in fit]))
+        else:
+            wheel = [0.0 for i in fit]
+            wheel[len(wheel) - 1] = 1.0
+
+        # Select a father and a mother.
+        father_idx = bisect_right(wheel, random())
+        father = population[father_idx]
+        mother_idx = (father_idx + 1) % len(wheel)
+        mother = population[mother_idx]
+
+        return father, mother
+
+
+```
+
++ 修改在line35开始
+
+&emsp;&emsp;至此，我们就自定义了Individual、Mutation，其实Population、Selection、Crossover这些模块我们都可以重新定义，目标是为我们的算法服务。
 
 ---
 
