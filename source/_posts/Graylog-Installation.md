@@ -255,4 +255,3 @@ date: 2020-02-04 11:41:53
 
 1. [Graylog Documentation](http://docs.graylog.org/en/3.1/index.html)
 2. [Graylog Website](https://www.graylog.org/)
-
