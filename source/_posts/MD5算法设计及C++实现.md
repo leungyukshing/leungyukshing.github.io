@@ -15,7 +15,7 @@ tags:
 
 ## 总体结构
 
-![MD5总体结构](/images/MD5总体结构.png)
+![MD5总体结构](/images/MD5_structure.png)
 
 ---
 
@@ -433,20 +433,20 @@ int main() {
 
    运行结果：
 
-   ![MD5测试1](/images/MD5测试1.png)
+   ![MD5测试1](/images/MD5_test1.png)
 
 2. MD5(“The
    quick brown fox jumps over the lazy cog”) = 1055d3e698d289f2af8663725127bd4b
 
    运行结果：
 
-   ![MD5测试2](/images/MD5测试2.png)
+   ![MD5测试2](/images/MD5_test2.png)
 
 3. MD5(“”) = d41d8cd98f00b204e9800998ecf8427e
 
    运行结果：
 
-   ![MD5测试3](/images/MD5测试3.png)
+   ![MD5测试3](/images/MD5_test3.png)
 
 ---
 
