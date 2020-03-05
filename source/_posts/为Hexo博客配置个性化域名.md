@@ -10,16 +10,16 @@ tags:
 
 ## 步骤
 1. 首先你需要购买一个域名，可以在阿里云或腾讯云购买个性化域名。可以购买的域名一般有`.com`、`.cn`、`.xyz`，这里我购买的是`.cn`的域名。输入自己的个性化名字后，在服务器确认可用后就可以购买了。然后在腾讯云的控制台中可以看到自己已经拥有了个性化域名。如下图
-![腾讯云](/images/腾讯云1.png)
+![腾讯云](/images/tencent_cloud_1.png)
 
 2. 然后点击域名，可以看到自己的域名情况，点击解析（第一次可能会比较慢）。如图：
-![腾讯云1](/images/腾讯云2.png)
+![腾讯云1](/images/tencent_cloud_2.png)
 
 3. 这里可能会需要实名认证，一般是3-5天，我的话几个小时就认证成功了。然后就点击`添加记录`，按照提示添加即可，主机记录为`www`，记录类型为`CNAME`，记录值为`你的github用户名.github.io`。
-![](/images/域名解析.png)
+![](/images/parse_domain.png)
 
 4. 然后去到github，打开仓库，进入Settings，找到custom domain，将自己的个性化域名添加进去。
-![配置域名](/images/配置域名.png)
+![配置域名](/images/config_domain.png)
 
 5. 接着在本地配置，打开博客所在目录，进入到`source/`，新建文件`CNAME`，在里面输入自己的域名，如我的就是`leungyukshing.cn`，然后`hexo d -g`重新部署即可。
 
