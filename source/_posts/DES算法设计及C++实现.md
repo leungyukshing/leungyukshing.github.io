@@ -20,6 +20,7 @@ tags:
 &emsp;&emsp;DES算法过程概要：
 
   1. 加密过程
+
     &emsp;&emsp;$C = E_k(M) = IP^{-1}\cdot T_{16}\cdot T_{15}\cdot \dots \cdot T{1} \cdot IP(M)$
 
   其中，$IP$为初始置换，$IP^{-1}$是$IP$的逆置换，$T_1,T2,\cdots,T_{16}$是一系列的迭代变换。
@@ -34,7 +35,7 @@ tags:
 
 &emsp;&emsp;DES算法的总体结构——Feistel结构
 
-![Feistel](/images/DES算法结构.png)
+![Feistel](/images/Feistel.png)
 
 ---
 
