@@ -63,7 +63,7 @@ df.head(10)
 
 &emsp;&emsp;查看前10条数据：
 
-![iris数据概览](/images/iris数据概览.png)
+![iris数据概览](/images/iris_preview.png)
 
 ### 处理数据
 
@@ -71,7 +71,7 @@ df.head(10)
 
 &emsp;&emsp;我们使用前100条数据作为训练集，我们可以通过查看数据介绍来提取必要的信息。
 
-![iris数据介绍](/images/iris数据介绍.png)
+![iris数据介绍](/images/iris_intro.png)
 
 &emsp;&emsp;我们使用第5列（花的类别）作为数据标签值，使用第1列（花萼长度）和第三列（花瓣长度）作为数据的输入。注意标签值的转化，将处理字符串转别为处理一个布尔变量（0，1表示）。
 
@@ -93,7 +93,7 @@ X = df.loc[0:100, [0, 2]].values
 
 &emsp;&emsp;这里我们还可以通过可视化工具来初步观察一下数据的特点。
 
-![iris数据可视化](/images/iris数据可视化.png)
+![iris数据可视化](/images/iris_visualization.png)
 
 &emsp;&emsp;可以看出明显存在两类数据，一类集中在左下角，一类集中在右上方。
 
@@ -172,13 +172,13 @@ class Percepter(object):
 
 &emsp;&emsp;完成了感知器模型的构建后，训练模型就很简单了，只需要调用`fit`函数即可。这里我们同时打印出【错误-训练次数】曲线。
 
-![iris数据训练错误曲线](/images/iris数据训练错误曲线.png)
+![iris数据训练错误曲线](/images/iris_error_curve.png)
 
 ### 展示模型
 
 &emsp;&emsp;下面我们展示一下模型对于训练数据的分类情况。
 
-![iris数据分类结果](/images/iris数据分类结果.png)
+![iris数据分类结果](/images/iris_result.png)
 
 &emsp;&emsp;可以看出，数据被明显地分成了两类，也就是说对于训练集，模型的训练误差为0。也就是说，在给定的这么多数据的情况下，模型的训练已经达到最优了。这个二维平面也可以称作该模型的决策面。
 
@@ -188,7 +188,7 @@ W[1]\*x+W[2]\*y+\theta=0
 $$
 &emsp;&emsp;我们输出$W$是：
 
-![iris数据训练权重](/images/iris数据训练权重.png)
+![iris数据训练权重](/images/iris_weights.png)
 
 &emsp;&emsp;所以可以计算出该直线为：
 $$
