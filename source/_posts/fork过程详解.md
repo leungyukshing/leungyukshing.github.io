@@ -31,9 +31,9 @@ int main() {
 }
 ```
 &emsp;&emsp;运行这段代码，结果如下：
-![fork分析](/images/fork分析.png)
+![fork分析](/images/fork_analysis.png)
 &emsp;&emsp;根据上面所说的过程，我们使用流程图分析得到：
-![fork流程](/images/fork流程.png)
+![fork流程](/images/fork_workflow.png)
 &emsp;&emsp;需要注意的是，我们只能够确定每个进程完成的任务，而不能确定他们之间执行的顺序，在不同机器上，它们的执行顺序可能会不同，这取决于系统的调度算法。
 
 ## 小结
