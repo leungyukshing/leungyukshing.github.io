@@ -18,7 +18,7 @@ date: 2019-02-04 11:41:17
 
 &emsp;&emsp;首先我们需要下载和安装Andriod Studio这个开发工具，下载地址为[Android官网](https://developer.android.com)或者是[github提供](https://github.com/inferjay/AndroidDevTools#sdk-tools)，前者在国内可能会被墙，后者一般是没有问题。
 
-&emsp;&emsp;进入亡之后选择对应的版本，如图：![AS下载](/images/Android Studio下载.png)
+&emsp;&emsp;进入亡之后选择对应的版本，如图：![AS下载](/images/Android Studio Download.png)
 
 &emsp;&emsp;然后运行安装问及那，定好Andriod Studio和SDK的默认安装位置就可以了，注意**SDK的安装路径不能有空格和中文字符**，一直点`next`，直至安装完成。这其中基本是没有问题的，如果有报错，大多是因为本机Java版本问题或者java环境变量设置错误。
 
@@ -44,7 +44,7 @@ date: 2019-02-04 11:41:17
 
 &emsp;&emsp;先来简单地看一下工程目录，如下图：
 
-![AS工程目录](/images/AS工程目录.png)
+![AS工程目录](/images/AS Project Structure.png)
 
 工程目录如下：
 
@@ -60,7 +60,7 @@ date: 2019-02-04 11:41:17
 
 &emsp;&emsp;回到开发界面，在完成项目构建后，点击右上方的绿色箭头在虚拟机上运行即可看到效果。默认的项目显示的是`Hello World!`字样！
 
-![项目构建](/images/项目运行.png)
+![项目构建](/images/Android Run.png)
 
 ---
 
