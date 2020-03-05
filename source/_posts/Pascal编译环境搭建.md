@@ -41,7 +41,7 @@ end.
 $ fpc hello.pas
 ```
 
-运行结果：![编译pascal](/images/编译pascal.png)
+运行结果：![编译pascal](/images/pascal_compile.png)
 
 然后你就能看到文件夹下多了两个文件`hello.o`和`hello.exe`。前者是中间的二进制文件，后者是可执行文件。直接运行exe：
 
@@ -51,7 +51,7 @@ $ hello.exe
 
 可以看到在命令行中输出”Hello world!"字样。
 
-![运行pascal](/images/运行pascal.png)
+![运行pascal](/images/pascal_run.png)
 
 ---
 
