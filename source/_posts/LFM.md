@@ -80,7 +80,7 @@ $$
 
 &emsp;&emsp;下面我将实现一个简单的电影推荐系统。首先获取数据集：[传送门](https://grouplens.org/datasets/movielens/)。在**recommended for education and development**中下载*Small*数据集。
 
-![电影数据](/images/电影数据.png)
+![电影数据](/images/movielens_dataset.png)
 
 &emsp;&emsp;下载并解压后其实我们可以看到，里面包含了几个csv数据，我们主要用到两个数据`ratings.csv`（用户对自己看过的电影的评分）和`movies.csv`（电影信息）。
 
@@ -226,7 +226,7 @@ train = optimizer.minimize(loss)
 
 &emsp;&emsp;训练模型的部分主要是tensorflow的操作，这里就不仔细讲解了。我们可以使用tensorboard可视化工具来看到训练过程。
 
-![训练过程](/images/训练过程.png)
+![训练过程](/images/recommendation_training_progress.png)
 
 &emsp;&emsp;可以看出损失函数随着训练次数的增加在下降。
 
@@ -291,7 +291,7 @@ for i in sortedResult:
 
 ```
 
-![推荐结果](/images/推荐结果.png)
+![推荐结果](/images/recommendation_result.png)
 
 &emsp;&emsp;这样，我们就成功构建起一个简单的电影推荐系统了。
 
