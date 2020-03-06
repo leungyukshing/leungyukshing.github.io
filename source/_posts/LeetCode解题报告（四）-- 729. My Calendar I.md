@@ -29,15 +29,16 @@ The third event can be booked, as the first event takes every time less than 20,
 ```
 
 **Note:**
+
   + The number of calls to `MyCalendar.book` per test case will be at most `1000`.
   + In calls to `MyCalendar.book(start, end)`, `start` and `end` are integers in the range `[0, 10^9]`.
 
 ## Analysis
 &emsp;&emsp;My Calendar总共有三道题，考察的重点是对于区间重叠的判断，而难点在于如何使用更少的循环求解出答案。这篇post分析的是第一题，也就是判断区间之间是否重合。我们很自然地会思考如何判断区间是否重叠。这里给出区间重叠的四种情况：
-![区间重叠](/images/区间重叠.jpg)
+![区间重叠](/images/interval_overlap.jpg)
 
 &emsp;&emsp;但其实对于写代码而言，更快的方法应该是判断区间不重叠，然后取非就可以了，这里给出区间不重叠的两种情况。
-![区间分离](/images/区间分离.jpg)
+![区间分离](/images/interval_disjoint.jpg)
 
 ## Solution
 &emsp;&emsp;根据上面给出的区间重叠的情况，主要抓住`start`和`end`的位置，就可以快速判断出区间之间是否重叠。对于重叠区间，直接返回fasle；对于不重叠区间，我们需要将他加入到现有的vector中。
