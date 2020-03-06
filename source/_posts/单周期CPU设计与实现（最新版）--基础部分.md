@@ -19,7 +19,7 @@ date: 2018-08-07 23:41:59
 
 ## 数据通路
 &emsp;&emsp;一条指令的执行需要不同部件的配合，如何使用这些部件就需要控制单元发出控制信号。指令以及数据在CPU各部件中的移动是使用数据通路图来描述的，老师提供的数据通路图如下：
-![数据通路图](/images/数据通路图.png)
+![数据通路图](/images/cpu_data_path.png)
 &emsp;&emsp;接下来我们在实现的过程中，需要紧密地联系以上这幅数据通路图，因此最好先熟悉这幅图，包括每个模块的接口，每个数据的位数等。
 &emsp;&emsp;每条指令由不同模块功能相互组合而成，模块主要有程序计数器（PC），指令寄存器（rom），寄存器组（register），控制单元（control unit），ALU运算器（ALU），数据存储器（ram），符号或者零拓展模块（extend）以及加法器，移位器和几个二选一数据选择器。
 
@@ -29,7 +29,7 @@ date: 2018-08-07 23:41:59
 ### 1.控制单元（ControlUnit.v）
 &emsp;&emsp;这里需要根据每条指令所用到的模块，通过建立对应的真值表，对每个控制信号进行赋值，以确定使用哪些模块。
 &emsp;&emsp;确定控制信号真值表，也是整个CPU逻辑最重要的部分。
-![控制信号真值表](/images/信号控制真值表.png)
+![控制信号真值表](/images/cpu_signal_truth_table.png)
 
 ```verilog
 module ControlUnit(
@@ -150,7 +150,7 @@ endmodule
 ### 4.指令寄存器（InsMEM.v）
 &emsp;&emsp;指令寄存器是由寄存器组成的，存储所有我们将要执行的指令。这里采用的是8位大端的存储模式。
 &emsp;&emsp;这里先给出我们需要测试的指令序列。
-![测试程序段](/images/测试程序段.png)
+![测试程序段](/images/cpu_test_program_section.png)
 
 ```verilog
 module InsMEM(
