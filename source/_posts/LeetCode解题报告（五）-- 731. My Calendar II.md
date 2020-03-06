@@ -41,7 +41,7 @@ the time [40, 50) will be single booked, and the time [50, 55) will be double bo
 
 
 ## Analysis
-&emsp;&emsp;这是Calendar系列的第二题，题目要求我们判断会议是否**三重重叠**。也就是说，没有重叠和两个会议重叠都是允许的，三个会议重叠则不允许。如果完成了[Calendar Ⅰ](https://leungyukshing.github.io/archives/LeetCode%E8%A7%A3%E9%A2%98%E6%8A%A5%E5%91%8A%EF%BC%88%E5%9B%9B%EF%BC%89--%20729.%20My%20Calendar%20I.html)，这题会比较简单。判断重叠的条件与之前一样，关键在于需要记录不重叠区间和两个会议重叠的区间。
+&emsp;&emsp;这是Calendar系列的第二题，题目要求我们判断会议是否**三重重叠**。也就是说，没有重叠和两个会议重叠都是允许的，三个会议重叠则不允许。如果完成了[Calendar Ⅰ](http://leungyukshing.cn/archives/LeetCode解题报告（四）-- 729. My Calendar I.html)，这题会比较简单。判断重叠的条件与之前一样，关键在于需要记录不重叠区间和两个会议重叠的区间。
 
 ## Solution
 &emsp;&emsp;我们需要两个vector来模拟一个分级的集合，分别记录不重叠的区间和一次重叠的区间。对于每个需要判断的区间，我们首先在一次重叠的vector中进行对比，如果存在交集，则说明出现了三个会议重叠的情况，直接return `false`；否则，从无重叠的区间中对比，如果存在重叠，则将重叠的区间加入到一次重叠的vector中，否则，直接把区间加入到不重叠的vector中。需要注意，**两个区间的重叠区间是左边界取大，右边界取小**！
