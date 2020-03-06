@@ -247,7 +247,7 @@ if __name__ == '__main__':
 
 ### 结果
 
-![天气预测](/images/天气预测.png)
+![天气预测](/images/knn_weather_prediction.png)
 
 ## 小结
 
