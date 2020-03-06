@@ -16,7 +16,7 @@ date: 2018-08-10 12:25:30
 ## 代码实现
 ### 1.控制单元（ControlUnti.v）
 &emsp;&emsp;控制单元包含了状态机、设置下一个状态、设置信号三个重要部分。我们需要根据当前指令设置下一个状态，根据当前状态设置控制信号。这与单周期CPU是类似的，同样是需要先构建一个控制信号真值表。
-![控制信号真值表](/images/控制信号真值表.png)
+![控制信号真值表](/images/multi_cpu_signal_truth_table.png)
 
 ```verilog
 module ControlUnit(
@@ -288,7 +288,7 @@ endmodule
 ### 4.指令寄存器（InsMEM.v）
 &emsp;&emsp;这里我使用了一种与单周期CPU不一样的方式初始化寄存器。我们可以首先编写好指令代码在一个txt文件中，在初始化的时候就将内容读入寄存器中。
 测试指令：
-![测试指令](/images/测试指令.png)
+![测试指令](/images/multi_cpu_test_program_section.png)
 ins.txt文件内容：
 ![ins](/images/ins.png)
 
@@ -627,7 +627,7 @@ module test;
 endmodule
 ```
 部分测试结果：
-![仿真结果](/images/5.png)
+![仿真结果](/images/multi_cpu_result.png)
 
 ### 烧板
 &emsp;&emsp;烧板的过程和步骤与单周期CPU基本一致，因此这里就不再赘述，详情可以参考GitHub里面的代码或者是参考[单周期烧板介绍](https://leungyukshing.github.io/archives/%E5%8D%95%E5%91%A8%E6%9C%9FCPU%E8%AE%BE%E8%AE%A1%E4%B8%8E%E5%AE%9E%E7%8E%B0%EF%BC%88%E6%9C%80%E6%96%B0%E7%89%88%EF%BC%89--%E7%83%A7%E6%9D%BF%E9%83%A8%E5%88%86.html)。
