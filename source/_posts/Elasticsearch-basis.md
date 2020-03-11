@@ -101,8 +101,19 @@ tags:
 
 上述四种节点并不是完全互斥的，比如说，数据节点也可以是master节点或client节点，这样就身兼两职。但是在规模较大的集群中，master和client节点在一些峰值情况下有可能会崩溃，如果与data放在一起，则会使得共存的data也故障。data的故障恢复需要一定的时间和资源消耗，会造成短时间的延迟。所以最好的策略还是把client和master与data分离开来。一旦出现问题，master和client的恢复是瞬间的，用户几乎感知不到。同时把data分离出来，master对data资源的消耗也更加准确，便于做容量管理。
 
+### master节点选举
+
+&emsp;&emsp;在一个集群中需要有一个master节点，该节点的产生是通过选举产生的。基本的策略是：从具有master资格的节点中选id最小的节点作为master。
+
+&emsp;&emsp;选举节点的时机也很关键。当集群启动的时候，后台启动线程去ping集群中的节点，按照上述策略从具有master资格的节点中选举出最小的。当集群中现有的master离开集群，后台一直有一个线程定时去ping master节点，如果超过一定次数ping失败，就会重新进行master的选举。
+
+### 避免集群脑裂
+
+&emsp;&emsp;在集群采用master-slave模式来管理分布式集群的时候，我们通常需要关注脑裂的问题。ES避免脑裂的策略是：过半原则。ES的配置中有一个参数`discovery.zen.minimum_master_nodes`，这个参数决定了在选举master过程中需要至少有几个节点在通信。我们通常设置$N/2+ 1$，其中$N$是集群中的节点数量。这样只要过半数的节点处于正常的通信状态，这个master才是有效的。
+
 ------
 
 ## Reference
 
-1. [ElasticSearch Near Real Time Search](
+1. [ElasticSearch Near Real Time Search](https://www.elastic.co/guide/en/elasticsearch/guide/current/near-real-time.html)
+2. [ES避免脑裂](https://www.cnblogs.com/zhukunrong/p/5224558.html)
