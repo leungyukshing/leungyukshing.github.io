@@ -117,6 +117,14 @@ tags:
 
    可以看到对于中文来说，是逐个字分开的。关于分词的优化后面会继续讨论。
 
+---
+
 ## Flask接入
 
 TBC...
+
+---
+
+## Reference
+
+1. [ES 搭建及使用](https://qii404.me/2018/11/22/elastic-search.html)
