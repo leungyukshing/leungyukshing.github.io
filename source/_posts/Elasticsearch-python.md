@@ -6,7 +6,7 @@ tags:
 
 ## ElasticSearch--Python接入
 
-&emsp;&emsp; 之前介绍过文档搜索引擎ElasticSearch（[传送门]()），今天我就来分享一下如何把使用python接入ES，进而作为我们的flask服务器的搜索引擎。
+&emsp;&emsp; 之前介绍过文档搜索引擎ElasticSearch（[传送门](http://leungyukshing.cn/archives/Elasticsearch-basis.html)），今天我就来分享一下如何把使用python接入ES，进而作为我们的flask服务器的搜索引擎。
 
 <!-- more -->
 
