@@ -20,7 +20,7 @@ date: 2019-07-02 11:24:20
 
 ## 1.redis是什么
 
-&emsp;&emsp;简单来说，redis是一个**非关系型数据库**，是一个基于**key-value**的数据结构服务器。它主要是在内存中操作数据，因此我们常常说**redis缓存**。（如果你还不了解**关系型数据库**和**非关系型数据库**的区别，请跳转到[浅谈关系型数据库与非关系型数据库](http://leungyukshing.cn/archives/%E6%B5%85%E8%B0%88%E5%85%B3%E7%B3%BB%E5%9E%8B%E6%95%B0%E6%8D%AE%E5%BA%93%E4%B8%8E%E9%9D%9E%E5%85%B3%E7%B3%BB%E5%9E%8B%E6%95%B0%E6%8D%AE%E5%BA%93.html)）
+&emsp;&emsp;简单来说，redis是一个**非关系型数据库**，是一个基于**key-value**的数据结构服务器。它主要是在内存中操作数据，因此我们常常说**redis缓存**。（如果你还不了解**关系型数据库**和**非关系型数据库**的区别，请跳转到[浅谈关系型数据库与非关系型数据库](http://leungyukshing.cn/archives/Thoughs-on-Relational-Database-and-Nonrelational-Database.html)）
 
 ## 2.redis数据类型
 
