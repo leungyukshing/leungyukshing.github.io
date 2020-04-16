@@ -95,11 +95,11 @@ cache:
     - node_modules
     - CNAME
 # env
-# 全局变量，为了安全，不要在这里设置，我这里设置只是示例，其实没有用到 
 env:
  global:
    - GITHUB_URL: github.com/leungyukshing/leungyukshing.github.io.git
-   - CODING_URL: git.coding.net/leungyukshing/leungyukshing.coding.me.git
+   # - CODING_URL: git.coding.net/leungyukshing/leungyukshing.coding.me.git 旧版的URL已经报废
+   - CODING_URL: e.coding.net/leungyukshing/leungyukshing.git # 注意使用新版的URL
 # tarvis 生命周期执行顺序详见官网文档 
 before_install:
 # 更改时区 
@@ -155,7 +155,8 @@ after_success:
 # 推送到主分支 
 - git push --force --quiet "https://${REPO_TOKEN}@${GITHUB_URL}" master:master
 # Mirror Repo
-- git push --force --quiet "https://leungyukshing:${CO_TOKEN}@{CODING_URL}" master:master
+# - git push --force --quiet "https://leungyukshing:${CO_TOKEN}@{CODING_URL}" master:master # 旧版的用户名是username
+- git push --force "https://18565043306:${CO_TOKEN}@${CODING_URL}" master:master # 新版的用户名是电话号码
 # 邮件通知机制，我在这里设置了成功 / 失败都会通知，这里不能使用环境变量 
 # configure notifications (email, IRC, campfire etc)
 # please update this section to your needs!
@@ -179,6 +180,10 @@ notifications:
 + `script`：在安装完后会执行的脚本文件，这里我们就写部署的代码。每次部署都需要先清除再部署，虽然看上去好像有点浪费时间，但这是软件工程开发的规范。
 + `after_success`：这里定义的是构建成功后的行为。构建成功后我们把代码提交到`master`分支，给Github Page渲染。
 + `notification`：通知提醒。我们每次构建完后都可以设置邮件提醒，这里我设置的是成功与失败都发送提醒。
+
+**重要更新**：
+
+coding.net改版后，仓库的URL和用户名都有改动。仓库域名改为`e.coding.net`，用户名改为手机号码。
 
 至此，CI的整个配置就完成了。接下来我们每次写博客的步骤简化为：
 
