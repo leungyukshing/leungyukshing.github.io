@@ -8,6 +8,8 @@ tags:
 
 &emsp;&emsp;博客的加载速度是非常影响阅读体验的，而很多人都是把博客部署在Github Pages上，这对于国内的访问并不是很友好，甚至有时候会不能访问。为了解决这个问题，我做了域名分流，目的就是提高加载速度，优化体验。
 
+<!-- more -->
+
 ## 域名分流的思路
 
 &emsp;&emsp;在之前的博客中我有分享过博客的自动部署（[传送门](http://leungyukshing.cn/archives/Hexo-Travis.html)），其中就有一点是同步代码到coding.net的镜像仓库。当时主要的考虑是备份，但是另一个优点就是，我们同样可以借助coding.net提供的静态页面去部署。这样，我们相当于有了两个部署的网页，一个是Github Pages，另一个是coding.net提供的。
