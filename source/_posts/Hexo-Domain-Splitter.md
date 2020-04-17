@@ -15,6 +15,7 @@ tags:
 &emsp;&emsp;在之前的博客中我有分享过博客的自动部署（[传送门](http://leungyukshing.cn/archives/Hexo-Travis.html)），其中就有一点是同步代码到coding.net的镜像仓库。当时主要的考虑是备份，但是另一个优点就是，我们同样可以借助coding.net提供的静态页面去部署。这样，我们相当于有了两个部署的网页，一个是Github Pages，另一个是coding.net提供的。
 
 &emsp;&emsp;域名分流就是基于以上假设的。Github Pages可以主要服务于国外的访问，而coding.net可以主要服务于国内的访问，这样网页的加载速度都会提升不少。
+![Domain Split](/images/hexo-optimization-splitter4.png)
 
 ## 步骤
 
