@@ -1,4 +1,11 @@
-# QUIC协议介绍及理解
+---
+title: QUIC协议介绍
+tags:
+date: 2020-05-31 11:43:12
+
+---
+
+# QUIC协议介绍
 
 &emsp;&emsp;QUIC(**Q**uick **U**dp **I**nternet **C**onnection) 是由Google提出的使用UDP进行多路并发传输的协议，直接对标TCP。这里结合我个人的理解，对其中一些技术要点进行分享。
 
