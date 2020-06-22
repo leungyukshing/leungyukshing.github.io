@@ -13,6 +13,8 @@ Given a 2D board containing `'X'` and `'O'` (**the letter O**), capture all regi
 
 A region is captured by flipping all `'O'`s into `'X'`s in that surrounded region.
 
+<!-- more -->
+
 **Example:**
 
 ```
