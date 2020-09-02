@@ -1,3 +1,4 @@
+![ci badge](https://travis-ci.org/leungyukshing/leungyukshing.github.io.svg?branch=hexo)
 ## 更新日志
 ### 2018.1.25
   + 更换了next主题
