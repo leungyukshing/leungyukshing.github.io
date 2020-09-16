@@ -6,12 +6,15 @@ date: 2020-07-18 12:56:22
 mathjax: true
 top: true
 
+
 ---
 
 ## beta-recsys v0.1版本发布啦！🎉🎉🎉
 
 &emsp;&emsp;我们的beta-recsys v0. 1版本发布了！这是一个基于pytorch 的推荐系统来源平台，我们致力于整合更多的推荐系统模型，为推荐系统这个社区提供一个公平比较的平台，同时推进代码的可复现性！
-**链接**: https://github.com/beta-team/beta-recsys
+**Github**: https://github.com/beta-team/beta-recsys
+
+**teaser video:**https://vimeo.com/456391232
 
 <!-- more -->
 
