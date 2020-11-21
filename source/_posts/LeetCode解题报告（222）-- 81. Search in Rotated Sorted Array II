@@ -1,0 +1,97 @@
+---
+title: LeetCode解题报告（222）-- 81. Search in Rotated Sorted Array II
+tags:
+  - LeetCode
+mathjax: true
+date: 2020-11-21 10:45:01
+
+---
+
+## Problem
+
+Suppose an array sorted in ascending order is rotated at some pivot unknown to you beforehand.
+
+(i.e., `[0,0,1,2,2,5,6]` might become `[2,5,6,0,0,1,2]`).
+
+You are given a target value to search. If found in the array return `true`, otherwise return `false`.
+
+<!-- more -->
+
+**Example 1:**
+
+```
+Input: nums = [2,5,6,0,0,1,2], target = 0
+Output: true
+```
+
+**Example 2:**
+
+```
+Input: nums = [2,5,6,0,0,1,2], target = 3
+Output: false
+```
+
+**Follow up:**
+
+- This is a follow up problem to [Search in Rotated Sorted Array](https://leetcode.com/problems/search-in-rotated-sorted-array/description/), where `nums` may contain duplicates.
+- Would this affect the run-time complexity? How and why?
+
+------
+
+## Analysis
+
+&emsp;&emsp;题目在Follow up已经给了提示，这是一道系列题，是在上一道题目的基础上，数组中会有重复的元素。所以在一个Rotated Sorted Array中的搜索这里我就不重新分析了，感兴趣的可以看上一题的题解。这里着重来看如何解决元素重复的问题。
+
+&emsp;&emsp;先来看一下元素有重复会带来什么问题。以Example 1为例，在第一个二分的时候，中间元素是0，而左半部分的起点是2，右半部分的终点也是2。在上一题，我们是通过这几个关键的位置去判断哪半部分是有序的，但是在这里就无法判断了。解决的办法其实也非常简单：**直接跳过重复的元素**。因为重复的元素并不会影响大小关系，所以遇到这种情况的时候，直接跳过一个就可以了。
+
+------
+
+## Solution
+
+&emsp;&emsp;跳过的具体做法是把`right--`，因为只有当`nums[left] == nums[mid] == nums[right]`的时候才有判断不了，这个时候动左边或者动右边都可以。因为我们的判断都是基于`right`的，所以`right--`即可。如果是判断都是用`left`的，`left++`也可以解决问题。
+
+------
+
+## Code
+
+```c++
+class Solution {
+public:
+    bool search(vector<int>& nums, int target) {
+        int left = 0, right = nums.size() - 1;
+        while (left <= right) {
+            int mid = (left + right) / 2;
+            // cout << mid << endl;
+            if (nums[mid] == target) {
+                return true;
+            }
+            if (nums[mid] < nums[right]) {
+                // right part is sorted
+                // cout << "right" << endl;
+                if (nums[mid] < target && target <= nums[right]) {
+                    left = mid + 1;
+                } else {
+                    right = mid - 1;
+                }
+            } else if (nums[mid] > nums[right]) {
+                // left part is sorted
+                // cout << "left" << endl;
+                if (nums[mid] > target && target >= nums[left]) {
+                    right = mid - 1;
+                } else {
+                    left = mid + 1;
+                }
+            } else {
+                right--;
+            }
+        }
+        return false;
+    }
+};
+```
+
+------
+
+## Summary
+
+&emsp;&emsp;基于上一道题，解决这道题目显然容易得多，因为问题还是出现在判断区间的有序性上，因此在做题的时候要多深究，弄懂为什么要这样做。这样就算后续遇到类似的题目，也很容易地借助过往的经验解决。这道题目的分享到这里，谢谢！
