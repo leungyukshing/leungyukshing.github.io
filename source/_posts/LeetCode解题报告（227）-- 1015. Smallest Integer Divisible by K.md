@@ -56,12 +56,12 @@ Explanation: The smallest answer is N = 111, which has length 3.
 &emsp;&emsp;重新梳理下思路，优化的方法就是把穷搜变成了只计算K个数的余数，K个数能找到整除的就直接是答案，不能找到的话后面也不会找到了。下面就来看看更为严谨的数学证明，我们要证明余数直接是有关联的。假设$f(n) = n个1组成的数$，$g(n) = f(n) % K$，则有：
 $$
 \begin{align}
-f(n) =& f(n-1) \times 10 + 1 \\
-g(n) =& (f(n-1) \times 10 + 1) \% K \\
-=& (f(n-1) \times 10) \% K + 1 \% K \\
-=& f(n-1) \% K \times 10 \% K + 1 \%K \\
-=& g(n-1) \times 10 \% K + 1 \% K \\
-=& (g(n-1) \times 10 + 1) \% K \\
+f(n) =& f(n-1) \times 10 + 1 \\\\
+g(n) =& (f(n-1) \times 10 + 1) \% K \\\\
+=& (f(n-1) \times 10) \% K + 1 \% K \\\\
+=& f(n-1) \% K \times 10 \% K + 1 \%K \\\\
+=& g(n-1) \times 10 \% K + 1 \% K \\\\
+=& (g(n-1) \times 10 + 1) \% K \\\\
 \end{align}
 $$
 &emsp;&emsp;上面的$g(n)$实际上就是余数，所以通过这个证明可以很清晰地看到余数直接的关系。
