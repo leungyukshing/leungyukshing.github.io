@@ -2,6 +2,7 @@
 
 <script>
   if (typeof MathJax === 'undefined') {
+    /*
     window.MathJax = {
       loader: {
         {%- if theme.math.mathjax.mhchem %}
@@ -43,6 +44,13 @@
         }
       }
     };
+    */
+    window.MathJax = {
+      tex2jax: {
+        inlineMath: [ ['$', '$'], ["\\(", "\\)"] ],
+        processEscapes: true
+      }
+    }
     (function () {
       var script = document.createElement('script');
       script.src = '{{ mathjax_uri }}';
