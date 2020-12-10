@@ -75,4 +75,5 @@ int main() {
 
 # Reference
 
-1. [约瑟夫环——公式法（递推公式）](
+1. [约瑟夫环——公式法（递推公式）](https://blog.csdn.net/u011500062/article/details/72855826)
+2. [Josephus Problem-Wikipedia](https://en.wikipedia.org/wiki/Josephus_problem)
