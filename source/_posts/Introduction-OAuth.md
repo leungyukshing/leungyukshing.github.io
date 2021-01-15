@@ -87,4 +87,4 @@ date: 2021-01-1 23:29:11
 4. [OAuth1.0--RFC 5849](https://tools.ietf.org/html/rfc5849)
 5. [OAuth2.0--RFC 6749](https://tools.ietf.org/html/rfc6749)
 6. [理解OAuth2.0](https://www.ruanyifeng.com/blog/2014/05/oauth_2_0.html)
-7. [OAuth2.0的一个简单解释](
+7. [OAuth2.0的一个简单解释](http://www.ruanyifeng.com/blog/2019/04/oauth_design.html)
