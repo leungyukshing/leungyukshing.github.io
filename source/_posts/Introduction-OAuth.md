@@ -10,6 +10,7 @@ date: 2021-01-1 23:29:11
 
 &emsp;&emsp;OAuth是当前最流行的**授权机制**，它本质要解决的问题是：**允许用户（User）向第三方应用（Client）授权，允许第三方应用（Client）访问用户的数据（Resource）**。
 
+<!-- more -->
 ------
 
 ## Glossory
