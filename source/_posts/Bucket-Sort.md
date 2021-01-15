@@ -137,4 +137,4 @@ int main() {
 ## Reference
 
 1. [C++桶排序算法的实现与改进](https://blog.csdn.net/misayaaaaa/article/details/66969486)
-2. [桶排序的时间复杂度分析](
+2. [桶排序的时间复杂度分析](https://blog.csdn.net/shengqianfeng/article/details/100074146)
