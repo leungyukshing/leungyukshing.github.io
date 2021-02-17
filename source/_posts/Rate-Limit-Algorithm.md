@@ -72,4 +72,4 @@ date: 2021-02-10 03:02:28
 
 1. [GCRA](https://brandur.org/rate-limiting)
 2. [接口限流算法](https://www.jianshu.com/p/a59c13e70582)
-3. [三种常见的限流算法](
+3. [三种常见的限流算法](https://www.cnblogs.com/linjiqin/p/9707713.html)
