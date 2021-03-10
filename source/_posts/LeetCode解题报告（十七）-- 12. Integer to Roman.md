@@ -62,7 +62,7 @@ Explanation: M = 1000, CM = 900, XC = 90 and IV = 4.
 ```
 
 ## Analysis
-&esmp;&emsp;这道题与[Roman to Integer](https://leungyukshing.github.io/archives/LeetCode%E8%A7%A3%E9%A2%98%E6%8A%A5%E5%91%8A%EF%BC%88%E5%8D%81%E5%85%AD%EF%BC%89--%2013.%20Roman%20to%20Integer.html)恰好是相反的思路。由阿拉伯数字转变成罗马数字，关键在于要从高位开始算，因此我们只需要知道有多少种符号就可以了。根据题目要求，我们可以知道共有13种符号，也就是说，我们共有13种不同的**位**。
+&emsp;&emsp;这道题与[Roman to Integer](https://leungyukshing.github.io/archives/LeetCode%E8%A7%A3%E9%A2%98%E6%8A%A5%E5%91%8A%EF%BC%88%E5%8D%81%E5%85%AD%EF%BC%89--%2013.%20Roman%20to%20Integer.html)恰好是相反的思路。由阿拉伯数字转变成罗马数字，关键在于要从高位开始算，因此我们只需要知道有多少种符号就可以了。根据题目要求，我们可以知道共有13种符号，也就是说，我们共有13种不同的**位**。
 
 ## Solution
 &emsp;&emsp;与前面一题相似，我们需要存储两种数字之间的对应关系，但是因为这里需要同时对应符号和**位**两个集合，而又要进行循环，因此使用map的话会比较麻烦，而使用数组的话可以用下标直接访问，快速很多。我们需要找出每一**位**出现的次数，然后添加对应的符号即可。注意需要将特殊情况的符号和**位**考虑在内。
