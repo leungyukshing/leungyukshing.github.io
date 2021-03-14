@@ -69,4 +69,4 @@ date: 2021-03-13 01:16:02
 
 1. [使用ssh连接github](https://www.jianshu.com/p/da621e687c39)
 2. [使用SSH协议连接Github](https://blog.csdn.net/u012150179/article/details/24790677)
-3. [windows中SSH中文路径问题](
+3. [windows中SSH中文路径问题](https://blog.csdn.net/qq_40265054/article/details/112443178)
