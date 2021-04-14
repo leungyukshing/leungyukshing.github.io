@@ -1,5 +1,5 @@
 ---
-title: LeetCode解题报告（341) -- 17. Letter Combinations of a Phone Number
+title: LeetCode解题报告（341) -- 953. Verifying an Alien Dictionary
 tags:
   - LeetCode
 mathjax: true
