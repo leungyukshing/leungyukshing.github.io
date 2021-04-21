@@ -12,7 +12,7 @@ date: 2020-10-19 23:55:18
 
 In a row of dominoes, `A[i]` and `B[i]` represent the top and bottom halves of the `ith` domino.  (A domino is a tile with two numbers from 1 to 6 - one on each half of the tile.)
 
-We may rotate the `ith` domino, so that `A[i]` and `B[i]` swap values.
+We may rotate the `i-th` domino, so that `A[i]` and `B[i]` swap values.
 
 Return the minimum number of rotations so that all the values in `A` are the same, or all the values in `B` are the same.
 
