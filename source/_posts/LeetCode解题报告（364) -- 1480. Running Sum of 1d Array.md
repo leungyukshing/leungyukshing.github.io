@@ -13,10 +13,6 @@ Given an array `nums`. We define a running sum of an array as `runningSum[i] = s
 
 Return the running sum of `nums`.
 
-You will start on the `1st` day and you cannot take two or more courses simultaneously.
-
-Return *the maximum number of courses that you can take*.
-
 <!-- more -->
 
 **Example 1:**
