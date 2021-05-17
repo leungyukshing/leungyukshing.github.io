@@ -90,4 +90,4 @@ date: 2021-05-15 00:50:03
 
 1. [Introduction to modern network load balancing and proxying](https://blog.envoyproxy.io/introduction-to-modern-network-load-balancing-and-proxying-a57f6ff80236)
 2. [现代负载均衡和代理简介](https://zhuanlan.zhihu.com/p/39575765)
-3. [四层、七层负载均衡的区别](
+3. [四层、七层负载均衡的区别](https://jaminzhang.github.io/lb/L4-L7-Load-Balancer-Difference/)
