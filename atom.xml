@@ -1,0 +1,404 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>Halo</title>
+  
+  <subtitle>A magic place for coding</subtitle>
+  <link href="https://leungyukshing.github.io/atom.xml" rel="self"/>
+  
+  <link href="https://leungyukshing.github.io/"/>
+  <updated>2021-06-22T18:37:11.138Z</updated>
+  <id>https://leungyukshing.github.io/</id>
+  
+  <author>
+    <name>Leungyukshing</name>
+    
+  </author>
+  
+  <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>LeetCode解题报告（398) -- 1690. Stone Game VII - LeetCode</title>
+    <link href="https://leungyukshing.github.io/archives/LeetCode%E8%A7%A3%E9%A2%98%E6%8A%A5%E5%91%8A%EF%BC%88398)%20--%201690.%20Stone%20Game%20VII.html"/>
+    <id>https://leungyukshing.github.io/archives/LeetCode%E8%A7%A3%E9%A2%98%E6%8A%A5%E5%91%8A%EF%BC%88398)%20--%201690.%20Stone%20Game%20VII.html</id>
+    <published>2021-06-14T10:40:24.000Z</published>
+    <updated>2021-06-22T18:37:11.138Z</updated>
+    
+    
+    <summary type="html">&lt;h2 id=&quot;Problem&quot;&gt;&lt;a href=&quot;#Problem&quot; class=&quot;headerlink&quot; title=&quot;Problem&quot;&gt;&lt;/a&gt;Problem&lt;/h2&gt;&lt;p&gt;Alice and Bob take turns playing a game, with &lt;strong&gt;Alice starting first&lt;/strong&gt;.&lt;/p&gt;
+&lt;p&gt;There are &lt;code&gt;n&lt;/code&gt; stones arranged in a row. On each player’s turn, they can &lt;strong&gt;remove&lt;/strong&gt; either the leftmost stone or the rightmost stone from the row and receive points equal to the &lt;strong&gt;sum&lt;/strong&gt; of the remaining stones’ values in the row. The winner is the one with the higher score when there are no stones left to remove.&lt;/p&gt;
+&lt;p&gt;Bob found that he will always lose this game (poor Bob, he always loses), so he decided to &lt;strong&gt;minimize the score’s difference&lt;/strong&gt;. Alice’s goal is to &lt;strong&gt;maximize the difference&lt;/strong&gt; in the score.&lt;/p&gt;
+&lt;p&gt;Given an array of integers &lt;code&gt;stones&lt;/code&gt; where &lt;code&gt;stones[i]&lt;/code&gt; represents the value of the &lt;code&gt;ith&lt;/code&gt; stone &lt;strong&gt;from the left&lt;/strong&gt;, return &lt;em&gt;the &lt;strong&gt;difference&lt;/strong&gt; in Alice and Bob’s score if they both play &lt;strong&gt;optimally&lt;/strong&gt;.&lt;/em&gt;&lt;/p&gt;</summary>
+    
+    
+    
+    
+  </entry>
+  
+  <entry>
+    <title>LeetCode解题报告（397) -- 1696. Jump Game VI - LeetCode</title>
+    <link href="https://leungyukshing.github.io/archives/LeetCode%E8%A7%A3%E9%A2%98%E6%8A%A5%E5%91%8A%EF%BC%88397)%20--%201696.%20Jump%20Game%20VI.html"/>
+    <id>https://leungyukshing.github.io/archives/LeetCode%E8%A7%A3%E9%A2%98%E6%8A%A5%E5%91%8A%EF%BC%88397)%20--%201696.%20Jump%20Game%20VI.html</id>
+    <published>2021-06-14T08:55:45.000Z</published>
+    <updated>2021-06-22T18:37:11.132Z</updated>
+    
+    
+    <summary type="html">&lt;h2 id=&quot;Problem&quot;&gt;&lt;a href=&quot;#Problem&quot; class=&quot;headerlink&quot; title=&quot;Problem&quot;&gt;&lt;/a&gt;Problem&lt;/h2&gt;&lt;p&gt;You are given a &lt;strong&gt;0-indexed&lt;/strong&gt; integer array &lt;code&gt;nums&lt;/code&gt; and an integer &lt;code&gt;k&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;You are initially standing at index &lt;code&gt;0&lt;/code&gt;. In one move, you can jump at most &lt;code&gt;k&lt;/code&gt; steps forward without going outside the boundaries of the array. That is, you can jump from index &lt;code&gt;i&lt;/code&gt; to any index in the range &lt;code&gt;[i + 1, min(n - 1, i + k)]&lt;/code&gt; &lt;strong&gt;inclusive&lt;/strong&gt;.&lt;/p&gt;
+&lt;p&gt;You want to reach the last index of the array (index &lt;code&gt;n - 1&lt;/code&gt;). Your &lt;strong&gt;score&lt;/strong&gt; is the &lt;strong&gt;sum&lt;/strong&gt; of all &lt;code&gt;nums[j]&lt;/code&gt; for each index &lt;code&gt;j&lt;/code&gt; you visited in the array.&lt;/p&gt;
+&lt;p&gt;Return &lt;em&gt;the &lt;strong&gt;maximum score&lt;/strong&gt; you can get&lt;/em&gt;.&lt;/p&gt;</summary>
+    
+    
+    
+    
+  </entry>
+  
+  <entry>
+    <title>LeetCode解题报告（396) -- 105. Construct Binary Tree from Preorder and Inorder Traversal</title>
+    <link href="https://leungyukshing.github.io/archives/LeetCode%E8%A7%A3%E9%A2%98%E6%8A%A5%E5%91%8A%EF%BC%88396)%20--%20105.%20Construct%20Binary%20Tree%20from%20Preorder%20and%20Inorder%20Traversal.html"/>
+    <id>https://leungyukshing.github.io/archives/LeetCode%E8%A7%A3%E9%A2%98%E6%8A%A5%E5%91%8A%EF%BC%88396)%20--%20105.%20Construct%20Binary%20Tree%20from%20Preorder%20and%20Inorder%20Traversal.html</id>
+    <published>2021-06-14T08:22:11.000Z</published>
+    <updated>2021-06-22T18:37:11.126Z</updated>
+    
+    
+    <summary type="html">&lt;h2 id=&quot;Problem&quot;&gt;&lt;a href=&quot;#Problem&quot; class=&quot;headerlink&quot; title=&quot;Problem&quot;&gt;&lt;/a&gt;Problem&lt;/h2&gt;&lt;p&gt;Given two integer arrays &lt;code&gt;preorder&lt;/code&gt; and &lt;code&gt;inorder&lt;/code&gt; where &lt;code&gt;preorder&lt;/code&gt; is the preorder traversal of a binary tree and &lt;code&gt;inorder&lt;/code&gt; is the inorder traversal of the same tree, construct and return &lt;em&gt;the binary tree&lt;/em&gt;.&lt;/p&gt;</summary>
+    
+    
+    
+    
+    <category term="LeetCode" scheme="https://leungyukshing.github.io/tags/LeetCode/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>LeetCode解题报告（394) -- 128. Longest Consecutive Sequence</title>
+    <link href="https://leungyukshing.github.io/archives/LeetCode%E8%A7%A3%E9%A2%98%E6%8A%A5%E5%91%8A%EF%BC%88394)%20--%20128.%20Longest%20Consecutive%20Sequence.html"/>
+    <id>https://leungyukshing.github.io/archives/LeetCode%E8%A7%A3%E9%A2%98%E6%8A%A5%E5%91%8A%EF%BC%88394)%20--%20128.%20Longest%20Consecutive%20Sequence.html</id>
+    <published>2021-06-14T07:21:47.000Z</published>
+    <updated>2021-06-22T18:37:11.121Z</updated>
+    
+    
+    <summary type="html">&lt;h2 id=&quot;Problem&quot;&gt;&lt;a href=&quot;#Problem&quot; class=&quot;headerlink&quot; title=&quot;Problem&quot;&gt;&lt;/a&gt;Problem&lt;/h2&gt;&lt;p&gt;Given an unsorted array of integers &lt;code&gt;nums&lt;/code&gt;, return &lt;em&gt;the length of the longest consecutive elements sequence.&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;You must write an algorithm that runs in &lt;code&gt;O(n)&lt;/code&gt; time.&lt;/p&gt;</summary>
+    
+    
+    
+    
+    <category term="LeetCode" scheme="https://leungyukshing.github.io/tags/LeetCode/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>LeetCode解题报告（395) -- 128. Longest Consecutive Sequence</title>
+    <link href="https://leungyukshing.github.io/archives/LeetCode%E8%A7%A3%E9%A2%98%E6%8A%A5%E5%91%8A%EF%BC%88395)%20--%20128.%20Longest%20Consecutive%20Sequence.html"/>
+    <id>https://leungyukshing.github.io/archives/LeetCode%E8%A7%A3%E9%A2%98%E6%8A%A5%E5%91%8A%EF%BC%88395)%20--%20128.%20Longest%20Consecutive%20Sequence.html</id>
+    <published>2021-06-14T07:21:47.000Z</published>
+    <updated>2021-06-22T18:37:11.144Z</updated>
+    
+    
+    <summary type="html">&lt;h2 id=&quot;Problem&quot;&gt;&lt;a href=&quot;#Problem&quot; class=&quot;headerlink&quot; title=&quot;Problem&quot;&gt;&lt;/a&gt;Problem&lt;/h2&gt;&lt;p&gt;Given an unsorted array of integers &lt;code&gt;nums&lt;/code&gt;, return &lt;em&gt;the length of the longest consecutive elements sequence.&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;You must write an algorithm that runs in &lt;code&gt;O(n)&lt;/code&gt; time.&lt;/p&gt;</summary>
+    
+    
+    
+    
+    <category term="LeetCode" scheme="https://leungyukshing.github.io/tags/LeetCode/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>LeetCode解题报告（393) -- 1383. Maximum Performance of a Team</title>
+    <link href="https://leungyukshing.github.io/archives/LeetCode%E8%A7%A3%E9%A2%98%E6%8A%A5%E5%91%8A%EF%BC%88393)%20--%201383.%20Maximum%20Performance%20of%20a%20Team.html"/>
+    <id>https://leungyukshing.github.io/archives/LeetCode%E8%A7%A3%E9%A2%98%E6%8A%A5%E5%91%8A%EF%BC%88393)%20--%201383.%20Maximum%20Performance%20of%20a%20Team.html</id>
+    <published>2021-06-14T06:20:11.000Z</published>
+    <updated>2021-06-22T18:37:11.115Z</updated>
+    
+    
+    <summary type="html">&lt;h2 id=&quot;Problem&quot;&gt;&lt;a href=&quot;#Problem&quot; class=&quot;headerlink&quot; title=&quot;Problem&quot;&gt;&lt;/a&gt;Problem&lt;/h2&gt;&lt;p&gt;You are given two integers &lt;code&gt;n&lt;/code&gt; and &lt;code&gt;k&lt;/code&gt; and two integer arrays &lt;code&gt;speed&lt;/code&gt; and &lt;code&gt;efficiency&lt;/code&gt; both of length &lt;code&gt;n&lt;/code&gt;. There are &lt;code&gt;n&lt;/code&gt; engineers numbered from &lt;code&gt;1&lt;/code&gt; to &lt;code&gt;n&lt;/code&gt;. &lt;code&gt;speed[i]&lt;/code&gt; and &lt;code&gt;efficiency[i]&lt;/code&gt; represent the speed and efficiency of the &lt;code&gt;ith&lt;/code&gt; engineer respectively.&lt;/p&gt;
+&lt;p&gt;Choose &lt;strong&gt;at most&lt;/strong&gt; &lt;code&gt;k&lt;/code&gt; different engineers out of the &lt;code&gt;n&lt;/code&gt; engineers to form a team with the maximum &lt;strong&gt;performance&lt;/strong&gt;.&lt;/p&gt;
+&lt;p&gt;The performance of a team is the sum of their engineers’ speeds multiplied by the minimum efficiency among their engineers.&lt;/p&gt;
+&lt;p&gt;Return &lt;em&gt;the maximum performance of this team&lt;/em&gt;. Since the answer can be a huge number, return it &lt;strong&gt;modulo&lt;/strong&gt; &lt;code&gt;109 + 7&lt;/code&gt;.&lt;/p&gt;</summary>
+    
+    
+    
+    
+    <category term="LeetCode" scheme="https://leungyukshing.github.io/tags/LeetCode/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>LeetCode解题报告（392) -- 752. Open the Lock</title>
+    <link href="https://leungyukshing.github.io/archives/LeetCode%E8%A7%A3%E9%A2%98%E6%8A%A5%E5%91%8A%EF%BC%88392)%20--%20752.%20Open%20the%20Lock.html"/>
+    <id>https://leungyukshing.github.io/archives/LeetCode%E8%A7%A3%E9%A2%98%E6%8A%A5%E5%91%8A%EF%BC%88392)%20--%20752.%20Open%20the%20Lock.html</id>
+    <published>2021-06-13T15:35:06.000Z</published>
+    <updated>2021-06-22T18:37:11.109Z</updated>
+    
+    
+    <summary type="html">&lt;h2 id=&quot;Problem&quot;&gt;&lt;a href=&quot;#Problem&quot; class=&quot;headerlink&quot; title=&quot;Problem&quot;&gt;&lt;/a&gt;Problem&lt;/h2&gt;&lt;p&gt;You have a lock in front of you with 4 circular wheels. Each wheel has 10 slots: &lt;code&gt;&amp;#39;0&amp;#39;, &amp;#39;1&amp;#39;, &amp;#39;2&amp;#39;, &amp;#39;3&amp;#39;, &amp;#39;4&amp;#39;, &amp;#39;5&amp;#39;, &amp;#39;6&amp;#39;, &amp;#39;7&amp;#39;, &amp;#39;8&amp;#39;, &amp;#39;9&amp;#39;&lt;/code&gt;. The wheels can rotate freely and wrap around: for example we can turn &lt;code&gt;&amp;#39;9&amp;#39;&lt;/code&gt; to be &lt;code&gt;&amp;#39;0&amp;#39;&lt;/code&gt;, or &lt;code&gt;&amp;#39;0&amp;#39;&lt;/code&gt; to be &lt;code&gt;&amp;#39;9&amp;#39;&lt;/code&gt;. Each move consists of turning one wheel one slot.&lt;/p&gt;
+&lt;p&gt;The lock initially starts at &lt;code&gt;&amp;#39;0000&amp;#39;&lt;/code&gt;, a string representing the state of the 4 wheels.&lt;/p&gt;
+&lt;p&gt;You are given a list of &lt;code&gt;deadends&lt;/code&gt; dead ends, meaning if the lock displays any of these codes, the wheels of the lock will stop turning and you will be unable to open it.&lt;/p&gt;
+&lt;p&gt;Given a &lt;code&gt;target&lt;/code&gt; representing the value of the wheels that will unlock the lock, return the minimum total number of turns required to open the lock, or -1 if it is impossible.&lt;/p&gt;</summary>
+    
+    
+    
+    
+    <category term="LeetCode" scheme="https://leungyukshing.github.io/tags/LeetCode/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>LeetCode解题报告（391) -- 1465. Maximum Area of a Piece of Cake After Horizontal and Vertical Cuts</title>
+    <link href="https://leungyukshing.github.io/archives/LeetCode%E8%A7%A3%E9%A2%98%E6%8A%A5%E5%91%8A%EF%BC%88391)%20--%201465.%20Maximum%20Area%20of%20a%20Piece%20of%20Cake%20After%20Horizontal%20and%20Vertical%20Cuts.html"/>
+    <id>https://leungyukshing.github.io/archives/LeetCode%E8%A7%A3%E9%A2%98%E6%8A%A5%E5%91%8A%EF%BC%88391)%20--%201465.%20Maximum%20Area%20of%20a%20Piece%20of%20Cake%20After%20Horizontal%20and%20Vertical%20Cuts.html</id>
+    <published>2021-06-12T08:19:52.000Z</published>
+    <updated>2021-06-22T18:37:11.103Z</updated>
+    
+    
+    <summary type="html">&lt;h2 id=&quot;Problem&quot;&gt;&lt;a href=&quot;#Problem&quot; class=&quot;headerlink&quot; title=&quot;Problem&quot;&gt;&lt;/a&gt;Problem&lt;/h2&gt;&lt;p&gt;You are given a rectangular cake of size &lt;code&gt;h x w&lt;/code&gt; and two arrays of integers &lt;code&gt;horizontalCuts&lt;/code&gt; and &lt;code&gt;verticalCuts&lt;/code&gt; where:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;horizontalCuts[i]&lt;/code&gt; is the distance from the top of the rectangular cake to the &lt;code&gt;ith&lt;/code&gt; horizontal cut and similarly, and&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;verticalCuts[j]&lt;/code&gt; is the distance from the left of the rectangular cake to the &lt;code&gt;jth&lt;/code&gt; vertical cut.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Return &lt;em&gt;the maximum area of a piece of cake after you cut at each horizontal and vertical position provided in the arrays&lt;/em&gt; &lt;code&gt;horizontalCuts&lt;/code&gt; &lt;em&gt;and&lt;/em&gt; &lt;code&gt;verticalCuts&lt;/code&gt;. Since the answer can be a large number, return this &lt;strong&gt;modulo&lt;/strong&gt; &lt;code&gt;109 + 7&lt;/code&gt;.&lt;/p&gt;</summary>
+    
+    
+    
+    
+    <category term="LeetCode" scheme="https://leungyukshing.github.io/tags/LeetCode/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>LeetCode解题报告（390) -- 97. Interleaving String</title>
+    <link href="https://leungyukshing.github.io/archives/LeetCode%E8%A7%A3%E9%A2%98%E6%8A%A5%E5%91%8A%EF%BC%88390)%20--%2097.%20Interleaving%20String.html"/>
+    <id>https://leungyukshing.github.io/archives/LeetCode%E8%A7%A3%E9%A2%98%E6%8A%A5%E5%91%8A%EF%BC%88390)%20--%2097.%20Interleaving%20String.html</id>
+    <published>2021-06-10T15:48:27.000Z</published>
+    <updated>2021-06-22T18:37:11.097Z</updated>
+    
+    
+    <summary type="html">&lt;h2 id=&quot;Problem&quot;&gt;&lt;a href=&quot;#Problem&quot; class=&quot;headerlink&quot; title=&quot;Problem&quot;&gt;&lt;/a&gt;Problem&lt;/h2&gt;&lt;p&gt;Given strings &lt;code&gt;s1&lt;/code&gt;, &lt;code&gt;s2&lt;/code&gt;, and &lt;code&gt;s3&lt;/code&gt;, find whether &lt;code&gt;s3&lt;/code&gt; is formed by an &lt;strong&gt;interleaving&lt;/strong&gt; of &lt;code&gt;s1&lt;/code&gt; and &lt;code&gt;s2&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;An &lt;strong&gt;interleaving&lt;/strong&gt; of two strings &lt;code&gt;s&lt;/code&gt; and &lt;code&gt;t&lt;/code&gt; is a configuration where they are divided into &lt;strong&gt;non-empty&lt;/strong&gt; substrings such that:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;s = s1 + s2 + ... + sn&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;t = t1 + t2 + ... + tm&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;|n - m| &amp;lt;= 1&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;The &lt;strong&gt;interleaving&lt;/strong&gt; is &lt;code&gt;s1 + t1 + s2 + t2 + s3 + t3 + ...&lt;/code&gt; or &lt;code&gt;t1 + s1 + t2 + s2 + t3 + s3 + ...&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;Note:&lt;/strong&gt; &lt;code&gt;a + b&lt;/code&gt; is the concatenation of strings &lt;code&gt;a&lt;/code&gt; and &lt;code&gt;b&lt;/code&gt;.&lt;/p&gt;</summary>
+    
+    
+    
+    
+    <category term="LeetCode" scheme="https://leungyukshing.github.io/tags/LeetCode/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>LeetCode解题报告（389) -- 695. Max Area of Island</title>
+    <link href="https://leungyukshing.github.io/archives/LeetCode%E8%A7%A3%E9%A2%98%E6%8A%A5%E5%91%8A%EF%BC%88389)%20--%20695.%20Max%20Area%20of%20Island.html"/>
+    <id>https://leungyukshing.github.io/archives/LeetCode%E8%A7%A3%E9%A2%98%E6%8A%A5%E5%91%8A%EF%BC%88389)%20--%20695.%20Max%20Area%20of%20Island.html</id>
+    <published>2021-06-09T15:55:18.000Z</published>
+    <updated>2021-06-22T18:37:11.089Z</updated>
+    
+    
+    <summary type="html">&lt;h2 id=&quot;Problem&quot;&gt;&lt;a href=&quot;#Problem&quot; class=&quot;headerlink&quot; title=&quot;Problem&quot;&gt;&lt;/a&gt;Problem&lt;/h2&gt;&lt;p&gt;You are given an &lt;code&gt;m x n&lt;/code&gt; binary matrix &lt;code&gt;grid&lt;/code&gt;. An island is a group of &lt;code&gt;1&lt;/code&gt;‘s (representing land) connected &lt;strong&gt;4-directionally&lt;/strong&gt; (horizontal or vertical.) You may assume all four edges of the grid are surrounded by water.&lt;/p&gt;
+&lt;p&gt;The &lt;strong&gt;area&lt;/strong&gt; of an island is the number of cells with a value &lt;code&gt;1&lt;/code&gt; in the island.&lt;/p&gt;
+&lt;p&gt;Return &lt;em&gt;the maximum &lt;strong&gt;area&lt;/strong&gt; of an island in&lt;/em&gt; &lt;code&gt;grid&lt;/code&gt;. If there is no island, return &lt;code&gt;0&lt;/code&gt;.&lt;/p&gt;</summary>
+    
+    
+    
+    
+    <category term="LeetCode" scheme="https://leungyukshing.github.io/tags/LeetCode/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>LeetCode解题报告（387) -- 164. Maximum Gap</title>
+    <link href="https://leungyukshing.github.io/archives/LeetCode%E8%A7%A3%E9%A2%98%E6%8A%A5%E5%91%8A%EF%BC%88387)%20--%20164.%20Maximum%20Gap.html"/>
+    <id>https://leungyukshing.github.io/archives/LeetCode%E8%A7%A3%E9%A2%98%E6%8A%A5%E5%91%8A%EF%BC%88387)%20--%20164.%20Maximum%20Gap.html</id>
+    <published>2021-06-06T08:57:33.000Z</published>
+    <updated>2021-06-22T18:37:11.083Z</updated>
+    
+    
+    <summary type="html">&lt;h2 id=&quot;Problem&quot;&gt;&lt;a href=&quot;#Problem&quot; class=&quot;headerlink&quot; title=&quot;Problem&quot;&gt;&lt;/a&gt;Problem&lt;/h2&gt;&lt;p&gt;Given an integer array &lt;code&gt;nums&lt;/code&gt;, return &lt;em&gt;the maximum difference between two successive elements in its sorted form&lt;/em&gt;. If the array contains less than two elements, return &lt;code&gt;0&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;You must write an algorithm that runs in linear time and uses linear extra space.&lt;/p&gt;</summary>
+    
+    
+    
+    
+    <category term="LeetCode" scheme="https://leungyukshing.github.io/tags/LeetCode/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>LeetCode解题报告（386) -- 52. N-Queens II</title>
+    <link href="https://leungyukshing.github.io/archives/LeetCode%E8%A7%A3%E9%A2%98%E6%8A%A5%E5%91%8A%EF%BC%88386)%20--%2052.%20N-Queens%20II.html"/>
+    <id>https://leungyukshing.github.io/archives/LeetCode%E8%A7%A3%E9%A2%98%E6%8A%A5%E5%91%8A%EF%BC%88386)%20--%2052.%20N-Queens%20II.html</id>
+    <published>2021-06-06T08:29:40.000Z</published>
+    <updated>2021-06-22T18:37:11.076Z</updated>
+    
+    
+    <summary type="html">&lt;h2 id=&quot;Problem&quot;&gt;&lt;a href=&quot;#Problem&quot; class=&quot;headerlink&quot; title=&quot;Problem&quot;&gt;&lt;/a&gt;Problem&lt;/h2&gt;&lt;p&gt;The &lt;strong&gt;n-queens&lt;/strong&gt; puzzle is the problem of placing &lt;code&gt;n&lt;/code&gt; queens on an &lt;code&gt;n x n&lt;/code&gt; chessboard such that no two queens attack each other.&lt;/p&gt;
+&lt;p&gt;Given an integer &lt;code&gt;n&lt;/code&gt;, return &lt;em&gt;the number of distinct solutions to the &lt;strong&gt;n-queens puzzle&lt;/strong&gt;&lt;/em&gt;.&lt;/p&gt;</summary>
+    
+    
+    
+    
+    <category term="LeetCode" scheme="https://leungyukshing.github.io/tags/LeetCode/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>LeetCode解题报告（385) -- 1695. Maximum Erasure Value</title>
+    <link href="https://leungyukshing.github.io/archives/LeetCode%E8%A7%A3%E9%A2%98%E6%8A%A5%E5%91%8A%EF%BC%88385)%20--%201695.%20Maximum%20Erasure%20Value.html"/>
+    <id>https://leungyukshing.github.io/archives/LeetCode%E8%A7%A3%E9%A2%98%E6%8A%A5%E5%91%8A%EF%BC%88385)%20--%201695.%20Maximum%20Erasure%20Value.html</id>
+    <published>2021-06-06T07:03:19.000Z</published>
+    <updated>2021-06-22T18:37:11.070Z</updated>
+    
+    
+    <summary type="html">&lt;h2 id=&quot;Problem&quot;&gt;&lt;a href=&quot;#Problem&quot; class=&quot;headerlink&quot; title=&quot;Problem&quot;&gt;&lt;/a&gt;Problem&lt;/h2&gt;&lt;p&gt;You are given an array of positive integers &lt;code&gt;nums&lt;/code&gt; and want to erase a subarray containing &lt;strong&gt;unique elements&lt;/strong&gt;. The &lt;strong&gt;score&lt;/strong&gt; you get by erasing the subarray is equal to the &lt;strong&gt;sum&lt;/strong&gt; of its elements.&lt;/p&gt;
+&lt;p&gt;Return &lt;em&gt;the &lt;strong&gt;maximum score&lt;/strong&gt; you can get by erasing &lt;strong&gt;exactly one&lt;/strong&gt; subarray.&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;An array &lt;code&gt;b&lt;/code&gt; is called to be a subarray of &lt;code&gt;a&lt;/code&gt; if it forms a contiguous subsequence of &lt;code&gt;a&lt;/code&gt;, that is, if it is equal to &lt;code&gt;a[l],a[l+1],...,a[r]&lt;/code&gt; for some &lt;code&gt;(l,r)&lt;/code&gt;.&lt;/p&gt;</summary>
+    
+    
+    
+    
+    <category term="LeetCode" scheme="https://leungyukshing.github.io/tags/LeetCode/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>LeetCode解题报告（384) -- 318. Maximum Product of Word Lengths</title>
+    <link href="https://leungyukshing.github.io/archives/LeetCode%E8%A7%A3%E9%A2%98%E6%8A%A5%E5%91%8A%EF%BC%88384)%20--%20318.%20Maximum%20Product%20of%20Word%20Lengths.html"/>
+    <id>https://leungyukshing.github.io/archives/LeetCode%E8%A7%A3%E9%A2%98%E6%8A%A5%E5%91%8A%EF%BC%88384)%20--%20318.%20Maximum%20Product%20of%20Word%20Lengths.html</id>
+    <published>2021-06-06T05:58:03.000Z</published>
+    <updated>2021-06-22T18:37:11.065Z</updated>
+    
+    
+    <summary type="html">&lt;h2 id=&quot;Problem&quot;&gt;&lt;a href=&quot;#Problem&quot; class=&quot;headerlink&quot; title=&quot;Problem&quot;&gt;&lt;/a&gt;Problem&lt;/h2&gt;&lt;p&gt;Given a string array &lt;code&gt;words&lt;/code&gt;, return &lt;em&gt;the maximum value of&lt;/em&gt; &lt;code&gt;length(word[i]) * length(word[j])&lt;/code&gt; &lt;em&gt;where the two words do not share common letters&lt;/em&gt;. If no such two words exist, return &lt;code&gt;0&lt;/code&gt;.&lt;/p&gt;</summary>
+    
+    
+    
+    
+    <category term="LeetCode" scheme="https://leungyukshing.github.io/tags/LeetCode/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>LeetCode解题报告（383) -- 1689. Partitioning Into Minimum Number Of Deci-Binary Numbers</title>
+    <link href="https://leungyukshing.github.io/archives/LeetCode%E8%A7%A3%E9%A2%98%E6%8A%A5%E5%91%8A%EF%BC%88383)%20--%201689.%20Partitioning%20Into%20Minimum%20Number%20Of%20Deci-Binary%20Numbers.html"/>
+    <id>https://leungyukshing.github.io/archives/LeetCode%E8%A7%A3%E9%A2%98%E6%8A%A5%E5%91%8A%EF%BC%88383)%20--%201689.%20Partitioning%20Into%20Minimum%20Number%20Of%20Deci-Binary%20Numbers.html</id>
+    <published>2021-06-06T04:16:28.000Z</published>
+    <updated>2021-06-22T18:37:11.058Z</updated>
+    
+    
+    <summary type="html">&lt;h2 id=&quot;Problem&quot;&gt;&lt;a href=&quot;#Problem&quot; class=&quot;headerlink&quot; title=&quot;Problem&quot;&gt;&lt;/a&gt;Problem&lt;/h2&gt;&lt;p&gt;A decimal number is called &lt;strong&gt;deci-binary&lt;/strong&gt; if each of its digits is either &lt;code&gt;0&lt;/code&gt; or &lt;code&gt;1&lt;/code&gt; without any leading zeros. For example, &lt;code&gt;101&lt;/code&gt; and &lt;code&gt;1100&lt;/code&gt; are &lt;strong&gt;deci-binary&lt;/strong&gt;, while &lt;code&gt;112&lt;/code&gt; and &lt;code&gt;3001&lt;/code&gt; are not.&lt;/p&gt;
+&lt;p&gt;Given a string &lt;code&gt;n&lt;/code&gt; that represents a positive decimal integer, return &lt;em&gt;the &lt;strong&gt;minimum&lt;/strong&gt; number of positive &lt;strong&gt;deci-binary&lt;/strong&gt; numbers needed so that they sum up to&lt;/em&gt; &lt;code&gt;n&lt;/code&gt;&lt;em&gt;.&lt;/em&gt;&lt;/p&gt;</summary>
+    
+    
+    
+    
+    <category term="LeetCode" scheme="https://leungyukshing.github.io/tags/LeetCode/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>LeetCode解题报告（382) -- 150. Evaluate Reverse Polish Notation</title>
+    <link href="https://leungyukshing.github.io/archives/LeetCode%E8%A7%A3%E9%A2%98%E6%8A%A5%E5%91%8A%EF%BC%88382)%20--%20150.%20Evaluate%20Reverse%20Polish%20Notation.html"/>
+    <id>https://leungyukshing.github.io/archives/LeetCode%E8%A7%A3%E9%A2%98%E6%8A%A5%E5%91%8A%EF%BC%88382)%20--%20150.%20Evaluate%20Reverse%20Polish%20Notation.html</id>
+    <published>2021-06-06T02:47:11.000Z</published>
+    <updated>2021-06-22T18:37:11.052Z</updated>
+    
+    
+    <summary type="html">&lt;h2 id=&quot;Problem&quot;&gt;&lt;a href=&quot;#Problem&quot; class=&quot;headerlink&quot; title=&quot;Problem&quot;&gt;&lt;/a&gt;Problem&lt;/h2&gt;&lt;p&gt;Evaluate the value of an arithmetic expression in &lt;a href=&quot;http://en.wikipedia.org/wiki/Reverse_Polish_notation&quot;&gt;Reverse Polish Notation&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;Valid operators are &lt;code&gt;+&lt;/code&gt;, &lt;code&gt;-&lt;/code&gt;, &lt;code&gt;*&lt;/code&gt;, and &lt;code&gt;/&lt;/code&gt;. Each operand may be an integer or another expression.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Note&lt;/strong&gt; that division between two integers should truncate toward zero.&lt;/p&gt;
+&lt;p&gt;It is guaranteed that the given RPN expression is always valid. That means the expression would always evaluate to a result, and there will not be any division by zero operation.&lt;/p&gt;</summary>
+    
+    
+    
+    
+    <category term="LeetCode" scheme="https://leungyukshing.github.io/tags/LeetCode/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>LeetCode解题报告（381) -- 51. N-Queens</title>
+    <link href="https://leungyukshing.github.io/archives/LeetCode%E8%A7%A3%E9%A2%98%E6%8A%A5%E5%91%8A%EF%BC%88381)%20--%2051.%20N-Queens.html"/>
+    <id>https://leungyukshing.github.io/archives/LeetCode%E8%A7%A3%E9%A2%98%E6%8A%A5%E5%91%8A%EF%BC%88381)%20--%2051.%20N-Queens.html</id>
+    <published>2021-06-05T09:17:51.000Z</published>
+    <updated>2021-06-22T18:37:11.045Z</updated>
+    
+    
+    <summary type="html">&lt;h2 id=&quot;Problem&quot;&gt;&lt;a href=&quot;#Problem&quot; class=&quot;headerlink&quot; title=&quot;Problem&quot;&gt;&lt;/a&gt;Problem&lt;/h2&gt;&lt;p&gt;The &lt;strong&gt;n-queens&lt;/strong&gt; puzzle is the problem of placing &lt;code&gt;n&lt;/code&gt; queens on an &lt;code&gt;n x n&lt;/code&gt; chessboard such that no two queens attack each other.&lt;/p&gt;
+&lt;p&gt;Given an integer &lt;code&gt;n&lt;/code&gt;, return &lt;em&gt;all distinct solutions to the &lt;strong&gt;n-queens puzzle&lt;/strong&gt;&lt;/em&gt;. You may return the answer in &lt;strong&gt;any order&lt;/strong&gt;.&lt;/p&gt;
+&lt;p&gt;Each solution contains a distinct board configuration of the n-queens’ placement, where &lt;code&gt;&amp;#39;Q&amp;#39;&lt;/code&gt; and &lt;code&gt;&amp;#39;.&amp;#39;&lt;/code&gt; both indicate a queen and an empty space, respectively.&lt;/p&gt;</summary>
+    
+    
+    
+    
+    <category term="LeetCode" scheme="https://leungyukshing.github.io/tags/LeetCode/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>浅谈Golang单元测试</title>
+    <link href="https://leungyukshing.github.io/archives/Introduction-Golang-UnitTest.html"/>
+    <id>https://leungyukshing.github.io/archives/Introduction-Golang-UnitTest.html</id>
+    <published>2021-06-05T05:42:17.000Z</published>
+    <updated>2021-06-22T18:37:08.696Z</updated>
+    
+    
+      
+      
+        
+        
+    <summary type="html">&lt;h1 id=&quot;Introduction&quot;&gt;&lt;a href=&quot;#Introduction&quot; class=&quot;headerlink&quot;</summary>
+        
+      
+    
+    
+    
+    
+  </entry>
+  
+  <entry>
+    <title>浅谈Service Mesh</title>
+    <link href="https://leungyukshing.github.io/archives/Introduction-ServiceMesh.html"/>
+    <id>https://leungyukshing.github.io/archives/Introduction-ServiceMesh.html</id>
+    <published>2021-06-05T05:42:17.000Z</published>
+    <updated>2021-06-22T18:37:08.721Z</updated>
+    
+    
+      
+      
+        
+        
+    <summary type="html">&lt;h1 id=&quot;Introduction&quot;&gt;&lt;a href=&quot;#Introduction&quot; class=&quot;headerlink&quot;</summary>
+        
+      
+    
+    
+    
+    
+  </entry>
+  
+  <entry>
+    <title>LeetCode解题报告（380) -- 462. Minimum Moves to Equal Array Elements II</title>
+    <link href="https://leungyukshing.github.io/archives/LeetCode%E8%A7%A3%E9%A2%98%E6%8A%A5%E5%91%8A%EF%BC%88380)%20--%20462.%20Minimum%20Moves%20to%20Equal%20Array%20Elements%20II.html"/>
+    <id>https://leungyukshing.github.io/archives/LeetCode%E8%A7%A3%E9%A2%98%E6%8A%A5%E5%91%8A%EF%BC%88380)%20--%20462.%20Minimum%20Moves%20to%20Equal%20Array%20Elements%20II.html</id>
+    <published>2021-05-31T15:47:24.000Z</published>
+    <updated>2021-06-22T18:37:11.037Z</updated>
+    
+    
+    <summary type="html">&lt;h2 id=&quot;Problem&quot;&gt;&lt;a href=&quot;#Problem&quot; class=&quot;headerlink&quot; title=&quot;Problem&quot;&gt;&lt;/a&gt;Problem&lt;/h2&gt;&lt;p&gt;Given an integer array &lt;code&gt;nums&lt;/code&gt; of size &lt;code&gt;n&lt;/code&gt;, return &lt;em&gt;the minimum number of moves required to make all array elements equal&lt;/em&gt;.&lt;/p&gt;
+&lt;p&gt;In one move, you can increment or decrement an element of the array by &lt;code&gt;1&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;Test cases are designed so that the answer will fit in a &lt;strong&gt;32-bit&lt;/strong&gt; integer.&lt;/p&gt;</summary>
+    
+    
+    
+    
+    <category term="LeetCode" scheme="https://leungyukshing.github.io/tags/LeetCode/"/>
+    
+  </entry>
+  
+</feed>
