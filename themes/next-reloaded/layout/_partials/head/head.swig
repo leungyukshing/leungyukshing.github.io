@@ -36,7 +36,7 @@
   <meta name="yandex-verification" content="{{ theme.yandex_site_verification }}">
 {%- endif %}
 {%- if theme.baidu_site_verification %}
-  <meta name="baidu-site-verification" content="{{ theme.baidu_site_verification }}">
+  <meta name="baidu-site-verification" content="code-gpMFPewYUF" />
 {%- endif %}
 
 <link rel="stylesheet" href="{{ url_for(theme.css) }}/main.css">
