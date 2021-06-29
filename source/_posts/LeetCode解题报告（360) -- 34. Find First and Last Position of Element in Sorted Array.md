@@ -1,10 +1,12 @@
 ---
-title: LeetCode解题报告（360) -- 34. Find First and Last Position of Element in Sorted Array
+title: >-
+  LeetCode解题报告（360) -- 34. Find First and Last Position of Element in Sorted
+  Array
 tags:
   - LeetCode
 mathjax: true
+abbrlink: 24869
 date: 2021-05-02 12:19:11
-
 ---
 
 ## Problem

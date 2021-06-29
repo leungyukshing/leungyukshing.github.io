@@ -3,8 +3,8 @@ title: LeetCode解题报告（241）-- 80. Remove Duplicates from Sorted Array I
 tags:
   - LeetCode
 mathjax: true
+abbrlink: 24322
 date: 2020-12-11 18:05:02
-
 ---
 
 ## Problem

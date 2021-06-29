@@ -2,9 +2,9 @@
 title: LeetCode解题报告（96）-- 264. Ugly Number II
 tags:
   - LeetCode
-date: 2020-07-04 17:34:50
 mathjax: true
-
+abbrlink: 55583
+date: 2020-07-04 17:34:50
 ---
 
 ## Problem

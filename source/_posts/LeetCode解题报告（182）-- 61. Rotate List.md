@@ -3,8 +3,8 @@ title: LeetCode解题报告（182）-- 61. Rotate List
 tags:
   - LeetCode
 mathjax: true
+abbrlink: 49119
 date: 2020-10-07 22:10:08
-
 ---
 
 ## Problem

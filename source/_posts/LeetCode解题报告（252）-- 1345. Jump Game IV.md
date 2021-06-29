@@ -3,8 +3,8 @@ title: LeetCode解题报告（252）-- 1345. Jump Game IV
 tags:
   - LeetCode
 mathjax: true
+abbrlink: 12069
 date: 2020-12-28 09:51:12
-
 ---
 
 ## Problem

@@ -3,8 +3,8 @@ title: LeetCode解题报告（179）-- 1288. Remove Covered Intervals
 tags:
   - LeetCode
 mathjax: true
+abbrlink: 36311
 date: 2020-10-04 22:48:30
-
 ---
 
 ## Problem

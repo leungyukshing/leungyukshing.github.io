@@ -3,9 +3,8 @@ title: LeetCode解题报告（169）-- 389. Find the Difference
 tags:
   - LeetCode
 mathjax: true
+abbrlink: 28287
 date: 2020-09-24 16:45:03
-
-
 ---
 
 ## Problem

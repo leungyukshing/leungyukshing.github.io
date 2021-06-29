@@ -3,8 +3,8 @@ title: LeetCode解题报告（368) -- 583. Delete Operation for Two Strings
 tags:
   - LeetCode
 mathjax: true
+abbrlink: 41774
 date: 2021-05-11 20:22:26
-
 ---
 
 ## Problem

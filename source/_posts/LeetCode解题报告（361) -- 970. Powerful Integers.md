@@ -3,8 +3,8 @@ title: LeetCode解题报告（361) -- 970. Powerful Integers
 tags:
   - LeetCode
 mathjax: true
+abbrlink: 62344
 date: 2021-05-02 12:25:49
-
 ---
 
 ## Problem

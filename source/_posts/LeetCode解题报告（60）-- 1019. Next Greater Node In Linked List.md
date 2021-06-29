@@ -2,6 +2,7 @@
 title: LeetCode解题报告（60）-- 1019. Next Greater Node In Linked List
 tags:
   - LeetCode
+abbrlink: 1018
 date: 2019-09-26 12:31:14
 ---
 

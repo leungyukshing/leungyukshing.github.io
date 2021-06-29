@@ -2,8 +2,8 @@
 title: LeetCode解题报告（47）-- 817. Linked List Components
 tags:
   - LeetCode
+abbrlink: 40262
 date: 2019-09-14 18:58:23
-
 ---
 
 ## Problem

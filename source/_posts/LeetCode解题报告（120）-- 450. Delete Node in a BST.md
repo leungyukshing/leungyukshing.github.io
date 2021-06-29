@@ -3,8 +3,8 @@ title: LeetCode解题报告（120）-- 450. Delete Node in a BST
 tags:
   - LeetCode
 mathjax: true
+abbrlink: 57400
 date: 2020-08-31 19:05:12
-
 ---
 
 ## Problem

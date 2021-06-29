@@ -3,8 +3,8 @@ title: LeetCode解题报告（382) -- 150. Evaluate Reverse Polish Notation
 tags:
   - LeetCode
 mathjax: true
+abbrlink: 39328
 date: 2021-06-06 10:47:11
-
 ---
 
 ## Problem

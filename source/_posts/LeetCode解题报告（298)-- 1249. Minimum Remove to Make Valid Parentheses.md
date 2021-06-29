@@ -3,8 +3,8 @@ title: LeetCode解题报告（298)-- 1249. Minimum Remove to Make Valid Parenthe
 tags:
   - LeetCode
 mathjax: true
+abbrlink: 63571
 date: 2021-02-19 21:21:11
-
 ---
 
 ## Problem

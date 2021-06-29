@@ -2,8 +2,8 @@
 title: LeetCode解题报告（66）-- 1038. Binary Search Tree to Greater Sum Tree
 tags:
   - LeetCode
+abbrlink: 53036
 date: 2019-09-30 18:26:40
-
 ---
 
 ## Problem

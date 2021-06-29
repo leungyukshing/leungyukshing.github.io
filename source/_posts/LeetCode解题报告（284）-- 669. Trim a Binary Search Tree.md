@@ -3,8 +3,8 @@ title: LeetCode解题报告（284）-- 669. Trim a Binary Search Tree
 tags:
   - LeetCode
 mathjax: true
+abbrlink: 63887
 date: 2021-02-09 20:32:16
-
 ---
 
 ## Problem

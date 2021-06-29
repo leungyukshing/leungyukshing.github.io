@@ -3,8 +3,8 @@ title: LeetCode解题报告（317)-- 1721. Swapping Nodes in a Linked List
 tags:
   - LeetCode
 mathjax: true
+abbrlink: 9940
 date: 2021-03-15 01:11:51
-
 ---
 
 ## Problem

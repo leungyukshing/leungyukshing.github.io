@@ -3,8 +3,8 @@ title: LeetCode解题报告（286）-- 594. Longest Harmonious Subsequence
 tags:
   - LeetCode
 mathjax: true
+abbrlink: 18248
 date: 2021-02-09 20:54:29
-
 ---
 
 ## Problem

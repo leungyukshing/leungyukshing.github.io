@@ -2,9 +2,9 @@
 title: LeetCode解题报告（84）-- 528. Random Pick with Weight
 tags:
   - LeetCode
-date: 2020-06-08 15:03:02
 mathjax: true
-
+abbrlink: 35611
+date: 2020-06-08 15:03:02
 ---
 
 ## Problem

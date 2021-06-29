@@ -3,9 +3,8 @@ title: LeetCode解题报告（217）-- 938. Range Sum of BST
 tags:
   - LeetCode
 mathjax: true
+abbrlink: 13178
 date: 2020-11-16 00:38:07
-
-
 ---
 
 ## Problem

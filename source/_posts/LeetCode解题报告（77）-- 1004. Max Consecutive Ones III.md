@@ -2,8 +2,9 @@
 title: LeetCode解题报告（77）-- 1004. Max Consecutive Ones III
 tags:
   - LeetCode
-date: 2019-12-08 13:57:43
 mathjax: true
+abbrlink: 51101
+date: 2019-12-08 13:57:43
 ---
 
 ## Problem

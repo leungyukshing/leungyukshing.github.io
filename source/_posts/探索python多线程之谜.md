@@ -1,9 +1,9 @@
 ---
 title: 探索python多线程之谜
-tags:
 mathjax: true
+abbrlink: 55796
 date: 2020-10-20 12:13:03
-
+tags:
 ---
 
 ## Python多线程是真的吗

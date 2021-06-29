@@ -3,8 +3,8 @@ title: LeetCode解题报告（116）-- 497. Random Point in Non-overlapping Rect
 tags:
   - LeetCode
 mathjax: true
+abbrlink: 5046
 date: 2020-08-27 14:28:51
-
 ---
 
 ## Problem

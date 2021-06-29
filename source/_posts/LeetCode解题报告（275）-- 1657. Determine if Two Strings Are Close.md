@@ -3,8 +3,8 @@ title: LeetCode解题报告（275）-- 1657. Determine if Two Strings Are Close
 tags:
   - LeetCode
 mathjax: true
+abbrlink: 14377
 date: 2021-02-02 01:19:48
-
 ---
 
 ## Problem

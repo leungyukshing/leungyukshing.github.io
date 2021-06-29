@@ -3,8 +3,8 @@ title: LeetCode解题报告（232）-- 218. The Skyline Problem
 tags:
   - LeetCode
 mathjax: true
+abbrlink: 56555
 date: 2020-11-30 23:44:27
-
 ---
 
 ## Problem

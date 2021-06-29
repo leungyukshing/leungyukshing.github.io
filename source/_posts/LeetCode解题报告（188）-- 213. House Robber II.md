@@ -3,8 +3,8 @@ title: LeetCode解题报告（188）-- 213. House Robber II
 tags:
   - LeetCode
 mathjax: true
+abbrlink: 25100
 date: 2020-10-15 01:30:40
-
 ---
 
 ## Problem

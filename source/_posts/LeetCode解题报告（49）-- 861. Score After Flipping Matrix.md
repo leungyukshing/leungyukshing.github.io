@@ -2,8 +2,8 @@
 title: LeetCode解题报告（49）-- 861. Score After Flipping Matrix
 tags:
   - LeetCode
+abbrlink: 19154
 date: 2019-09-14 23:45:55
-
 ---
 
 ## Problem

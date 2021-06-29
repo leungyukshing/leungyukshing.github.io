@@ -3,8 +3,8 @@ title: LeetCode解题报告（189）-- 189. Rotate Array
 tags:
   - LeetCode
 mathjax: true
+abbrlink: 49925
 date: 2020-10-16 10:57:49
-
 ---
 
 ## Problem

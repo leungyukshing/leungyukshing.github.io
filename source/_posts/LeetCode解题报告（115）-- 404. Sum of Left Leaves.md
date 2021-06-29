@@ -3,8 +3,8 @@ title: LeetCode解题报告（115）-- 404. Sum of Left Leaves
 tags:
   - LeetCode
 mathjax: true
+abbrlink: 16243
 date: 2020-08-26 17:27:11
-
 ---
 
 ## Problem

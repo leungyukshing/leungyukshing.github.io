@@ -3,8 +3,8 @@ title: LeetCode解题报告（291）-- 138. Copy List with Random Pointer
 tags:
   - LeetCode
 mathjax: true
+abbrlink: 26833
 date: 2021-02-13 17:18:02
-
 ---
 
 ## Problem

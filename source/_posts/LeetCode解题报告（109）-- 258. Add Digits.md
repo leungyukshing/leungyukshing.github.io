@@ -2,10 +2,9 @@
 title: LeetCode解题报告（109）-- 258. Add Digits
 tags:
   - LeetCode
-date: 2020-07-28 10:48:29
 mathjax: true
-
-
+abbrlink: 22997
+date: 2020-07-28 10:48:29
 ---
 
 ## Problem

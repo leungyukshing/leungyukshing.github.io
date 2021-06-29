@@ -3,8 +3,8 @@ title: LeetCode解题报告（124）-- 763. Partition Labels
 tags:
   - LeetCode
 mathjax: true
+abbrlink: 12429
 date: 2020-09-04 15:21:28
-
 ---
 
 ## Problem

@@ -3,8 +3,8 @@ title: LeetCode解题报告（322)-- 841. Keys and Rooms
 tags:
   - LeetCode
 mathjax: true
+abbrlink: 38749
 date: 2021-03-23 01:44:29
-
 ---
 
 ## Problem

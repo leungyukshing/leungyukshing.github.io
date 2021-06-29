@@ -3,8 +3,8 @@ title: LeetCode解题报告（384) -- 318. Maximum Product of Word Lengths
 tags:
   - LeetCode
 mathjax: true
+abbrlink: 16266
 date: 2021-06-06 13:58:03
-
 ---
 
 ## Problem

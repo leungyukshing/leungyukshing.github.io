@@ -2,10 +2,9 @@
 title: LeetCode解题报告（100）-- 347. Top K Frequent Elements
 tags:
   - LeetCode
-date: 2020-07-18 14:00:48
 mathjax: true
-
-
+abbrlink: 4183
+date: 2020-07-18 14:00:48
 ---
 
 ## Problem

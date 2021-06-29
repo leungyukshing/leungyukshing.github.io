@@ -3,9 +3,8 @@ title: LeetCode解题报告（194）-- 735. Asteroid Collision
 tags:
   - LeetCode
 mathjax: true
+abbrlink: 61644
 date: 2020-10-21 17:12:58
-
-
 ---
 
 ## Problem

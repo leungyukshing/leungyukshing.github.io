@@ -3,8 +3,8 @@ title: LeetCode解题报告（267）-- 1658. Minimum Operations to Reduce X to Z
 tags:
   - LeetCode
 mathjax: true
+abbrlink: 5639
 date: 2021-01-15 18:29:40
-
 ---
 
 ## Problem

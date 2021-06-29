@@ -3,8 +3,8 @@ title: LeetCode解题报告（336) -- 622. Design Circular Queue
 tags:
   - LeetCode
 mathjax: true
+abbrlink: 25214
 date: 2021-04-10 20:16:38
-
 ---
 
 ## Problem

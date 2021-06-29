@@ -3,8 +3,8 @@ title: LeetCode解题报告（209）-- 1283. Find the Smallest Divisor Given a T
 tags:
   - LeetCode
 mathjax: true
+abbrlink: 52062
 date: 2020-11-07 01:05:20
-
 ---
 
 ## Problem

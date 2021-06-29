@@ -3,6 +3,7 @@ title: LeetCode解题报告（348) -- 1074. Number of Submatrices That Sum to Ta
 tags:
   - LeetCode
 mathjax: true
+abbrlink: 47259
 date: 2021-04-22 23:28:19
 ---
 

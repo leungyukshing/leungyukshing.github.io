@@ -3,8 +3,8 @@ title: LeetCode解题报告（199）-- 799. Champagne Tower
 tags:
   - LeetCode
 mathjax: true
+abbrlink: 31739
 date: 2020-10-27 00:41:30
-
 ---
 
 ## Problem

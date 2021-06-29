@@ -3,8 +3,8 @@ title: LeetCode解题报告（248）-- 880. Decoded String at Index
 tags:
   - LeetCode
 mathjax: true
+abbrlink: 32373
 date: 2020-12-20 22:34:21
-
 ---
 
 ## Problem

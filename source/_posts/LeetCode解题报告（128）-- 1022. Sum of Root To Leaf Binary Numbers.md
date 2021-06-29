@@ -3,8 +3,8 @@ title: LeetCode解题报告（128）-- 1022. Sum of Root To Leaf Binary Numbers
 tags:
   - LeetCode
 mathjax: true
+abbrlink: 4553
 date: 2020-09-08 23:41:50
-
 ---
 
 ## Problem

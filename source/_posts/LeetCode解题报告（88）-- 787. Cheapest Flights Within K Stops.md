@@ -2,9 +2,9 @@
 title: LeetCode解题报告（88）-- 787. Cheapest Flights Within K Stops
 tags:
   - LeetCode
-date: 2020-06-15 11:49:30
 mathjax: true
-
+abbrlink: 42410
+date: 2020-06-15 11:49:30
 ---
 
 ## Problem

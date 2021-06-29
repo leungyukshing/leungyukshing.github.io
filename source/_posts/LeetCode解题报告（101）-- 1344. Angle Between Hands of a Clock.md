@@ -2,9 +2,9 @@
 title: LeetCode解题报告（101）-- 1344. Angle Between Hands of a Clock
 tags:
   - LeetCode
-date: 2020-07-18 14:57:02
 mathjax: true
-
+abbrlink: 50051
+date: 2020-07-18 14:57:02
 ---
 
 ## Problem

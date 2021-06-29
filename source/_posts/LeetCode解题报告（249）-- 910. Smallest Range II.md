@@ -3,8 +3,8 @@ title: LeetCode解题报告（249）-- 910. Smallest Range II
 tags:
   - LeetCode
 mathjax: true
+abbrlink: 22411
 date: 2020-12-21 22:32:59
-
 ---
 
 ## Problem

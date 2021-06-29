@@ -3,8 +3,8 @@ title: LeetCode解题报告（265）-- 1649. Create Sorted Array through Instruc
 tags:
   - LeetCode
 mathjax: true
+abbrlink: 62857
 date: 2021-01-13 16:47:19
-
 ---
 
 ## Problem

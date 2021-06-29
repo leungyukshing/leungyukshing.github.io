@@ -3,8 +3,8 @@ title: LeetCode解题报告（195）-- 111. Minimum Depth of Binary Tree
 tags:
   - LeetCode
 mathjax: true
+abbrlink: 1922
 date: 2020-10-25 16:21:42
-
 ---
 
 ## Problem

@@ -2,9 +2,9 @@
 title: LeetCode解题报告（95）-- 957. Prison Cells After N Days
 tags:
   - LeetCode
-date: 2020-07-04 14:21:44
 mathjax: true
-
+abbrlink: 54870
+date: 2020-07-04 14:21:44
 ---
 
 ## Problem

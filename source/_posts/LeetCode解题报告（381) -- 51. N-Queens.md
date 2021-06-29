@@ -3,8 +3,8 @@ title: LeetCode解题报告（381) -- 51. N-Queens
 tags:
   - LeetCode
 mathjax: true
+abbrlink: 40023
 date: 2021-06-05 17:17:51
-
 ---
 
 ## Problem

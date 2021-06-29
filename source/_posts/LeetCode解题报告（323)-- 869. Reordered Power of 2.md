@@ -3,8 +3,8 @@ title: LeetCode解题报告（323)-- 869. Reordered Power of 2
 tags:
   - LeetCode
 mathjax: true
+abbrlink: 18781
 date: 2021-03-26 02:03:14
-
 ---
 
 ## Problem

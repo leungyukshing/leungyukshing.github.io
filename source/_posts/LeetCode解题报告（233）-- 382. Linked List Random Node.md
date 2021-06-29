@@ -3,8 +3,8 @@ title: LeetCode解题报告（233）-- 382. Linked List Random Node
 tags:
   - LeetCode
 mathjax: true
+abbrlink: 61194
 date: 2020-12-02 17:31:48
-
 ---
 
 ## Problem

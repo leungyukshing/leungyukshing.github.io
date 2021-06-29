@@ -2,6 +2,7 @@
 title: LeetCode解题报告（71）-- 1200. Minimum Absolute Difference
 tags:
   - LeetCode
+abbrlink: 15193
 date: 2019-10-11 18:24:57
 ---
 

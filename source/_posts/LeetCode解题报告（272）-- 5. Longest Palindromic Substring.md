@@ -3,8 +3,8 @@ title: LeetCode解题报告（272）-- 5. Longest Palindromic Substring
 tags:
   - LeetCode
 mathjax: true
+abbrlink: 45711
 date: 2021-01-31 21:49:18
-
 ---
 
 ## Problem

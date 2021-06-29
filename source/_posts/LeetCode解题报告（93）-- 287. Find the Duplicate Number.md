@@ -2,9 +2,9 @@
 title: LeetCode解题报告（93）-- 287. Find the Duplicate Number
 tags:
   - LeetCode
-date: 2020-06-28 16:14:22
 mathjax: true
-
+abbrlink: 17104
+date: 2020-06-28 16:14:22
 ---
 
 ## Problem

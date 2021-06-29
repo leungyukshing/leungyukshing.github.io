@@ -1,5 +1,6 @@
 ---
 title: Graylog环境搭建
+abbrlink: 4623
 date: 2020-02-04 11:41:53
 ---
 

@@ -3,8 +3,8 @@ title: LeetCode解题报告（392) -- 752. Open the Lock
 tags:
   - LeetCode
 mathjax: true
+abbrlink: 7515
 date: 2021-06-13 23:35:06
-
 ---
 
 ## Problem

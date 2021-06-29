@@ -3,8 +3,8 @@ title: LeetCode解题报告（177）-- 39. Combination Sum
 tags:
   - LeetCode
 mathjax: true
+abbrlink: 20168
 date: 2020-10-02 19:38:30
-
 ---
 
 ## Problem

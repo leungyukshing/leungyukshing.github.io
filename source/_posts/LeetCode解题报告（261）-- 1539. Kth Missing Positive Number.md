@@ -3,9 +3,8 @@ title: LeetCode解题报告（261）-- 1539. Kth Missing Positive Number
 tags:
   - LeetCode
 mathjax: true
+abbrlink: 33312
 date: 2021-01-09 00:40:02
-
-
 ---
 
 ## Problem

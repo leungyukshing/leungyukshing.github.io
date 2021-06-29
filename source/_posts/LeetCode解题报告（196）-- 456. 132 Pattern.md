@@ -3,9 +3,8 @@ title: LeetCode解题报告（196）-- 456. 132 Pattern
 tags:
   - LeetCode
 mathjax: true
+abbrlink: 23142
 date: 2020-10-25 16:44:19
-
-
 ---
 
 ## Problem

@@ -3,8 +3,8 @@ title: LeetCode解题报告（113）-- 983. Minimum Cost For Tickets
 tags:
   - LeetCode
 mathjax: true
+abbrlink: 12337
 date: 2020-08-26 12:28:19
-
 ---
 
 ## Problem

@@ -3,8 +3,8 @@ title: LeetCode解题报告（364) -- 1480. Running Sum of 1d Array
 tags:
   - LeetCode
 mathjax: true
+abbrlink: 25868
 date: 2021-05-05 15:04:32
-
 ---
 
 ## Problem

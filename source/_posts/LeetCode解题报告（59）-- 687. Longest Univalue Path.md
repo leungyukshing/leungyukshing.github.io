@@ -2,8 +2,8 @@
 title: LeetCode解题报告（59）-- 687. Longest Univalue Path
 tags:
   - LeetCode
+abbrlink: 57359
 date: 2019-09-25 23:54:03
-
 ---
 
 ## Problem

@@ -3,9 +3,8 @@ title: LeetCode解题报告（114）-- 1032. Stream of Characters
 tags:
   - LeetCode
 mathjax: true
+abbrlink: 24336
 date: 2020-08-26 16:11:44
-
-
 ---
 
 ## Problem

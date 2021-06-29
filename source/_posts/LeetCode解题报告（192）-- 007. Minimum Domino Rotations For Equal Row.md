@@ -3,9 +3,8 @@ title: LeetCode解题报告（192）-- 007. Minimum Domino Rotations For Equal R
 tags:
   - LeetCode
 mathjax: true
+abbrlink: 29298
 date: 2020-10-19 23:55:18
-
-
 ---
 
 ## Problem

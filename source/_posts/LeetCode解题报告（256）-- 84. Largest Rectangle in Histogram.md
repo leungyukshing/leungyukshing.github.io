@@ -3,8 +3,8 @@ title: LeetCode解题报告（256）-- 84. Largest Rectangle in Histogram
 tags:
   - LeetCode
 mathjax: true
+abbrlink: 387
 date: 2021-01-01 22:19:42
-
 ---
 
 ## Problem

@@ -3,9 +3,8 @@ title: LeetCode解题报告（395) -- 128. Longest Consecutive Sequence
 tags:
   - LeetCode
 mathjax: true
+abbrlink: 35445
 date: 2021-06-14 15:21:47
-
-
 ---
 
 ## Problem

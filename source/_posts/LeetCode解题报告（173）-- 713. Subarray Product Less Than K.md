@@ -3,9 +3,8 @@ title: LeetCode解题报告（173）-- 713. Subarray Product Less Than K
 tags:
   - LeetCode
 mathjax: true
+abbrlink: 63506
 date: 2020-09-30 00:44:21
-
-
 ---
 
 ## Problem

@@ -3,9 +3,8 @@ title: LeetCode解题报告（171）-- 495. Teemo Attacking
 tags:
   - LeetCode
 mathjax: true
+abbrlink: 16790
 date: 2020-09-26 23:06:12
-
-
 ---
 
 ## Problem

@@ -3,8 +3,8 @@ title: LeetCode解题报告（285）-- 141. Linked List Cycle
 tags:
   - LeetCode
 mathjax: true
+abbrlink: 30257
 date: 2021-02-09 20:48:19
-
 ---
 
 ## Problem

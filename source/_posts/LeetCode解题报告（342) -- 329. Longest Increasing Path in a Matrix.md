@@ -3,8 +3,8 @@ title: LeetCode解题报告（342) -- 329. Longest Increasing Path in a Matrix
 tags:
   - LeetCode
 mathjax: true
+abbrlink: 27944
 date: 2021-04-14 12:26:04
-
 ---
 
 ## Problem

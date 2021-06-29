@@ -3,8 +3,8 @@ title: LeetCode解题报告（387) -- 164. Maximum Gap
 tags:
   - LeetCode
 mathjax: true
+abbrlink: 256
 date: 2021-06-06 16:57:33
-
 ---
 
 ## Problem

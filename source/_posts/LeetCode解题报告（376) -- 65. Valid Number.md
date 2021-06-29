@@ -3,8 +3,8 @@ title: LeetCode解题报告（376) -- 65. Valid Number
 tags:
   - LeetCode
 mathjax: true
+abbrlink: 58796
 date: 2021-05-19 12:27:58
-
 ---
 
 ## Problem

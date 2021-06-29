@@ -3,8 +3,8 @@ title: LeetCode解题报告（369) -- 906. Super Palindromes
 tags:
   - LeetCode
 mathjax: true
+abbrlink: 8419
 date: 2021-05-12 13:15:48
-
 ---
 
 ## Problem

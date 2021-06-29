@@ -3,8 +3,8 @@ title: LeetCode解题报告（213）-- 1026. Maximum Difference Between Node and
 tags:
   - LeetCode
 mathjax: true
+abbrlink: 17743
 date: 2020-11-10 11:05:27
-
 ---
 
 ## Problem

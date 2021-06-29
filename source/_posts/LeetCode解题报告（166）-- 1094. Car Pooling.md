@@ -3,8 +3,8 @@ title: LeetCode解题报告（166）-- 1094. Car Pooling
 tags:
   - LeetCode
 mathjax: true
+abbrlink: 62394
 date: 2020-09-21 16:49:30
-
 ---
 
 ## Problem

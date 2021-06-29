@@ -3,8 +3,8 @@ title: LeetCode解题报告（324)-- 966. Vowel Spellchecker
 tags:
   - LeetCode
 mathjax: true
+abbrlink: 46401
 date: 2021-03-27 16:40:03
-
 ---
 
 ## Problem

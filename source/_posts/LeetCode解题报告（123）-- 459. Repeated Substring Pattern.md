@@ -3,8 +3,8 @@ title: LeetCode解题报告（123）-- 459. Repeated Substring Pattern
 tags:
   - LeetCode
 mathjax: true
+abbrlink: 59339
 date: 2020-09-03 18:59:11
-
 ---
 
 ## Problem

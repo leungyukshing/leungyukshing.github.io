@@ -3,8 +3,8 @@ title: LeetCode解题报告（231）-- 1306. Jump Game III
 tags:
   - LeetCode
 mathjax: true
+abbrlink: 41775
 date: 2020-11-29 16:58:11
-
 ---
 
 ## Problem

@@ -3,8 +3,8 @@ title: LeetCode解题报告（201）-- 228. Summary Ranges
 tags:
   - LeetCode
 mathjax: true
+abbrlink: 60998
 date: 2020-10-28 16:19:58
-
 ---
 
 ## Problem

@@ -3,8 +3,8 @@ title: LeetCode解题报告（349) -- 19. Remove Nth Node From End of List
 tags:
   - LeetCode
 mathjax: true
+abbrlink: 52063
 date: 2021-04-23 01:17:23
-
 ---
 
 ## Problem

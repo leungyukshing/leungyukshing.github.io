@@ -3,8 +3,8 @@ title: LeetCode解题报告（340) -- 17. Letter Combinations of a Phone Number
 tags:
   - LeetCode
 mathjax: true
+abbrlink: 60128
 date: 2021-04-13 01:41:12
-
 ---
 
 ## Problem

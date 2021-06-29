@@ -3,8 +3,8 @@ title: LeetCode解题报告（175）-- 41. First Missing Positive
 tags:
   - LeetCode
 mathjax: true
+abbrlink: 60992
 date: 2020-09-30 15:34:35
-
 ---
 
 ## Problem

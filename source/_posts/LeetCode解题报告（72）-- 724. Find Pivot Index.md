@@ -2,6 +2,7 @@
 title: LeetCode解题报告（72）-- 724. Find Pivot Index
 tags:
   - LeetCode
+abbrlink: 18741
 date: 2019-10-11 18:30:06
 ---
 

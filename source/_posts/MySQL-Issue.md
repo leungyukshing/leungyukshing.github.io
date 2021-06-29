@@ -1,5 +1,6 @@
 ---
 title: MySQL的一些细节
+abbrlink: 15677
 date: 2020-02-28 11:22:25
 ---
 

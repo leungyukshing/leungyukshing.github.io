@@ -3,8 +3,8 @@ title: LeetCode解题报告（393) -- 1383. Maximum Performance of a Team
 tags:
   - LeetCode
 mathjax: true
+abbrlink: 46190
 date: 2021-06-14 14:20:11
-
 ---
 
 ## Problem

@@ -3,8 +3,8 @@ title: LeetCode解题报告（299)-- 524. Longest Word in Dictionary through Del
 tags:
   - LeetCode
 mathjax: true
+abbrlink: 55099
 date: 2021-02-22 22:38:04
-
 ---
 
 ## Problem

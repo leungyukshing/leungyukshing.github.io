@@ -2,8 +2,8 @@
 title: LeetCode解题报告（63）-- 725. Split Linked List in Parts
 tags:
   - LeetCode
+abbrlink: 18499
 date: 2019-09-29 12:33:11
-
 ---
 
 ## Problem

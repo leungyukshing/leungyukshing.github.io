@@ -3,8 +3,8 @@ title: LeetCode解题报告（352) -- 120. Triangle
 tags:
   - LeetCode
 mathjax: true
+abbrlink: 46183
 date: 2021-04-26 19:03:04
-
 ---
 
 ## Problem

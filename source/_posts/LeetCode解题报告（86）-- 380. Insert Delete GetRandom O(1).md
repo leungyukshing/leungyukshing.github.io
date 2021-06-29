@@ -2,9 +2,9 @@
 title: LeetCode解题报告（86）-- 380. Insert Delete GetRandom O(1)
 tags:
   - LeetCode
-date: 2020-06-12 19:20:12
 mathjax: true
-
+abbrlink: 33065
+date: 2020-06-12 19:20:12
 ---
 
 ## Problem

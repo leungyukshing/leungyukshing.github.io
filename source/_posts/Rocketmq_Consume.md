@@ -2,9 +2,9 @@
 title: RocketMQ消费模式详解
 tags:
   - MQ
-date: 2020-06-07 11:43:15
 mathjax: true
-
+abbrlink: 30954
+date: 2020-06-07 11:43:15
 ---
 
 # RocketMQ消费模式详解

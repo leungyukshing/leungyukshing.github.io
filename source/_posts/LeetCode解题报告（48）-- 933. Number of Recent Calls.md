@@ -2,9 +2,8 @@
 title: LeetCode解题报告（48）-- 933. Number of Recent Calls
 tags:
   - LeetCode
+abbrlink: 51459
 date: 2019-09-14 21:46:32
-
-
 ---
 
 ## Problem

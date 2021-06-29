@@ -2,6 +2,7 @@
 title: LeetCode解题报告（69）-- 1122. Relative Sort Array
 tags:
   - LeetCode
+abbrlink: 40800
 date: 2019-10-11 17:43:34
 ---
 

@@ -3,9 +3,8 @@ title: LeetCode解题报告（185）-- 316. Remove Duplicate Letters
 tags:
   - LeetCode
 mathjax: true
+abbrlink: 7256
 date: 2020-10-12 00:40:37
-
-
 ---
 
 ## Problem

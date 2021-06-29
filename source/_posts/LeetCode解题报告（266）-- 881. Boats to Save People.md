@@ -3,8 +3,8 @@ title: LeetCode解题报告（266）-- 881. Boats to Save People
 tags:
   - LeetCode
 mathjax: true
+abbrlink: 41239
 date: 2021-01-15 17:40:28
-
 ---
 
 ## Problem

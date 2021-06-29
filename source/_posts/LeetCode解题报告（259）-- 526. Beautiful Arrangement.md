@@ -3,8 +3,8 @@ title: LeetCode解题报告（259）-- 526. Beautiful Arrangement
 tags:
   - LeetCode
 mathjax: true
+abbrlink: 13881
 date: 2021-01-05 01:56:30
-
 ---
 
 ## Problem

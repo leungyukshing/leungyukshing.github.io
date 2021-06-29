@@ -3,8 +3,8 @@ title: LeetCode解题报告（280）-- 1680. Concatenation of Consecutive Binary
 tags:
   - LeetCode
 mathjax: true
+abbrlink: 8026
 date: 2021-02-07 15:31:30
-
 ---
 
 ## Problem

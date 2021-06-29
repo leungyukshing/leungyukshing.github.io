@@ -3,8 +3,8 @@ title: LeetCode解题报告（273）-- 20. Valid Parentheses
 tags:
   - LeetCode
 mathjax: true
+abbrlink: 51082
 date: 2021-01-31 22:41:26
-
 ---
 
 ## Problem

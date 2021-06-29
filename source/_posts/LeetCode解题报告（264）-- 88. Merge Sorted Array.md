@@ -3,9 +3,8 @@ title: LeetCode解题报告（264）-- 88. Merge Sorted Array
 tags:
   - LeetCode
 mathjax: true
+abbrlink: 28980
 date: 2021-01-12 21:20:14
-
-
 ---
 
 ## Problem

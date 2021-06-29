@@ -2,10 +2,9 @@
 title: LeetCode解题报告（92）-- 96. Unique Binary Search Trees
 tags:
   - LeetCode
-date: 2020-06-27 11:46:18
 mathjax: true
-
-
+abbrlink: 12099
+date: 2020-06-27 11:46:18
 ---
 
 ## Problem

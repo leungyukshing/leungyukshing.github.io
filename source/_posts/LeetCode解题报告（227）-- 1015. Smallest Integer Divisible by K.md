@@ -3,8 +3,8 @@ title: LeetCode解题报告（227）-- 1015. Smallest Integer Divisible by K
 tags:
   - LeetCode
 mathjax: true
+abbrlink: 10327
 date: 2020-11-26 02:09:11
-
 ---
 
 ## Problem

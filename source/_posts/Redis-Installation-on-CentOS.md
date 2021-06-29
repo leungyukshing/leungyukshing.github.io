@@ -1,5 +1,6 @@
 ---
 title: CentOS下搭建Redis环境
+abbrlink: 61849
 date: 2020-02-01 15:11:07
 ---
 

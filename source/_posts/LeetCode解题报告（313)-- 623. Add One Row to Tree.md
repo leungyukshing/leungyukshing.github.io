@@ -3,8 +3,8 @@ title: LeetCode解题报告（313)-- 623. Add One Row to Tree
 tags:
   - LeetCode
 mathjax: true
+abbrlink: 44621
 date: 2021-03-10 01:49:11
-
 ---
 
 ## Problem

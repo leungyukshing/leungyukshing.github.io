@@ -3,8 +3,8 @@ title: LeetCode解题报告（333) -- 234. Palindrome Linked List
 tags:
   - LeetCode
 mathjax: true
+abbrlink: 11147
 date: 2021-04-06 01:31:26
-
 ---
 
 ## Problem

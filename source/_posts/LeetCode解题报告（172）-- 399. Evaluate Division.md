@@ -3,8 +3,8 @@ title: LeetCode解题报告（172）-- 399. Evaluate Division
 tags:
   - LeetCode
 mathjax: true
+abbrlink: 13270
 date: 2020-09-28 00:27:19
-
 ---
 
 ## Problem

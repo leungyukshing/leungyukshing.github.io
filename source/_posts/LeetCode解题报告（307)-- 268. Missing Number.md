@@ -3,8 +3,8 @@ title: LeetCode解题报告（307)-- 268. Missing Number
 tags:
   - LeetCode
 mathjax: true
+abbrlink: 4871
 date: 2021-03-06 02:26:28
-
 ---
 
 ## Problem

@@ -3,8 +3,8 @@ title: LeetCode解题报告（287）-- 71. Simplify Path
 tags:
   - LeetCode
 mathjax: true
+abbrlink: 49445
 date: 2021-02-10 01:46:11
-
 ---
 
 ## Problem

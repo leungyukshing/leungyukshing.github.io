@@ -3,9 +3,8 @@ title: LeetCode解题报告（240）-- 941. Valid Mountain Array
 tags:
   - LeetCode
 mathjax: true
+abbrlink: 51629
 date: 2020-12-10 17:37:24
-
-
 ---
 
 ## Problem

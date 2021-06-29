@@ -3,8 +3,8 @@ title: LeetCode解题报告（378) -- 1048. Longest String Chain
 tags:
   - LeetCode
 mathjax: true
+abbrlink: 14289
 date: 2021-05-30 15:06:17
-
 ---
 
 ## Problem

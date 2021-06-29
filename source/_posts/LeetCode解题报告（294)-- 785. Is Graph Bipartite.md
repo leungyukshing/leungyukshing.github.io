@@ -3,8 +3,8 @@ title: LeetCode解题报告（294)-- 785. Is Graph Bipartite?
 tags:
   - LeetCode
 mathjax: true
+abbrlink: 56599
 date: 2021-02-15 02:24:07
-
 ---
 
 ## Problem

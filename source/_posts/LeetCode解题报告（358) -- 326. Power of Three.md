@@ -3,8 +3,8 @@ title: LeetCode解题报告（358) -- 326. Power of Three
 tags:
   - LeetCode
 mathjax: true
+abbrlink: 3570
 date: 2021-05-02 11:53:36
-
 ---
 
 ## Problem

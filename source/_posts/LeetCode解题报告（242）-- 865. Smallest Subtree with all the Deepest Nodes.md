@@ -3,8 +3,8 @@ title: LeetCode解题报告（242）-- 865. Smallest Subtree with all the Deepes
 tags:
   - LeetCode
 mathjax: true
+abbrlink: 51443
 date: 2020-12-14 14:19:21
-
 ---
 
 ## Problem

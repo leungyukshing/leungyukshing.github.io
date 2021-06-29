@@ -1,10 +1,9 @@
 ---
-title: LeetCode解题报告（67）-- 1207. Unique Number of Occurrences 
+title: LeetCode解题报告（67）-- 1207. Unique Number of Occurrences
 tags:
   - LeetCode
+abbrlink: 6081
 date: 2019-10-01 09:25:37
-
-
 ---
 
 ## Problem

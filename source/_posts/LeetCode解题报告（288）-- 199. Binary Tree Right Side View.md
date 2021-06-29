@@ -3,8 +3,8 @@ title: LeetCode解题报告（288）-- 199. Binary Tree Right Side View
 tags:
   - LeetCode
 mathjax: true
+abbrlink: 46746
 date: 2021-02-10 02:12:05
-
 ---
 
 ## Problem

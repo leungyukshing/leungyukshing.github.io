@@ -3,8 +3,8 @@ title: LeetCode解题报告（306)-- 645. Set Mismatch
 tags:
   - LeetCode
 mathjax: true
+abbrlink: 13190
 date: 2021-03-05 01:23:44
-
 ---
 
 ## Problem

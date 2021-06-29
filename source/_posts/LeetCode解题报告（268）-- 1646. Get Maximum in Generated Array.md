@@ -3,8 +3,8 @@ title: LeetCode解题报告（268）-- 1646. Get Maximum in Generated Array
 tags:
   - LeetCode
 mathjax: true
+abbrlink: 65194
 date: 2021-01-15 22:33:51
-
 ---
 
 ## Problem

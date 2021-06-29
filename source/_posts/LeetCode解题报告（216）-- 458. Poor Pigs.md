@@ -3,8 +3,8 @@ title: LeetCode解题报告（216）-- 458. Poor Pigs
 tags:
   - LeetCode
 mathjax: true
+abbrlink: 25020
 date: 2020-11-14 20:56:10
-
 ---
 
 ## Problem

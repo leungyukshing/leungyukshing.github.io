@@ -1,9 +1,8 @@
 ---
-title: LeetCode解题报告（398) -- 1690. Stone Game VII
-  - LeetCode
+title: LeetCode解题报告（398) -- 1690. Stone Game VII - LeetCode
 mathjax: true
+abbrlink: 16640
 date: 2021-06-14 18:40:24
-
 ---
 
 ## Problem

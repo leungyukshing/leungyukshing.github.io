@@ -2,9 +2,9 @@
 title: LeetCode解题报告（80）-- 986. Interval List Intersections
 tags:
   - LeetCode
-date: 2019-12-24 17:28:45
 mathjax: true
-
+abbrlink: 48295
+date: 2019-12-24 17:28:45
 ---
 
 ## Problem

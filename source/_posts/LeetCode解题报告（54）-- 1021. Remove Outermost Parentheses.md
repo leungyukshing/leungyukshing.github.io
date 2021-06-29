@@ -2,8 +2,8 @@
 title: LeetCode解题报告（54）-- 1021. Remove Outermost Parentheses
 tags:
   - LeetCode
+abbrlink: 56598
 date: 2019-09-19 00:53:03
-
 ---
 
 ## Problem

@@ -3,9 +3,8 @@ title: LeetCode解题报告（251）-- 91. Decode Ways
 tags:
   - LeetCode
 mathjax: true
+abbrlink: 2382
 date: 2020-12-27 00:36:11
-
-
 ---
 
 ## Problem

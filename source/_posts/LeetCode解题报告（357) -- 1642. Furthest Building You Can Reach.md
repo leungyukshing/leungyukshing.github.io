@@ -3,8 +3,8 @@ title: LeetCode解题报告（357) -- 1642. Furthest Building You Can Reach
 tags:
   - LeetCode
 mathjax: true
+abbrlink: 47646
 date: 2021-05-01 23:06:45
-
 ---
 
 ## Problem

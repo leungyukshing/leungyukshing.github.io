@@ -3,8 +3,8 @@ title: LeetCode解题报告（339) -- 1704. Determine if String Halves Are Alike
 tags:
   - LeetCode
 mathjax: true
+abbrlink: 2909
 date: 2021-04-12 18:10:48
-
 ---
 
 ## Problem

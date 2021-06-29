@@ -3,8 +3,8 @@ title: LeetCode解题报告（255）-- 289. Game of Life
 tags:
   - LeetCode
 mathjax: true
+abbrlink: 3257
 date: 2020-12-30 21:37:15
-
 ---
 
 ## Problem

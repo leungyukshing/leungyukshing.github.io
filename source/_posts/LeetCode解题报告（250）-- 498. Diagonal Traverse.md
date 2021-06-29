@@ -3,8 +3,8 @@ title: LeetCode解题报告（250）-- 498. Diagonal Traverse
 tags:
   - LeetCode
 mathjax: true
+abbrlink: 51290
 date: 2020-12-26 02:56:24
-
 ---
 
 ## Problem

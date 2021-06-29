@@ -3,8 +3,8 @@ title: LeetCode解题报告（309)-- 637. Average of Levels in Binary Tree
 tags:
   - LeetCode
 mathjax: true
+abbrlink: 36149
 date: 2021-03-06 16:27:52
-
 ---
 
 ## Problem

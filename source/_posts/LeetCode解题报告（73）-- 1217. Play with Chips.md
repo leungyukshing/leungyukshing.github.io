@@ -2,9 +2,8 @@
 title: LeetCode解题报告（73）-- 1217. Play with Chips
 tags:
   - LeetCode
+abbrlink: 10803
 date: 2019-10-26 14:00:07
-
-
 ---
 
 ## Problem

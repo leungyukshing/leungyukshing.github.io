@@ -2,10 +2,9 @@
 title: LeetCode解题报告（104）-- 203. Remove Linked List Elements
 tags:
   - LeetCode
-date: 2020-07-21 22:36:28
 mathjax: true
-
-
+abbrlink: 62612
+date: 2020-07-21 22:36:28
 ---
 
 ## Problem

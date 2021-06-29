@@ -3,8 +3,8 @@ title: LeetCode解题报告（304)-- 895. Maximum Frequency Stack
 tags:
   - LeetCode
 mathjax: true
+abbrlink: 8452
 date: 2021-03-03 01:22:28
-
 ---
 
 ## Problem

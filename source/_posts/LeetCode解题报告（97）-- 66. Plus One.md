@@ -2,9 +2,9 @@
 title: LeetCode解题报告（97）-- 66. Plus One
 tags:
   - LeetCode
-date: 2020-07-06 22:12:31
 mathjax: true
-
+abbrlink: 30967
+date: 2020-07-06 22:12:31
 ---
 
 ## Problem

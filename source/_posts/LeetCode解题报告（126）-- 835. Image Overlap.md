@@ -3,8 +3,8 @@ title: LeetCode解题报告（126）-- 835. Image Overlap
 tags:
   - LeetCode
 mathjax: true
+abbrlink: 48018
 date: 2020-09-06 15:23:40
-
 ---
 
 ## Problem

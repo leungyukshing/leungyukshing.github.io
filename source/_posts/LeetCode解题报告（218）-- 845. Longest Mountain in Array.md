@@ -3,8 +3,8 @@ title: LeetCode解题报告（218）-- 845. Longest Mountain in Array
 tags:
   - LeetCode
 mathjax: true
+abbrlink: 50641
 date: 2020-11-18 01:12:11
-
 ---
 
 ## Problem

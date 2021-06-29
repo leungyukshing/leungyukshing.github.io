@@ -3,8 +3,8 @@ title: LeetCode解题报告（366) -- 45. Jump Game II
 tags:
   - LeetCode
 mathjax: true
+abbrlink: 44365
 date: 2021-05-10 13:19:22
-
 ---
 
 ## Problem

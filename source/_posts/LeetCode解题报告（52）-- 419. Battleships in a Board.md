@@ -2,9 +2,8 @@
 title: LeetCode解题报告（52）-- 419. Battleships in a Board
 tags:
   - LeetCode
+abbrlink: 49469
 date: 2019-09-18 10:45:18
-
-
 ---
 
 ## Problem

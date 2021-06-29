@@ -3,9 +3,8 @@ title: LeetCode解题报告（133）-- 58. Length of Last Word
 tags:
   - LeetCode
 mathjax: true
+abbrlink: 26473
 date: 2020-09-15 22:18:31
-
-
 ---
 
 ## Problem

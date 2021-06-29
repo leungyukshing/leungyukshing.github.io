@@ -3,8 +3,8 @@ title: LeetCode解题报告（338) -- 1551. Minimum Operations to Make Array Equ
 tags:
   - LeetCode
 mathjax: true
+abbrlink: 4200
 date: 2021-04-11 10:21:36
-
 ---
 
 ## Problem

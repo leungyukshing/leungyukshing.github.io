@@ -3,8 +3,8 @@ title: LeetCode解题报告（329)-- 423. Reconstruct Original Digits from Engli
 tags:
   - LeetCode
 mathjax: true
+abbrlink: 59182
 date: 2021-04-04 14:38:11
-
 ---
 
 ## Problem

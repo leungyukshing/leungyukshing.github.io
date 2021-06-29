@@ -1,11 +1,12 @@
 ---
-title: LeetCode解题报告（315)-- 1461. Check If a String Contains All Binary Codes of Size K
+title: >-
+  LeetCode解题报告（315)-- 1461. Check If a String Contains All Binary Codes of Size
+  K
 tags:
   - LeetCode
 mathjax: true
+abbrlink: 24851
 date: 2021-03-12 22:14:39
-
-
 ---
 
 ## Problem

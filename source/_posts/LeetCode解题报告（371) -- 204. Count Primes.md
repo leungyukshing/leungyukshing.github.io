@@ -3,8 +3,8 @@ title: LeetCode解题报告（371) -- 204. Count Primes
 tags:
   - LeetCode
 mathjax: true
+abbrlink: 61757
 date: 2021-05-12 19:44:13
-
 ---
 
 ## Problem

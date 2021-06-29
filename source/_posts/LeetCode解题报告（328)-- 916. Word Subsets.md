@@ -3,8 +3,8 @@ title: LeetCode解题报告（328)-- 916. Word Subsets
 tags:
   - LeetCode
 mathjax: true
+abbrlink: 16357
 date: 2021-04-02 02:21:40
-
 ---
 
 ## Problem

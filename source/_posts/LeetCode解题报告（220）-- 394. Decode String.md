@@ -3,8 +3,8 @@ title: LeetCode解题报告（220）-- 394. Decode String
 tags:
   - LeetCode
 mathjax: true
+abbrlink: 28536
 date: 2020-11-20 21:43:11
-
 ---
 
 ## Problem

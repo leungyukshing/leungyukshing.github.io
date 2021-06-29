@@ -2,6 +2,7 @@
 title: LeetCode解题报告（50）-- 1078. Occurrences After Bigram
 tags:
   - LeetCode
+abbrlink: 49588
 date: 2019-09-17 00:26:45
 ---
 

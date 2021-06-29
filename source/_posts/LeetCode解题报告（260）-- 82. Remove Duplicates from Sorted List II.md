@@ -3,8 +3,8 @@ title: LeetCode解题报告（260）-- 82. Remove Duplicates from Sorted List II
 tags:
   - LeetCode
 mathjax: true
+abbrlink: 7402
 date: 2021-01-09 00:20:51
-
 ---
 
 ## Problem

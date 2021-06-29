@@ -3,8 +3,8 @@ title: LeetCode解题报告（312)-- 1332. Remove Palindromic Subsequences
 tags:
   - LeetCode
 mathjax: true
+abbrlink: 39103
 date: 2021-03-10 01:34:28
-
 ---
 
 ## Problem

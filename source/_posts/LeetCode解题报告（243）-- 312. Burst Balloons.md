@@ -3,8 +3,8 @@ title: LeetCode解题报告（243）-- 312. Burst Balloons
 tags:
   - LeetCode
 mathjax: true
+abbrlink: 17997
 date: 2020-12-14 11:48:20
-
 ---
 
 ## Problem

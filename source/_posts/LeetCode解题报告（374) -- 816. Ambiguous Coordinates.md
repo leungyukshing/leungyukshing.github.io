@@ -3,8 +3,8 @@ title: LeetCode解题报告（374) -- 816. Ambiguous Coordinates
 tags:
   - LeetCode
 mathjax: true
+abbrlink: 26581
 date: 2021-05-16 14:05:32
-
 ---
 
 ## Problem

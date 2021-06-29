@@ -1,5 +1,6 @@
 ---
 title: ElasticSearch--Python接入
+abbrlink: 40974
 date: 2020-04-02 00:17:19
 tags:
 ---

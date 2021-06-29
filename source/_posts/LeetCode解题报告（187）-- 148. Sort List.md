@@ -3,9 +3,8 @@ title: LeetCode解题报告（187）-- 148. Sort List
 tags:
   - LeetCode
 mathjax: true
+abbrlink: 32310
 date: 2020-10-13 19:09:22
-
-
 ---
 
 ## Problem

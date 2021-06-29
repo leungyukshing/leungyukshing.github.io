@@ -3,8 +3,8 @@ title: LeetCode解题报告（367) -- 109. Convert Sorted List to Binary Search 
 tags:
   - LeetCode
 mathjax: true
+abbrlink: 18209
 date: 2021-05-11 13:29:30
-
 ---
 
 ## Problem

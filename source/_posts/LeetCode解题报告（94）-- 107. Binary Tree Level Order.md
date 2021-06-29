@@ -2,10 +2,9 @@
 title: LeetCode解题报告（94）-- 107. Binary Tree Level Order Traversal II
 tags:
   - LeetCode
-date: 2020-07-04 13:52:30
 mathjax: true
-
-
+abbrlink: 27049
+date: 2020-07-04 13:52:30
 ---
 
 ## Problem

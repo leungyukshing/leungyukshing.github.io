@@ -2,8 +2,8 @@
 title: LeetCode解题报告（62）-- 328. Odd Even Linked List
 tags:
   - LeetCode
+abbrlink: 56527
 date: 2019-09-27 17:43:10
-
 ---
 
 ## Problem

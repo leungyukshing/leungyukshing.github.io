@@ -3,8 +3,8 @@ title: LeetCode解题报告（183）-- 449. Serialize and Deserialize BST
 tags:
   - LeetCode
 mathjax: true
+abbrlink: 56498
 date: 2020-10-09 22:45:12
-
 ---
 
 ## Problem

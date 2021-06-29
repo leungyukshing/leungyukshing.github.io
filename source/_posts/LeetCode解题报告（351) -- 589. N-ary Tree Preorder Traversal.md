@@ -3,8 +3,8 @@ title: LeetCode解题报告（351) -- 589. N-ary Tree Preorder Traversal
 tags:
   - LeetCode
 mathjax: true
+abbrlink: 60692
 date: 2021-04-25 13:13:41
-
 ---
 
 ## Problem

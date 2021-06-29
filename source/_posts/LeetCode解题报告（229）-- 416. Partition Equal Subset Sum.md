@@ -3,8 +3,8 @@ title: LeetCode解题报告（229）-- 416. Partition Equal Subset Sum
 tags:
   - LeetCode
 mathjax: true
+abbrlink: 30747
 date: 2020-11-27 11:53:20
-
 ---
 
 ## Problem

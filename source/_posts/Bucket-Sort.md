@@ -1,9 +1,9 @@
 ---
 title: 桶排序算法分析及实现
-tags:
 mathjax: true
+abbrlink: 65528
 date: 2021-01-15 23:32:58
-
+tags:
 ---
 
 ## Introduction

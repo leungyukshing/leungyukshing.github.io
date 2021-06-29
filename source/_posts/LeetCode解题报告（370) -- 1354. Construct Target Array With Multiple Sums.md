@@ -3,8 +3,8 @@ title: LeetCode解题报告（370) -- 1354. Construct Target Array With Multiple
 tags:
   - LeetCode
 mathjax: true
+abbrlink: 43075
 date: 2021-05-12 19:36:04
-
 ---
 
 ## Problem

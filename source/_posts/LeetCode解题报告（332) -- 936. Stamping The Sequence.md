@@ -3,8 +3,8 @@ title: LeetCode解题报告（332) -- 936. Stamping The Sequence
 tags:
   - LeetCode
 mathjax: true
+abbrlink: 25287
 date: 2021-04-05 20:58:19
-
 ---
 
 ## Problem

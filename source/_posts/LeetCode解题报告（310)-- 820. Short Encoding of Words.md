@@ -3,8 +3,8 @@ title: LeetCode解题报告（310)-- 820. Short Encoding of Words
 tags:
   - LeetCode
 mathjax: true
+abbrlink: 41888
 date: 2021-03-06 17:06:37
-
 ---
 
 ## Problem

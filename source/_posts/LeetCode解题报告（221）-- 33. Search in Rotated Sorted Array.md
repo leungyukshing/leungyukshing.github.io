@@ -3,8 +3,8 @@ title: LeetCode解题报告（221）-- 33. Search in Rotated Sorted Array
 tags:
   - LeetCode
 mathjax: true
+abbrlink: 16768
 date: 2020-11-21 10:18:05
-
 ---
 
 ## Problem

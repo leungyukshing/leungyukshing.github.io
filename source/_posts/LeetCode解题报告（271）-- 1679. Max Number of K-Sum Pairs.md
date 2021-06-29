@@ -3,8 +3,8 @@ title: LeetCode解题报告（271）-- 1679. Max Number of K-Sum Pairs
 tags:
   - LeetCode
 mathjax: true
+abbrlink: 62412
 date: 2021-01-19 01:43:14
-
 ---
 
 ## Problem

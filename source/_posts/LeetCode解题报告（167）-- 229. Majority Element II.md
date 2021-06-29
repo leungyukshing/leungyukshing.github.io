@@ -3,8 +3,8 @@ title: LeetCode解题报告（167）-- 229. Majority Element II
 tags:
   - LeetCode
 mathjax: true
+abbrlink: 54547
 date: 2020-09-22 17:46:49
-
 ---
 
 ## Problem

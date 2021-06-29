@@ -2,10 +2,9 @@
 title: LeetCode解题报告（89）-- 60. Permutation Sequence
 tags:
   - LeetCode
-date: 2020-06-21 12:01:05
 mathjax: true
-
-
+abbrlink: 27140
+date: 2020-06-21 12:01:05
 ---
 
 ## Problem

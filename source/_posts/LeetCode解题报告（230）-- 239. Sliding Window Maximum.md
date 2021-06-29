@@ -3,8 +3,8 @@ title: LeetCode解题报告（230）-- 239. Sliding Window Maximum
 tags:
   - LeetCode
 mathjax: true
+abbrlink: 20589
 date: 2020-11-28 20:03:45
-
 ---
 
 ## Problem

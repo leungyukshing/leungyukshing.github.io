@@ -3,8 +3,8 @@ title: LeetCode解题报告（134）-- 1041. Robot Bounded In Circle
 tags:
   - LeetCode
 mathjax: true
+abbrlink: 11071
 date: 2020-09-17 16:20:28
-
 ---
 
 ## Problem

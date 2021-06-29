@@ -3,8 +3,8 @@ title: LeetCode解题报告（318)-- 535. Encode and Decode TinyURL
 tags:
   - LeetCode
 mathjax: true
+abbrlink: 58736
 date: 2021-03-16 12:06:46
-
 ---
 
 ## Problem

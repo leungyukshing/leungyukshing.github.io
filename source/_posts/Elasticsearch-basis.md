@@ -1,8 +1,8 @@
 ---
 title: ElasticSearch 详解
+abbrlink: 6377
 date: 2020-03-10 10:27:12
 tags:
-
 ---
 
 ## ElasticSearch

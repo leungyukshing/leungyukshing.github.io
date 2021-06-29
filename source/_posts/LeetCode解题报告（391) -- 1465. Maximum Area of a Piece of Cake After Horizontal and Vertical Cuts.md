@@ -1,10 +1,12 @@
 ---
-title: LeetCode解题报告（391) -- 1465. Maximum Area of a Piece of Cake After Horizontal and Vertical Cuts
+title: >-
+  LeetCode解题报告（391) -- 1465. Maximum Area of a Piece of Cake After Horizontal
+  and Vertical Cuts
 tags:
   - LeetCode
 mathjax: true
+abbrlink: 26414
 date: 2021-06-12 16:19:52
-
 ---
 
 ## Problem

@@ -3,8 +3,8 @@ title: LeetCode解题报告（302)-- 856. Score of Parentheses
 tags:
   - LeetCode
 mathjax: true
+abbrlink: 10709
 date: 2021-02-27 15:08:14
-
 ---
 
 ## Problem

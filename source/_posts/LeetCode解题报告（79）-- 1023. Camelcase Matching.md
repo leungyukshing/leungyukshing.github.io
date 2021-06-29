@@ -2,8 +2,9 @@
 title: LeetCode解题报告（79）-- 1023. Camelcase Matching
 tags:
   - LeetCode
-date: 2019-12-09 22:58:13
 mathjax: true
+abbrlink: 58795
+date: 2019-12-09 22:58:13
 ---
 
 ## Problem

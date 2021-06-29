@@ -3,8 +3,8 @@ title: LeetCode解题报告（244）-- 98. Validate Binary Search Tree
 tags:
   - LeetCode
 mathjax: true
+abbrlink: 60281
 date: 2020-12-16 20:50:30
-
 ---
 
 ## Problem

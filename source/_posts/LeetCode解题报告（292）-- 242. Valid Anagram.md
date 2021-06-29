@@ -3,9 +3,8 @@ title: LeetCode解题报告（292）-- 242. Valid Anagram
 tags:
   - LeetCode
 mathjax: true
+abbrlink: 8704
 date: 2021-02-14 11:54:08
-
-
 ---
 
 ## Problem

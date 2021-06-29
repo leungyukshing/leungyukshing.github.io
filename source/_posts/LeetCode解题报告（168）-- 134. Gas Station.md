@@ -3,8 +3,8 @@ title: LeetCode解题报告（168）-- 134. Gas Station
 tags:
   - LeetCode
 mathjax: true
+abbrlink: 57666
 date: 2020-09-23 15:49:11
-
 ---
 
 ## Problem

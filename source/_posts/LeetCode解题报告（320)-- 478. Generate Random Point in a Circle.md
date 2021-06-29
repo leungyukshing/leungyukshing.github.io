@@ -3,8 +3,8 @@ title: LeetCode解题报告（320)-- 478. Generate Random Point in a Circle
 tags:
   - LeetCode
 mathjax: true
+abbrlink: 7853
 date: 2021-03-20 18:16:24
-
 ---
 
 ## Problem

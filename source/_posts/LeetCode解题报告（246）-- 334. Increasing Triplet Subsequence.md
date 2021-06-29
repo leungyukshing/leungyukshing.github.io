@@ -3,9 +3,8 @@ title: LeetCode解题报告（246）-- 334. Increasing Triplet Subsequence
 tags:
   - LeetCode
 mathjax: true
+abbrlink: 26968
 date: 2020-12-19 01:45:48
-
-
 ---
 
 ## Problem

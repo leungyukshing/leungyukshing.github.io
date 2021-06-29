@@ -1,9 +1,9 @@
 ---
 title: Josephus Problem(约瑟夫环问题)
-tags:
 mathjax: true
+abbrlink: 29517
 date: 2020-12-10 11:58:13
-
+tags:
 ---
 
 ## Problem

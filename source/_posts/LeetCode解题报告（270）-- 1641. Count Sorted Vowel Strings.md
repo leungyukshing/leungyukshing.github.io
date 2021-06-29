@@ -3,9 +3,8 @@ title: LeetCode解题报告（270）-- 1641. Count Sorted Vowel Strings
 tags:
   - LeetCode
 mathjax: true
+abbrlink: 63696
 date: 2021-01-17 20:16:24
-
-
 ---
 
 ## Problem

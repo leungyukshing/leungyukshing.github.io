@@ -3,8 +3,8 @@ title: LeetCode解题报告（117）-- 470. Implement Rand10() Using Rand7()
 tags:
   - LeetCode
 mathjax: true
+abbrlink: 58530
 date: 2020-08-29 14:49:25
-
 ---
 
 ## Problem

@@ -3,8 +3,8 @@ title: LeetCode解题报告（283）-- 1675. Minimize Deviation in Array
 tags:
   - LeetCode
 mathjax: true
+abbrlink: 60459
 date: 2021-02-09 13:39:43
-
 ---
 
 ## Problem

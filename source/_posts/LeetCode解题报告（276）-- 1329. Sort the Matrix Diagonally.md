@@ -3,9 +3,8 @@ title: LeetCode解题报告（276）-- 1329. Sort the Matrix Diagonally
 tags:
   - LeetCode
 mathjax: true
+abbrlink: 24339
 date: 2021-02-02 22:46:35
-
-
 ---
 
 ## Problem

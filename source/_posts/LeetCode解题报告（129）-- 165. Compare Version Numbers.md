@@ -3,8 +3,8 @@ title: LeetCode解题报告（129）-- 165. Compare Version Numbers
 tags:
   - LeetCode
 mathjax: true
+abbrlink: 53184
 date: 2020-09-10 00:38:11
-
 ---
 
 ## Problem

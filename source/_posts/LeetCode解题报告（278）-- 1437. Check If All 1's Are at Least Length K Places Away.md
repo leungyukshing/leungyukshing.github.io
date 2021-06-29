@@ -3,8 +3,8 @@ title: LeetCode解题报告（278）-- 1437. Check If All 1's Are at Least Lengt
 tags:
   - LeetCode
 mathjax: true
+abbrlink: 20985
 date: 2021-02-03 22:21:36
-
 ---
 
 ## Problem

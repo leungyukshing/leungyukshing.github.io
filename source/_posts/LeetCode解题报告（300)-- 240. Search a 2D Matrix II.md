@@ -3,8 +3,8 @@ title: LeetCode解题报告（300)-- 240. Search a 2D Matrix II
 tags:
   - LeetCode
 mathjax: true
+abbrlink: 11868
 date: 2021-02-24 01:24:17
-
 ---
 
 ## Problem

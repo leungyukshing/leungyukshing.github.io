@@ -2,9 +2,9 @@
 title: LeetCode解题报告（103）-- 67. Add Binary
 tags:
   - LeetCode
-date: 2020-07-20 23:26:30
 mathjax: true
-
+abbrlink: 52357
+date: 2020-07-20 23:26:30
 ---
 
 ## Problem

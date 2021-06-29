@@ -3,8 +3,8 @@ title: LeetCode解题报告（297)-- 413. Arithmetic Slices
 tags:
   - LeetCode
 mathjax: true
+abbrlink: 63206
 date: 2021-02-18 21:47:42
-
 ---
 
 ## Problem

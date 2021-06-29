@@ -3,8 +3,8 @@ title: LeetCode解题报告（290）-- 538. Convert BST to Greater Tree
 tags:
   - LeetCode
 mathjax: true
+abbrlink: 53215
 date: 2021-02-10 03:02:28
-
 ---
 
 ## Problem

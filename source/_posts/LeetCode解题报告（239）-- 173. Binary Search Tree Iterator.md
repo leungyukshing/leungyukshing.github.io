@@ -3,8 +3,8 @@ title: LeetCode解题报告（239）-- 173. Binary Search Tree Iterator
 tags:
   - LeetCode
 mathjax: true
+abbrlink: 1807
 date: 2020-12-10 01:15:06
-
 ---
 
 ## Problem

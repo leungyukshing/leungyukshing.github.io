@@ -3,8 +3,8 @@ title: LeetCode解题报告（235）-- 1492. The kth Factor of n
 tags:
   - LeetCode
 mathjax: true
+abbrlink: 17289
 date: 2020-12-05 02:49:40
-
 ---
 
 ## Problem

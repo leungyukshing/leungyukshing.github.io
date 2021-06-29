@@ -1,5 +1,6 @@
 ---
 title: Gensim快速加载数据集
+abbrlink: 33599
 date: 2020-01-03 21:55:52
 tags:
 ---

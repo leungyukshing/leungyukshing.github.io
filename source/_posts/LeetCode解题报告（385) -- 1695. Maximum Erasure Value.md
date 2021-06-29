@@ -3,8 +3,8 @@ title: LeetCode解题报告（385) -- 1695. Maximum Erasure Value
 tags:
   - LeetCode
 mathjax: true
+abbrlink: 6498
 date: 2021-06-06 15:03:19
-
 ---
 
 ## Problem

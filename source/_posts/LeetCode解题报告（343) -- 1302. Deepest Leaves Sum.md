@@ -3,8 +3,8 @@ title: LeetCode解题报告（343) -- 1302. Deepest Leaves Sum
 tags:
   - LeetCode
 mathjax: true
+abbrlink: 54654
 date: 2021-04-16 01:17:22
-
 ---
 
 ## Problem

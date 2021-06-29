@@ -1,7 +1,7 @@
 ---
 title: Windows下搭建Redis环境
+abbrlink: 20252
 date: 2020-01-30 18:42:27
-
 ---
 
 # Redis环境搭建--Windows

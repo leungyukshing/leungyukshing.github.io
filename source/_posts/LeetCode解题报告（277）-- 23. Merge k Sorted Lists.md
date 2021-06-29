@@ -3,8 +3,8 @@ title: LeetCode解题报告（277）-- 23. Merge k Sorted Lists
 tags:
   - LeetCode
 mathjax: true
+abbrlink: 38777
 date: 2021-02-03 21:42:04
-
 ---
 
 ## Problem

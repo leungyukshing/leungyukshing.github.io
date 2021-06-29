@@ -3,8 +3,8 @@ title: LeetCode解题报告（223）-- 902. Numbers At Most N Given Digit Set
 tags:
   - LeetCode
 mathjax: true
+abbrlink: 5357
 date: 2020-11-21 21:49:40
-
 ---
 
 ## Problem

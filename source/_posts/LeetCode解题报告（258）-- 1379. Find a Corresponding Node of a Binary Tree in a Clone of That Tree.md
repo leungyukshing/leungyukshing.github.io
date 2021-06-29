@@ -1,10 +1,12 @@
 ---
-title: LeetCode解题报告（258）-- 1379. Find a Corresponding Node of a Binary Tree in a Clone of That Tree
+title: >-
+  LeetCode解题报告（258）-- 1379. Find a Corresponding Node of a Binary Tree in a
+  Clone of That Tree
 tags:
   - LeetCode
 mathjax: true
+abbrlink: 29553
 date: 2021-01-05 00:51:04
-
 ---
 
 ## Problem

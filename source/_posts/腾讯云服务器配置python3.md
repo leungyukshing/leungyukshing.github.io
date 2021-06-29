@@ -1,7 +1,7 @@
 ---
 title: 腾讯云服务器配置Python3环境
+abbrlink: 65202
 date: 2020-01-10 00:03:18
-
 ---
 
 ## Introduction

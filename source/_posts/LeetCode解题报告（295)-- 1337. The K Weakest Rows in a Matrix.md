@@ -3,9 +3,8 @@ title: LeetCode解题报告（295)-- 1337. The K Weakest Rows in a Matrix
 tags:
   - LeetCode
 mathjax: true
+abbrlink: 322
 date: 2021-02-16 12:18:11
-
-
 ---
 
 ## Problem

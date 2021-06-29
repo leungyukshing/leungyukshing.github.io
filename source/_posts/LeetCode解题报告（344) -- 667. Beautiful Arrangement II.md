@@ -3,8 +3,8 @@ title: LeetCode解题报告（344) -- 667. Beautiful Arrangement II
 tags:
   - LeetCode
 mathjax: true
+abbrlink: 48901
 date: 2021-04-18 21:06:35
-
 ---
 
 ## Problem

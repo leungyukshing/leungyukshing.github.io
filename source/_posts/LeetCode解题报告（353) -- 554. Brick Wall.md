@@ -3,8 +3,8 @@ title: LeetCode解题报告（353) -- 554. Brick Wall
 tags:
   - LeetCode
 mathjax: true
+abbrlink: 3617
 date: 2021-04-27 21:32:19
-
 ---
 
 ## Problem

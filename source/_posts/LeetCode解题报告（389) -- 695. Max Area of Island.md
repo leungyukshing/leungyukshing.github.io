@@ -3,8 +3,8 @@ title: LeetCode解题报告（389) -- 695. Max Area of Island
 tags:
   - LeetCode
 mathjax: true
+abbrlink: 21603
 date: 2021-06-09 23:55:18
-
 ---
 
 ## Problem

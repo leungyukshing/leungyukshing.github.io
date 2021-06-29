@@ -3,8 +3,8 @@ title: LeetCode解题报告（131）-- 152. Maximum Product Subarray
 tags:
   - LeetCode
 mathjax: true
+abbrlink: 2716
 date: 2020-09-11 19:53:18
-
 ---
 
 ## Problem

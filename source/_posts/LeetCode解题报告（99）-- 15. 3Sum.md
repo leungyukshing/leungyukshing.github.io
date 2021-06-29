@@ -2,9 +2,9 @@
 title: LeetCode解题报告（99）-- 15. 3Sum
 tags:
   - LeetCode
-date: 2020-07-10 21:20:11
 mathjax: true
-
+abbrlink: 56579
+date: 2020-07-10 21:20:11
 ---
 
 ## Problem

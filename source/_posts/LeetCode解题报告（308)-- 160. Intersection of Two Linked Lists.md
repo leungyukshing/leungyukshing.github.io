@@ -3,8 +3,8 @@ title: LeetCode解题报告（308)-- 160. Intersection of Two Linked Lists
 tags:
   - LeetCode
 mathjax: true
+abbrlink: 64038
 date: 2021-03-06 15:28:02
-
 ---
 
 ## Problem

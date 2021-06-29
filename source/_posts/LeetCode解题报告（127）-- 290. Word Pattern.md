@@ -3,8 +3,8 @@ title: LeetCode解题报告（127）-- 290. Word Pattern
 tags:
   - LeetCode
 mathjax: true
+abbrlink: 8220
 date: 2020-09-07 15:34:04
-
 ---
 
 ## Problem

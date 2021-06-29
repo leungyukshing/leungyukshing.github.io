@@ -3,8 +3,8 @@ title: LeetCode解题报告（234）-- 897. Increasing Order Search Tree
 tags:
   - LeetCode
 mathjax: true
+abbrlink: 61080
 date: 2020-12-04 10:23:11
-
 ---
 
 ## Problem

@@ -3,8 +3,8 @@ title: LeetCode解题报告（375) -- 114. Flatten Binary Tree to Linked List
 tags:
   - LeetCode
 mathjax: true
+abbrlink: 65352
 date: 2021-05-17 09:42:41
-
 ---
 
 ## Problem

@@ -3,8 +3,8 @@ title: LeetCode解题报告（254）-- 1457. Pseudo-Palindromic Paths in a Binar
 tags:
   - LeetCode
 mathjax: true
+abbrlink: 7186
 date: 2020-12-29 23:44:51
-
 ---
 
 ## Problem

@@ -3,8 +3,8 @@ title: LeetCode解题报告（282）-- 987. Vertical Order Traversal of a Binary
 tags:
   - LeetCode
 mathjax: true
+abbrlink: 31207
 date: 2021-02-08 17:10:02
-
 ---
 
 ## Problem

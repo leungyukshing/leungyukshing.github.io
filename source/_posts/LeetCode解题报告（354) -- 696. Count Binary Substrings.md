@@ -3,8 +3,8 @@ title: LeetCode解题报告（354) -- 696. Count Binary Substrings
 tags:
   - LeetCode
 mathjax: true
+abbrlink: 34641
 date: 2021-04-27 23:04:22
-
 ---
 
 ## Problem

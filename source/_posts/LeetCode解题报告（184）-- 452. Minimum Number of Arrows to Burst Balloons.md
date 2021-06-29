@@ -3,8 +3,8 @@ title: LeetCode解题报告（184）-- 452. Minimum Number of Arrows to Burst Ba
 tags:
   - LeetCode
 mathjax: true
+abbrlink: 22058
 date: 2020-10-10 18:00:20
-
 ---
 
 ## Problem

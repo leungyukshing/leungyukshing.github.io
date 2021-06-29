@@ -3,8 +3,8 @@ title: LeetCode解题报告（214）-- 593. Valid Square
 tags:
   - LeetCode
 mathjax: true
+abbrlink: 54193
 date: 2020-11-12 00:26:12
-
 ---
 
 ## Problem

@@ -2,8 +2,8 @@
 title: LeetCode解题报告（61）-- 237. Delete Node in a Linked List
 tags:
   - LeetCode
+abbrlink: 40666
 date: 2019-09-27 16:35:22
-
 ---
 
 ## Problem

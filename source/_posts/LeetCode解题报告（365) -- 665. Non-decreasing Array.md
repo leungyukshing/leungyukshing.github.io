@@ -3,8 +3,8 @@ title: LeetCode解题报告（365) -- 665. Non-decreasing Array
 tags:
   - LeetCode
 mathjax: true
+abbrlink: 35732
 date: 2021-05-05 15:06:15
-
 ---
 
 ## Problem

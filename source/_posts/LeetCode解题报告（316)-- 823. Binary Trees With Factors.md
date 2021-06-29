@@ -3,8 +3,8 @@ title: LeetCode解题报告（316)-- 823. Binary Trees With Factors
 tags:
   - LeetCode
 mathjax: true
+abbrlink: 29593
 date: 2021-03-14 00:48:28
-
 ---
 
 ## Problem

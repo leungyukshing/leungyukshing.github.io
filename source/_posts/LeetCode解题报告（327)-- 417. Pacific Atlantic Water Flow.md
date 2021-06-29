@@ -3,8 +3,8 @@ title: LeetCode解题报告（327)-- 417. Pacific Atlantic Water Flow
 tags:
   - LeetCode
 mathjax: true
+abbrlink: 17047
 date: 2021-04-02 01:32:21
-
 ---
 
 ## Problem

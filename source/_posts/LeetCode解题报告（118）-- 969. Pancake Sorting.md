@@ -3,9 +3,8 @@ title: LeetCode解题报告（118）-- 969. Pancake Sorting
 tags:
   - LeetCode
 mathjax: true
+abbrlink: 31126
 date: 2020-08-30 01:43:11
-
-
 ---
 
 ## Problem

@@ -3,8 +3,8 @@ title: LeetCode解题报告（301)-- 946. Validate Stack Sequences
 tags:
   - LeetCode
 mathjax: true
+abbrlink: 13098
 date: 2021-02-27 13:05:41
-
 ---
 
 ## Problem

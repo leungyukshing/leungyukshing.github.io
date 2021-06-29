@@ -2,9 +2,9 @@
 title: LeetCode解题报告（108）-- 797. All Paths From Source to Target
 tags:
   - LeetCode
-date: 2020-07-26 10:52:20
 mathjax: true
-
+abbrlink: 38299
+date: 2020-07-26 10:52:20
 ---
 
 ## Problem

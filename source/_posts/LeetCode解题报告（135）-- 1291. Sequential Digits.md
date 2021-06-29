@@ -3,9 +3,8 @@ title: LeetCode解题报告（135）-- 1291. Sequential Digits
 tags:
   - LeetCode
 mathjax: true
+abbrlink: 48193
 date: 2020-09-19 22:09:11
-
-
 ---
 
 ## Problem

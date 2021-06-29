@@ -3,8 +3,8 @@ title: LeetCode解题报告（274）-- 1673. Find the Most Competitive Subsequen
 tags:
   - LeetCode
 mathjax: true
+abbrlink: 2699
 date: 2021-02-01 12:34:15
-
 ---
 
 ## Problem

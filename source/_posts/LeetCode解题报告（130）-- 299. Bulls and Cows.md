@@ -3,8 +3,8 @@ title: LeetCode解题报告（130）-- 299. Bulls and Cows
 tags:
   - LeetCode
 mathjax: true
+abbrlink: 35620
 date: 2020-09-10 18:01:02
-
 ---
 
 ## Problem

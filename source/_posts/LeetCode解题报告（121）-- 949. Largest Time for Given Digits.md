@@ -3,8 +3,8 @@ title: LeetCode解题报告（121）-- 949. Largest Time for Given Digits
 tags:
   - LeetCode
 mathjax: true
+abbrlink: 44396
 date: 2020-09-01 18:33:51
-
 ---
 
 ## Problem

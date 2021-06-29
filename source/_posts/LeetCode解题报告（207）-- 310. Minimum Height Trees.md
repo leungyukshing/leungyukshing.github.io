@@ -3,8 +3,8 @@ title: LeetCode解题报告（207）-- 310. Minimum Height Trees
 tags:
   - LeetCode
 mathjax: true
+abbrlink: 43831
 date: 2020-11-05 01:37:05
-
 ---
 
 ## Problem

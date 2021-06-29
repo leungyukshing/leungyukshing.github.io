@@ -3,8 +3,8 @@ title: LeetCode解题报告（386) -- 52. N-Queens II
 tags:
   - LeetCode
 mathjax: true
+abbrlink: 51291
 date: 2021-06-06 16:29:40
-
 ---
 
 ## Problem

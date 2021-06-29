@@ -2,10 +2,9 @@
 title: LeetCode解题报告（106）-- 103. Binary Tree Zigzag Level Order Traversal
 tags:
   - LeetCode
-date: 2020-07-23 23:10:11
 mathjax: true
-
-
+abbrlink: 32332
+date: 2020-07-23 23:10:11
 ---
 
 ## Problem

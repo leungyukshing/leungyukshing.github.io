@@ -3,8 +3,8 @@ title: LeetCode解题报告（330) -- 971. Flip Binary Tree To Match Preorder Tr
 tags:
   - LeetCode
 mathjax: true
+abbrlink: 34974
 date: 2021-04-04 15:07:52
-
 ---
 
 ## Problem

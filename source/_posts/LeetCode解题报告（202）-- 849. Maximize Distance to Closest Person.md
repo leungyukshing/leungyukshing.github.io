@@ -3,8 +3,8 @@ title: LeetCode解题报告（202）-- 849. Maximize Distance to Closest Person
 tags:
   - LeetCode
 mathjax: true
+abbrlink: 32415
 date: 2020-10-29 18:20:44
-
 ---
 
 ## Problem

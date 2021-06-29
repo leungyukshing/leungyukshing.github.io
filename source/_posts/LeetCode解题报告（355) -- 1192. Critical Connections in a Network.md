@@ -3,8 +3,8 @@ title: LeetCode解题报告（355) -- 1192. Critical Connections in a Network
 tags:
   - LeetCode
 mathjax: true
+abbrlink: 33650
 date: 2021-04-28 01:04:38
-
 ---
 
 ## Problem

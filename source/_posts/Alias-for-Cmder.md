@@ -1,7 +1,8 @@
 ---
 title: cmder设置alias
-tags:
+abbrlink: 58581
 date: 2019-10-19 01:06:52
+tags:
 ---
 
 ## cmder设置alias

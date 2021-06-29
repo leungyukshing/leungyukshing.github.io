@@ -3,9 +3,8 @@ title: LeetCode解题报告（215）-- 116. Populating Next Right Pointers in Ea
 tags:
   - LeetCode
 mathjax: true
+abbrlink: 64566
 date: 2020-11-14 20:29:20
-
-
 ---
 
 ## Problem

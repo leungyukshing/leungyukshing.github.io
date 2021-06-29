@@ -2,8 +2,9 @@
 title: LeetCode解题报告（76）-- 947. Most Stones Removed with Same Row or Column
 tags:
   - LeetCode
-date: 2019-11-24 21:46:30
 mathjax: true
+abbrlink: 34312
+date: 2019-11-24 21:46:30
 ---
 
 ## Problem

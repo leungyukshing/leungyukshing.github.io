@@ -3,8 +3,8 @@ title: LeetCode解题报告（311)-- 706. Design HashMap
 tags:
   - LeetCode
 mathjax: true
+abbrlink: 53325
 date: 2021-03-09 22:51:03
-
 ---
 
 ## Problem

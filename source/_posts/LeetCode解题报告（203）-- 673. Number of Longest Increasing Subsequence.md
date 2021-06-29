@@ -3,9 +3,8 @@ title: LeetCode解题报告（203）-- 673. Number of Longest Increasing Subsequ
 tags:
   - LeetCode
 mathjax: true
+abbrlink: 27531
 date: 2020-10-31 11:48:02
-
-
 ---
 
 ## Problem

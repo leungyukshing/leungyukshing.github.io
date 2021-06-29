@@ -3,8 +3,8 @@ title: LeetCode解题报告（346) -- 86. Partition List
 tags:
   - LeetCode
 mathjax: true
+abbrlink: 61202
 date: 2021-04-20 22:02:11
-
 ---
 
 ## Problem

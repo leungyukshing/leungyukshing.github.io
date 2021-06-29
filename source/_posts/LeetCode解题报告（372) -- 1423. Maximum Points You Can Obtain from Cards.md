@@ -3,8 +3,8 @@ title: LeetCode解题报告（372) -- 1423. Maximum Points You Can Obtain from C
 tags:
   - LeetCode
 mathjax: true
+abbrlink: 64470
 date: 2021-05-12 20:11:39
-
 ---
 
 ## Problem

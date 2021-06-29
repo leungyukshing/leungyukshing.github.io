@@ -2,6 +2,7 @@
 title: LeetCode解题报告（55）-- 1079. Letter Tile Possibilities
 tags:
   - LeetCode
+abbrlink: 58223
 date: 2019-09-19 15:20:09
 ---
 

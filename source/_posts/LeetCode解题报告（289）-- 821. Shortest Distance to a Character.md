@@ -3,8 +3,8 @@ title: LeetCode解题报告（289）-- 821. Shortest Distance to a Character
 tags:
   - LeetCode
 mathjax: true
+abbrlink: 58351
 date: 2021-02-10 02:30:52
-
 ---
 
 ## Problem

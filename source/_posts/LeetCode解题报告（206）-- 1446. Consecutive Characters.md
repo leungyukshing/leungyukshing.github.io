@@ -3,8 +3,8 @@ title: LeetCode解题报告（206）-- 1446. Consecutive Characters
 tags:
   - LeetCode
 mathjax: true
+abbrlink: 33343
 date: 2020-11-03 16:17:20
-
 ---
 
 ## Problem

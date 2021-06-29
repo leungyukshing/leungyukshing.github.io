@@ -3,9 +3,8 @@ title: LeetCode解题报告（198）-- 1510. Stone Game IV
 tags:
   - LeetCode
 mathjax: true
+abbrlink: 17143
 date: 2020-10-26 18:54:26
-
-
 ---
 
 ## Problem

@@ -3,9 +3,8 @@ title: LeetCode解题报告（211）-- 563. Binary Tree Tilt
 tags:
   - LeetCode
 mathjax: true
+abbrlink: 41477
 date: 2020-11-08 22:33:21
-
-
 ---
 
 ## Problem

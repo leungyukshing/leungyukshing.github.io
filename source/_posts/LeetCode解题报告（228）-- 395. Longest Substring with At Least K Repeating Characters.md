@@ -1,11 +1,12 @@
 ---
-title: LeetCode解题报告（228）-- 395. Longest Substring with At Least K Repeating Characters
+title: >-
+  LeetCode解题报告（228）-- 395. Longest Substring with At Least K Repeating
+  Characters
 tags:
   - LeetCode
 mathjax: true
+abbrlink: 5941
 date: 2020-11-27 01:35:02
-
-
 ---
 
 ## Problem

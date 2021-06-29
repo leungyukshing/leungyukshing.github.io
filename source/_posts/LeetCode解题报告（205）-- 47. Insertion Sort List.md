@@ -3,8 +3,8 @@ title: LeetCode解题报告（205）-- 47. Insertion Sort List
 tags:
   - LeetCode
 mathjax: true
+abbrlink: 417
 date: 2020-11-03 00:32:12
-
 ---
 
 ## Problem

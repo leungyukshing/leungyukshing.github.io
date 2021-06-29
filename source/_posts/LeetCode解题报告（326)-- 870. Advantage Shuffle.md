@@ -3,8 +3,8 @@ title: LeetCode解题报告（326)-- 870. Advantage Shuffle
 tags:
   - LeetCode
 mathjax: true
+abbrlink: 59660
 date: 2021-03-31 01:56:49
-
 ---
 
 ## Problem

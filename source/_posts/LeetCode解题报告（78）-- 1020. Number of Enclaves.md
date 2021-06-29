@@ -2,8 +2,9 @@
 title: LeetCode解题报告（78）-- 1020. Number of Enclaves
 tags:
   - LeetCode
-date: 2019-12-08 23:29:10
 mathjax: true
+abbrlink: 8541
+date: 2019-12-08 23:29:10
 ---
 
 ## Problem

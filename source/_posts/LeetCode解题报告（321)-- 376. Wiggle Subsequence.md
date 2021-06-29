@@ -3,8 +3,8 @@ title: LeetCode解题报告（321)-- 376. Wiggle Subsequence
 tags:
   - LeetCode
 mathjax: true
+abbrlink: 22706
 date: 2021-03-22 23:06:30
-
 ---
 
 ## Problem

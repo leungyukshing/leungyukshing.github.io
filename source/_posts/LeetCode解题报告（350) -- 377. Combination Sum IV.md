@@ -3,8 +3,8 @@ title: LeetCode解题报告（350) -- 377. Combination Sum IV
 tags:
   - LeetCode
 mathjax: true
+abbrlink: 12595
 date: 2021-04-23 01:30:40
-
 ---
 
 ## Problem

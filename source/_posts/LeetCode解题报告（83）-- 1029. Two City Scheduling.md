@@ -2,9 +2,9 @@
 title: LeetCode解题报告（83）-- 1029. Two City Scheduling
 tags:
   - LeetCode
-date: 2020-06-08 12:08:11
 mathjax: true
-
+abbrlink: 63711
+date: 2020-06-08 12:08:11
 ---
 
 ## Problem

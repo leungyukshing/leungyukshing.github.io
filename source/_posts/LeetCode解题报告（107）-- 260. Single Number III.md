@@ -2,9 +2,9 @@
 title: LeetCode解题报告（107）-- 260. Single Number III
 tags:
   - LeetCode
-date: 2020-07-23 23:57:21
 mathjax: true
-
+abbrlink: 24867
+date: 2020-07-23 23:57:21
 ---
 
 ## Problem

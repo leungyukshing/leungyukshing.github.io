@@ -3,9 +3,8 @@ title: LeetCode解题报告（117）-- 436. Find Right Interval
 tags:
   - LeetCode
 mathjax: true
+abbrlink: 26246
 date: 2020-08-27 16:13:58
-
-
 ---
 
 ## Problem

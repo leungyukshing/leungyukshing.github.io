@@ -3,8 +3,8 @@ title: LeetCode解题报告（253）-- 754. Reach a Number
 tags:
   - LeetCode
 mathjax: true
+abbrlink: 30657
 date: 2020-12-28 20:15:24
-
 ---
 
 ## Problem

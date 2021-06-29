@@ -3,8 +3,8 @@ title: LeetCode解题报告（341) -- 953. Verifying an Alien Dictionary
 tags:
   - LeetCode
 mathjax: true
+abbrlink: 50948
 date: 2021-04-14 02:16:48
-
 ---
 
 ## Problem

@@ -3,9 +3,8 @@ title: LeetCode解题报告（212）-- 110. Balanced Binary Tree
 tags:
   - LeetCode
 mathjax: true
+abbrlink: 17111
 date: 2020-11-08 22:43:10
-
-
 ---
 
 ## Problem

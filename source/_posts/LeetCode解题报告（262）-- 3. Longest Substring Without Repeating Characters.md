@@ -3,8 +3,8 @@ title: LeetCode解题报告（262）-- 3. Longest Substring Without Repeating Ch
 tags:
   - LeetCode
 mathjax: true
+abbrlink: 10025
 date: 2021-01-09 01:18:37
-
 ---
 
 ## Problem

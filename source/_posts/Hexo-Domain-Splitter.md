@@ -1,5 +1,6 @@
 ---
 title: Hexo博客优化之域名分流
+abbrlink: 14822
 date: 2020-04-16 20:13:40
 tags:
 ---

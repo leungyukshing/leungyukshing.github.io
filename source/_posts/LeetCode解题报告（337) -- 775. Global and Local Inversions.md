@@ -3,8 +3,8 @@ title: LeetCode解题报告（337) -- 775. Global and Local Inversions
 tags:
   - LeetCode
 mathjax: true
+abbrlink: 7136
 date: 2021-04-11 01:50:12
-
 ---
 
 ## Problem

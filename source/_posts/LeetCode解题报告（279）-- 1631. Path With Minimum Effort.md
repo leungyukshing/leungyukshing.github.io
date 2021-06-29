@@ -3,8 +3,8 @@ title: LeetCode解题报告（279）-- 1631. Path With Minimum Effort
 tags:
   - LeetCode
 mathjax: true
+abbrlink: 26080
 date: 2021-02-06 13:33:11
-
 ---
 
 ## Problem

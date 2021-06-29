@@ -3,6 +3,7 @@ title: LeetCode解题报告（236）-- 605. Can Place Flowers
 tags:
   - LeetCode
 mathjax: true
+abbrlink: 63165
 date: 2020-12-06 01:01:30
 ---
 

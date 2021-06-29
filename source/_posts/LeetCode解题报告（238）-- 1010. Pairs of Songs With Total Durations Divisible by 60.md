@@ -3,9 +3,8 @@ title: LeetCode解题报告（238）-- 1010. Pairs of Songs With Total Durations
 tags:
   - LeetCode
 mathjax: true
+abbrlink: 52701
 date: 2020-12-08 20:12:29
-
-
 ---
 
 ## Problem

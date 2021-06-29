@@ -1,5 +1,6 @@
 ---
 title: MapReduce实验
+abbrlink: 22673
 date: 2020-05-04 14:28:40
 tags:
 ---

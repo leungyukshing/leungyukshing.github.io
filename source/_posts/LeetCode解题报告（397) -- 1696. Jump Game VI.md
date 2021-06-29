@@ -1,9 +1,8 @@
 ---
-title: LeetCode解题报告（397) -- 1696. Jump Game VI
-  - LeetCode
+title: LeetCode解题报告（397) -- 1696. Jump Game VI - LeetCode
 mathjax: true
+abbrlink: 45082
 date: 2021-06-14 16:55:45
-
 ---
 
 ## Problem

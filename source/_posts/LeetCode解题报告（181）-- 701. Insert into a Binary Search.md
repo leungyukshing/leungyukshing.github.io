@@ -3,9 +3,8 @@ title: LeetCode解题报告（181）-- 701. Insert into a Binary Search Tree
 tags:
   - LeetCode
 mathjax: true
+abbrlink: 15558
 date: 2020-10-06 20:41:03
-
-
 ---
 
 ## Problem

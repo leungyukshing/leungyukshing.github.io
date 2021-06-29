@@ -3,9 +3,8 @@ title: LeetCode解题报告（224）-- 804. Unique Morse Code Words
 tags:
   - LeetCode
 mathjax: true
+abbrlink: 35102
 date: 2020-11-22 20:39:30
-
-
 ---
 
 ## Problem

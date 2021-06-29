@@ -1,10 +1,12 @@
 ---
-title: LeetCode解题报告（396) -- 105. Construct Binary Tree from Preorder and Inorder Traversal
+title: >-
+  LeetCode解题报告（396) -- 105. Construct Binary Tree from Preorder and Inorder
+  Traversal
 tags:
   - LeetCode
 mathjax: true
+abbrlink: 51482
 date: 2021-06-14 16:22:11
-
 ---
 
 ## Problem

@@ -1,9 +1,9 @@
 ---
 title: 浅谈CDN
-tags:
 mathjax: true
+abbrlink: 21954
 date: 2021-02-10 03:02:28
-
+tags:
 ---
 
 ## Introduction

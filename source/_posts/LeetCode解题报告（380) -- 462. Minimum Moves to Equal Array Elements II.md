@@ -3,8 +3,8 @@ title: LeetCode解题报告（380) -- 462. Minimum Moves to Equal Array Elements
 tags:
   - LeetCode
 mathjax: true
+abbrlink: 63656
 date: 2021-05-31 23:47:24
-
 ---
 
 ## Problem

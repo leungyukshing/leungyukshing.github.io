@@ -3,9 +3,8 @@ title: LeetCode解题报告（176）-- 933. Number of Recent Calls
 tags:
   - LeetCode
 mathjax: true
+abbrlink: 23394
 date: 2020-10-01 17:14:49
-
-
 ---
 
 ## Problem

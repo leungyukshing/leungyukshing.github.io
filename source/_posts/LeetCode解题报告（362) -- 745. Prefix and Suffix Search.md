@@ -3,8 +3,8 @@ title: LeetCode解题报告（362) -- 745. Prefix and Suffix Search
 tags:
   - LeetCode
 mathjax: true
+abbrlink: 22842
 date: 2021-05-02 22:56:28
-
 ---
 
 ## Problem

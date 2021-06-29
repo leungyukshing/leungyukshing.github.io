@@ -3,8 +3,8 @@ title: LeetCode解题报告（296)-- 784. Letter Case Permutation
 tags:
   - LeetCode
 mathjax: true
+abbrlink: 46751
 date: 2021-02-17 11:16:24
-
 ---
 
 ## Problem

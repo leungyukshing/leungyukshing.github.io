@@ -3,8 +3,8 @@ title: LeetCode解题报告（204）-- 99. Recover Binary Search Tree
 tags:
   - LeetCode
 mathjax: true
+abbrlink: 5479
 date: 2020-11-01 11:43:28
-
 ---
 
 ## Problem

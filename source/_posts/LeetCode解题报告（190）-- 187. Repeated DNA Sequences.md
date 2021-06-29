@@ -3,9 +3,8 @@ title: LeetCode解题报告（190）-- 187. Repeated DNA Sequences
 tags:
   - LeetCode
 mathjax: true
+abbrlink: 52750
 date: 2020-10-18 21:24:40
-
-
 ---
 
 ## Problem

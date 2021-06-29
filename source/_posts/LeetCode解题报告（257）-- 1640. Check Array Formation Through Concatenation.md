@@ -3,9 +3,8 @@ title: LeetCode解题报告（257）-- 1640. Check Array Formation Through Conca
 tags:
   - LeetCode
 mathjax: true
+abbrlink: 40985
 date: 2021-01-04 02:34:52
-
-
 ---
 
 ## Problem

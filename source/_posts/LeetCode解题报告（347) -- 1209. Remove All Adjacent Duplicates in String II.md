@@ -3,8 +3,8 @@ title: LeetCode解题报告（347) -- 1209. Remove All Adjacent Duplicates in St
 tags:
   - LeetCode
 mathjax: true
+abbrlink: 52726
 date: 2021-04-21 01:13:25
-
 ---
 
 ## Problem

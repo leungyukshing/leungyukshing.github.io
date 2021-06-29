@@ -2,9 +2,8 @@
 title: LeetCode解题报告（64）-- 152. Maximum Product Subarray
 tags:
   - LeetCode
+abbrlink: 40760
 date: 2019-09-30 01:57:14
-
-
 ---
 
 ## Problem

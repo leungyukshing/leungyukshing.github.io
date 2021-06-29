@@ -3,8 +3,8 @@ title: LeetCode解题报告（119）-- 952. Largest Component Size by Common Fac
 tags:
   - LeetCode
 mathjax: true
+abbrlink: 49800
 date: 2020-08-31 11:39:19
-
 ---
 
 ## Problem

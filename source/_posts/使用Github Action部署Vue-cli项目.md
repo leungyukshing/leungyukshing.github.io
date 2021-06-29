@@ -1,5 +1,6 @@
 ---
 title: 使用Github Action部署Vue-cli项目到Github Pages
+abbrlink: 25800
 date: 2020-01-03 14:52:23
 tags:
 ---

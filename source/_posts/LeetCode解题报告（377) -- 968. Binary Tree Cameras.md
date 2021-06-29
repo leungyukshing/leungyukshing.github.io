@@ -3,9 +3,8 @@ title: LeetCode解题报告（377) -- 968. Binary Tree Cameras
 tags:
   - LeetCode
 mathjax: true
+abbrlink: 56103
 date: 2021-05-29 12:27:58
-
-
 ---
 
 ## Problem

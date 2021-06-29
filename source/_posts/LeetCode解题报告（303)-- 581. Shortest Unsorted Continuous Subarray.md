@@ -3,8 +3,8 @@ title: LeetCode解题报告（303)-- 581. Shortest Unsorted Continuous Subarray
 tags:
   - LeetCode
 mathjax: true
+abbrlink: 14161
 date: 2021-03-02 00:33:10
-
 ---
 
 ## Problem

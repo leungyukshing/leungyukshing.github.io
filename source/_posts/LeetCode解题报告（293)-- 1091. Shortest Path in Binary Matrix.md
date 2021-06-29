@@ -3,8 +3,8 @@ title: LeetCode解题报告（293)-- 1091. Shortest Path in Binary Matrix
 tags:
   - LeetCode
 mathjax: true
+abbrlink: 842
 date: 2021-02-15 01:18:39
-
 ---
 
 ## Problem

@@ -3,8 +3,8 @@ title: LeetCode解题报告（208）-- 1217. Minimum Cost to Move Chips to The S
 tags:
   - LeetCode
 mathjax: true
+abbrlink: 55283
 date: 2020-11-06 00:20:48
-
 ---
 
 ## Problem

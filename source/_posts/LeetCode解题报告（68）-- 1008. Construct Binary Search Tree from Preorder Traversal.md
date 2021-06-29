@@ -2,8 +2,8 @@
 title: LeetCode解题报告（68）-- 1008. Construct Binary Search Tree from Preorder Traversal
 tags:
   - LeetCode
+abbrlink: 10482
 date: 2019-10-01 10:20:31
-
 ---
 
 ## Problem

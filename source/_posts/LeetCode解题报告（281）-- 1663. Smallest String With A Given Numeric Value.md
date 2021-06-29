@@ -3,9 +3,8 @@ title: LeetCode解题报告（281）-- 1663. Smallest String With A Given Numeri
 tags:
   - LeetCode
 mathjax: true
+abbrlink: 6455
 date: 2021-02-08 17:04:47
-
-
 ---
 
 ## Problem

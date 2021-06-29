@@ -3,8 +3,8 @@ title: LeetCode解题报告（180）-- 1009. Complement of Base 10 Integer
 tags:
   - LeetCode
 mathjax: true
+abbrlink: 49851
 date: 2020-10-05 15:12:11
-
 ---
 
 ## Problem

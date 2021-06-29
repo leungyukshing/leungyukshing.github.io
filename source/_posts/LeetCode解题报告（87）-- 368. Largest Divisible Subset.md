@@ -2,10 +2,9 @@
 title: LeetCode解题报告（87）-- 368. Largest Divisible Subset
 tags:
   - LeetCode
-date: 2020-06-14 13:18:22
 mathjax: true
-
-
+abbrlink: 17325
+date: 2020-06-14 13:18:22
 ---
 
 ## Problem

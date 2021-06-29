@@ -3,8 +3,8 @@ title: LeetCode解题报告（263）-- 127. Word Ladder
 tags:
   - LeetCode
 mathjax: true
+abbrlink: 39333
 date: 2021-01-12 01:11:20
-
 ---
 
 ## Problem

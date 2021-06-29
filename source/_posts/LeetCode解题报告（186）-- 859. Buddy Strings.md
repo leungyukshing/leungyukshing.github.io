@@ -3,8 +3,8 @@ title: LeetCode解题报告（186）-- 859. Buddy Strings
 tags:
   - LeetCode
 mathjax: true
+abbrlink: 53826
 date: 2020-10-12 19:34:40
-
 ---
 
 ## Problem

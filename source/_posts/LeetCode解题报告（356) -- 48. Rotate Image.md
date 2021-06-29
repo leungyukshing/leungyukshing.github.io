@@ -3,8 +3,8 @@ title: LeetCode解题报告（356) -- 48. Rotate Image
 tags:
   - LeetCode
 mathjax: true
+abbrlink: 19879
 date: 2021-05-01 14:31:53
-
 ---
 
 ## Problem

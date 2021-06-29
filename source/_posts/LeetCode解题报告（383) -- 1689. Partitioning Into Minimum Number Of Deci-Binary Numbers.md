@@ -1,10 +1,12 @@
 ---
-title: LeetCode解题报告（383) -- 1689. Partitioning Into Minimum Number Of Deci-Binary Numbers
+title: >-
+  LeetCode解题报告（383) -- 1689. Partitioning Into Minimum Number Of Deci-Binary
+  Numbers
 tags:
   - LeetCode
 mathjax: true
+abbrlink: 53211
 date: 2021-06-06 12:16:28
-
 ---
 
 ## Problem

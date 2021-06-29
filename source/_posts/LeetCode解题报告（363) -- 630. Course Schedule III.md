@@ -3,8 +3,8 @@ title: LeetCode解题报告（363) -- 630. Course Schedule III
 tags:
   - LeetCode
 mathjax: true
+abbrlink: 45821
 date: 2021-05-03 00:31:40
-
 ---
 
 ## Problem

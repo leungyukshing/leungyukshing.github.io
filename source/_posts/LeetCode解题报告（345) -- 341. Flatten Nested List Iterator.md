@@ -3,8 +3,8 @@ title: LeetCode解题报告（345) -- 341. Flatten Nested List Iterator
 tags:
   - LeetCode
 mathjax: true
+abbrlink: 53343
 date: 2021-04-18 22:24:02
-
 ---
 
 ## Problem

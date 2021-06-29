@@ -3,9 +3,8 @@ title: LeetCode解题报告（178）-- 532. K-diff Pairs in an Array
 tags:
   - LeetCode
 mathjax: true
+abbrlink: 61208
 date: 2020-10-04 01:00:24
-
-
 ---
 
 ## Problem

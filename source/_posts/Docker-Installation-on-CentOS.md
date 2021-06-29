@@ -1,5 +1,6 @@
 ---
 title: CentOS下安装Docker
+abbrlink: 35862
 date: 2020-02-05 14:33:12
 ---
 

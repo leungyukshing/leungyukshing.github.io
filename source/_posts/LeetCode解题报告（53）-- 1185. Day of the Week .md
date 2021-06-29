@@ -2,8 +2,8 @@
 title: LeetCode解题报告（53）-- 1185. Day of the Week
 tags:
   - LeetCode
+abbrlink: 65290
 date: 2019-09-18 11:36:39
-
 ---
 
 ## Problem

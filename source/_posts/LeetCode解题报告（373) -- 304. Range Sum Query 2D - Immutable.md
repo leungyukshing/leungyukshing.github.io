@@ -3,8 +3,8 @@ title: LeetCode解题报告（373) -- 304. Range Sum Query 2D - Immutable
 tags:
   - LeetCode
 mathjax: true
+abbrlink: 861
 date: 2021-05-13 00:22:03
-
 ---
 
 ## Problem
