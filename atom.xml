@@ -6,7 +6,7 @@
   <link href="https://leungyukshing.github.io/atom.xml" rel="self"/>
   
   <link href="https://leungyukshing.github.io/"/>
-  <updated>2021-06-22T18:37:11.138Z</updated>
+  <updated>2021-07-14T16:08:13.071Z</updated>
   <id>https://leungyukshing.github.io/</id>
   
   <author>
@@ -15,6 +15,21 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>HTTP和RPC</title>
+    <link href="https://leungyukshing.github.io/archives/Http-And-Rpc.html"/>
+    <id>https://leungyukshing.github.io/archives/Http-And-Rpc.html</id>
+    <published>2021-07-14T14:38:08.000Z</published>
+    <updated>2021-07-14T16:08:13.071Z</updated>
+    
+    
+    <summary type="html">&lt;h1 id=&quot;Introduction&quot;&gt;&lt;a href=&quot;#Introduction&quot; class=&quot;headerlink&quot; title=&quot;Introduction&quot;&gt;&lt;/a&gt;Introduction&lt;/h1&gt;&lt;p&gt;&amp;emsp;&amp;emsp;现在的软件工程领域中，经常会听到HTTP（Hyper Text Transport Protocol）和RPC（Remote Procedure Call）这两个术语，好像都是和接口、网络请求有关，但是它们究竟是什么，是不是对等的两样东西，它们之间的关系和优缺点是什么，很多朋友都没有弄清楚。所以在这篇博客，我将简单梳理一下HTTP和RPC相关的知识。&lt;/p&gt;</summary>
+    
+    
+    
+    
+  </entry>
   
   <entry>
     <title>LeetCode解题报告（398) -- 1690. Stone Game VII - LeetCode</title>
@@ -379,25 +394,6 @@
     
     
     
-    
-  </entry>
-  
-  <entry>
-    <title>LeetCode解题报告（380) -- 462. Minimum Moves to Equal Array Elements II</title>
-    <link href="https://leungyukshing.github.io/archives/LeetCode%E8%A7%A3%E9%A2%98%E6%8A%A5%E5%91%8A%EF%BC%88380)%20--%20462.%20Minimum%20Moves%20to%20Equal%20Array%20Elements%20II.html"/>
-    <id>https://leungyukshing.github.io/archives/LeetCode%E8%A7%A3%E9%A2%98%E6%8A%A5%E5%91%8A%EF%BC%88380)%20--%20462.%20Minimum%20Moves%20to%20Equal%20Array%20Elements%20II.html</id>
-    <published>2021-05-31T15:47:24.000Z</published>
-    <updated>2021-06-22T18:37:11.037Z</updated>
-    
-    
-    <summary type="html">&lt;h2 id=&quot;Problem&quot;&gt;&lt;a href=&quot;#Problem&quot; class=&quot;headerlink&quot; title=&quot;Problem&quot;&gt;&lt;/a&gt;Problem&lt;/h2&gt;&lt;p&gt;Given an integer array &lt;code&gt;nums&lt;/code&gt; of size &lt;code&gt;n&lt;/code&gt;, return &lt;em&gt;the minimum number of moves required to make all array elements equal&lt;/em&gt;.&lt;/p&gt;
-&lt;p&gt;In one move, you can increment or decrement an element of the array by &lt;code&gt;1&lt;/code&gt;.&lt;/p&gt;
-&lt;p&gt;Test cases are designed so that the answer will fit in a &lt;strong&gt;32-bit&lt;/strong&gt; integer.&lt;/p&gt;</summary>
-    
-    
-    
-    
-    <category term="LeetCode" scheme="https://leungyukshing.github.io/tags/LeetCode/"/>
     
   </entry>
   
