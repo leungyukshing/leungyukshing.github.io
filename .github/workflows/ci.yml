@@ -1,0 +1,20 @@
+name: CI
+
+# trigger when push event happens on hexo branch
+on:
+  push:
+    branches:
+      - hexo
+
+jobs: # workflow
+  build:
+    runs-on: ubuntu-latest # run in virtual machine environment
+
+    strategy:
+      matrix:
+        node-version: [10.x]
+
+
+    steps:
+      - name: Checkout # step 1
+        uses: actions/
