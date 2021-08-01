@@ -1,6 +1,7 @@
 ---
 title: 浅淡DNS
 mathjax: true
+abbrlink: 36617
 date: 2021-07-24 17:46:11
 tags:
 ---
