@@ -1,6 +1,7 @@
 ---
 title: 浅谈云原生
 mathjax: true
+abbrlink: 32172
 date: 2021-08-07 14:39:05
 tags:
 ---
