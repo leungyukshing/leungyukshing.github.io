@@ -1,9 +1,9 @@
 ---
 title: 浅谈堡垒机
 mathjax: true
+abbrlink: 10564
 date: 2021-08-01 20:20:18
 tags:
-
 ---
 
 # Introduction
