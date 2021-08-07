@@ -1,6 +1,7 @@
 ---
 title: 浅谈API网关
 mathjax: true
+abbrlink: 21270
 date: 2021-08-06 00:27:43
 tags:
 ---
