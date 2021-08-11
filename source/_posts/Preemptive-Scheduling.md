@@ -1,9 +1,9 @@
 ---
 title: 抢占式优先队列之C++实现
 mathjax: true
+abbrlink: 58904
 date: 2021-08-07 21:48:37
 tags:
-
 ---
 
 # Introduction
