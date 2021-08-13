@@ -1,9 +1,9 @@
 ---
 title: 浅谈k8s
 mathjax: true
+abbrlink: 19619
 date: 2021-08-08 14:56:55
 tags:
-
 ---
 
 # Introduction
