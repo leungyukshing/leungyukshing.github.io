@@ -1,5 +1,6 @@
 ---
 title: 浅谈Access Contrl
+abbrlink: 5410
 date: 2021-08-24 12:28:35
 tags:
 ---
