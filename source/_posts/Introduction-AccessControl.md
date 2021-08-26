@@ -7,7 +7,7 @@ tags:
 
 # Introduction
 
-&emsp;&emsp;之前在讨论gateway的时候就提到过[https://web.archive.org/web/20160303234840/http://csrc.nist.gov/groups/SNS/rbac/documents/ferraiolo-kuhn-92.pdf](RBAC)，这个到底是一个什么东西呢？实际上RBAC是一种与访问权限控制相关的概念模型，在这篇博客我们将来讨论Access Control相关的细节，以及重点分析下几个比较出名的模型。
+&emsp;&emsp;之前在讨论gateway的时候就提到过[RBAC](https://web.archive.org/web/20160303234840/http://csrc.nist.gov/groups/SNS/rbac/documents/ferraiolo-kuhn-92.pdf)，这个到底是一个什么东西呢？实际上RBAC是一种与访问权限控制相关的概念模型，在这篇博客我们将来讨论Access Control相关的细节，以及重点分析下几个比较出名的模型。
 
 <!-- more -->
 
