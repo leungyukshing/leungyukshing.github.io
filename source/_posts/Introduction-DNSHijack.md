@@ -1,6 +1,7 @@
 ---
 title: 浅谈DNS劫持
 mathjax: true
+abbrlink: 14749
 date: 2021-08-26 20:01:17
 tags:
 ---
