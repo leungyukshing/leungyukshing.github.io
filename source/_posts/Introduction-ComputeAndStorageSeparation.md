@@ -1,6 +1,7 @@
 ---
 title: 什么是存储与计算分离
 mathjax: true
+abbrlink: 49793
 date: 2021-08-27 17:12:48
 tags:
 ---
