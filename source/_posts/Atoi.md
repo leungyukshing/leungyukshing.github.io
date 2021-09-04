@@ -1,6 +1,7 @@
 ---
 title: C++实现Atoi
 mathjax: true
+abbrlink: 32840
 date: 2021-09-02 22:46:11
 tags:
 ---
