@@ -1,6 +1,7 @@
 ---
 title: LeetCode解题报告（401) -- 815. Bus Routes
 mathjax: true
+abbrlink: 33250
 date: 2021-09-04 14:50:11
 ---
 
