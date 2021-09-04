@@ -1,6 +1,7 @@
 ---
 title: LeetCode解题报告（399) -- 4. Median of Two Sorted Arrays
 mathjax: true
+abbrlink: 48744
 date: 2021-09-03 22:44:05
 ---
 
