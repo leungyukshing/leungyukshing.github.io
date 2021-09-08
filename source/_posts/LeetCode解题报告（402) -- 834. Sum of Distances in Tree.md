@@ -1,6 +1,7 @@
 ---
 title: LeetCode解题报告（402) -- 834. Sum of Distances in Tree
 mathjax: true
+abbrlink: 40702
 date: 2021-09-04 16:42:36
 ---
 
