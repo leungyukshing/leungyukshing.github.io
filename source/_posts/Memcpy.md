@@ -1,6 +1,7 @@
 ---
 title: C++之memcpy你真的懂了吗
 mathjax: true
+abbrlink: 52801
 date: 2021-09-07 13:55:06
 tags:
 ---
