@@ -1,6 +1,7 @@
 ---
 title: LeetCode解题报告（404) -- 848. Shifting Letters
 mathjax: true
+abbrlink: 50134
 date: 2021-09-08 14:21:05
 ---
 
