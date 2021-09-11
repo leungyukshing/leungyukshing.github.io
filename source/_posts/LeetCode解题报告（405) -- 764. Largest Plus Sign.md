@@ -1,6 +1,7 @@
 ---
 title: LeetCode解题报告（405) -- 764. Largest Plus Sign
 mathjax: true
+abbrlink: 14588
 date: 2021-09-10 15:16:17
 ---
 
