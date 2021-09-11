@@ -1,6 +1,7 @@
 ---
 title: LeetCode解题报告（406) -- 446. Arithmetic Slices II - Subsequence
 mathjax: true
+abbrlink: 32626
 date: 2021-09-10 17:01:45
 ---
 
