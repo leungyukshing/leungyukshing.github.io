@@ -1,6 +1,7 @@
 ---
 title: LeetCode解题报告（407) -- 224. Basic Calculator
 mathjax: true
+abbrlink: 58236
 date: 2021-09-11 18:07:37
 ---
 
