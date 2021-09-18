@@ -1,6 +1,7 @@
 ---
 title: LeetCode解题报告（408) -- 774. Minimize Max Distance to Gas Station
 mathjax: true
+abbrlink: 5901
 date: 2021-09-17 17:58:24
 ---
 
