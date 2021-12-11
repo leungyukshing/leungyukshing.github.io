@@ -6,6 +6,10 @@ on:
     branches:
       - hexo
 
+env:
+  GIT_USER: leungyukshing
+  GIT_EMAIL: jacky14.liang@gmail.com
+
 jobs: # workflow
   build-and-deploy:
     runs-on: ubuntu-latest # run in virtual machine environment
@@ -32,6 +36,8 @@ jobs: # workflow
           echo "$GITHUB_TOKEN" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
           ssh-keyscan github.com >> ~/.ssh/known_hosts
+          git config --global user.name $GIT_USER
+          git config --global user.email $GIT_EMAIL
 
       - name: Deploy # step 3 (deploy github and coding)
         run: npx hexo deploy -g
