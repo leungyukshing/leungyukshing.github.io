@@ -74,7 +74,7 @@ deploy:
   repo:
     # github: https://git@github.com/leungyukshing/leungyukshing.github.io.git
     github: git@github.com:leungyukshing/leungyukshing.github.io.git
-    coding: git@coding.net/leungyukshing/leungyukshing.git
+    coding: git@e.coding.net:leungyukshing/leungyukshing.git
   branch: master
 
 sitemap:
