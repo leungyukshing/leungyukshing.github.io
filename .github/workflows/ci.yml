@@ -31,7 +31,7 @@ jobs: # workflow
           GITHUB_TOKEN: ${{ secrets.ACCESS_TOKEN }} # token
           CODING_TOKEN: ${{ secrets.CODING_TOKEN }} # token
         run: |
-          sudo timedatectl set-timezone "Asia/Shanghai"
+          sudo timedatectl set-timezone "America/New_York"
           mkdir -p ~/.ssh
           echo "$GITHUB_TOKEN" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
