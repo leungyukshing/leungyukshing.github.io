@@ -34,4 +34,4 @@ jobs: # workflow
           ssh-keyscan github.com >> ~/.ssh/known_hosts
 
       - name: Deploy # step 3 (deploy github and coding)
-        run: hexo deploy -g
+        run: npx hexo deploy -g
