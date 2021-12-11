@@ -29,7 +29,6 @@ jobs: # workflow
       - name: Set up environment
         env: # set env
           GITHUB_TOKEN: ${{ secrets.ACCESS_TOKEN }} # token
-          CODING_TOKEN: ${{ secrets.CODING_TOKEN }} # token
         run: |
           sudo timedatectl set-timezone "America/New_York"
           mkdir -p ~/.ssh
