@@ -1,4 +1,4 @@
-name: CI
+name: Hexo CI/CD
 
 # trigger when push event happens on hexo branch
 on:
@@ -7,22 +7,31 @@ on:
       - hexo
 
 jobs: # workflow
-  build:
+  build-and-deploy:
     runs-on: ubuntu-latest # run in virtual machine environment
-
-    strategy:
-      matrix:
-        node-version: [10.x]
-
 
     steps:
       - name: Checkout # step 1
-        uses: actions/checkout@v1 # format: username/repoName
-      - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/set-node@v1 # install nodejs
+        uses: actions/checkout@v2 # format: username/repoName
+
+      - name: Use Node.js@14.x
+        uses: actions/setup-node@v1 # install nodejs
         with:
-          node-version: ${{ metrix.node-version }}
-      - name: run deploy.sh # step 3 (deploy github and coding)
+          node-version: 14.x
+
+      - name: Install depndencies
+        run: npm install
+
+      - name: Set up environment
         env: # set env
           GITHUB_TOKEN: ${{ secrets.ACCESS_TOKEN }} # token
-          CODING_TOKEN: ${{ secrets.CODING_TOKEN }} #
+          CODING_TOKEN: ${{ secrets.CODING_TOKEN }} # token
+        run: |
+          sudo timedatectl set-timezone "Asia/Shanghai"
+          mkdir -p ~/.ssh
+          echo "$GITHUB_TOKEN" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan github.com >> ~/.ssh/known_hosts
+
+      - name: Deploy # step 3 (deploy github and coding)
+        run: hexo deploy -g
