@@ -1,5 +1,5 @@
 ---
-title: LeetCode解题报告（411) -- 301. Remove Invalid Parentheses.md
+title: LeetCode解题报告（411) -- 301. Remove Invalid Parentheses
 mathjax: true
 date: 2021-12-11 16:54:06
 ---
