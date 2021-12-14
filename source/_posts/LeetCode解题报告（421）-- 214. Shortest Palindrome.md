@@ -1,7 +1,7 @@
 ---
 title: LeetCode解题报告（421）-- 214. Shortest Palindrome
 mathjax: true
-date: 2021-12-13 22:30:57
+date: 2021-12-12 22:30:57
 ---
 
 ## Problem
