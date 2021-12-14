@@ -1,5 +1,5 @@
 ---
-title: LeetCode解题报告（425）-- 723. Candy Crush
+title: LeetCode解题报告（426）-- 723. Candy Crush
 mathjax: true
 date: 2021-12-14 15:47:21
 ---
