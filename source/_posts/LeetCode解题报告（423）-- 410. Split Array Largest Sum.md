@@ -1,7 +1,7 @@
 ---
 title: LeetCode解题报告（423）-- 410. Split Array Largest Sum
 mathjax: true
-date: 2021-12-12 16:32:41
+date: 2021-12-13 16:32:41
 ---
 
 ## Problem

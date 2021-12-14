@@ -1,7 +1,7 @@
 ---
 title: LeetCode解题报告（424）-- 1987. Number of Unique Good Subsequences
 mathjax: true
-date: 2021-12-12 22:39:03
+date: 2021-12-13 22:39:03
 ---
 
 ## Problem
