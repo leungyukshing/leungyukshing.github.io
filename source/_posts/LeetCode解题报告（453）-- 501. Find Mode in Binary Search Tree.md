@@ -1,7 +1,7 @@
 ---
 title: LeetCode解题报告（453）-- 501. Find Mode in Binary Search Tree
 mathjax: true
-date: 2021-12-25 22:16:19
+date: 2021-12-25 23:16:19
 ---
 
 ## Problem
