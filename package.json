@@ -30,6 +30,7 @@
     "hexo-server": "^2.0.0",
     "highlight.js": "^10.4.1",
     "lodash": "^4.17.21",
+    "marked": "^2.0.0",
     "node": "^10.20.1",
     "npm": "^6.14.4",
     "nth-check": "^2.0.1",
