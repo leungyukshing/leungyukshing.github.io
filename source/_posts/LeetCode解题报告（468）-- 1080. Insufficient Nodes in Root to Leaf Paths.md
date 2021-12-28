@@ -1,7 +1,7 @@
 ---
 title: LeetCode解题报告（468）-- 1080. Insufficient Nodes in Root to Leaf Paths
 mathjax: true
-date: 2021-12-27 13:48:19
+date: 2021-12-28 13:48:19
 ---
 
 ## Problem
