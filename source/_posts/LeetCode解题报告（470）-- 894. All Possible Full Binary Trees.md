@@ -53,32 +53,42 @@ Output: [[0,0,0]]
 ## Code
 
 ```c++
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode() : val(0), left(nullptr), right(nullptr) {}
+ *     TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
+ *     TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {}
+ * };
+ */
 class Solution {
 public:
-    int minSwaps(vector<int>& data) {
-        int totalOnes = 0;
-        for (int &num: data) {
-            totalOnes += num;
-        }
-        
-        int left = 0, right = 0, size = data.size();
-        int ones = 0, maxOnes = 0;
-        while (right < size) {
-            if (data[right++]) {
-                ones++;
-            }
-            
-            while (right - left > totalOnes) {
-                if (data[left++]) {
-                    ones--;
+    vector<TreeNode*> allPossibleFBT(int n) {
+        vector<TreeNode*> result;
+        // base case
+        if (n == 1) {
+            result.push_back(new TreeNode(0));
+        } else if (n % 2 == 1) {
+            // only odd number can construct a FBT
+            for (int i = 0; i < n; i++) {
+                int j = n - 1 - i;
+                for (auto a: allPossibleFBT(i)) {
+                    for (auto b: allPossibleFBT(j)) {
+                        TreeNode* node = new TreeNode(0);
+                        node->left = a;
+                        node->right = b;
+                        result.push_back(node);
+                    }
                 }
             }
-            
-            maxOnes = max(maxOnes, ones);
         }
-        
-        return totalOnes - maxOnes;
+        return memo[n] = result;
     }
+private:
+    unordered_map<int, vector<TreeNode*>> memo;
 };
 ```
 
