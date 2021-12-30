@@ -72,8 +72,36 @@ Explanation: No even integers can be formed using the given digits.
 ```c++
 class Solution {
 public:
-    bool checkOnesSegment(string s) {
-        return s.find("01") == string::npos;
+    vector<int> findEvenNumbers(vector<int>& digits) {
+        vector<int> count(10, 0);
+        for (int &digit: digits) {
+            ++count[digit];
+        }
+        
+        vector<int> result;
+        
+        for (int i = 100; i < 999; i += 2) {
+            int temp = i;
+            vector<int> freq(10, 0);
+            
+            while (temp) {
+                ++freq[temp % 10];
+                temp /= 10;
+            }
+            
+            bool flag = true;
+            for (int j = 0; j < 10; ++j) {
+                if (freq[j] > count[j]) {
+                    flag = false;
+                    break;
+                }
+            }
+            
+            if (flag) {
+                result.push_back(i);
+            }
+        }
+        return result;
     }
 };
 ```
