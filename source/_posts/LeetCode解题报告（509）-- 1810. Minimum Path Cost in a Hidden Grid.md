@@ -120,93 +120,83 @@ Explanation: There is no path from the robot to the target cell.
  * class GridMaster {
  *   public:
  *     bool canMove(char direction);
- *     void move(char direction);
+ *     int move(char direction);
  *     boolean isTarget();
  * };
  */
-
+struct cmp {
+    bool operator()(const vector<int> &a, const vector<int> &b) {
+        return a[2] > b[2];
+    }
+};
 class Solution {
 public:
     int findShortestPath(GridMaster &master) {
-        graph = vector<vector<int>>(1001, vector<int>(1001, 3));
-        // targetI = INT_MAX, targetJ = INT_MAX;
-        dfs(master, 501, 501);
-        /*
+        targetI = INT_MAX, targetJ = INT_MAX;
+        dfs(master, 0, 0, 0);
         if (targetI == INT_MAX || targetJ == INT_MAX) {
             return -1;
         }
-        */
-        // cout << "finish dfs" << endl;
-        
+        visited.clear();
         // bfs
-        // visited.clear();
         int dx[] = {-1, 0, 1, 0};
         int dy[] = {0, -1, 0, 1};
-        queue<pair<int, int>> q;
-        q.push({501, 501});
-        
-        int steps = 0;
-        while (!q.empty()) {
-            //cout << steps << endl;
-            int size = q.size();
-            for (int i = 0; i < size; ++i) {
-                auto cur = q.front();
-                q.pop();
-                
-                int x = cur.first, y = cur.second;
-                for (int k = 0; k < 4; ++k) {
-                    int newI = x + dx[k];
-                    int newJ = y + dy[k];
-                    if (newI < 0 || newI >= 1001 || newJ < 0 || newJ >= 1001) {
-                        continue;
-                    }
-                    if (graph[newI][newJ] == 1) {
-                        q.push({newI, newJ});
-                        graph[newI][newJ] = 3;
-                    } else if (graph[newI][newJ] == 2) {
-                        // cout << "search target" << endl;
-                        return steps + 1;
-                    }
+        priority_queue<vector<int>, vector<vector<int>>, cmp> pq;
+        pq.push({0, 0, 0});
+        while (!pq.empty()) {
+            auto cur = pq.top();
+            pq.pop();
+            int i = cur[0], j = cur[1], cost = cur[2];
+            if (i == targetI && j == targetJ) {
+                return cost;
+            }
+            
+            for (int k = 0; k < 4; ++k) {
+                int newI = i + dx[k];
+                int newJ = j + dy[k];
+                int key = newI * 101 + newJ;
+                if (graph[newI][newJ] > 0 && !visited.count(key)) {
+                    pq.push({newI, newJ, graph[newI][newJ] + cost});
+                    visited.insert(key);
                 }
             }
-            ++steps;
         }
         return -1;
     }
 private:
-    vector<vector<int>> graph;
-    // int targetI, targetJ;
-    void dfs(GridMaster &master, int i, int j) {
-        if (graph[i][j] != 3) {
-            return;
-        }
-        
-        graph[i][j] = 1;
+    unordered_map<int, unordered_map<int, int>> graph;
+    int targetI, targetJ;
+    unordered_set<int> visited;
+    void dfs(GridMaster &master, int i, int j, int cost) {
+        graph[i][j] = cost;
         if (master.isTarget()) {
-            //targetI = i;
-            //targetJ = j;
-            graph[i][j] = 2;
+            targetI = i;
+            targetJ = j;
             return;
         }
         
-        if (master.canMove('L') && graph[i][j - 1] == 3) {
-            master.move('L');
-            dfs(master, i, j - 1);
+        int key = i * 101 + j;
+        visited.insert(key);
+        
+        int left = i * 101 + j - 1, right = i * 101 + j + 1, up = (i - 1) * 101 + j, down = (i + 1) * 101 + j;
+        if (master.canMove('L') && !visited.count(left)) {
+            int temp = master.move('L');
+            dfs(master, i, j - 1, temp);
             master.move('R');
         }
-        if (master.canMove('R') && graph[i][j + 1] == 3) {
-            master.move('R');
-            dfs(master, i, j + 1);
+        if (master.canMove('R') && !visited.count(right)) {
+            int temp = master.move('R');
+            dfs(master, i, j + 1, temp);
             master.move('L');
         }
-        if (master.canMove('U') && graph[i - 1][j] == 3) {
-            master.move('U');
-            dfs(master, i - 1, j);
+        if (master.canMove('U') && !visited.count(up)) {
+            int temp = master.move('U');
+            dfs(master, i - 1, j, temp);
             master.move('D');
         }
-        if (master.canMove('D') && graph[i + 1][j] == 3) {
-            master.move('D');
-            dfs(master, i + 1, j);
+        if (master.canMove('D') && !visited.count(down)) {
+            int temp = master.move('D');
+            dfs(master, i + 1, j, temp);
             master.move('U');
         }
     }
