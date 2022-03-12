@@ -5,11 +5,12 @@ tags:
 mathjax: true
 abbrlink: 29298
 date: 2020-10-19 23:55:18
+
 ---
 
 ## Problem
 
-In a row of dominoes, `A[i]` and B[i] represent the top and bottom halves of the `ith` domino.  (A domino is a tile with two numbers from 1 to 6 - one on each half of the tile.)
+In a row of dominoes, `A[i]` and `B[i]` represent the top and bottom halves of the `ith` domino.  (A domino is a tile with two numbers from 1 to 6 - one on each half of the tile.)
 
 We may rotate the `i-th` domino, so that `A[i]` and `B[i]` swap values.
 
