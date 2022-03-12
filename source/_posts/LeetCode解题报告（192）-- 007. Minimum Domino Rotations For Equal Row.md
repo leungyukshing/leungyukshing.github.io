@@ -1,5 +1,5 @@
 ---
-title: LeetCode解题报告（192）-- 007. Minimum Domino Rotations For Equal Row (Test)
+title: LeetCode解题报告（192）-- 007. Minimum Domino Rotations For Equal Row
 tags:
   - LeetCode
 mathjax: true
@@ -9,6 +9,10 @@ date: 2020-10-19 23:55:18
 ---
 
 ## Problem
+
+In a row of dominoes, `A[i]` and `B[i]` represent the top and bottom halves of the `ith` domino.  (A domino is a tile with two numbers from 1 to 6 - one on each half of the tile.)
+
+We may rotate the `i-th` domino, so that `A[i]` and `B[i]` swap values.
 
 Return the minimum number of rotations so that all the values in `A` are the same, or all the values in `B` are the same.
 
@@ -58,7 +62,7 @@ In this case, it is not possible to rotate the dominoes to make one row of value
 
 ## Solution
 
-&emsp;&emsp;分别用`A`和`B`的第一个元素作为`target`，各自判断一遍是否满足题目要求，如果有满足的就选交换少；如果都不满足的话就是无解，返回-1。
+&emsp;&emsp;分别用`A`和`B`的第一个元素作为`target`，各自判断一遍是否满足题目要求，如果有满足的就选交换少；如果都不满足的话就是无解，返回-1。
 
 ------
 
