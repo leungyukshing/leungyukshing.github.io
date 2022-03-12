@@ -1,5 +1,5 @@
 ---
-title: LeetCode解题报告（192）-- 007. Minimum Domino Rotations For Equal Row
+title: LeetCode解题报告（192）-- 007. Minimum Domino Rotations For Equal Row (Test)
 tags:
   - LeetCode
 mathjax: true
@@ -9,8 +9,6 @@ date: 2020-10-19 23:55:18
 ---
 
 ## Problem
-
-We may rotate the `i-th` domino, so that `A[i]` and `B[i]` swap values.
 
 Return the minimum number of rotations so that all the values in `A` are the same, or all the values in `B` are the same.
 
