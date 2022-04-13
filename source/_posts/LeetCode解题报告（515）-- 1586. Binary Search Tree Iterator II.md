@@ -1,5 +1,5 @@
 ---
-title: LeetCode解题报告（514）-- 173. Binary Search Tree Iterator
+title: LeetCode解题报告（515）-- 1586. Binary Search Tree Iterator II
 mathjax: true
 date: 2022-01-13 23:15:34
 ---
