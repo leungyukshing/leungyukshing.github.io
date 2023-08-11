@@ -1,0 +1,801 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <meta name="google-site-verification" content="FHjCzDi7nry9Mvf4EFOY5cYoco-ZXq9tKjvXZK0nKr4">
+  <meta name="baidu-site-verification" content="code-gpMFPewYUF" />
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="/lib/pace/pace-theme-minimal.min.css">
+  <script src="/lib/pace/pace.min.js"></script>
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"leungyukshing.github.io","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"right","display":"hide","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"appID":"52USYSYESX","apiKey":"20b904c66f55b874f05edea4aca57780","indexName":"blog","hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="前言&amp;emsp;&amp;emsp;支持向量机，Support Vector Machine（SVM）是机器学习中处理分类问题一个很重要的方法。SVM最有价值的地方在于它给我们提供了一个解决问题的思路，本篇博客我们就一起来看SVM到底是怎么去解决一个分类问题的。（内容会很长，希望大家能够耐心看完）。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="支持向量机--SVM">
+<meta property="og:url" content="https://leungyukshing.github.io/archives/SVM.html">
+<meta property="og:site_name" content="Halo">
+<meta property="og:description" content="前言&amp;emsp;&amp;emsp;支持向量机，Support Vector Machine（SVM）是机器学习中处理分类问题一个很重要的方法。SVM最有价值的地方在于它给我们提供了一个解决问题的思路，本篇博客我们就一起来看SVM到底是怎么去解决一个分类问题的。（内容会很长，希望大家能够耐心看完）。">
+<meta property="og:locale">
+<meta property="og:image" content="https://leungyukshing.github.io/images/svm1.png">
+<meta property="og:image" content="https://leungyukshing.github.io/images/svm2.png">
+<meta property="og:image" content="https://leungyukshing.github.io/images/svm3.png">
+<meta property="og:image" content="https://leungyukshing.github.io/images/svm4.png">
+<meta property="og:image" content="https://leungyukshing.github.io/images/svm5.jpg">
+<meta property="og:image" content="https://leungyukshing.github.io/images/svm_notes1.jpg">
+<meta property="og:image" content="https://leungyukshing.github.io/images/svm_notes2.jpg">
+<meta property="og:image" content="https://leungyukshing.github.io/images/svm_notes3.jpg">
+<meta property="og:image" content="https://leungyukshing.github.io/images/svm_notes4.jpg">
+<meta property="og:image" content="https://leungyukshing.github.io/images/svm_notes5.jpg">
+<meta property="og:image" content="https://leungyukshing.github.io/images/svm_notes6.jpg">
+<meta property="og:image" content="https://leungyukshing.github.io/images/svm_notes7.jpg">
+<meta property="og:image" content="https://leungyukshing.github.io/images/svm_notes8.jpg">
+<meta property="og:image" content="https://leungyukshing.github.io/images/svm_notes9.jpg">
+<meta property="og:image" content="https://leungyukshing.github.io/images/svm_notes10.jpg">
+<meta property="og:image" content="https://leungyukshing.github.io/images/svm_notes11.jpg">
+<meta property="og:image" content="https://leungyukshing.github.io/images/svm_notes12.jpg">
+<meta property="og:image" content="https://leungyukshing.github.io/images/svm_notes13.jpg">
+<meta property="og:image" content="https://leungyukshing.github.io/images/svm_notes14.jpg">
+<meta property="og:image" content="https://leungyukshing.github.io/images/svm_notes15.jpg">
+<meta property="article:published_time" content="2019-03-22T12:48:22.000Z">
+<meta property="article:modified_time" content="2021-06-22T18:33:08.588Z">
+<meta property="article:author" content="Leungyukshing">
+<meta property="article:tag" content="Machine Learning">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://leungyukshing.github.io/images/svm1.png">
+
+<link rel="canonical" href="https://leungyukshing.github.io/archives/SVM.html">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-Hans'
+  };
+</script>
+
+  <title>支持向量机--SVM | Halo</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+<!-- hexo injector head_end end --><link rel="alternate" href="/atom.xml" title="Halo" type="application/atom+xml"><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Halo</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">A magic place for coding</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>About</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>Tags</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>Search
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="Searching..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+  <a href="https://github.com/leungyukshing" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="https://leungyukshing.github.io/archives/SVM.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="Leungyukshing">
+      <meta itemprop="description" content="A blog for code, programme sharing.">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Halo">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          支持向量机--SVM
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2019-03-22 08:48:22" itemprop="dateCreated datePublished" datetime="2019-03-22T08:48:22-04:00">2019-03-22</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2021-06-22 14:33:08" itemprop="dateModified" datetime="2021-06-22T14:33:08-04:00">2021-06-22</time>
+              </span>
+
+          
+            <span class="post-meta-item" title="Views" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">Views: </span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine: </span>
+    
+    <a title="valine" href="/archives/SVM.html#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/archives/SVM.html" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>&emsp;&emsp;支持向量机，Support Vector Machine（SVM）是机器学习中处理分类问题一个很重要的方法。SVM最有价值的地方在于它给我们提供了一个解决问题的思路，本篇博客我们就一起来看SVM到底是怎么去解决一个分类问题的。（内容会很长，希望大家能够耐心看完）。</p>
+<a id="more"></a>
+
+<hr>
+<h2 id="什么是SVM"><a href="#什么是SVM" class="headerlink" title="什么是SVM"></a>什么是SVM</h2><p>&emsp;&emsp;当我们面对一个二分类问题的时候，假设数据是<strong>线性可分的</strong>，以二维平面为例，也就是说，我们能够用一条直线来将数据分开为两部分。对于高维问题而言，这条<strong>直线</strong>我们成为<strong>超平面</strong>。这条直线的位置和两种类别的数据点分布的位置是相关的，两类数据点之间是有<strong>间隔</strong>的，我们最优化的过程就是去寻找这个最大的间隔。</p>
+<img src="/images/svm1.png" width="400px">
+
+<img src="/images/svm2.png" width="400px">
+
+<p>&emsp;&emsp;如图，对于同一个数据集，我们能够有很多种方法去找到一条直线去分隔开两类数据，而第一种不是我们最想要的是，第二种才是。为什么呢？我们可以通过对原始数据随机增加噪声的方法，去测试这个模型的<strong>推广能力</strong>。你会发现，如果两类数据之间的间隔特别小的话，随机增加噪声后，许多数据点就会被错误地分类；而如果间隔足够大的话，增加噪声后错误分类的个数明显变少。这也说明，SVM在构建模型的时候，已经将其推广能力考虑在内，甚至可以说，SVM是基于模型推广能力而构建起的一个分类模型。与之对比的是，逻辑回归是在后续操作中，通过正则项来增强模型推广能力。</p>
+<p>&emsp;&emsp;所以我们就可以大致总结一下SVM是在干什么。SVM就是要寻找一个用于分隔开两类数据的超平面，而这个<strong>最优解就是那个具有最大间隔的超平面</strong>。其中，位于这个最优解两侧的虚线所穿过的样本点，就叫做<strong>支持向量（Support Vector）</strong>。</p>
+<img src="/images/svm3.png" width="400px">
+
+<hr>
+<h2 id="1-建立数学模型"><a href="#1-建立数学模型" class="headerlink" title="1.建立数学模型"></a>1.建立数学模型</h2><p>&emsp;&emsp;前面说到我们的最优化问题为我们期望的是分类间隔的最大化。首先我们来对<strong>决策面</strong>、<strong>分类间隔</strong>来做数学描述，然后确定这个优化问题的<strong>约束条件</strong>，最后给出求解的方法。</p>
+<h3 id="决策面方程"><a href="#决策面方程" class="headerlink" title="决策面方程"></a>决策面方程</h3><p>&emsp;&emsp;这里所说的决策面就是用于分隔两类数据的超平面，在二维空间中，我们的表示为：<br>$$<br>y=ax+b<br>$$<br>&emsp;&emsp;为了贴合机器学习中输入的特征值，将$x$替换为$x_1$，将$y$替换成$x_2$：<br>$$<br>x_2=ax_1+b \<br>ax_1-x_2+b=0<br>$$<br>&emsp;&emsp;写成向量化的形式：<br>$$<br>\begin{bmatrix}<br>{a} &amp; {-1}<br>\end{bmatrix}<br>\begin{bmatrix}<br>{x_1} \<br>{x_2}<br>\end{bmatrix}+ b = 0<br>$$<br>&emsp;&emsp;用$w$表示权重，$x$表示特征，$\gamma$表示阈值，这三者都是向量，可以写成：<br>$$<br>w^Tx+\gamma=0<br>$$<br>&emsp;&emsp;其中，$w=\begin{bmatrix}{w_1, w_2}\end{bmatrix}^T$，$x=\begin{bmatrix}{x_1, x_2}\end{bmatrix}^T$。这两个是具有特殊的几何意义的，$w$是直线的<strong>法向量</strong>，$\gamma$决定了直线的<strong>截距</strong>。</p>
+<p>&emsp;&emsp;于是，我们就可以将这条公式推广到$n$维空间中了，也就是说，一个超平面方程必然能写成：<br>$$<br>w^Tx+\gamma=0<br>$$<br>&emsp;&emsp;其中，$w=\begin{bmatrix}{w_1, w_2, \cdots,w_n}\end{bmatrix}^T$，$x=\begin{bmatrix}{x_1, x_2, \cdots, x_n}\end{bmatrix}^T$。</p>
+<h3 id="分类间隔方程"><a href="#分类间隔方程" class="headerlink" title="分类间隔方程"></a>分类间隔方程</h3><p>&emsp;&emsp;同样，我们以二维空间为例进行推导。在二维空间中，点到直线的距离公式为：<br>$$<br>d=\left|\frac{Ax_0+By_0+C}{\sqrt{A^2+B^2}}\right|<br>$$<br>&emsp;&emsp;其中，直线方程为$Ax_0+By_0+C=0$，点坐标为$(x_0, y_0)$。</p>
+<p>&emsp;&emsp;推广到高维空间，我们上面已经求得超平面方程，因此距离为：<br>$$<br>d=\frac{\left|w^Tx+\gamma\right|}{\parallel w \parallel}<br>$$<br>&emsp;&emsp;这个$d$就是分类间隔。他表示某个数据点到决策面的距离。因此这就给出了我们去衡量一个决策面好坏的评判方法——<strong>根据分类间隔的大小来判断分类器的好坏，间隔越大，我们认为该超平面分类的效果越好</strong>。于是，问题从求解一个超平面转化为<strong>最大化分类间隔</strong>的问题。</p>
+<h3 id="约束条件"><a href="#约束条件" class="headerlink" title="约束条件"></a>约束条件</h3><p>&emsp;&emsp;上面我们一直讨论的是如何表达<strong>决策面</strong>和<strong>分类间隔</strong>，但是最关键的分类问题还是没有提到。在SVM下，分类问题是作为约束条件出现的。</p>
+<p>&emsp;&emsp;首先对于数据集，有两种点：</p>
+<ul>
+<li>红色点为正样本，标记为+1</li>
+<li>蓝色点为负样本，标记为-1</li>
+</ul>
+<p>&emsp;&emsp;为什么要标记成+1和-1（而不是0和1）？这在后面会解释。将语言表示为数学形式：<br>$$<br>y_i = \begin{cases}<br>+1 \quad \quad红色点\<br>-1 \quad \quad蓝色点\<br>\end{cases}<br>$$<br>&emsp;&emsp;如果我们求出的超平面能够对所有数据点进行正确分类，就会满足：<br>$$<br>\begin{cases}<br>w^Tx_i+\gamma\gt0 \quad y_i=1\<br>w^Tx_i+\gamma\lt0 \quad y_i=-1\<br>\end{cases}<br>$$<br>&emsp;&emsp;我们再提高要求，要求这个超平面位于间隔区域的中间，对应的支持向量到超平面的距离为$d$，那么有：<br>$$<br>\begin{cases}<br>\frac{w^Tx_i+\gamma}{\parallel w\parallel} \ge d \quad \forall y_i=1\<br>\frac{w^Tx_i+\gamma}{\parallel w\parallel} \le -d \quad \forall y_i=-1\<br>\end{cases}<br>$$<br>&emsp;&emsp;上述的公式的几何意义是，对于任意样本，他们到决策面的距离（绝对值）都大于$d$。同时除以$d$，得到：<br>$$<br>\begin{cases}<br>\frac{w_d^Tx_i+\gamma_d}{\parallel w\parallel} \ge 1 \quad \forall y_i=1\<br>\frac{w_d^Tx_i+\gamma_d}{\parallel w\parallel} \le -1 \quad \forall y_i=-1\<br>\end{cases}<br>$$<br>&emsp;&emsp;其中$w_d=\frac{w}{\parallel w\parallel d}$，$\gamma_d=\frac{\gamma}{\parallel w\parallel d}$。可以看出，$w_d$和$\gamma_d$依然是两个矢量，他们同样是在空间中描述一个超平面。所以我们可以直接表示为：（只是符号改变了，意义并没有改变）：<br>$$<br>\begin{cases}<br>w^Tx_i+\gamma \ge 1 \quad \forall y_i=1\<br>w^Tx_i+\gamma \le -1 \quad \forall y_i=-1\<br>\end{cases}<br>$$<br>&emsp;&emsp;以上就是SVM最优化问题的约束条件。这里就回答之前提到的，为什么要标记成+1和-1。我们可以发现，这样标记的好处就是可以将这个约束条件写成统一形式：<br>$$<br>y_i(w^Tx_i+\gamma) \ge 1 \quad \forall x_i<br>$$</p>
+<h3 id="SVM优化问题概述"><a href="#SVM优化问题概述" class="headerlink" title="SVM优化问题概述"></a>SVM优化问题概述</h3><p>&emsp;&emsp;现在我们整理一下思路，我们需要最优化的目标是分类间隔：<br>$$<br>d=\frac{\left|w^Tx+\gamma\right|}{\parallel w \parallel}<br>$$<br>&emsp;&emsp;因为我们只用支持向量上的样本点进行求解，这些都满足：<br>$$<br>\left | w^Tx_i+\gamma\right| = 1 \quad \forall支持向量上的样本点x_i<br>$$<br>&emsp;&emsp;所以待优化的目标函数可以简化成：<br>$$<br>d=\frac{1}{\parallel w\parallel}<br>$$<br>&emsp;&emsp;为了求解过程中求导的方便，我们将极大化问题转化为极小化问题，并添加上约束条件，得到SVM的优化问题：<br>$$<br>min\frac12\parallel w \parallel^2 \<br>s.t.\quad y_i(w^Tx_i+b) \ge 1,i=1,2,\cdots,n<br>$$</p>
+<h3 id="求解方法"><a href="#求解方法" class="headerlink" title="求解方法"></a>求解方法</h3><p>&emsp;&emsp;我们讨论的是<a target="_blank" rel="noopener" href="https://blog.csdn.net/lzldhhaha/article/details/76382962">凸优化问题</a>的求解。大致有如下几类：</p>
+<ul>
+<li><p><strong>无约束</strong>优化问题：<br>$$<br>minf(x)<br>$$<br>求解方法：求导，在极值处求得最优值。</p>
+</li>
+<li><p><strong>有等式约束</strong>的优化问题：<br>$$<br>minf(x) \<br>s.t. \quad h_{i}(x)=0, \quad i=1,2,\cdots,n \<br>$$<br>求解方法：拉格朗日乘子法（Lagrange Multiplier）。</p>
+</li>
+<li><p><strong>有不等式约束</strong>的优化问题：<br>$$<br>minf(x) \<br>s.t. \quad g_{i}(x) \le 0, \quad i=1,2,\cdots,n \<br>h_j(x)=0, \quad j=1,2,\cdots,m<br>$$<br>求解方法：拉格朗日乘子法加上KKT条件。</p>
+</li>
+</ul>
+<p>&emsp;&emsp;很明显，我们的SVM优化问题是有不等式约束的优化问题，因此我们要使用第三种方法。我们先来看看什么是<strong>拉格朗日函数</strong>和<strong>KKT条件</strong>。</p>
+<h4 id="拉格朗日函数"><a href="#拉格朗日函数" class="headerlink" title="拉格朗日函数"></a>拉格朗日函数</h4><p>&emsp;&emsp;拉格朗日函数出现的思路是，我们当前的最小化问题很难求解，所以我想构造一个函数，这个新的函数在可行解区域内与原函数完全一致，而在可行解区域之外的值非常大（因为非常大的话就不会影响极小值的问题）。那么这个<strong>新的无约束条件的函数的优化问题</strong>就等价于<strong>原来有约束条件的优化问题</strong>。它的核心思路是将有约束转化为无约束。</p>
+<p>&emsp;&emsp;对偶的意思是，对于一个优化问题，总有另一个优化问题与之对应。使用对偶的目的是求解拉格朗日函数。</p>
+<p>&emsp;&emsp;我们先将原有的函数转化为新构造的拉格朗日函数：<br>$$<br>\mathcal{L}(w,b,\alpha)=\frac12\parallel w\parallel^2-\sum^n_{i=1}\alpha_i(y_i(w^Tx_i+b)-1)<br>$$<br>&emsp;&emsp;其中$\alpha_i$是拉格朗日乘子，$\alpha_i \ge 0$。令：<br>$$<br>\theta(w)= \max_{\alpha_i \ge 0}\mathcal{L}(w,b,\alpha)<br>$$<br>&emsp;&emsp;当样本不满足约束的时候，我们就认为它在<strong>可行解区域外</strong>：<br>$$<br>y_i(w^Tx_i+b) \lt1<br>$$<br>&emsp;&emsp;此时我们要将$\alpha_i$设置为$\infty$，也就是说$\theta(w)$也是$\infty$。</p>
+<p>&emsp;&emsp;所以我们新的目标函数为：<br>$$<br>\theta(w) = \begin{cases}<br>\frac12\parallel w \parallel^2 \quad \quad x \in可行解区域\<br>+\infty \quad \quad x\in非可行解区域\<br>\end{cases}<br>$$<br>&emsp;&emsp;于是我们的问题变成了：<br>$$<br>\min_{w,b}\theta(w)=\min_{w,b}\max_{\alpha_i\ge0}\mathcal{L}(W,b,\alpha) = p^*<br>$$<br>&emsp;$p*$表示问题的最优解，和最初的问题是等价的。</p>
+<p>&emsp;&emsp;但是我们发现，上面这个问题是不好求解的。原因是，我们需要在带有参数$w,b​$的情况下，对参数$\alpha_i​$先求一个最大值，同时要要兼顾$\alpha_i​$的约束，然后再求最小值。我们使用前面提到的对偶性，将问题转化为：<br>$$<br>\max_{\alpha_i \ge 0}\min_{w,b}\mathcal{L}(w,b,\alpha) = d^*<br>$$<br>&emsp;&emsp;$d^*$表示新的对偶问题的最优值，而且$d^* \le p^*$。我们最关心的就是这个等号什么时候能够成立。条件有二：</p>
+<ul>
+<li>这个优化问题是凸优化问题。</li>
+<li>满足KKT条件。</li>
+</ul>
+<p>&emsp;&emsp;凸优化问题的定义是：求最小值的目标函数为凸函数的一类优化问题。我们优化的函数是凸函数，同时求的是极小值，所以这个问题是凸优化问题。我们接下来要关注KKT条件。</p>
+<h4 id="KKT条件"><a href="#KKT条件" class="headerlink" title="KKT条件"></a>KKT条件</h4><p>&emsp;&emsp;KKT条件给出的是最优值必须满足的条件，有三条：</p>
+<ul>
+<li>条件1：经过拉格朗日函数处理之后的新目标函数$\mathcal{L}(w,b,\alpha)$对$\alpha$求导为0；</li>
+<li>条件2：$h(x)=0$;</li>
+<li>条件3：$\alpha * g(x)=0$</li>
+</ul>
+<h3 id="对偶问题求解"><a href="#对偶问题求解" class="headerlink" title="对偶问题求解"></a>对偶问题求解</h3><p>&emsp;&emsp;我们先求解内层的极小化问题。<br>$$<br>\frac{\partial\mathcal{L}}{\partial w}=0 \Rightarrow w=\sum^n_{i=1}\alpha_iy_ix_i \<br>\frac{\partial\mathcal{L}}{\partial b}=0 \Rightarrow \sum^n_{i=1}\alpha_iy_i=0<br>$$<br>&emsp;&emsp;将上述结果代回$\mathcal{L}(w, b, \alpha)$中，得：<br>$$<br>\begin{aligned}<br>\mathcal{L}(w,b,\alpha)&amp;=\frac12\parallel w \parallel^2-\sum^n_{i=1}\alpha_i[y_i(w^Tx_i+b)-1] \<br>&amp;= \frac12w^Tw-w^T\sum^n_{i=1}\alpha_iy_ix_i-b\sum^n_{i=1}\alpha_iy_i+\sum^n_{i=1}\alpha_i \<br>&amp;= \frac12w^T\sum^n_{i=1}\alpha_iy_ix_i-w^T\sum^n_{i=1}\alpha_iy_ix_i-b\cdot0+\sum^n_{i=1}\alpha_i \<br>&amp;= \sum^n_{i=1}\alpha_i-\frac12(\sum^n_{i=1}\alpha_iy_ix_i)^T\sum^n_{i=1}\alpha_iy_ix_i \<br>&amp;= \sum^n_{i=1}\alpha_i-\frac12\alpha_i\alpha_jy_iy_jx_i^Tx_j<br>\end{aligned}<br>$$<br>&emsp;&emsp;内侧的min求解完后，接下来求解外侧的max：<br>$$<br>\max_\alpha\sum^n_{i=1}\alpha_i-\frac12\sum^n_{i,j=1}\alpha_i\alpha_jy_iy_jx_i^Tx_j \<br>s.t. \quad \alpha_i \ge0,i=1,2,\cdots,n \<br>\sum^n_{i=1}\alpha_iy_i=0<br>$$<br>&emsp;&emsp;至此，我们就将SVM复杂的优化问题转化为上面这个优化问题。可能你会疑问，上面这个问题同样地复杂，我们需要怎么求解呢？SMO算法为我们提供了很好的方法。</p>
+<hr>
+<h2 id="2-SMO算法"><a href="#2-SMO算法" class="headerlink" title="2.SMO算法"></a>2.SMO算法</h2><p>&emsp;&emsp;SMO算法（Sequential Minimal Optimization）是Platt发布的一个算法，它的思路是将大优化问题分解成为多个小的优化问题来求解。这些小的优化问题一般比较容易求解，并且它们顺序求解的结果与整体求解的结果是一样的。SMO算法的papaer链接在最后给出。</p>
+<p>&emsp;&emsp;SMO算法是通过求取一系列的$\alpha$和$b$，最后再求出$w$，这样我们就得出了决策面。</p>
+<p>&emsp;&emsp;SMO算法的工作原理是每次循环选择两个$\alpha$进行优化。为什么是两个呢？因为对$\alpha$我们有约束，一个$\alpha$的增大必然导致另一个$\alpha$的减小，因此只调整一个$\alpha$是不可行的。其中$\alpha$必须满足两个条件：</p>
+<ul>
+<li>两个$\alpha$必须要在间隔边界之外。</li>
+<li>两个$\alpha$还没有进行过区间化处理或者不在边界上。</li>
+</ul>
+<p>&emsp;&emsp;输出函数为：<br>$$<br>u=w^Tx+b<br>$$<br>&emsp;&emsp;替换$w$，得到：<br>$$<br>u=\sum^n_{i=1}\alpha_iy_ix^T_ix+b<br>$$<br>&emsp;&emsp;将目标函数变形（最大值问题转化为最小值问题）：<br>$$<br>\min_\alpha\frac12\sum^n_{i=1}\sum^n_{j=1}\alpha_i\alpha_jy_iy_jx_i^Tx_j-\sum^n_{i=1}\alpha_i \<br>s.t. \quad \alpha_i \ge0,i=1,2,\cdots,n \<br>\sum^n_{i=1}\alpha_iy_i=0<br>$$<br>&emsp;&emsp;考虑到我们需要分类的数据不一定是100%线性可分的，我们的约束条件需要做出适当地调整。通过引入<strong>松弛变量</strong>，允许少量数据点可以处于超平面错误的一侧。调整后的约束条件为：<br>$$<br>s.t. \quad C \ge \alpha_i \ge 0, i=1,2,\cdots,n \<br>\sum^n_{i=1}\alpha_iy_i=0<br>$$<br>&emsp;&emsp;其中$\alpha_i$取值的意义为：<br>$$<br>\begin{aligned}<br>\alpha_i=0 &amp;\Leftrightarrow y_iu_i \ge1 \<br>0 \lt \alpha_i \lt C &amp;\Leftrightarrow y_iu_i = 1 \<br>\alpha_i=C &amp;\Leftrightarrow y_iu_i \le 1<br>\end{aligned}<br>$$</p>
+<ul>
+<li>第一种情况：$\alpha_i$正确分类，在边界内部；</li>
+<li>第二种情况：$\alpha_i$是支持向量，在边界上；</li>
+<li>第三种情况：$\alpha_i$在两条边界之间。</li>
+</ul>
+<p>&emsp;&emsp;同时还有第二个约束：<br>$$<br>\sum^n_{i=1}\alpha_iy_i=0<br>$$<br>&emsp;&emsp;前面也提到，因为这个约束，我们需要成对更新$\alpha$，不失一般性地，我们选择两个乘子$\alpha_1$和$\alpha_2$：<br>$$<br>\alpha_1^{new}y_1+\alpha_2^{new}y_2=\alpha_1^{old}y_1+\alpha_2^{old}y_2 = k<br>$$<br>&emsp;&emsp;其中$k$是常数。我们很难同时求解两个因子，因此可以先固定一个，求出一个，再求另一个。这里的思路是先求$\alpha_2^{new}$，再求$\alpha_1^{new}$。我们需要确定$\alpha_2^{new}$的取值范围，假设它的上下界分别为$H$和$L$，那么有：<br>$$<br>L \le \alpha_2^{new} \le H<br>$$</p>
+<h3 id="推导-alpha"><a href="#推导-alpha" class="headerlink" title="推导$\alpha$"></a>推导$\alpha$</h3><p>&emsp;&emsp;接下来分两种情况讨论：</p>
+<ul>
+<li><p>当$y_1 \neq y_2$，一个为1，一个为-1，得：<br>$$<br>\alpha_1^{old}-\alpha_2^{old}=k<br>$$<br>所以$L=\max(0, -k)$，$H=\min(C, C-k)$</p>
+</li>
+<li><p>当$y_1 = y_2$，两者同为1或同为-1，得：<br>$$<br>\alpha_1^{old}+\alpha_2^{old}=k<br>$$<br>所以$L=\max(0, k-C)$，$H=\min(C,k)$</p>
+</li>
+</ul>
+<img src="/images/svm4.png" width="400px">
+
+<p>&emsp;&emsp;以上就确定了$\alpha_i$的边界。接下来要推到用于更新$\alpha$的迭代式，还是不失一般性地选择$\alpha_1$和$\alpha_2$来推导：<br>$$<br>\begin{aligned}<br>W(\alpha_2) &amp;= \sum^n_{i=1}\alpha_i-\frac12\sum^n_{i=1}\sum^n_{j=1}y_iy_jx_i^Tx_j\alpha_i\alpha_j \<br>&amp;= \alpha_1 + \alpha_2 + \sum^n_{i=3}\alpha_i - \frac12\sum^n_{i=1}(\sum^2_{i=1}y_iy_jx_i^Tx_j\alpha_i\alpha_j+\sum^n_{j=3}y_iy_jx_i^Tx_j\alpha_i\alpha_j) \<br>&amp;= \alpha_1+\alpha_2+\sum^n_{i=3}\alpha_i-\frac12\sum^2_{i=1}(\sum^2_{j=1}y_iy_jx_i^Tx_j\alpha_i\alpha_j + \sum^n_{j=3}y_iy_jx_i^Tx_j\alpha_i\alpha_j)-\frac12\sum^n_{i=3}(\sum^2_{j=1}y_iy_jx_i^Tx_j\alpha_i\alpha_j+\sum^n_{j=3}y_iy_jx_i^Tx_j\alpha_i\alpha_j) \<br>&amp;= \alpha_1+\alpha_2+\sum^n_{i=3}\alpha_i-\frac12\sum^2_{i=1}\sum^2_{j=1}y_iy_j\alpha_i\alpha_jx_i^Tx_j - \sum^2_{i=1}\sum^n_{j=3}y_iy_j\alpha_i\alpha_jx_i^Tx_j - \frac12\sum^n_{i=3}\sum^n_{j=3}y_iy_j\alpha_i\alpha_jx_i^Tx_j \<br>&amp;= \alpha_1+\alpha_2 - \frac12\alpha_1^2x_1^Tx_1 - \frac12\alpha_2<br>^2x_2^Tx_2-y_1y_2\alpha_1\alpha_2x_1^Tx_2-y_1\alpha_1\sum^n_{j=3}\alpha_jy_jx_1^Tx_j - y_2\alpha_2\sum^n_{j=3}\alpha_jy_jx_2^Tx_j + \sum^n_{i=3}\alpha_i - \frac12\sum^n_{i=3}\sum^n_{j=3}y_iy_j\alpha_i\alpha_jx_i^Tx_j<br>\end{aligned}<br>$$<br>&emsp;&emsp;定义如下符号：<br>$$<br>\begin{aligned}<br>f(x_i) &amp;= \sum^n_{j=1}\alpha_jy_jx_i^Tx_j+b \<br>v_i &amp;= \sum^n_{j=3}\alpha_jy_jx_i^Tx_j=f(x_i)-\sum^2_{j=1}\alpha_jy_jx_i^Tx_j-b<br>\end{aligned}<br>$$<br>&emsp;&emsp;所以替换符号后，得：<br>$$<br>W(\alpha_2) = \alpha_1+\alpha_2-\frac12\alpha_1^2x_1^Tx_1-\frac12\alpha_2^2x_2^Tx_2 - y_1y_2\alpha_1\alpha_2x_1^Tx_2 - y_1\alpha_1v_1 - y_2\alpha_2v_2 + constant<br>$$<br>&emsp;&emsp;因为我们不关心constant部分，对于$\alpha_1$和$\alpha_2$而言，其余都是常数项，求导时直接变为0。</p>
+<p>&emsp;&emsp;然后我们通过$\alpha_1$和$\alpha_2$之间的约束关系，消去$\alpha_1$：<br>$$<br>\sum^n_{i=1}\alpha_iy_i=0 \<br>\alpha_1y_1+\alpha_2y_2=-\sum^n_{i=3}\alpha_iy_i=B<br>$$<br>&emsp;&emsp;两边同乘$y_1$，得（利用$y_1^2=1$）：<br>$$<br>\alpha_1=By_1-y_1y_2\alpha_2=\gamma-s\alpha2<br>$$<br>&emsp;&emsp;其中，$\gamma=By$，$s=y_1y_2$。所以得到：<br>$$<br>W(\alpha_2) = \gamma-s\alpha_2+\alpha_2 - \frac12(r-s\alpha_2)^2x_1^Tx_1-\frac12\alpha_2^2x_2^Tx_2-s(\gamma-s\alpha_2)\alpha_2x_1^Tx_2 - y_1(\gamma-s\alpha_2)v_1-y_2\alpha_2v_2+constant<br>$$<br>&emsp;&emsp;对$W(\alpha_2)$求偏导：<br>$$<br>\frac{\partial W(\alpha_2)}{\partial \alpha_2} = -s + 1 + \gamma sx_1^Tx_1 - \alpha_2x_1^Tx_1-\alpha_2x_2^Tx_2-\gamma sx_1^Tx_2 + 2\alpha_2x_1^Tx_2 + y_2v_1 - y_2v_2 = 0 \<br>\alpha_2^{new} = \frac{y_2(y_2-y_1+y_1\gamma(x_1^Tx_1-x_1^Tx_2)+v_1-v_2)}{(x_1^Tx_1+x_2^Tx_2-2x_1^Tx_2)}<br>$$<br>&emsp;&emsp;定义两个中间变量：</p>
+<ul>
+<li>误差项：$E_i=f(x_i) - y_i$</li>
+<li>学习率：$\eta=x_1^Tx_1+x_2^Tx_2-2x_1^Tx_2$</li>
+</ul>
+<p>&emsp;&emsp;根据已知条件：<br>$$<br>\gamma = \alpha_1^{old} + s\alpha_2^{old} \<br>v_j = \sum^n_{i=3}\alpha_iy_ix_j^Tx_i = f(x_j) - \sum^2_{i=1}\alpha_iy_ix_j^Tx_i - b<br>$$<br>&emsp;&emsp;代入上式求解：<br>$$<br>\begin{aligned}<br>\alpha_2^{new} &amp;= \frac{y_2[(v_1-v_2+y_2-y_1) + (\alpha_1^{old}y_1+\alpha_2^{old}y_2)(x_1^Tx_1-x_1^Tx_2)]}{(x_1^Tx_1+x_2^Tx_2-2x_1^Tx_2)} \<br>&amp;= \frac{y_2(E_1-E_2)+\alpha_2^{old}(x_1^Tx_1+x_2^Tx_2-2x_1Tx_2)}{(x_1^Tx_1+x_2^Tx_2-2x_1^Tx_2)} \<br>&amp;= \alpha_2^{old} + \frac{y_2(E_1-E_2)}{\eta}<br>\end{aligned}<br>$$<br>&emsp;&emsp;详细推导过程：</p>
+<img src="/images/svm5.jpg" width="400px">
+
+<p>&emsp;&emsp;以上就是$\alpha_2$的更新迭代公式，考虑约束：$0 \lt \alpha_i \lt C$，作剪辑处理：<br>$$<br>\alpha_2^{new, clipped} = \begin{cases}<br>H \quad \quad \alpha_2^{new} \gt H \<br>\alpha_2^{new} \quad \quad L \le \alpha_2^{new} \le H \<br>L \quad \quad \alpha_2^{new} \lt L<br>\end{cases}<br>$$<br>&emsp;&emsp;根据：<br>$$<br>\begin{cases}<br>\alpha_1^{old} = \gamma - s\alpha_2^{old} \<br>\alpha_1^{new} = \gamma - s\alpha_2^{new, clipped}\<br>\end{cases}<br>$$<br>&emsp;&emsp;推出$\alpha_1$的迭代更新式：<br>$$<br>\alpha_1^{new} = \alpha_1^{old}+y_1y_2(\alpha_2^{old}-\alpha_2^{new, clipped})<br>$$<br>&emsp;&emsp;至此，我们已经推导出$\alpha_1$和$\alpha_2$的更新迭代式，然后考虑$b$的更新。</p>
+<h3 id="推导-b"><a href="#推导-b" class="headerlink" title="推导$b$"></a>推导$b$</h3><p>&emsp;&emsp;当$0 \lt \alpha_1^{new} \lt C$，该点是支持向量上的点，满足：<br>$$<br>y_1(w^Tx_1+b)=1<br>$$<br>&emsp;&emsp;两边同乘以$y_1$，得：<br>$$<br>w^Tx_1 + b = y_1 \<br>\sum^n_{i=1}\alpha_iy_ix_ix_1 + b = y_1<br>$$<br>&emsp;&emsp;根据已经$\alpha_1$和$\alpha_2$去更新$b$，其余的$\alpha_i(i \ne1,2)$固定不变：<br>$$<br>b_1^{new}=y_1 - \sum^n_{i=3}\alpha_iy_ix_i^Tx_1 - \alpha_1^{new}y_1x_1^Tx_1-\alpha_2^{new}y_2x_2^Tx_1 \<br>y_1 - \sum^n_{i=3}\alpha_iy_ix_i^Tx_1=-E_1+\alpha_1^{old}y_1x_1^Tx_1+ \alpha_2^{old}y_2x_2^Tx_1+b^{old}<br>$$<br>&emsp;&emsp;合并上面两条式子，得到：<br>$$<br>b_1^{new} = b^{old}-E_1-y_1(\alpha_1^{new} - \alpha_1^{old})x_1^Tx_1-y_2(\alpha_2^{new}-\alpha_2^{old})x_2^Tx_1<br>$$<br>&emsp;&emsp;同理，$b_2^{new}$推导为：<br>$$<br>b_2^{new} = b^{old}-E_2-y_1(\alpha_1^{new} - \alpha_1^{old})x_1^Tx_2-y_2(\alpha_2^{new}-\alpha_2^{old})x_2^Tx_2<br>$$<br>&emsp;&emsp;当$b_1$和 $b_2$都是有效时，它们是相等的：<br>$$<br>b^{new} = b_1^{new} = b_2^{new}<br>$$<br>&emsp;&emsp;当两个乘子在边界上，$b$和KKT条件一致；当不满足时，SMO算法选择它们的中点作为新的阈值：<br>$$<br>b =\begin{cases}<br>b_1 , \quad 0 \lt \alpha_1^{new} \lt C\<br>b_2 , \quad 0 \lt \alpha_2^{new} \lt C\<br>\frac{b_1+b_2}{2}, \quad otherwise<br>\end{cases}<br>$$</p>
+<h3 id="算法步骤总结"><a href="#算法步骤总结" class="headerlink" title="算法步骤总结"></a>算法步骤总结</h3><h4 id="第一步：计算误差-E-i"><a href="#第一步：计算误差-E-i" class="headerlink" title="第一步：计算误差$E_i$"></a>第一步：计算误差$E_i$</h4><p>$$<br>E_i=f(x_i) - y_i = \sum^n_{j=1}\alpha_jy_jx_i^Tx_j+b-y_i<br>$$</p>
+<h4 id="第二步：计算-alpha-上下界-L-和-H"><a href="#第二步：计算-alpha-上下界-L-和-H" class="headerlink" title="第二步：计算$\alpha$上下界$L$和 $H$"></a>第二步：计算$\alpha$上下界$L$和 $H$</h4><p>$$<br>\begin{cases}<br>L=\max(0,\alpha_j^{old}-\alpha_i^{old}), H=\min(C, C+\alpha_j^{old}-\alpha_i^{old}), \quad \quad if\quad y_i \neq y_j\<br>L=\max(0,\alpha_j^{old}+\alpha_i^{old}-C), H=\min(C, \alpha_j^{old}+\alpha_i^{old}), \quad \quad if \quad y_i = y_j\<br>\end{cases}<br>$$</p>
+<h4 id="第三步：计算-eta"><a href="#第三步：计算-eta" class="headerlink" title="第三步：计算$\eta$"></a>第三步：计算$\eta$</h4><p>$$<br>\eta = x_i^Tx_i+x_j^Tx_j-2x_i^Tx_j<br>$$</p>
+<h4 id="第四步：更新-alpha-j"><a href="#第四步：更新-alpha-j" class="headerlink" title="第四步：更新$\alpha_j$"></a>第四步：更新$\alpha_j$</h4><p>$$<br>\alpha_j^{new} = \alpha_j^{old} + \frac{y_j(E_i-E_j)}{\eta}<br>$$</p>
+<h4 id="第五步：根据取值范围修剪-alpha-j"><a href="#第五步：根据取值范围修剪-alpha-j" class="headerlink" title="第五步：根据取值范围修剪$\alpha_j$"></a>第五步：根据取值范围修剪$\alpha_j$</h4><p>$$<br>\alpha_j^{new, clipped} = \begin{cases}<br>H \quad \quad \alpha_j^{new} \gt H \<br>\alpha_j^{new} \quad \quad L \le \alpha_j^{new} \le H \<br>L \quad \quad \alpha_j^{new} \lt L<br>\end{cases}<br>$$</p>
+<h4 id="第六步：更新-alpha-i"><a href="#第六步：更新-alpha-i" class="headerlink" title="第六步：更新$\alpha_i$"></a>第六步：更新$\alpha_i$</h4><p>$$<br>\alpha_i^{new} = \alpha_i^{old}+y_iy_j(\alpha_j^{old}-\alpha_j^{new, clipped})<br>$$</p>
+<h4 id="第七步：更新-b-i-和-b-j"><a href="#第七步：更新-b-i-和-b-j" class="headerlink" title="第七步：更新$b_i$和$b_j$"></a>第七步：更新$b_i$和$b_j$</h4><p>$$<br>b_i^{new} = b^{old}-E_i-y_i(\alpha_i^{new} - \alpha_i^{old})x_i^Tx_i-y_j(\alpha_j^{new}-\alpha_j^{old})x_j^Tx_i \<br>b_j^{new} = b^{old}-E_j-y_i(\alpha_i^{new} - \alpha_i^{old})x_i^Tx_j-y_j(\alpha_j^{new}-\alpha_j^{old})x_j^Tx_j<br>$$</p>
+<h4 id="第八步：根据-b-i-和-b-j-更新-b"><a href="#第八步：根据-b-i-和-b-j-更新-b" class="headerlink" title="第八步：根据$b_i$和$b_j$更新$b$"></a>第八步：根据$b_i$和$b_j$更新$b$</h4><p>$$<br>b =\begin{cases}<br>b_i , \quad 0 \lt \alpha_i^{new} \lt C\<br>b_j , \quad 0 \lt \alpha_j^{new} \lt C\<br>\frac{b_i+b_j}{2}, \quad otherwise<br>\end{cases}<br>$$</p>
+<hr>
+<h2 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h2><p>&emsp;&emsp;如果你能够仔细阅读每一部分的推导，那么恭喜你已经基本掌握了SVM及SMO算法的原理。如果你是直接跳到这里的，那么我建议你静下心来慢慢看，我自己也是看了很多次才慢慢理解，这个过程是需要时间和耐心的。</p>
+<p>&emsp;&emsp;以上就是SVM和SMO算法的主要内容，推导过程中如果有不严谨或者不正确的地方，欢迎大家指出！最后，谢谢您的支持！</p>
+<hr>
+<h2 id="手写笔记"><a href="#手写笔记" class="headerlink" title="手写笔记"></a>手写笔记</h2><table>
+<thead>
+<tr>
+<th><img src="/images/svm_notes1.jpg" alt="笔记1"></th>
+<th><img src="/images/svm_notes2.jpg" alt="笔记2"></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><img src="/images/svm_notes3.jpg" alt="笔记3"></td>
+<td><img src="/images/svm_notes4.jpg" alt="笔记4"></td>
+</tr>
+<tr>
+<td><img src="/images/svm_notes5.jpg" alt="笔记5"></td>
+<td><img src="/images/svm_notes6.jpg" alt="笔记6"></td>
+</tr>
+<tr>
+<td><img src="/images/svm_notes7.jpg" alt="笔记7"></td>
+<td><img src="/images/svm_notes8.jpg" alt="笔记8"></td>
+</tr>
+<tr>
+<td><img src="/images/svm_notes9.jpg" alt="笔记9"></td>
+<td><img src="/images/svm_notes10.jpg" alt="笔记10"></td>
+</tr>
+<tr>
+<td><img src="/images/svm_notes11.jpg" alt="笔记11"></td>
+<td><img src="/images/svm_notes12.jpg" alt="笔记12"></td>
+</tr>
+<tr>
+<td><img src="/images/svm_notes13.jpg" alt="笔记13"></td>
+<td><img src="/images/svm_notes14.jpg" alt="笔记14"></td>
+</tr>
+<tr>
+<td><img src="/images/svm_notes15.jpg" alt="笔记15"></td>
+<td></td>
+</tr>
+</tbody></table>
+<hr>
+<h2 id="参考文献"><a href="#参考文献" class="headerlink" title="参考文献"></a>参考文献</h2><ol>
+<li><p><a href="/download/SMO.pdf">SMO by Platt</a></p>
+</li>
+<li><p><a href="/download/cs229-notes3.pdf">SVM classnotes by Andrew Ng</a></p>
+</li>
+<li><p><a href="/download/ML-SVM.pdf">Class slides by Prof. Yan Pan</a></p>
+</li>
+</ol>
+
+    </div>
+
+    
+    
+    
+        <div class="reward-container">
+  <div></div>
+  <button onclick="var qr = document.getElementById('qr'); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    Donate
+  </button>
+  <div id="qr" style="display: none;">
+      
+      <div style="display: inline-block;">
+        <img src="/images/wechat_reward.png" alt="Leungyukshing WeChat Pay">
+        <p>WeChat Pay</p>
+      </div>
+      
+      <div style="display: inline-block;">
+        <img src="/images/alipay_reward.png" alt="Leungyukshing Alipay">
+        <p>Alipay</p>
+      </div>
+
+  </div>
+</div>
+
+        
+
+  <div class="followme">
+    <p>Welcome to my other publishing channels</p>
+
+    <div class="social-list">
+
+        <div class="social-item">
+          <a target="_blank" class="social-link" href="/atom.xml">
+            <span class="icon">
+              <i class="fa fa-rss"></i>
+            </span>
+
+            <span class="label">RSS</span>
+          </a>
+        </div>
+    </div>
+  </div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Machine-Learning/" rel="tag"># Machine Learning</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/archives/LogisticRegression.html" rel="prev" title="逻辑回归--LogisticRegression">
+      <i class="fa fa-chevron-left"></i> 逻辑回归--LogisticRegression
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/archives/HexoUploadFile.html" rel="next" title="Hexo博客上传文件">
+      Hexo博客上传文件 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%89%8D%E8%A8%80"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BB%80%E4%B9%88%E6%98%AFSVM"><span class="nav-number">2.</span> <span class="nav-text">什么是SVM</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#1-%E5%BB%BA%E7%AB%8B%E6%95%B0%E5%AD%A6%E6%A8%A1%E5%9E%8B"><span class="nav-number">3.</span> <span class="nav-text">1.建立数学模型</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%86%B3%E7%AD%96%E9%9D%A2%E6%96%B9%E7%A8%8B"><span class="nav-number">3.1.</span> <span class="nav-text">决策面方程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%86%E7%B1%BB%E9%97%B4%E9%9A%94%E6%96%B9%E7%A8%8B"><span class="nav-number">3.2.</span> <span class="nav-text">分类间隔方程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BA%A6%E6%9D%9F%E6%9D%A1%E4%BB%B6"><span class="nav-number">3.3.</span> <span class="nav-text">约束条件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#SVM%E4%BC%98%E5%8C%96%E9%97%AE%E9%A2%98%E6%A6%82%E8%BF%B0"><span class="nav-number">3.4.</span> <span class="nav-text">SVM优化问题概述</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%B1%82%E8%A7%A3%E6%96%B9%E6%B3%95"><span class="nav-number">3.5.</span> <span class="nav-text">求解方法</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%8B%89%E6%A0%BC%E6%9C%97%E6%97%A5%E5%87%BD%E6%95%B0"><span class="nav-number">3.5.1.</span> <span class="nav-text">拉格朗日函数</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#KKT%E6%9D%A1%E4%BB%B6"><span class="nav-number">3.5.2.</span> <span class="nav-text">KKT条件</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AF%B9%E5%81%B6%E9%97%AE%E9%A2%98%E6%B1%82%E8%A7%A3"><span class="nav-number">3.6.</span> <span class="nav-text">对偶问题求解</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-SMO%E7%AE%97%E6%B3%95"><span class="nav-number">4.</span> <span class="nav-text">2.SMO算法</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%8E%A8%E5%AF%BC-alpha"><span class="nav-number">4.1.</span> <span class="nav-text">推导$\alpha$</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%8E%A8%E5%AF%BC-b"><span class="nav-number">4.2.</span> <span class="nav-text">推导$b$</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%AE%97%E6%B3%95%E6%AD%A5%E9%AA%A4%E6%80%BB%E7%BB%93"><span class="nav-number">4.3.</span> <span class="nav-text">算法步骤总结</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%AC%AC%E4%B8%80%E6%AD%A5%EF%BC%9A%E8%AE%A1%E7%AE%97%E8%AF%AF%E5%B7%AE-E-i"><span class="nav-number">4.3.1.</span> <span class="nav-text">第一步：计算误差$E_i$</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%AC%AC%E4%BA%8C%E6%AD%A5%EF%BC%9A%E8%AE%A1%E7%AE%97-alpha-%E4%B8%8A%E4%B8%8B%E7%95%8C-L-%E5%92%8C-H"><span class="nav-number">4.3.2.</span> <span class="nav-text">第二步：计算$\alpha$上下界$L$和 $H$</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%AC%AC%E4%B8%89%E6%AD%A5%EF%BC%9A%E8%AE%A1%E7%AE%97-eta"><span class="nav-number">4.3.3.</span> <span class="nav-text">第三步：计算$\eta$</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%AC%AC%E5%9B%9B%E6%AD%A5%EF%BC%9A%E6%9B%B4%E6%96%B0-alpha-j"><span class="nav-number">4.3.4.</span> <span class="nav-text">第四步：更新$\alpha_j$</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%AC%AC%E4%BA%94%E6%AD%A5%EF%BC%9A%E6%A0%B9%E6%8D%AE%E5%8F%96%E5%80%BC%E8%8C%83%E5%9B%B4%E4%BF%AE%E5%89%AA-alpha-j"><span class="nav-number">4.3.5.</span> <span class="nav-text">第五步：根据取值范围修剪$\alpha_j$</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%AC%AC%E5%85%AD%E6%AD%A5%EF%BC%9A%E6%9B%B4%E6%96%B0-alpha-i"><span class="nav-number">4.3.6.</span> <span class="nav-text">第六步：更新$\alpha_i$</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%AC%AC%E4%B8%83%E6%AD%A5%EF%BC%9A%E6%9B%B4%E6%96%B0-b-i-%E5%92%8C-b-j"><span class="nav-number">4.3.7.</span> <span class="nav-text">第七步：更新$b_i$和$b_j$</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%AC%AC%E5%85%AB%E6%AD%A5%EF%BC%9A%E6%A0%B9%E6%8D%AE-b-i-%E5%92%8C-b-j-%E6%9B%B4%E6%96%B0-b"><span class="nav-number">4.3.8.</span> <span class="nav-text">第八步：根据$b_i$和$b_j$更新$b$</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B0%8F%E7%BB%93"><span class="nav-number">5.</span> <span class="nav-text">小结</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%89%8B%E5%86%99%E7%AC%94%E8%AE%B0"><span class="nav-number">6.</span> <span class="nav-text">手写笔记</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%82%E8%80%83%E6%96%87%E7%8C%AE"><span class="nav-number">7.</span> <span class="nav-text">参考文献</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Leungyukshing"
+      src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">Leungyukshing</p>
+  <div class="site-description" itemprop="description">A blog for code, programme sharing.</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">688</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">27</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/leungyukshing" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;leungyukshing" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:jacky14.liang@gmail.com" title="E-Mail → mailto:jacky14.liang@gmail.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="/atom.xml" title="RSS → &#x2F;atom.xml"><i class="fa fa-rss fa-fw"></i>RSS</a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll motion-element">
+    <div class="links-of-blogroll-title"><i class="fa fa-link fa-fw"></i>
+      Friends
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="http://www.liangjh45.com/" title="http:&#x2F;&#x2F;www.liangjh45.com&#x2F;" rel="noopener" target="_blank">Alva's blog</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="https://sysucarey.github.io/" title="https:&#x2F;&#x2F;sysucarey.github.io&#x2F;" rel="noopener" target="_blank">Carey's blog</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="https://blog.csdn.net/dickdick111/" title="https:&#x2F;&#x2F;blog.csdn.net&#x2F;dickdick111&#x2F;" rel="noopener" target="_blank">Dick's blog</a>
+        </li>
+    </ul>
+  </div>
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2017 – 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Leungyukshing</span>
+</div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="Total Visitors">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="Total Views">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+      
+
+<script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      loader: {
+        source: {
+          '[tex]/amsCd': '[tex]/amscd',
+          '[tex]/AMScd': '[tex]/amscd'
+        }
+      },
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              let target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    (function () {
+      var script = document.createElement('script');
+      script.src = '//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+      script.defer = true;
+      document.head.appendChild(script);
+    })();
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : true,
+      appId      : 'AaLog29QcUdQKTboD6cY2dNP-gzGzoHsz',
+      appKey     : 'dUWNHLnTY9qG1jJwPnTtfMm8',
+      placeholder: "Just go go",
+      avatar     : 'mm',
+      meta       : guest,
+      pageSize   : '10' || 10,
+      visitor    : false,
+      lang       : '' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : false,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+
+</body>
+</html>

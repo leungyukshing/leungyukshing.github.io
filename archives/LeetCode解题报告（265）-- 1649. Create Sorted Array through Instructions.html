@@ -1,0 +1,680 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <meta name="google-site-verification" content="FHjCzDi7nry9Mvf4EFOY5cYoco-ZXq9tKjvXZK0nKr4">
+  <meta name="baidu-site-verification" content="code-gpMFPewYUF" />
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="/lib/pace/pace-theme-minimal.min.css">
+  <script src="/lib/pace/pace.min.js"></script>
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"leungyukshing.github.io","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"right","display":"hide","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"appID":"52USYSYESX","apiKey":"20b904c66f55b874f05edea4aca57780","indexName":"blog","hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="ProblemGiven an integer array instructions, you are asked to create a sorted array from the elements in instructions. You start with an empty container nums. For each element from left to right in ins">
+<meta property="og:type" content="article">
+<meta property="og:title" content="LeetCode解题报告（265）-- 1649. Create Sorted Array through Instructions">
+<meta property="og:url" content="https://leungyukshing.github.io/archives/LeetCode%E8%A7%A3%E9%A2%98%E6%8A%A5%E5%91%8A%EF%BC%88265%EF%BC%89--%201649.%20Create%20Sorted%20Array%20through%20Instructions.html">
+<meta property="og:site_name" content="Halo">
+<meta property="og:description" content="ProblemGiven an integer array instructions, you are asked to create a sorted array from the elements in instructions. You start with an empty container nums. For each element from left to right in ins">
+<meta property="og:locale">
+<meta property="article:published_time" content="2021-01-13T08:47:19.000Z">
+<meta property="article:modified_time" content="2021-06-22T18:37:10.290Z">
+<meta property="article:author" content="Leungyukshing">
+<meta property="article:tag" content="LeetCode">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://leungyukshing.github.io/archives/LeetCode%E8%A7%A3%E9%A2%98%E6%8A%A5%E5%91%8A%EF%BC%88265%EF%BC%89--%201649.%20Create%20Sorted%20Array%20through%20Instructions.html">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-Hans'
+  };
+</script>
+
+  <title>LeetCode解题报告（265）-- 1649. Create Sorted Array through Instructions | Halo</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+<!-- hexo injector head_end end --><link rel="alternate" href="/atom.xml" title="Halo" type="application/atom+xml"><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Halo</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">A magic place for coding</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>About</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>Tags</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>Search
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="Searching..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+  <a href="https://github.com/leungyukshing" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="https://leungyukshing.github.io/archives/LeetCode%E8%A7%A3%E9%A2%98%E6%8A%A5%E5%91%8A%EF%BC%88265%EF%BC%89--%201649.%20Create%20Sorted%20Array%20through%20Instructions.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="Leungyukshing">
+      <meta itemprop="description" content="A blog for code, programme sharing.">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Halo">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          LeetCode解题报告（265）-- 1649. Create Sorted Array through Instructions
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2021-01-13 03:47:19" itemprop="dateCreated datePublished" datetime="2021-01-13T03:47:19-05:00">2021-01-13</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2021-06-22 14:37:10" itemprop="dateModified" datetime="2021-06-22T14:37:10-04:00">2021-06-22</time>
+              </span>
+
+          
+            <span class="post-meta-item" title="Views" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">Views: </span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine: </span>
+    
+    <a title="valine" href="/archives/LeetCode%E8%A7%A3%E9%A2%98%E6%8A%A5%E5%91%8A%EF%BC%88265%EF%BC%89--%201649.%20Create%20Sorted%20Array%20through%20Instructions.html#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/archives/LeetCode%E8%A7%A3%E9%A2%98%E6%8A%A5%E5%91%8A%EF%BC%88265%EF%BC%89--%201649.%20Create%20Sorted%20Array%20through%20Instructions.html" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="Problem"><a href="#Problem" class="headerlink" title="Problem"></a>Problem</h2><p>Given an integer array <code>instructions</code>, you are asked to create a sorted array from the elements in <code>instructions</code>. You start with an empty container <code>nums</code>. For each element from <strong>left to right</strong> in <code>instructions</code>, insert it into <code>nums</code>. The <strong>cost</strong> of each insertion is the <strong>minimum</strong> of the following:</p>
+<ul>
+<li>The number of elements currently in <code>nums</code> that are <strong>strictly less than</strong> <code>instructions[i]</code>.</li>
+<li>The number of elements currently in <code>nums</code> that are <strong>strictly greater than</strong> <code>instructions[i]</code>.</li>
+</ul>
+<p>For example, if inserting element <code>3</code> into <code>nums = [1,2,3,5]</code>, the <strong>cost</strong> of insertion is <code>min(2, 1)</code> (elements <code>1</code> and <code>2</code> are less than <code>3</code>, element <code>5</code> is greater than <code>3</code>) and <code>nums</code> will become <code>[1,2,3,3,5]</code>.</p>
+<p>Return <em>the <strong>total cost</strong> to insert all elements from</em> <code>instructions</code> <em>into</em> <code>nums</code>. Since the answer may be large, return it <strong>modulo</strong> <code>109 + 7</code></p>
+<a id="more"></a>
+
+<p><strong>Example 1:</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">Input: instructions &#x3D; [1,5,6,2]</span><br><span class="line">Output: 1</span><br><span class="line">Explanation: Begin with nums &#x3D; [].</span><br><span class="line">Insert 1 with cost min(0, 0) &#x3D; 0, now nums &#x3D; [1].</span><br><span class="line">Insert 5 with cost min(1, 0) &#x3D; 0, now nums &#x3D; [1,5].</span><br><span class="line">Insert 6 with cost min(2, 0) &#x3D; 0, now nums &#x3D; [1,5,6].</span><br><span class="line">Insert 2 with cost min(1, 2) &#x3D; 1, now nums &#x3D; [1,2,5,6].</span><br><span class="line">The total cost is 0 + 0 + 0 + 1 &#x3D; 1.</span><br></pre></td></tr></table></figure>
+
+<p><strong>Example 2:</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">Input: instructions &#x3D; [1,2,3,6,5,4]</span><br><span class="line">Output: 3</span><br><span class="line">Explanation: Begin with nums &#x3D; [].</span><br><span class="line">Insert 1 with cost min(0, 0) &#x3D; 0, now nums &#x3D; [1].</span><br><span class="line">Insert 2 with cost min(1, 0) &#x3D; 0, now nums &#x3D; [1,2].</span><br><span class="line">Insert 3 with cost min(2, 0) &#x3D; 0, now nums &#x3D; [1,2,3].</span><br><span class="line">Insert 6 with cost min(3, 0) &#x3D; 0, now nums &#x3D; [1,2,3,6].</span><br><span class="line">Insert 5 with cost min(3, 1) &#x3D; 1, now nums &#x3D; [1,2,3,5,6].</span><br><span class="line">Insert 4 with cost min(3, 2) &#x3D; 2, now nums &#x3D; [1,2,3,4,5,6].</span><br><span class="line">The total cost is 0 + 0 + 0 + 0 + 1 + 2 &#x3D; 3.</span><br></pre></td></tr></table></figure>
+
+<p><strong>Example 3:</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">Input: instructions &#x3D; [1,3,3,3,2,4,2,1,2]</span><br><span class="line">Output: 4</span><br><span class="line">Explanation: Begin with nums &#x3D; [].</span><br><span class="line">Insert 1 with cost min(0, 0) &#x3D; 0, now nums &#x3D; [1].</span><br><span class="line">Insert 3 with cost min(1, 0) &#x3D; 0, now nums &#x3D; [1,3].</span><br><span class="line">Insert 3 with cost min(1, 0) &#x3D; 0, now nums &#x3D; [1,3,3].</span><br><span class="line">Insert 3 with cost min(1, 0) &#x3D; 0, now nums &#x3D; [1,3,3,3].</span><br><span class="line">Insert 2 with cost min(1, 3) &#x3D; 1, now nums &#x3D; [1,2,3,3,3].</span><br><span class="line">Insert 4 with cost min(5, 0) &#x3D; 0, now nums &#x3D; [1,2,3,3,3,4].</span><br><span class="line">Insert 2 with cost min(1, 4) &#x3D; 1, now nums &#x3D; [1,2,2,3,3,3,4].</span><br><span class="line">Insert 1 with cost min(0, 6) &#x3D; 0, now nums &#x3D; [1,1,2,2,3,3,3,4].</span><br><span class="line">Insert 2 with cost min(2, 4) &#x3D; 2, now nums &#x3D; [1,1,2,2,2,3,3,3,4].</span><br><span class="line">The total cost is 0 + 0 + 0 + 0 + 1 + 0 + 1 + 0 + 2 &#x3D; 4.</span><br></pre></td></tr></table></figure>
+
+<p><strong>Constraints:</strong></p>
+<ul>
+<li><code>1 &lt;= instructions.length &lt;= 105</code></li>
+<li><code>1 &lt;= instructions[i] &lt;= 105</code></li>
+</ul>
+<hr>
+<h2 id="Analysis"><a href="#Analysis" class="headerlink" title="Analysis"></a>Analysis</h2><p>&emsp;&emsp;这是一道hard题目，可以说算是hard里面比较难的，这道题目有两种解法，这两种解法分别都是算法领域中非常重要的算法，这里我就简单介绍一下如何求解。</p>
+<p>&emsp;&emsp;首先看一下题目的要求，把复杂的描述简化一下，就是给定一个数组，要求每个位置的cost，对<code>cost[i]</code>的定义是<code>min(在这个位置之前比nums[i]小的数的个数,在这个位置之前比nums[i]大的数的个数)</code>。而对于某个位置来说，只要我们知道前面有多少个数字比它小，还有知道有多少个数字和它一样大，那么就能计算出有多少个数字比它大，因此计算前者即可。所以求解的问题转化为：对每个位置，计算在这个位置之前比这个数字小的数的个数。</p>
+<h3 id="分治法"><a href="#分治法" class="headerlink" title="分治法"></a>分治法</h3><p>&emsp;&emsp;涉及到大小比较，我们就会想到能不能先进行排序。直观上看好像不可以，因为对整体排序的话，就丢失了位置的信息。整体排序不行的话，部分排序呢？比如说<code>[1, 5, 8, 9]</code>和<code>[2, 3, 6, 16, 20]</code>这两个部分，虽然整体上并没有顺序，但是它们各自有序，这个时候对我们查找在前面有多少个数字比该数字小就有很大帮助。以6为例，它只需要到前面一个数组中找到第一个比6大的数字，往前的都肯定是比6小的。所以它找到了8，下标是2，所以比6小的数字个数就有两个。这个时候看似能解决一部分问题，但是会有另一个疑问了，这样的方法能够解决在不同部分的，那和6在同一个部分的数字呢？（比如例子中的2和3）这还不简单，已经分成了两半，各自有序，这就是经典的<strong>归并排序</strong>！所以在上一步的时候，我们就已经统计好比6小的数字个数是2，然后在这一步，<strong>再加上2</strong>，所以记得这里是累加！</p>
+<p>&emsp;&emsp;完成归并后我们就有了每个位置前比该位置小的数字的个数这个信息了，然后我们再遍历一边原数组，计算每个位置的cost。我们用一个数组去统计相同数字出现的次数，减去在这个位置前比这个数字小的数字的个数和相同数字出现的次数，得到的结果就是在这个位置前比这个数字大的数字的个数，最后两者取较小值即可。</p>
+<h3 id="树状数组（Binary-Indexed-Tree）"><a href="#树状数组（Binary-Indexed-Tree）" class="headerlink" title="树状数组（Binary Indexed Tree）"></a>树状数组（Binary Indexed Tree）</h3><p>&emsp;&emsp;上面介绍了使用归并排序的思路去求解这道题目，理解起来是比较直观的，但是效率上还不是最优。这里再给大家介绍一种数据结构——树状数组BIT，这种数据结构就是专门解决这种类型的题目。</p>
+<p>&emsp;&emsp;BIT的原理和实现细节比较复杂，我会在另外一篇博客和大家分享，这里只谈用法。BIT实际上是一个数组（<strong>特别注意这个数组是1-index的</strong>），数组的下标是数值，对应的值是这个数字出现的次数。比如1出现了2次，则<code>bitArray[1] = 2</code>。结合这道题目，假设我们知道<code>bitArr[1] = 2</code>，<code>bitArr[5] = 10</code>，如果要求数字8前面比它小的数字的个数，那么就是<code>2 + 10 = 12</code>。而BIT的特点就是能够高效地求出这个前缀和。</p>
+<p>&emsp;&emsp;然后我们看看BIT提供了什么接口，主要有两个<code>update(int idx, int val)</code>和<code>sumRange(int i, int j)</code>。</p>
+<ul>
+<li><code>update(int idx, int val)</code>：往BIT中插入一个元素，如果5出现了一次，则<code>update(5, 1)</code>；</li>
+<li><code>sumRange(int i, intj)</code>：计算区间<code>[i,j]</code>的和。</li>
+</ul>
+<p>&emsp;&emsp;所以回到这道题目，实际上我们只需要一次遍历数组，然后每次都update一下当前元素，出现的次数+1，然后计算<code>sumRange(0, nums[i] - 1)</code>和<code>sumRange(nums[i] + 1, size)</code>两者的极小值，最后累加起来即可。</p>
+<hr>
+<h2 id="Solution"><a href="#Solution" class="headerlink" title="Solution"></a>Solution</h2><h3 id="分治法-1"><a href="#分治法-1" class="headerlink" title="分治法"></a>分治法</h3><p>&emsp;&emsp;由于我们在求解过程中需要排序，因此需要多开一个空间<code>sorted</code>去存放排序后的结果。同时，我们求解的答案并不是最终有序的数组，而是一个能够记录每个位置前比该位置元素小的数字的个数，所以这里也需要开一个空间<code>cost</code>去存放。</p>
+<h3 id="树状数组"><a href="#树状数组" class="headerlink" title="树状数组"></a>树状数组</h3><p>&emsp;&emsp;树状数组的实现不在这里详细解释，在打题时建议直接套用模版。模版封装好了两个接口<code>update()</code>和<code>sumRange()</code>。</p>
+<hr>
+<h2 id="Code"><a href="#Code" class="headerlink" title="Code"></a>Code</h2><h3 id="分治"><a href="#分治" class="headerlink" title="分治"></a>分治</h3><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span> &#123;</span></span><br><span class="line">    <span class="keyword">int</span> smaller[<span class="number">100001</span>];</span><br><span class="line">    <span class="keyword">int</span> sorted[<span class="number">100001</span>];</span><br><span class="line">    <span class="keyword">int</span> count[<span class="number">100001</span>];</span><br><span class="line">    <span class="keyword">int</span> temp[<span class="number">100001</span>];</span><br><span class="line">    <span class="keyword">int</span> M = <span class="number">1e9</span> + <span class="number">7</span>;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function"><span class="keyword">int</span> <span class="title">createSortedArray</span><span class="params">(<span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt;&amp; instructions)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">int</span> size = instructions.size();</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; size; i++) &#123;</span><br><span class="line">            sorted[i] = instructions[i];</span><br><span class="line">        &#125;</span><br><span class="line">        helper(instructions, <span class="number">0</span>, size - <span class="number">1</span>);</span><br><span class="line">        <span class="keyword">long</span> <span class="keyword">long</span> result = <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; size; i++) &#123;</span><br><span class="line">            result += min(smaller[i], i - smaller[i] - count[instructions[i]]);</span><br><span class="line">            result %= M;</span><br><span class="line">            count[instructions[i]]++;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> result;</span><br><span class="line">    &#125;</span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">helper</span><span class="params">(<span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt;&amp; nums, <span class="keyword">int</span> a, <span class="keyword">int</span> b)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (a &gt;= b) &#123;</span><br><span class="line">            <span class="keyword">return</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">int</span> mid = (a + b) / <span class="number">2</span>;</span><br><span class="line">        helper(nums, a, mid);</span><br><span class="line">        helper(nums, mid + <span class="number">1</span>, b);</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = mid + <span class="number">1</span>; i &lt;= b; i++) &#123;</span><br><span class="line">            <span class="keyword">auto</span> iter = lower_bound(sorted + a, sorted + mid + <span class="number">1</span>, nums[i]);</span><br><span class="line">            smaller[i] += iter - (sorted + a);</span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">        <span class="comment">// merge</span></span><br><span class="line">        <span class="keyword">int</span> i = a, j = mid + <span class="number">1</span>, p = <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">while</span> (i &lt;= mid &amp;&amp; j &lt;= b) &#123;</span><br><span class="line">            <span class="keyword">if</span> (sorted[i] &lt;= sorted[j]) &#123;</span><br><span class="line">                temp[p] = sorted[i];</span><br><span class="line">                i++;</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                temp[p] = sorted[j];</span><br><span class="line">                j++;</span><br><span class="line">            &#125;</span><br><span class="line">            p++;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">while</span> (i &lt;= mid) &#123;</span><br><span class="line">            temp[p] = sorted[i];</span><br><span class="line">            i++;</span><br><span class="line">            p++;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">while</span> (j &lt;= b) &#123;</span><br><span class="line">            temp[p] = sorted[j];</span><br><span class="line">            j++;</span><br><span class="line">            p++;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; b - a + <span class="number">1</span>; i++) &#123;</span><br><span class="line">            sorted[a + i] = temp[i];</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<h3 id="树状数组-1"><a href="#树状数组-1" class="headerlink" title="树状数组"></a>树状数组</h3><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> <span class="keyword">int</span> MAX_N = <span class="number">1e5</span>;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span> &#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function"><span class="keyword">int</span> <span class="title">createSortedArray</span><span class="params">(<span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt;&amp; instructions)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">long</span> <span class="keyword">long</span> result = <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">int</span> size = instructions.size();</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; size; i++) &#123;</span><br><span class="line">            update(instructions[i], <span class="number">1</span>);</span><br><span class="line">            <span class="keyword">long</span> <span class="keyword">long</span> a = sumRange(<span class="number">1</span>, instructions[i] - <span class="number">1</span>);</span><br><span class="line">            <span class="keyword">long</span> <span class="keyword">long</span> b = sumRange(instructions[i] + <span class="number">1</span>, MAX_N);</span><br><span class="line">            result += min(a, b);</span><br><span class="line">            result %= M;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> result;</span><br><span class="line">    &#125;</span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">    <span class="keyword">int</span> bitArr[MAX_N + <span class="number">1</span>]; <span class="comment">// 1-index</span></span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">int</span> <span class="title">lowbit</span><span class="params">(<span class="keyword">int</span> x)</span> </span>&#123; <span class="keyword">return</span> x &amp; (-x); &#125;</span><br><span class="line">    <span class="keyword">int</span> M = <span class="number">1e9</span> + <span class="number">7</span>;</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">update</span><span class="params">(<span class="keyword">int</span> i, <span class="keyword">long</span> <span class="keyword">long</span> d)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">while</span> (i &lt;= MAX_N) &#123;</span><br><span class="line">            bitArr[i] += d;</span><br><span class="line">            bitArr[i] %= M;</span><br><span class="line">            i += lowbit(i);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">long</span> <span class="keyword">long</span> <span class="title">queryPreSum</span><span class="params">(<span class="keyword">int</span> i)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">long</span> <span class="keyword">long</span> ans = <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">while</span> (i) &#123;</span><br><span class="line">            ans += bitArr[i];</span><br><span class="line">            ans %= M;</span><br><span class="line">            i -= lowbit(i);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> ans;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">long</span> <span class="keyword">long</span> <span class="title">sumRange</span><span class="params">(<span class="keyword">int</span> i, <span class="keyword">int</span> j)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> queryPreSum(j) - queryPreSum(i - <span class="number">1</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="Summary"><a href="#Summary" class="headerlink" title="Summary"></a>Summary</h2><p>&emsp;&emsp;这道题目的两种解法都是非常著名的算法，第一种解法是归并排序，虽然这个方法听得很多，但实际能应用的场景不多，这道题算是为数不多能够应用的场景。第二种解法时BIT，这是一个非常有趣的数据结构，因为原理比较复杂没办法在这里一次过和大家分享，之后一定会出一篇有关BIT的博客，希望大家持续关注！这道题这道题目的分享到这里，谢谢您的支持！</p>
+
+    </div>
+
+    
+    
+    
+        <div class="reward-container">
+  <div></div>
+  <button onclick="var qr = document.getElementById('qr'); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    Donate
+  </button>
+  <div id="qr" style="display: none;">
+      
+      <div style="display: inline-block;">
+        <img src="/images/wechat_reward.png" alt="Leungyukshing WeChat Pay">
+        <p>WeChat Pay</p>
+      </div>
+      
+      <div style="display: inline-block;">
+        <img src="/images/alipay_reward.png" alt="Leungyukshing Alipay">
+        <p>Alipay</p>
+      </div>
+
+  </div>
+</div>
+
+        
+
+  <div class="followme">
+    <p>Welcome to my other publishing channels</p>
+
+    <div class="social-list">
+
+        <div class="social-item">
+          <a target="_blank" class="social-link" href="/atom.xml">
+            <span class="icon">
+              <i class="fa fa-rss"></i>
+            </span>
+
+            <span class="label">RSS</span>
+          </a>
+        </div>
+    </div>
+  </div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/LeetCode/" rel="tag"># LeetCode</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/archives/LeetCode%E8%A7%A3%E9%A2%98%E6%8A%A5%E5%91%8A%EF%BC%88264%EF%BC%89--%2088.%20Merge%20Sorted%20Array.html" rel="prev" title="LeetCode解题报告（264）-- 88. Merge Sorted Array">
+      <i class="fa fa-chevron-left"></i> LeetCode解题报告（264）-- 88. Merge Sorted Array
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/archives/LeetCode%E8%A7%A3%E9%A2%98%E6%8A%A5%E5%91%8A%EF%BC%88266%EF%BC%89--%20881.%20Boats%20to%20Save%20People.html" rel="next" title="LeetCode解题报告（266）-- 881. Boats to Save People">
+      LeetCode解题报告（266）-- 881. Boats to Save People <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Problem"><span class="nav-number">1.</span> <span class="nav-text">Problem</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Analysis"><span class="nav-number">2.</span> <span class="nav-text">Analysis</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%86%E6%B2%BB%E6%B3%95"><span class="nav-number">2.1.</span> <span class="nav-text">分治法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%A0%91%E7%8A%B6%E6%95%B0%E7%BB%84%EF%BC%88Binary-Indexed-Tree%EF%BC%89"><span class="nav-number">2.2.</span> <span class="nav-text">树状数组（Binary Indexed Tree）</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Solution"><span class="nav-number">3.</span> <span class="nav-text">Solution</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%86%E6%B2%BB%E6%B3%95-1"><span class="nav-number">3.1.</span> <span class="nav-text">分治法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%A0%91%E7%8A%B6%E6%95%B0%E7%BB%84"><span class="nav-number">3.2.</span> <span class="nav-text">树状数组</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Code"><span class="nav-number">4.</span> <span class="nav-text">Code</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%86%E6%B2%BB"><span class="nav-number">4.1.</span> <span class="nav-text">分治</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%A0%91%E7%8A%B6%E6%95%B0%E7%BB%84-1"><span class="nav-number">4.2.</span> <span class="nav-text">树状数组</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Summary"><span class="nav-number">5.</span> <span class="nav-text">Summary</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Leungyukshing"
+      src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">Leungyukshing</p>
+  <div class="site-description" itemprop="description">A blog for code, programme sharing.</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">688</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">27</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/leungyukshing" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;leungyukshing" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:jacky14.liang@gmail.com" title="E-Mail → mailto:jacky14.liang@gmail.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="/atom.xml" title="RSS → &#x2F;atom.xml"><i class="fa fa-rss fa-fw"></i>RSS</a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll motion-element">
+    <div class="links-of-blogroll-title"><i class="fa fa-link fa-fw"></i>
+      Friends
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="http://www.liangjh45.com/" title="http:&#x2F;&#x2F;www.liangjh45.com&#x2F;" rel="noopener" target="_blank">Alva's blog</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="https://sysucarey.github.io/" title="https:&#x2F;&#x2F;sysucarey.github.io&#x2F;" rel="noopener" target="_blank">Carey's blog</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="https://blog.csdn.net/dickdick111/" title="https:&#x2F;&#x2F;blog.csdn.net&#x2F;dickdick111&#x2F;" rel="noopener" target="_blank">Dick's blog</a>
+        </li>
+    </ul>
+  </div>
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2017 – 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Leungyukshing</span>
+</div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="Total Visitors">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="Total Views">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+      
+
+<script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      loader: {
+        source: {
+          '[tex]/amsCd': '[tex]/amscd',
+          '[tex]/AMScd': '[tex]/amscd'
+        }
+      },
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              let target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    (function () {
+      var script = document.createElement('script');
+      script.src = '//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+      script.defer = true;
+      document.head.appendChild(script);
+    })();
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : true,
+      appId      : 'AaLog29QcUdQKTboD6cY2dNP-gzGzoHsz',
+      appKey     : 'dUWNHLnTY9qG1jJwPnTtfMm8',
+      placeholder: "Just go go",
+      avatar     : 'mm',
+      meta       : guest,
+      pageSize   : '10' || 10,
+      visitor    : false,
+      lang       : '' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : false,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+
+</body>
+</html>

@@ -1,0 +1,614 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <meta name="google-site-verification" content="FHjCzDi7nry9Mvf4EFOY5cYoco-ZXq9tKjvXZK0nKr4">
+  <meta name="baidu-site-verification" content="code-gpMFPewYUF" />
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="/lib/pace/pace-theme-minimal.min.css">
+  <script src="/lib/pace/pace.min.js"></script>
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"leungyukshing.github.io","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"right","display":"hide","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"appID":"52USYSYESX","apiKey":"20b904c66f55b874f05edea4aca57780","indexName":"blog","hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="Introduction&amp;emsp;&amp;emsp;现在的软件工程领域中，经常会听到HTTP（Hyper Text Transport Protocol）和RPC（Remote Procedure Call）这两个术语，好像都是和接口、网络请求有关，但是它们究竟是什么，是不是对等的两样东西，它们之间的关系和优缺点是什么，很多朋友都没有弄清楚。所以在这篇博客，我将简单梳理一下HTTP和RPC相关的知识。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="HTTP和RPC">
+<meta property="og:url" content="https://leungyukshing.github.io/archives/Http-And-Rpc.html">
+<meta property="og:site_name" content="Halo">
+<meta property="og:description" content="Introduction&amp;emsp;&amp;emsp;现在的软件工程领域中，经常会听到HTTP（Hyper Text Transport Protocol）和RPC（Remote Procedure Call）这两个术语，好像都是和接口、网络请求有关，但是它们究竟是什么，是不是对等的两样东西，它们之间的关系和优缺点是什么，很多朋友都没有弄清楚。所以在这篇博客，我将简单梳理一下HTTP和RPC相关的知识。">
+<meta property="og:locale">
+<meta property="og:image" content="https://leungyukshing.github.io/images/rpc.png">
+<meta property="article:published_time" content="2021-07-14T14:38:08.000Z">
+<meta property="article:modified_time" content="2021-07-14T16:08:13.071Z">
+<meta property="article:author" content="Leungyukshing">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://leungyukshing.github.io/images/rpc.png">
+
+<link rel="canonical" href="https://leungyukshing.github.io/archives/Http-And-Rpc.html">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-Hans'
+  };
+</script>
+
+  <title>HTTP和RPC | Halo</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+<!-- hexo injector head_end end --><link rel="alternate" href="/atom.xml" title="Halo" type="application/atom+xml"><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Halo</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">A magic place for coding</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>About</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>Tags</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>Search
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="Searching..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+  <a href="https://github.com/leungyukshing" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="https://leungyukshing.github.io/archives/Http-And-Rpc.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="Leungyukshing">
+      <meta itemprop="description" content="A blog for code, programme sharing.">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Halo">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          HTTP和RPC
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+              
+
+              <time title="Created: 2021-07-14 10:38:08 / Modified: 12:08:13" itemprop="dateCreated datePublished" datetime="2021-07-14T10:38:08-04:00">2021-07-14</time>
+            </span>
+
+          
+            <span class="post-meta-item" title="Views" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">Views: </span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine: </span>
+    
+    <a title="valine" href="/archives/Http-And-Rpc.html#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/archives/Http-And-Rpc.html" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="Introduction"><a href="#Introduction" class="headerlink" title="Introduction"></a>Introduction</h1><p>&emsp;&emsp;现在的软件工程领域中，经常会听到HTTP（Hyper Text Transport Protocol）和RPC（Remote Procedure Call）这两个术语，好像都是和接口、网络请求有关，但是它们究竟是什么，是不是对等的两样东西，它们之间的关系和优缺点是什么，很多朋友都没有弄清楚。所以在这篇博客，我将简单梳理一下HTTP和RPC相关的知识。</p>
+<a id="more"></a>
+
+<hr>
+<h1 id="HTTP和RPC最大的不同"><a href="#HTTP和RPC最大的不同" class="headerlink" title="HTTP和RPC最大的不同"></a>HTTP和RPC最大的不同</h1><p>&emsp;&emsp;HTTP的全称是Hyper Text Transport Protocol，中文叫超文本传输协议，是一种应用层协议，在传输层协议TCP之上。</p>
+<p>&emsp;&emsp;而RPC的全称则是Remote Procedure Call，中文叫远程过程调用，是一种服务间的网络通讯模式。它本身和网络层没有任何关系，理论上它可以基于任何网络协议，通常来说它会基于TCP协议。</p>
+<p>&emsp;&emsp;所以两者之间最本质的区别就是一个是应用层协议，另一个是服务间的通讯方式。</p>
+<hr>
+<h1 id="HTTP详解"><a href="#HTTP详解" class="headerlink" title="HTTP详解"></a>HTTP详解</h1><p>&emsp;&emsp;HTTP大家听的最多，接触的也比较多，就先来看HTTP到底是一个什么东西。应用层协议实质上就是一个网络世界的通讯规则。为了让大多数人都能够通讯，所以大家就必须遵守一定的规则去传递信息。比如说HTTP中规定了请求头、报头、请求体等格式，当然还有返回码之类的，大家必须按照规定的格式去通信，相互才能收到消息。</p>
+<p>&emsp;&emsp;举个例子，我在浏览器中输入<code>www.google.com</code>，从我的机器就能够访问到谷歌的服务器；如果我输入<code>www.baidu.com</code>，我也能访问到百度的服务器。这是因为我的浏览器、谷歌的服务器、百度的服务器都遵守HTTP协议，所以我发起这个请求后，它们都能够响应。</p>
+<p>&emsp;&emsp;与HTTP处于并列关系的比较常用的协议还有SMTP。这是一个邮件协议，因为世界上主流的邮件服务商都用这个协议，所以不同服务商之间的邮件可以相互通信。</p>
+<hr>
+<h1 id="RPC详解"><a href="#RPC详解" class="headerlink" title="RPC详解"></a>RPC详解</h1><p>&emsp;&emsp;我们先来看看RPC这个概念是怎么诞生的。与远程过程调用相对应的是<strong>本地调用</strong>。什么是本地调用？其实就是你在代码中调用了一个函数（方法）。以前的服务都是把大部分的功能代码都写在一个服务中，所以逻辑模块之间的交互直接在代码中调用即可。但是后面随着微服务的兴起，庞大的单体服务逐渐被拆分成相对独立的微服务，每个微服务负责一定的逻辑模块和数据模型，那么在写代码的时候，就有很多跨服务的通讯。</p>
+<p>&emsp;&emsp;例如我们在做一个外卖的系统，微服务A负责的是餐厅的数据模型，微服务B负责的是菜品的数据模型，这两个是相对独立的模块。当用户查找某样菜品时，就需要这两个微服务通信。怎么通讯呢？最简单的就是用HTTP，我们还是遵循统一的规则，这个肯定是可靠的，但问题是有没有这个必要。</p>
+<p>&emsp;&emsp;首先微服务A和微服务B都是我写的，它们之间的通讯实质上是<strong>内部通讯</strong>，没有必要都遵守这么复杂的HTTP。HTTP在DNS解析、HTTP握手、数据包处理等方面都需要大量的耗时，而如果我能够定义内部的通讯规范，那么我就不需要遵守HTTP了。这样一来的好处就是我的通讯变得高效，虽然实际上是服务之间的网络请求，但是做到就跟本地代码调用一个方法这么简单，因此就叫RPC。</p>
+<p><img src="/images/rpc.png" alt="rpc structure"></p>
+<p>&emsp;&emsp;一个基本的RPC服务的基本架构如上图，包含了一个组件：</p>
+<ul>
+<li>Client：客户端，是方法的调用者；</li>
+<li>Client Stub：客户端存根，存放服务端的地址（通过服务发现），把客户端的请求参数打包（序列化）成网络消息，然后通过网络发送给服务方；</li>
+<li>Server：服务端，是服务的提供者；</li>
+<li>Server Stub：服务端存根，接受客户端发过来的消息，把消息反序列化成请求参数，然后处理相应的逻辑。</li>
+</ul>
+<h2 id="流行的RPC框架"><a href="#流行的RPC框架" class="headerlink" title="流行的RPC框架"></a>流行的RPC框架</h2><h3 id="gRPC"><a href="#gRPC" class="headerlink" title="gRPC"></a>gRPC</h3><p>&emsp;&emsp;gRPC是google开源的基于HTTP2.0的协议，在传输数据方面，gRPC使用了protobuf协议，这是一个以超高压缩率著称的数据序列化协议；同时基于HTTP2.0也使得gRPC拥有了更加灵活的流控制以及优先级控制。</p>
+<h3 id="thrift"><a href="#thrift" class="headerlink" title="thrift"></a>thrift</h3><p>&emsp;&emsp;thrift是facebook开源的一个框架，它用一个代码生成器来对它所定义的IDL文件生成服务代码框架，好处是这个是跨语言的，劣势是开发者需要学习新的语言特性，有一定成本。</p>
+<h1 id="Comparison"><a href="#Comparison" class="headerlink" title="Comparison"></a>Comparison</h1><p>&emsp;&emsp;经过上面的简单介绍，我们可以对HTTP和RPC两者做一些对比和总结：</p>
+<ul>
+<li>使用场景<ul>
+<li>RPC主要用于内部通讯，尤其是微服务之间，优点是性能好、传输效率高</li>
+<li>HTTP主要用于对外通信，优点是适用范围广，缺点是效率较低。</li>
+</ul>
+</li>
+</ul>
+<p>&emsp;&emsp;这里再提几点RPC特有的优点：</p>
+<ol>
+<li>长链接：保持长链接减少握手次数，减少网络开销；</li>
+<li>服务注册及发现机制：RPC框架有统一的注册中心，配合Service Mesh可以做到有效的监控管理。接口的发布、扩展等能做到平滑无感知；</li>
+<li>安全：使用RPC不会暴露资源操作，降低数据风险。</li>
+</ol>
+<hr>
+<h1 id="Summary"><a href="#Summary" class="headerlink" title="Summary"></a>Summary</h1><p>&emsp;&emsp;到这里相信大家对这两个概念有了一定的了解，在之后的开发中也不会混淆这两个概念。其实两者并不存在孰优孰劣的问题，而是要结合使用场景来选择合适的工具。对于大型的、内部的系统，RPC自然是更优的选择；而对于小型的、对外的系统，HTTP则更胜一筹。</p>
+
+    </div>
+
+    
+    
+    
+        <div class="reward-container">
+  <div></div>
+  <button onclick="var qr = document.getElementById('qr'); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    Donate
+  </button>
+  <div id="qr" style="display: none;">
+      
+      <div style="display: inline-block;">
+        <img src="/images/wechat_reward.png" alt="Leungyukshing WeChat Pay">
+        <p>WeChat Pay</p>
+      </div>
+      
+      <div style="display: inline-block;">
+        <img src="/images/alipay_reward.png" alt="Leungyukshing Alipay">
+        <p>Alipay</p>
+      </div>
+
+  </div>
+</div>
+
+        
+
+  <div class="followme">
+    <p>Welcome to my other publishing channels</p>
+
+    <div class="social-list">
+
+        <div class="social-item">
+          <a target="_blank" class="social-link" href="/atom.xml">
+            <span class="icon">
+              <i class="fa fa-rss"></i>
+            </span>
+
+            <span class="label">RSS</span>
+          </a>
+        </div>
+    </div>
+  </div>
+
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/archives/LeetCode%E8%A7%A3%E9%A2%98%E6%8A%A5%E5%91%8A%EF%BC%88398)%20--%201690.%20Stone%20Game%20VII.html" rel="prev" title="LeetCode解题报告（398) -- 1690. Stone Game VII">
+      <i class="fa fa-chevron-left"></i> LeetCode解题报告（398) -- 1690. Stone Game VII
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/archives/Introduction-DNS.html" rel="next" title="浅淡DNS">
+      浅淡DNS <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Introduction"><span class="nav-number">1.</span> <span class="nav-text">Introduction</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#HTTP%E5%92%8CRPC%E6%9C%80%E5%A4%A7%E7%9A%84%E4%B8%8D%E5%90%8C"><span class="nav-number">2.</span> <span class="nav-text">HTTP和RPC最大的不同</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#HTTP%E8%AF%A6%E8%A7%A3"><span class="nav-number">3.</span> <span class="nav-text">HTTP详解</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#RPC%E8%AF%A6%E8%A7%A3"><span class="nav-number">4.</span> <span class="nav-text">RPC详解</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%B5%81%E8%A1%8C%E7%9A%84RPC%E6%A1%86%E6%9E%B6"><span class="nav-number">4.1.</span> <span class="nav-text">流行的RPC框架</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#gRPC"><span class="nav-number">4.1.1.</span> <span class="nav-text">gRPC</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#thrift"><span class="nav-number">4.1.2.</span> <span class="nav-text">thrift</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Comparison"><span class="nav-number">5.</span> <span class="nav-text">Comparison</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Summary"><span class="nav-number">6.</span> <span class="nav-text">Summary</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Leungyukshing"
+      src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">Leungyukshing</p>
+  <div class="site-description" itemprop="description">A blog for code, programme sharing.</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">688</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">27</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/leungyukshing" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;leungyukshing" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:jacky14.liang@gmail.com" title="E-Mail → mailto:jacky14.liang@gmail.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="/atom.xml" title="RSS → &#x2F;atom.xml"><i class="fa fa-rss fa-fw"></i>RSS</a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll motion-element">
+    <div class="links-of-blogroll-title"><i class="fa fa-link fa-fw"></i>
+      Friends
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="http://www.liangjh45.com/" title="http:&#x2F;&#x2F;www.liangjh45.com&#x2F;" rel="noopener" target="_blank">Alva's blog</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="https://sysucarey.github.io/" title="https:&#x2F;&#x2F;sysucarey.github.io&#x2F;" rel="noopener" target="_blank">Carey's blog</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="https://blog.csdn.net/dickdick111/" title="https:&#x2F;&#x2F;blog.csdn.net&#x2F;dickdick111&#x2F;" rel="noopener" target="_blank">Dick's blog</a>
+        </li>
+    </ul>
+  </div>
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2017 – 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Leungyukshing</span>
+</div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="Total Visitors">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="Total Views">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : true,
+      appId      : 'AaLog29QcUdQKTboD6cY2dNP-gzGzoHsz',
+      appKey     : 'dUWNHLnTY9qG1jJwPnTtfMm8',
+      placeholder: "Just go go",
+      avatar     : 'mm',
+      meta       : guest,
+      pageSize   : '10' || 10,
+      visitor    : false,
+      lang       : '' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : false,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+
+</body>
+</html>

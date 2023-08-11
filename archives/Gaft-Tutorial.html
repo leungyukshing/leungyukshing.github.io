@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <meta name="google-site-verification" content="FHjCzDi7nry9Mvf4EFOY5cYoco-ZXq9tKjvXZK0nKr4">
+  <meta name="baidu-site-verification" content="code-gpMFPewYUF" />
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="/lib/pace/pace-theme-minimal.min.css">
+  <script src="/lib/pace/pace.min.js"></script>
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"leungyukshing.github.io","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"right","display":"hide","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"appID":"52USYSYESX","apiKey":"20b904c66f55b874f05edea4aca57780","indexName":"blog","hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="Introduction for GAFT&amp;emsp;&amp;emsp;GAFT（Genetic Algorithm Framework in Python）是一个基于python的遗传算法框架，它提供了一系列的遗传运算子（operator）和一些插件接口（plugin interfaces），方便用户自定义。同时还提供了运行时分析（on-the-fly analysis）。GAFT还集成了MPI并行化">
+<meta property="og:type" content="article">
+<meta property="og:title" content="GAFT框架使用">
+<meta property="og:url" content="https://leungyukshing.github.io/archives/Gaft-Tutorial.html">
+<meta property="og:site_name" content="Halo">
+<meta property="og:description" content="Introduction for GAFT&amp;emsp;&amp;emsp;GAFT（Genetic Algorithm Framework in Python）是一个基于python的遗传算法框架，它提供了一系列的遗传运算子（operator）和一些插件接口（plugin interfaces），方便用户自定义。同时还提供了运行时分析（on-the-fly analysis）。GAFT还集成了MPI并行化">
+<meta property="og:locale">
+<meta property="og:image" content="https://leungyukshing.github.io/images/gaft0.png">
+<meta property="article:published_time" content="2020-02-19T04:37:42.000Z">
+<meta property="article:modified_time" content="2021-06-22T18:37:08.638Z">
+<meta property="article:author" content="Leungyukshing">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://leungyukshing.github.io/images/gaft0.png">
+
+<link rel="canonical" href="https://leungyukshing.github.io/archives/Gaft-Tutorial.html">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-Hans'
+  };
+</script>
+
+  <title>GAFT框架使用 | Halo</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+<!-- hexo injector head_end end --><link rel="alternate" href="/atom.xml" title="Halo" type="application/atom+xml"><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Halo</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">A magic place for coding</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>About</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>Tags</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>Search
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="Searching..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+  <a href="https://github.com/leungyukshing" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="https://leungyukshing.github.io/archives/Gaft-Tutorial.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="Leungyukshing">
+      <meta itemprop="description" content="A blog for code, programme sharing.">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Halo">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          GAFT框架使用
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2020-02-18 23:37:42" itemprop="dateCreated datePublished" datetime="2020-02-18T23:37:42-05:00">2020-02-18</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2021-06-22 14:37:08" itemprop="dateModified" datetime="2021-06-22T14:37:08-04:00">2021-06-22</time>
+              </span>
+
+          
+            <span class="post-meta-item" title="Views" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">Views: </span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine: </span>
+    
+    <a title="valine" href="/archives/Gaft-Tutorial.html#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/archives/Gaft-Tutorial.html" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="Introduction-for-GAFT"><a href="#Introduction-for-GAFT" class="headerlink" title="Introduction for GAFT"></a>Introduction for GAFT</h2><p>&emsp;&emsp;GAFT（<strong>G</strong>enetic <strong>A</strong>lgorithm <strong>F</strong>ramework in <strong>P</strong>ython）是一个基于python的遗传算法框架，它提供了一系列的遗传运算子（operator）和一些插件接口（plugin interfaces），方便用户自定义。同时还提供了运行时分析（on-the-fly analysis）。GAFT还集成了MPI并行化接口，可以加速算法的运算。</p>
+<a id="more"></a>
+
+<h2 id="Installation"><a href="#Installation" class="headerlink" title="Installation"></a>Installation</h2><p>&emsp;&emsp;<strong>Python环境</strong>：Python 3.x</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pip install gaft</span><br></pre></td></tr></table></figure>
+
+<p>&emsp;&emsp;如果希望支持并行化，需要安装MPI。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pip install mpi4py</span><br></pre></td></tr></table></figure>
+
+<h2 id="Quick-Start"><a href="#Quick-Start" class="headerlink" title="Quick Start"></a>Quick Start</h2><h3 id="1-引入GAFT模块"><a href="#1-引入GAFT模块" class="headerlink" title="1.引入GAFT模块"></a>1.引入GAFT模块</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># components and operators</span></span><br><span class="line"><span class="keyword">from</span> gaft <span class="keyword">import</span> GAEngine</span><br><span class="line"><span class="keyword">from</span> gaft.components <span class="keyword">import</span> BinaryIndividual</span><br><span class="line"><span class="keyword">from</span> gaft.components <span class="keyword">import</span> Population</span><br><span class="line"><span class="keyword">from</span> gaft.operators <span class="keyword">import</span> RouletteWheelSelection</span><br><span class="line"><span class="keyword">from</span> gaft.operators <span class="keyword">import</span> UniformCrossover</span><br><span class="line"><span class="keyword">from</span> gaft.operators <span class="keyword">import</span> FlipBitMutation</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment"># Analysis Plugin</span></span><br><span class="line"><span class="keyword">from</span> gaft.plugin_interfaces.analysis <span class="keyword">import</span> OnTheFlyAnalysis</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">from</span> gaft.analysis.fitness_store <span class="keyword">import</span> FitnessStore</span><br><span class="line"></span><br><span class="line"><span class="comment"># Math</span></span><br><span class="line"><span class="keyword">from</span> math <span class="keyword">import</span> sin, cos</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>GAFT的模块和遗传算法的结构有紧密的关系。<code>components</code>模块下的是个体和种群。<code>operators</code>下的是一个运算子，包括选择、交叉和变异。分析相关的插件是在<code>pluggin_terfaces</code>和<code>analysis</code>。</li>
+</ul>
+<h3 id="2-个体与种群的定义及初始化"><a href="#2-个体与种群的定义及初始化" class="headerlink" title="2.个体与种群的定义及初始化"></a>2.个体与种群的定义及初始化</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">indv_template = BinaryIndividual(ranges=[(<span class="number">0</span>, <span class="number">10</span>)], eps=<span class="number">0.001</span>)</span><br><span class="line">population = Population(indv_template=indv_template, size=<span class="number">20</span>)</span><br><span class="line">population.init()</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>首先定义个体，这里用的是框架默认提供的<code>BinaryIndividual</code>。如果不符合我们的需求，也可以自定义。</li>
+<li>然后是定义种群，一般是传入个体的模板和种群的大小。</li>
+<li>最后是初始化种群，初始化种群时会逐个调用个体的初始化函数。</li>
+</ul>
+<h3 id="3-运算子的定义"><a href="#3-运算子的定义" class="headerlink" title="3.运算子的定义"></a>3.运算子的定义</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">selection = RouletteWheelSelection()</span><br><span class="line">crossover = UniformCrossover(pc=<span class="number">0.8</span>, pe=<span class="number">0.5</span>)</span><br><span class="line">mutation = FlipBitMutation(pm=<span class="number">0.1</span>)</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>运算子在遗传算法中至关重要，运算中设计的好坏直接影响了种群的多样性，从而影响算法最后的结果。</li>
+<li>选择：GAFT提供了轮盘赌的选择运算。但是这里有一个bug，当所有个体的fitness都相同时，会报错，改进方法后面会讲。</li>
+<li>交叉：交叉运算是构成种群多样性的重要运算。这里用了UniformCrossover，里面有两个参数。<code>pc</code>指的是交叉的概率，推荐范围是<code>[0.25, 1.0]</code>，<code>pe</code>指的是选择到该个体后，每个位置上基因的交换概率，推荐范围是<code>[0.5, 0.7]</code>。</li>
+<li>变异：这里用的是FlipBitMutation，也就是按每个位上的基因进行翻转（0变为1，1变为0）。参数是<code>pm</code>指的是变异概率，推荐范围是<code>[0.001, 0.1]</code></li>
+</ul>
+<h3 id="4-GA引擎初始化"><a href="#4-GA引擎初始化" class="headerlink" title="4.GA引擎初始化"></a>4.GA引擎初始化</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">engine = GAEngine(population=population, selection=selection, crossover=crossover, mutation=mutation, analysis=[FitnessStore])</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>把前面初始化的一系列个体、种群、运算子都加载到引擎中，包括分析插件。</li>
+</ul>
+<h3 id="5-注册适应值函数"><a href="#5-注册适应值函数" class="headerlink" title="5.注册适应值函数"></a>5.注册适应值函数</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@engine.fitness_register</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">fitness</span>(<span class="params">indv</span>):</span></span><br><span class="line">    x, = indv.solution</span><br><span class="line">    <span class="keyword">return</span> x + <span class="number">10</span>*sin(<span class="number">5</span>*x) + <span class="number">7</span>*cos(<span class="number">4</span>*x)</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>适应值函数是引导种群筛选掉差解，保留好解的重要工具。适应值高的个体我们认为是好解，所以在这里我们要做的就是把每个解的适应值计算出来。</li>
+<li>适应值函数需要注册到引擎，这里的写法是采用注解的方法。</li>
+<li>在这个任务中，我们计算的时候一个数学函数的最大值，所以在适应值计算中直接计算这个函数的值即可。</li>
+</ul>
+<h3 id="6-运行时分析（Optional）"><a href="#6-运行时分析（Optional）" class="headerlink" title="6. 运行时分析（Optional）"></a>6. 运行时分析（Optional）</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@engine.analysis_register</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">ConsoleOutput</span>(<span class="params">OnTheFlyAnalysis</span>):</span></span><br><span class="line">    master_only = <span class="literal">True</span></span><br><span class="line">    interval = <span class="number">1</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">register_step</span>(<span class="params">self, g, population, engine</span>):</span></span><br><span class="line">        best_indv = population.best_indv(engine.fitness)</span><br><span class="line">        msg = <span class="string">&#x27;Generation: &#123;&#125;, best fitness: &#123;:.3f&#125;&#x27;</span>.<span class="built_in">format</span>(g, engine.fmax)</span><br><span class="line">        engine.logger.info(msg)</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>同样是采用注解的方式，将运行时分析的函数注册到引擎。里面需要实现<code>register_step</code>的方法。</li>
+<li>这里的分析内容是每一次迭代都打印最好的fitness。</li>
+</ul>
+<h3 id="7-运行"><a href="#7-运行" class="headerlink" title="7.运行"></a>7.运行</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">engine.run(ng=<span class="number">100</span>)</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>运行算法，指定参数<code>ng</code>是迭代的次数。</li>
+</ul>
+<h3 id="8-分析结果"><a href="#8-分析结果" class="headerlink" title="8.分析结果"></a>8.分析结果</h3><p>&emsp;&emsp;运行完后，会生成一个<code>best_fit.py</code>的文件，里面是每一轮迭代最好的个体以及对应的最好的fitness，通过这个文件我们能够追踪到整个种群的进化过程。</p>
+<p><img src="/images/gaft0.png" alt="GAFT result"></p>
+<h2 id="Advance-Usage"><a href="#Advance-Usage" class="headerlink" title="Advance Usage"></a>Advance Usage</h2><p>&emsp;&emsp;这一部分我加入了自定义的模块，把这个GAFT框架改造一下，比较符合我解题的需要。主要改动如下：</p>
+<ol>
+<li>自定义个体，直接使用chromosome，而跳过solution的编码过程，这样用起来更加直接。同时在初始化的时候加入新的参数。</li>
+<li>修复在轮盘赌时，所以个体fitness一样时出现的异常。</li>
+</ol>
+<h3 id="1-自定义个体"><a href="#1-自定义个体" class="headerlink" title="1.自定义个体"></a>1.自定义个体</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">PizzaIndividual</span>(<span class="params">IndividualBase</span>):</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span>(<span class="params">self, ranges, eps=<span class="number">0.001</span>, size=<span class="literal">None</span></span>):</span></span><br><span class="line">        <span class="built_in">super</span>(self.__class__, self).__init__(ranges, eps)</span><br><span class="line">        self.size = size</span><br><span class="line">        chromsome = np.random.randint(<span class="number">0</span>, <span class="number">2</span>, size).tolist()</span><br><span class="line">        self.init(chromsome=chromsome)</span><br><span class="line">        </span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">encode</span>(<span class="params">self</span>):</span></span><br><span class="line">        <span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"><span class="string">        Encode solution to gene sequence in individual using different encoding.</span></span><br><span class="line"><span class="string">        &#x27;&#x27;&#x27;</span></span><br><span class="line">        <span class="keyword">return</span> <span class="built_in">int</span>(self.solution[<span class="number">0</span>])</span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">decode</span>(<span class="params">self</span>):</span></span><br><span class="line">        <span class="string">&#x27;&#x27;&#x27; </span></span><br><span class="line"><span class="string">        Decode gene sequence to solution of target function.</span></span><br><span class="line"><span class="string">        &#x27;&#x27;&#x27;</span></span><br><span class="line">        <span class="keyword">return</span> self.chromsome</span><br><span class="line">        </span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>自定义的个体都需要继承基类<code>IndividualBase</code>，其中在<code>init</code>方法中，对个体进行初始化。这个类中有两个变量<code>solution</code>和<code>chromsome</code>。在初始化的时候，如果两个参数都传入，则使用<code>chromsome</code>。如果都没有传入参数，则随机初始化<code>solution</code>。</li>
+<li><code>solution</code>和<code>chromsome</code>的关系：<code>solution</code>-&gt;<code>encode()</code>-&gt;<code>chromsome</code>；<code>chromsome</code>-&gt;<code>decode()</code>-&gt;<code>solution</code>。</li>
+<li>这里我初始化的时候直接传入了<code>chromsome</code>，所以不需要从<code>solution</code>调用encode，所以encode随便写就好了。decode的时候是我们获取<code>solution</code>的时候用的，直接返回<code>chromsome</code>本身。</li>
+</ul>
+<h3 id="2-修改Population中的初始化函数"><a href="#2-修改Population中的初始化函数" class="headerlink" title="2.修改Population中的初始化函数"></a>2.修改Population中的初始化函数</h3><p>&emsp;&emsp;注意到上面初始化的参数，前两个是必须提供的，而第三个<code>size</code>是我新加上去的。前面提到，在初始化种群的时候，会逐个调用个体的初始化函数，这个框架的兼容性做的实在不怎么好，只能进去源码中修改。路径是<code>gaft/components/population.py</code>。在Population的初始化函数加上对应的参数即可。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">init</span>(<span class="params">self, indvs=<span class="literal">None</span></span>):</span></span><br><span class="line">        <span class="string">&#x27;&#x27;&#x27; Initialize current population with individuals.</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">        :param indvs: Initial individuals in population, randomly initialized</span></span><br><span class="line"><span class="string">                      individuals are created if not provided.</span></span><br><span class="line"><span class="string">        :type indvs: list of Individual object</span></span><br><span class="line"><span class="string">        &#x27;&#x27;&#x27;</span></span><br><span class="line">        IndvType = self.indv_template.__class__</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> indvs <span class="keyword">is</span> <span class="literal">None</span>:</span><br><span class="line">            <span class="keyword">for</span> _ <span class="keyword">in</span> <span class="built_in">range</span>(self.size):</span><br><span class="line">                indv = IndvType(ranges=self.indv_template.ranges,</span><br><span class="line">                                eps=self.indv_template.eps,</span><br><span class="line">                                size=self.indv_template.size)</span><br><span class="line">                self.individuals.append(indv)</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            <span class="comment"># Check individuals.</span></span><br><span class="line">            <span class="keyword">if</span> <span class="built_in">len</span>(indvs) != self.size:</span><br><span class="line">                <span class="keyword">raise</span> ValueError(<span class="string">&#x27;Invalid individuals number&#x27;</span>)</span><br><span class="line">            <span class="keyword">for</span> indv <span class="keyword">in</span> indvs:</span><br><span class="line">                <span class="keyword">if</span> <span class="keyword">not</span> <span class="built_in">isinstance</span>(indv, IndividualBase):</span><br><span class="line">                    <span class="keyword">raise</span> ValueError(<span class="string">&#x27;individual class must be subclass of IndividualBase&#x27;</span>)</span><br><span class="line">            self.individuals = indvs</span><br><span class="line"></span><br><span class="line">        self._updated = <span class="literal">True</span></span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> self</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h3 id="3-定义运算子"><a href="#3-定义运算子" class="headerlink" title="3.定义运算子"></a>3.定义运算子</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">PizzaMutation</span>(<span class="params">Mutation</span>):</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span>(<span class="params">self, pm</span>):</span></span><br><span class="line">        <span class="keyword">if</span> pm &lt;= <span class="number">0.0</span> <span class="keyword">or</span> pm &gt; <span class="number">1.0</span>:</span><br><span class="line">            <span class="keyword">raise</span> ValueError(<span class="string">&#x27;Invalid mutation probability&#x27;</span>)</span><br><span class="line">        </span><br><span class="line">        self.pm = pm</span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">mutate</span>(<span class="params">self, individual, engine</span>):</span></span><br><span class="line">        <span class="string">&#x27;&#x27;&#x27; Mutate the individual.</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">        :param individual: The individual on which crossover operation occurs</span></span><br><span class="line"><span class="string">        :type individual: :obj:`gaft.components.IndividualBase`</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">        :param engine: Current genetic algorithm engine</span></span><br><span class="line"><span class="string">        :type engine: :obj:`gaft.engine.GAEngine`</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">        :return: A mutated individual</span></span><br><span class="line"><span class="string">        :rtype: :obj:`gaft.components.IndividualBase`</span></span><br><span class="line"><span class="string">        &#x27;&#x27;&#x27;</span></span><br><span class="line">        do_mutation = <span class="literal">True</span> <span class="keyword">if</span> random() &lt;= self.pm <span class="keyword">else</span> <span class="literal">False</span></span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> do_mutation:</span><br><span class="line">            <span class="keyword">for</span> i, genome <span class="keyword">in</span> <span class="built_in">enumerate</span>(individual.chromsome):</span><br><span class="line">                no_flip = <span class="literal">True</span> <span class="keyword">if</span> random() &gt; self.pm <span class="keyword">else</span> <span class="literal">False</span></span><br><span class="line">                <span class="keyword">if</span> no_flip:</span><br><span class="line">                    <span class="keyword">continue</span></span><br><span class="line"></span><br><span class="line">                <span class="keyword">if</span> <span class="built_in">type</span>(individual) <span class="keyword">is</span> PizzaIndividual:</span><br><span class="line">                    individual.chromsome[i] = genome^<span class="number">1</span></span><br><span class="line">                <span class="keyword">else</span>:</span><br><span class="line">                    <span class="keyword">raise</span> TypeError(<span class="string">&#x27;Wrong individual type: &#123;&#125;&#x27;</span>.<span class="built_in">format</span>(<span class="built_in">type</span>(individual)))</span><br><span class="line"></span><br><span class="line">            <span class="comment"># Update solution.</span></span><br><span class="line">            individual.solution = individual.decode()</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> individual</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>原有的FlipBitMutation中在执行mutate操作时会严格地检查个体类型，我们自定义的类型当然不包括在里面。我们既可以修改源码，也可以新写一个Mutation操作。这里我直接新写一个，后续也方便增加东西。</li>
+</ul>
+<h3 id="4-解决轮盘赌除0的异常"><a href="#4-解决轮盘赌除0的异常" class="headerlink" title="4.解决轮盘赌除0的异常"></a>4.解决轮盘赌除0的异常</h3><p>&emsp;&emsp;我们使用的是轮盘赌选择方法，但是原来的代码有个问题，当所有的个体的fitness都是一样的时候，会出现除0的异常情况。而实际上，当这种情况出现的时候，我们应该随机地选择一个个体，让算法继续运行下去，为了解决这个问题，我们需要修改源码。路径为：<code>gaft/operators/selection/roulette_wheel_selection.py</code></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#!/usr/bin/env python</span></span><br><span class="line"><span class="comment"># -*- coding: utf-8 -*-</span></span><br><span class="line"></span><br><span class="line"><span class="string">&#x27;&#x27;&#x27; Roulette Wheel Selection implementation. &#x27;&#x27;&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">from</span> random <span class="keyword">import</span> random</span><br><span class="line"><span class="keyword">from</span> bisect <span class="keyword">import</span> bisect_right</span><br><span class="line"><span class="keyword">from</span> itertools <span class="keyword">import</span> accumulate</span><br><span class="line"></span><br><span class="line"><span class="keyword">from</span> ...plugin_interfaces.operators.selection <span class="keyword">import</span> Selection</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">RouletteWheelSelection</span>(<span class="params">Selection</span>):</span></span><br><span class="line">    <span class="string">&#x27;&#x27;&#x27; Selection operator with fitness proportionate selection(FPS) or</span></span><br><span class="line"><span class="string">    so-called roulette-wheel selection implementation.</span></span><br><span class="line"><span class="string">    &#x27;&#x27;&#x27;</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span>(<span class="params">self</span>):</span></span><br><span class="line">        <span class="keyword">pass</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">select</span>(<span class="params">self, population, fitness</span>):</span></span><br><span class="line">        <span class="string">&#x27;&#x27;&#x27; Select a pair of parent using FPS algorithm.</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">        :param population: Population where the selection operation occurs.</span></span><br><span class="line"><span class="string">        :type population: :obj:`gaft.components.Population`</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">        :return: Selected parents (a father and a mother)</span></span><br><span class="line"><span class="string">        :rtype: list of :obj:`gaft.components.IndividualBase`</span></span><br><span class="line"><span class="string">        &#x27;&#x27;&#x27;</span></span><br><span class="line">        <span class="comment"># Normalize fitness values for all individuals.</span></span><br><span class="line">        fit = population.all_fits(fitness)</span><br><span class="line">        min_fit = <span class="built_in">min</span>(fit)</span><br><span class="line">        fit = [(i - min_fit) <span class="keyword">for</span> i <span class="keyword">in</span> fit]</span><br><span class="line"></span><br><span class="line">        <span class="comment"># Create roulette wheel.</span></span><br><span class="line">        <span class="comment">## HERE!</span></span><br><span class="line">        sum_fit = <span class="built_in">sum</span>(fit)</span><br><span class="line">        <span class="keyword">if</span> sum_fit != <span class="number">0.0</span>:</span><br><span class="line">            wheel = <span class="built_in">list</span>(accumulate([i/sum_fit <span class="keyword">for</span> i <span class="keyword">in</span> fit]))</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            wheel = [<span class="number">0.0</span> <span class="keyword">for</span> i <span class="keyword">in</span> fit]</span><br><span class="line">            wheel[<span class="built_in">len</span>(wheel) - <span class="number">1</span>] = <span class="number">1.0</span></span><br><span class="line"></span><br><span class="line">        <span class="comment"># Select a father and a mother.</span></span><br><span class="line">        father_idx = bisect_right(wheel, random())</span><br><span class="line">        father = population[father_idx]</span><br><span class="line">        mother_idx = (father_idx + <span class="number">1</span>) % <span class="built_in">len</span>(wheel)</span><br><span class="line">        mother = population[mother_idx]</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> father, mother</span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>修改在line35开始</li>
+</ul>
+<p>&emsp;&emsp;至此，我们就自定义了Individual、Mutation，其实Population、Selection、Crossover这些模块我们都可以重新定义，目标是为我们的算法服务。</p>
+<hr>
+<h2 id="Reference"><a href="#Reference" class="headerlink" title="Reference"></a>Reference</h2><ol>
+<li><a target="_blank" rel="noopener" href="https://github.com/PytLab/gaft">GAFT Github</a></li>
+<li><a target="_blank" rel="noopener" href="https://gaft.readthedocs.io/en/latest/index.html">GAFT Documentation</a></li>
+</ol>
+
+    </div>
+
+    
+    
+    
+        <div class="reward-container">
+  <div></div>
+  <button onclick="var qr = document.getElementById('qr'); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    Donate
+  </button>
+  <div id="qr" style="display: none;">
+      
+      <div style="display: inline-block;">
+        <img src="/images/wechat_reward.png" alt="Leungyukshing WeChat Pay">
+        <p>WeChat Pay</p>
+      </div>
+      
+      <div style="display: inline-block;">
+        <img src="/images/alipay_reward.png" alt="Leungyukshing Alipay">
+        <p>Alipay</p>
+      </div>
+
+  </div>
+</div>
+
+        
+
+  <div class="followme">
+    <p>Welcome to my other publishing channels</p>
+
+    <div class="social-list">
+
+        <div class="social-item">
+          <a target="_blank" class="social-link" href="/atom.xml">
+            <span class="icon">
+              <i class="fa fa-rss"></i>
+            </span>
+
+            <span class="label">RSS</span>
+          </a>
+        </div>
+    </div>
+  </div>
+
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/archives/Docker-Installation-on-CentOS.html" rel="prev" title="CentOS下安装Docker">
+      <i class="fa fa-chevron-left"></i> CentOS下安装Docker
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/archives/Kmp-Algorithm.html" rel="next" title="KMP算法">
+      KMP算法 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Introduction-for-GAFT"><span class="nav-number">1.</span> <span class="nav-text">Introduction for GAFT</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Installation"><span class="nav-number">2.</span> <span class="nav-text">Installation</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Quick-Start"><span class="nav-number">3.</span> <span class="nav-text">Quick Start</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-%E5%BC%95%E5%85%A5GAFT%E6%A8%A1%E5%9D%97"><span class="nav-number">3.1.</span> <span class="nav-text">1.引入GAFT模块</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-%E4%B8%AA%E4%BD%93%E4%B8%8E%E7%A7%8D%E7%BE%A4%E7%9A%84%E5%AE%9A%E4%B9%89%E5%8F%8A%E5%88%9D%E5%A7%8B%E5%8C%96"><span class="nav-number">3.2.</span> <span class="nav-text">2.个体与种群的定义及初始化</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-%E8%BF%90%E7%AE%97%E5%AD%90%E7%9A%84%E5%AE%9A%E4%B9%89"><span class="nav-number">3.3.</span> <span class="nav-text">3.运算子的定义</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-GA%E5%BC%95%E6%93%8E%E5%88%9D%E5%A7%8B%E5%8C%96"><span class="nav-number">3.4.</span> <span class="nav-text">4.GA引擎初始化</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-%E6%B3%A8%E5%86%8C%E9%80%82%E5%BA%94%E5%80%BC%E5%87%BD%E6%95%B0"><span class="nav-number">3.5.</span> <span class="nav-text">5.注册适应值函数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-%E8%BF%90%E8%A1%8C%E6%97%B6%E5%88%86%E6%9E%90%EF%BC%88Optional%EF%BC%89"><span class="nav-number">3.6.</span> <span class="nav-text">6. 运行时分析（Optional）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#7-%E8%BF%90%E8%A1%8C"><span class="nav-number">3.7.</span> <span class="nav-text">7.运行</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#8-%E5%88%86%E6%9E%90%E7%BB%93%E6%9E%9C"><span class="nav-number">3.8.</span> <span class="nav-text">8.分析结果</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Advance-Usage"><span class="nav-number">4.</span> <span class="nav-text">Advance Usage</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-%E8%87%AA%E5%AE%9A%E4%B9%89%E4%B8%AA%E4%BD%93"><span class="nav-number">4.1.</span> <span class="nav-text">1.自定义个体</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-%E4%BF%AE%E6%94%B9Population%E4%B8%AD%E7%9A%84%E5%88%9D%E5%A7%8B%E5%8C%96%E5%87%BD%E6%95%B0"><span class="nav-number">4.2.</span> <span class="nav-text">2.修改Population中的初始化函数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-%E5%AE%9A%E4%B9%89%E8%BF%90%E7%AE%97%E5%AD%90"><span class="nav-number">4.3.</span> <span class="nav-text">3.定义运算子</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-%E8%A7%A3%E5%86%B3%E8%BD%AE%E7%9B%98%E8%B5%8C%E9%99%A40%E7%9A%84%E5%BC%82%E5%B8%B8"><span class="nav-number">4.4.</span> <span class="nav-text">4.解决轮盘赌除0的异常</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Reference"><span class="nav-number">5.</span> <span class="nav-text">Reference</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Leungyukshing"
+      src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">Leungyukshing</p>
+  <div class="site-description" itemprop="description">A blog for code, programme sharing.</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">688</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">27</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/leungyukshing" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;leungyukshing" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:jacky14.liang@gmail.com" title="E-Mail → mailto:jacky14.liang@gmail.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="/atom.xml" title="RSS → &#x2F;atom.xml"><i class="fa fa-rss fa-fw"></i>RSS</a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll motion-element">
+    <div class="links-of-blogroll-title"><i class="fa fa-link fa-fw"></i>
+      Friends
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="http://www.liangjh45.com/" title="http:&#x2F;&#x2F;www.liangjh45.com&#x2F;" rel="noopener" target="_blank">Alva's blog</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="https://sysucarey.github.io/" title="https:&#x2F;&#x2F;sysucarey.github.io&#x2F;" rel="noopener" target="_blank">Carey's blog</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="https://blog.csdn.net/dickdick111/" title="https:&#x2F;&#x2F;blog.csdn.net&#x2F;dickdick111&#x2F;" rel="noopener" target="_blank">Dick's blog</a>
+        </li>
+    </ul>
+  </div>
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2017 – 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Leungyukshing</span>
+</div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="Total Visitors">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="Total Views">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : true,
+      appId      : 'AaLog29QcUdQKTboD6cY2dNP-gzGzoHsz',
+      appKey     : 'dUWNHLnTY9qG1jJwPnTtfMm8',
+      placeholder: "Just go go",
+      avatar     : 'mm',
+      meta       : guest,
+      pageSize   : '10' || 10,
+      visitor    : false,
+      lang       : '' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : false,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+
+</body>
+</html>

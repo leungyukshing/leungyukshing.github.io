@@ -1,0 +1,659 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <meta name="google-site-verification" content="FHjCzDi7nry9Mvf4EFOY5cYoco-ZXq9tKjvXZK0nKr4">
+  <meta name="baidu-site-verification" content="code-gpMFPewYUF" />
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="/lib/pace/pace-theme-minimal.min.css">
+  <script src="/lib/pace/pace.min.js"></script>
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"leungyukshing.github.io","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"right","display":"hide","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"appID":"52USYSYESX","apiKey":"20b904c66f55b874f05edea4aca57780","indexName":"blog","hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="介绍&amp;emsp;&amp;emsp;本题涉及到的是常微分方程初值问题的求解方法。求解常微分方程可以分为两类解法：（1）解析方法；（2）数值解法。前者仅限于对特殊的方程进行求解，而后者可以应用于一般方程的求解。&amp;emsp;&amp;emsp;常微分方程初值问题的一般形式是：$$y^{‘} &#x3D; f(x,y), x \in [x_0, b],\y(x_0) &#x3D; y_0，$$而我们需要做的就是求解出$y&#x3D;y(x)$。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="常微分方程初值问题求解">
+<meta property="og:url" content="https://leungyukshing.github.io/archives/%E5%B8%B8%E5%BE%AE%E5%88%86%E6%96%B9%E7%A8%8B%E5%88%9D%E5%80%BC%E9%97%AE%E9%A2%98%E6%B1%82%E8%A7%A3.html">
+<meta property="og:site_name" content="Halo">
+<meta property="og:description" content="介绍&amp;emsp;&amp;emsp;本题涉及到的是常微分方程初值问题的求解方法。求解常微分方程可以分为两类解法：（1）解析方法；（2）数值解法。前者仅限于对特殊的方程进行求解，而后者可以应用于一般方程的求解。&amp;emsp;&amp;emsp;常微分方程初值问题的一般形式是：$$y^{‘} &#x3D; f(x,y), x \in [x_0, b],\y(x_0) &#x3D; y_0，$$而我们需要做的就是求解出$y&#x3D;y(x)$。">
+<meta property="og:locale">
+<meta property="og:image" content="https://raw.githubusercontent.com/leungyukshing/Numerical-Computation-Methods/master/%E6%95%B0%E5%80%BC%E8%AE%A1%E7%AE%97%E7%AC%AC%E4%BA%8C%E6%AC%A1%E5%AE%9E%E9%AA%8C/Images/%E5%89%8D%E5%90%91%E6%AC%A7%E6%8B%89%E6%96%B9%E6%B3%95.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/leungyukshing/Numerical-Computation-Methods/master/%E6%95%B0%E5%80%BC%E8%AE%A1%E7%AE%97%E7%AC%AC%E4%BA%8C%E6%AC%A1%E5%AE%9E%E9%AA%8C/Images/%E5%90%8E%E5%90%91%E6%AC%A7%E6%8B%89%E6%96%B9%E6%B3%95.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/leungyukshing/Numerical-Computation-Methods/master/%E6%95%B0%E5%80%BC%E8%AE%A1%E7%AE%97%E7%AC%AC%E4%BA%8C%E6%AC%A1%E5%AE%9E%E9%AA%8C/Images/%E6%A2%AF%E5%BD%A2%E6%96%B9%E6%B3%95.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/leungyukshing/Numerical-Computation-Methods/master/%E6%95%B0%E5%80%BC%E8%AE%A1%E7%AE%97%E7%AC%AC%E4%BA%8C%E6%AC%A1%E5%AE%9E%E9%AA%8C/Images/%E6%94%B9%E8%BF%9B%E6%AC%A7%E6%8B%89%E6%96%B9%E6%B3%95.png">
+<meta property="article:published_time" content="2018-07-23T14:47:23.000Z">
+<meta property="article:modified_time" content="2021-06-22T18:33:08.725Z">
+<meta property="article:author" content="Leungyukshing">
+<meta property="article:tag" content="数值分析">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/leungyukshing/Numerical-Computation-Methods/master/%E6%95%B0%E5%80%BC%E8%AE%A1%E7%AE%97%E7%AC%AC%E4%BA%8C%E6%AC%A1%E5%AE%9E%E9%AA%8C/Images/%E5%89%8D%E5%90%91%E6%AC%A7%E6%8B%89%E6%96%B9%E6%B3%95.png">
+
+<link rel="canonical" href="https://leungyukshing.github.io/archives/%E5%B8%B8%E5%BE%AE%E5%88%86%E6%96%B9%E7%A8%8B%E5%88%9D%E5%80%BC%E9%97%AE%E9%A2%98%E6%B1%82%E8%A7%A3.html">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-Hans'
+  };
+</script>
+
+  <title>常微分方程初值问题求解 | Halo</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+<!-- hexo injector head_end end --><link rel="alternate" href="/atom.xml" title="Halo" type="application/atom+xml"><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Halo</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">A magic place for coding</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>About</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>Tags</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>Search
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="Searching..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+  <a href="https://github.com/leungyukshing" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="https://leungyukshing.github.io/archives/%E5%B8%B8%E5%BE%AE%E5%88%86%E6%96%B9%E7%A8%8B%E5%88%9D%E5%80%BC%E9%97%AE%E9%A2%98%E6%B1%82%E8%A7%A3.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="Leungyukshing">
+      <meta itemprop="description" content="A blog for code, programme sharing.">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Halo">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          常微分方程初值问题求解
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2018-07-23 10:47:23" itemprop="dateCreated datePublished" datetime="2018-07-23T10:47:23-04:00">2018-07-23</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2021-06-22 14:33:08" itemprop="dateModified" datetime="2021-06-22T14:33:08-04:00">2021-06-22</time>
+              </span>
+
+          
+            <span class="post-meta-item" title="Views" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">Views: </span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine: </span>
+    
+    <a title="valine" href="/archives/%E5%B8%B8%E5%BE%AE%E5%88%86%E6%96%B9%E7%A8%8B%E5%88%9D%E5%80%BC%E9%97%AE%E9%A2%98%E6%B1%82%E8%A7%A3.html#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/archives/%E5%B8%B8%E5%BE%AE%E5%88%86%E6%96%B9%E7%A8%8B%E5%88%9D%E5%80%BC%E9%97%AE%E9%A2%98%E6%B1%82%E8%A7%A3.html" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="介绍"><a href="#介绍" class="headerlink" title="介绍"></a>介绍</h2><p>&emsp;&emsp;本题涉及到的是常微分方程初值问题的求解方法。求解常微分方程可以分为两类解法：（1）解析方法；（2）<strong>数值解法</strong>。前者仅限于对特殊的方程进行求解，而后者可以应用于一般方程的求解。<br>&emsp;&emsp;常微分方程初值问题的一般形式是：<br>$$<br>y^{‘} = f(x,y), x \in [x_0, b],\y(x_0) = y_0，<br>$$<br>而我们需要做的就是求解出$y=y(x)$。</p>
+<a id="more"></a>
+
+<h2 id="分析"><a href="#分析" class="headerlink" title="分析"></a>分析</h2><h3 id="1-前向欧拉法"><a href="#1-前向欧拉法" class="headerlink" title="1.前向欧拉法"></a>1.前向欧拉法</h3><p>&emsp;&emsp;在$xy$平面上，微分方程$f(x,y) = y^{‘}$的解$y=y(x)$称作它的<strong>积分曲线</strong>。从几何角度出发，从初始点$P_0(x_0,y_0)$出发，沿该点切线方向$f(x_0,y_0)$推进到$x=x_1$上的一点$P_1$，然后再从$P1$点推进到$x=x_2$上的一点$P_2$，一直推进到$P_n$。<br>&emsp;&emsp;对于相邻的两个点$P_n$和$P_{n+1}$，有如下关系：<br>$$<br>\frac{y_{n+1} - y_n}{x_{n+1} - x_n} = f(x_n,y_n)，<br>$$<br>通过变换得到：<br>$$<br>y_{n+1} = y_n + hf(x_n,y_n)，<br>$$<br>这个方法就称为<strong>欧拉方法</strong>（前向欧拉方法）。实际上这是对常微分方程中的导数用<strong>均差</strong>来近似。若初值$y_0$已知，则可以通过递推算出$y_n$</p>
+<h3 id="2-后向欧拉法"><a href="#2-后向欧拉法" class="headerlink" title="2.后向欧拉法"></a>2.后向欧拉法</h3><p>&emsp;&emsp;如果对微分方程从$x_0$到$x_{n+1}$积分，可以得到：<br>$$<br>y(x_{n+1}) = y(x_n) + \int^{x_{n+1}}<em>{x_n}f(t,y(t))dt，<br>$$<br>对右端的积分使用<strong>右矩形公式</strong>近似，得到：<br>$$<br>y_{n+1} = y_n + hf(x_{n+1},y</em>{n+1})，<br>$$<br>这种方法称为<strong>后退的欧拉法</strong>（后向欧拉法）。由于等式右边含有$y_{n+1}$，所以后向欧拉法是<strong>隐式的</strong>。<br>&emsp;&emsp;隐式方法计算的时候，要使用迭代法，逐步显式化。首先使用欧拉公式提供初值，再进行迭代。<br>$$<br>y^{(0)}<em>{n+1} = y_n + hf(x_n,y_n)\<br>y^{(k+1)}_{n+1} = y_n + hf(x_{n+1},y^{(1)}</em>{n+1})<br>$$</p>
+<h3 id="3-梯形方法"><a href="#3-梯形方法" class="headerlink" title="3.梯形方法"></a>3.梯形方法</h3><p>&emsp;&emsp;在欧拉方法的基础上，对积分右端近似的方法进行改进，使用<strong>梯形求积公式</strong>近似，可以得到精度更高的计算公式，主要形式为：<br>$$<br>y_{n+1} = y_n + \frac{h}{2}[f(x_n,y_n) + f(x_{n+1}, y_{n+1})]，<br>$$<br>这种方法被称为<strong>梯形方法</strong>，由于等式右端同样含有$y_{n+1}$，因此这种方法也是<strong>隐式的</strong>。求解的方法同后向欧拉类似，由欧拉方法给出初值，再逐步显式化。<br>$$<br>y^{(0)}<em>{n+1} = y_n + hf(x_n,y_n) \<br>y^{(k+1)}_{n+1} = y_n + \frac{h}{2}[f(x_n,y_n) + f(x_{n+1},y^{(k)}</em>{n+1})], k = 0,1,2,\dots<br>$$</p>
+<h3 id="4-改进欧拉方法"><a href="#4-改进欧拉方法" class="headerlink" title="4.改进欧拉方法"></a>4.改进欧拉方法</h3><p>&emsp;&emsp;梯形方法给我们提供了一种获得更高精度的算法，但是其计算量是庞大的，因为每步迭代都需要重新计算$f(x,y)$的值。这里给出了一种思路：先使用欧拉方法求得一个<strong>初步的近似值</strong>$\overline y_{n+1}$,\，称为<strong>预测值</strong>，但是这个预测值的精度可能会很差，因此需要校正。这里使用<strong>梯形公式</strong>对其进行校正，得到一个<strong>校正值</strong>$y_{n+1}$。这种<strong>预测-校正系统</strong>称为<strong>改进的欧拉公式</strong>：<br>$$\begin{cases}<br>预测  \overline y_{n+1} = y_n + hf(x_n,y_n)，\<br>校正 y_{n+1} = y_n + \frac{h}{2}[f(x_n,y_n) + f(x_{n+1}, \overline y_{n+1})]<br>\end{cases}$$</p>
+<h2 id="代码实现"><a href="#代码实现" class="headerlink" title="代码实现"></a>代码实现</h2><h3 id="1-前向欧拉法-1"><a href="#1-前向欧拉法-1" class="headerlink" title="1.前向欧拉法"></a>1.前向欧拉法</h3><p>&emsp;&emsp;根据上述推导的公式，编写matlab代码：</p>
+<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">% 前向欧拉方法</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="params">[x,y]</span> = <span class="title">Euler</span><span class="params">(a, b, y0, h)</span></span></span><br><span class="line">    x(<span class="number">1</span>) = a;</span><br><span class="line">    y(<span class="number">1</span>) = y0;</span><br><span class="line">    n = (b - a) / h;</span><br><span class="line">    <span class="keyword">for</span> <span class="built_in">i</span> = <span class="number">1</span>:n</span><br><span class="line">        x(<span class="built_in">i</span>+<span class="number">1</span>) = x(<span class="built_in">i</span>) + h;</span><br><span class="line">        y(<span class="built_in">i</span>+<span class="number">1</span>) = y(<span class="built_in">i</span>) + h * myFun(x(<span class="built_in">i</span>),y(<span class="built_in">i</span>));</span><br><span class="line">    <span class="keyword">end</span></span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">f</span> = <span class="title">myFun</span><span class="params">(x, y)</span></span></span><br><span class="line">    f = y - <span class="number">2</span> * x / y;</span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure>
+<h3 id="2-后向欧拉法-1"><a href="#2-后向欧拉法-1" class="headerlink" title="2.后向欧拉法"></a>2.后向欧拉法</h3><p>&emsp;&emsp;根据上述推导的公式，编写matlab代码：</p>
+<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">% 后向欧拉方法</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="params">[x,y]</span> = <span class="title">EulerBackward</span><span class="params">(a, b, y0, h)</span></span></span><br><span class="line">    n = (b - a) / h;</span><br><span class="line">    x = <span class="built_in">zeros</span>(<span class="number">1</span>, n);</span><br><span class="line">    x(<span class="number">1</span>) = a;</span><br><span class="line">    y(<span class="number">1</span>) = y0;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> <span class="built_in">i</span> = <span class="number">1</span>:n</span><br><span class="line">        x(<span class="built_in">i</span>+<span class="number">1</span>) = x(<span class="built_in">i</span>) + h;</span><br><span class="line">        yt = y(<span class="built_in">i</span>) + h * myFun(x(<span class="built_in">i</span>), y(<span class="built_in">i</span>)); <span class="comment">% 使用欧拉公式给出迭代初值</span></span><br><span class="line">        finished = <span class="number">0</span>; <span class="comment">% 初始化</span></span><br><span class="line">        <span class="keyword">while</span> ~finished</span><br><span class="line">            y(<span class="built_in">i</span>+<span class="number">1</span>) = y(<span class="built_in">i</span>) + h * myFun(x(<span class="built_in">i</span>+<span class="number">1</span>), yt);</span><br><span class="line">            finished = (<span class="built_in">abs</span>(y(<span class="built_in">i</span>+<span class="number">1</span>) - yt) &lt; <span class="number">0.000001</span>);</span><br><span class="line">            yt = y(<span class="built_in">i</span>+<span class="number">1</span>);</span><br><span class="line">        <span class="keyword">end</span></span><br><span class="line">    <span class="keyword">end</span></span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">f</span> = <span class="title">myFun</span><span class="params">(x, y)</span></span></span><br><span class="line">    f = y - <span class="number">2</span> * x / y;</span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure>
+<h3 id="3-梯形方法-1"><a href="#3-梯形方法-1" class="headerlink" title="3.梯形方法"></a>3.梯形方法</h3><p>&emsp;&emsp;根据上述推导的公式，编写matlab代码：</p>
+<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">% 梯形方法</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="params">[x,y]</span> = <span class="title">Trapezoid</span><span class="params">(a, b, y0, h)</span></span></span><br><span class="line">    n = (b - a) / h;</span><br><span class="line">    x = <span class="built_in">zeros</span>(<span class="number">1</span>, n);</span><br><span class="line">    y(<span class="number">1</span>) = y0;</span><br><span class="line">    x(<span class="number">1</span>) = a;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> <span class="built_in">i</span> = <span class="number">1</span>:n</span><br><span class="line">        x(<span class="built_in">i</span>+<span class="number">1</span>) = x(<span class="built_in">i</span>) + h;</span><br><span class="line">        yt = y(<span class="built_in">i</span>) + h * myFun(x(<span class="built_in">i</span>), y(<span class="built_in">i</span>)); <span class="comment">% 使用欧拉方法提供迭代初值</span></span><br><span class="line">        finished = <span class="number">0</span>; <span class="comment">% 初始化</span></span><br><span class="line">        <span class="keyword">while</span> ~finished</span><br><span class="line">            y(<span class="built_in">i</span>+<span class="number">1</span>) = y(<span class="built_in">i</span>) + (h/<span class="number">2</span>) * (myFun(x(<span class="built_in">i</span>), y(<span class="built_in">i</span>)) + myFun(x(<span class="built_in">i</span>+<span class="number">1</span>), yt));</span><br><span class="line">            finished = (<span class="built_in">abs</span>(y(<span class="built_in">i</span>+<span class="number">1</span>) - yt) &lt; <span class="number">0.000001</span>);</span><br><span class="line">            yt = y(<span class="built_in">i</span>+<span class="number">1</span>);</span><br><span class="line">        <span class="keyword">end</span></span><br><span class="line">    <span class="keyword">end</span></span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">f</span> = <span class="title">myFun</span><span class="params">(x, y)</span></span></span><br><span class="line">    f = y - <span class="number">2</span> * x / y;</span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure>
+<h3 id="4-改进欧拉方法-1"><a href="#4-改进欧拉方法-1" class="headerlink" title="4.改进欧拉方法"></a>4.改进欧拉方法</h3><p>&emsp;&emsp;根据上述推导的公式，编写matlab代码：</p>
+<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">% 改进欧拉方法</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="params">[x,y]</span> = <span class="title">EulerImproved</span><span class="params">(a, b, y0, h)</span></span></span><br><span class="line">    n = (b - a) / h;</span><br><span class="line">    x = <span class="built_in">zeros</span>(<span class="number">1</span>, n);</span><br><span class="line">    y(<span class="number">1</span>) = y0;</span><br><span class="line">    x(<span class="number">1</span>) = a;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> <span class="built_in">i</span> = <span class="number">1</span>:n</span><br><span class="line">        x(<span class="built_in">i</span>+<span class="number">1</span>) = x(<span class="built_in">i</span>) + h;</span><br><span class="line">        yt = y(<span class="built_in">i</span>) + h * myFun(x(<span class="built_in">i</span>), y(<span class="built_in">i</span>)); <span class="comment">% 预测</span></span><br><span class="line">        y(<span class="built_in">i</span>+<span class="number">1</span>) = y(<span class="built_in">i</span>) + (h/<span class="number">2</span>) * (myFun(x(<span class="built_in">i</span>), y(<span class="built_in">i</span>)) + myFun(x(<span class="built_in">i</span>+<span class="number">1</span>), yt)); <span class="comment">% 校正</span></span><br><span class="line">    <span class="keyword">end</span></span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">f</span> = <span class="title">myFun</span><span class="params">(x, y)</span></span></span><br><span class="line">    f = y - <span class="number">2</span> * x / y;</span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h2><p>运行上述各方法的代码后，分别对其进行简单的数值实验，结果如下：<br>前向欧拉方法结果：<br><img src="https://raw.githubusercontent.com/leungyukshing/Numerical-Computation-Methods/master/%E6%95%B0%E5%80%BC%E8%AE%A1%E7%AE%97%E7%AC%AC%E4%BA%8C%E6%AC%A1%E5%AE%9E%E9%AA%8C/Images/%E5%89%8D%E5%90%91%E6%AC%A7%E6%8B%89%E6%96%B9%E6%B3%95.png" alt="前向欧拉方法结果"><br>后向欧拉方法结果：<br><img src="https://raw.githubusercontent.com/leungyukshing/Numerical-Computation-Methods/master/%E6%95%B0%E5%80%BC%E8%AE%A1%E7%AE%97%E7%AC%AC%E4%BA%8C%E6%AC%A1%E5%AE%9E%E9%AA%8C/Images/%E5%90%8E%E5%90%91%E6%AC%A7%E6%8B%89%E6%96%B9%E6%B3%95.png" alt="后向欧拉方法结果"><br>梯形方法结果：<br><img src="https://raw.githubusercontent.com/leungyukshing/Numerical-Computation-Methods/master/%E6%95%B0%E5%80%BC%E8%AE%A1%E7%AE%97%E7%AC%AC%E4%BA%8C%E6%AC%A1%E5%AE%9E%E9%AA%8C/Images/%E6%A2%AF%E5%BD%A2%E6%96%B9%E6%B3%95.png" alt="梯形方法结果"><br>改进欧拉方法结果：<br><img src="https://raw.githubusercontent.com/leungyukshing/Numerical-Computation-Methods/master/%E6%95%B0%E5%80%BC%E8%AE%A1%E7%AE%97%E7%AC%AC%E4%BA%8C%E6%AC%A1%E5%AE%9E%E9%AA%8C/Images/%E6%94%B9%E8%BF%9B%E6%AC%A7%E6%8B%89%E6%96%B9%E6%B3%95.png" alt="改进欧拉方法结果"></p>
+<p>&emsp;&emsp;由上述几种方法可以看出，前向欧拉方法和后向欧拉方法的误差是比较大的，改进的欧拉方法精度比欧拉法要好，而在四种方法中，梯形方法拥有更高的精度。但是从计算复杂度而言，欧拉法是比较简单的。考虑到数值稳定性的问题，有时可以使用后向欧拉方法来保证数值的稳定性。综合计算复杂度和精度而言，个人认为<strong>改进欧拉方法是一个比较好的折中方案</strong>。</p>
+<hr>
+<h4 id="参考资料："><a href="#参考资料：" class="headerlink" title="参考资料："></a>参考资料：</h4><p>1.数值分析（第5版）  李庆扬，王能超，易大义 <em>编</em></p>
+
+    </div>
+
+    
+    
+    
+        <div class="reward-container">
+  <div></div>
+  <button onclick="var qr = document.getElementById('qr'); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    Donate
+  </button>
+  <div id="qr" style="display: none;">
+      
+      <div style="display: inline-block;">
+        <img src="/images/wechat_reward.png" alt="Leungyukshing WeChat Pay">
+        <p>WeChat Pay</p>
+      </div>
+      
+      <div style="display: inline-block;">
+        <img src="/images/alipay_reward.png" alt="Leungyukshing Alipay">
+        <p>Alipay</p>
+      </div>
+
+  </div>
+</div>
+
+        
+
+  <div class="followme">
+    <p>Welcome to my other publishing channels</p>
+
+    <div class="social-list">
+
+        <div class="social-item">
+          <a target="_blank" class="social-link" href="/atom.xml">
+            <span class="icon">
+              <i class="fa fa-rss"></i>
+            </span>
+
+            <span class="label">RSS</span>
+          </a>
+        </div>
+    </div>
+  </div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E6%95%B0%E5%80%BC%E5%88%86%E6%9E%90/" rel="tag"># 数值分析</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/archives/%E6%95%B0%E5%80%BC%E7%A7%AF%E5%88%86%E8%A7%A3%E6%B3%95.html" rel="prev" title="数值积分解法">
+      <i class="fa fa-chevron-left"></i> 数值积分解法
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/archives/%E4%B8%AD%E5%B1%B1%E5%A4%A7%E5%AD%A6%E5%88%9D%E7%BA%A7%E5%AE%9E%E8%AE%AD.html" rel="next" title="中山大学初级实训">
+      中山大学初级实训 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BB%8B%E7%BB%8D"><span class="nav-number">1.</span> <span class="nav-text">介绍</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%88%86%E6%9E%90"><span class="nav-number">2.</span> <span class="nav-text">分析</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-%E5%89%8D%E5%90%91%E6%AC%A7%E6%8B%89%E6%B3%95"><span class="nav-number">2.1.</span> <span class="nav-text">1.前向欧拉法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-%E5%90%8E%E5%90%91%E6%AC%A7%E6%8B%89%E6%B3%95"><span class="nav-number">2.2.</span> <span class="nav-text">2.后向欧拉法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-%E6%A2%AF%E5%BD%A2%E6%96%B9%E6%B3%95"><span class="nav-number">2.3.</span> <span class="nav-text">3.梯形方法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-%E6%94%B9%E8%BF%9B%E6%AC%A7%E6%8B%89%E6%96%B9%E6%B3%95"><span class="nav-number">2.4.</span> <span class="nav-text">4.改进欧拉方法</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BB%A3%E7%A0%81%E5%AE%9E%E7%8E%B0"><span class="nav-number">3.</span> <span class="nav-text">代码实现</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-%E5%89%8D%E5%90%91%E6%AC%A7%E6%8B%89%E6%B3%95-1"><span class="nav-number">3.1.</span> <span class="nav-text">1.前向欧拉法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-%E5%90%8E%E5%90%91%E6%AC%A7%E6%8B%89%E6%B3%95-1"><span class="nav-number">3.2.</span> <span class="nav-text">2.后向欧拉法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-%E6%A2%AF%E5%BD%A2%E6%96%B9%E6%B3%95-1"><span class="nav-number">3.3.</span> <span class="nav-text">3.梯形方法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-%E6%94%B9%E8%BF%9B%E6%AC%A7%E6%8B%89%E6%96%B9%E6%B3%95-1"><span class="nav-number">3.4.</span> <span class="nav-text">4.改进欧拉方法</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B0%8F%E7%BB%93"><span class="nav-number">4.</span> <span class="nav-text">小结</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%8F%82%E8%80%83%E8%B5%84%E6%96%99%EF%BC%9A"><span class="nav-number">4.0.1.</span> <span class="nav-text">参考资料：</span></a></li></ol></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Leungyukshing"
+      src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">Leungyukshing</p>
+  <div class="site-description" itemprop="description">A blog for code, programme sharing.</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">688</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">27</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/leungyukshing" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;leungyukshing" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:jacky14.liang@gmail.com" title="E-Mail → mailto:jacky14.liang@gmail.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="/atom.xml" title="RSS → &#x2F;atom.xml"><i class="fa fa-rss fa-fw"></i>RSS</a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll motion-element">
+    <div class="links-of-blogroll-title"><i class="fa fa-link fa-fw"></i>
+      Friends
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="http://www.liangjh45.com/" title="http:&#x2F;&#x2F;www.liangjh45.com&#x2F;" rel="noopener" target="_blank">Alva's blog</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="https://sysucarey.github.io/" title="https:&#x2F;&#x2F;sysucarey.github.io&#x2F;" rel="noopener" target="_blank">Carey's blog</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="https://blog.csdn.net/dickdick111/" title="https:&#x2F;&#x2F;blog.csdn.net&#x2F;dickdick111&#x2F;" rel="noopener" target="_blank">Dick's blog</a>
+        </li>
+    </ul>
+  </div>
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2017 – 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Leungyukshing</span>
+</div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="Total Visitors">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="Total Views">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+      
+
+<script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      loader: {
+        source: {
+          '[tex]/amsCd': '[tex]/amscd',
+          '[tex]/AMScd': '[tex]/amscd'
+        }
+      },
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              let target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    (function () {
+      var script = document.createElement('script');
+      script.src = '//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+      script.defer = true;
+      document.head.appendChild(script);
+    })();
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : true,
+      appId      : 'AaLog29QcUdQKTboD6cY2dNP-gzGzoHsz',
+      appKey     : 'dUWNHLnTY9qG1jJwPnTtfMm8',
+      placeholder: "Just go go",
+      avatar     : 'mm',
+      meta       : guest,
+      pageSize   : '10' || 10,
+      visitor    : false,
+      lang       : '' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : false,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+
+</body>
+</html>

@@ -1,0 +1,792 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <meta name="google-site-verification" content="FHjCzDi7nry9Mvf4EFOY5cYoco-ZXq9tKjvXZK0nKr4">
+  <meta name="baidu-site-verification" content="code-gpMFPewYUF" />
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="/lib/pace/pace-theme-minimal.min.css">
+  <script src="/lib/pace/pace.min.js"></script>
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"leungyukshing.github.io","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"right","display":"hide","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"appID":"52USYSYESX","apiKey":"20b904c66f55b874f05edea4aca57780","indexName":"blog","hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="面试总结之数据库原理基础&amp;emsp;&amp;emsp;数据库操作是后端开发的基础，数据库的操作涉及到许多实际的细节，以及一些底层的原理，学的时候可能比较凌乱。这里就为大家总结一下常见的考点。总结的部分是结合了教科书、其他面经以及个人的面试经历，相信能够帮助到大家。如果有不足的地方，欢迎大家指出！ &amp;emsp;&amp;emsp;本博客长期更新，欢迎大家收藏、订阅！">
+<meta property="og:type" content="article">
+<meta property="og:title" content="实习面经-数据库基础">
+<meta property="og:url" content="https://leungyukshing.github.io/archives/Interview-Database-basic.html">
+<meta property="og:site_name" content="Halo">
+<meta property="og:description" content="面试总结之数据库原理基础&amp;emsp;&amp;emsp;数据库操作是后端开发的基础，数据库的操作涉及到许多实际的细节，以及一些底层的原理，学的时候可能比较凌乱。这里就为大家总结一下常见的考点。总结的部分是结合了教科书、其他面经以及个人的面试经历，相信能够帮助到大家。如果有不足的地方，欢迎大家指出！ &amp;emsp;&amp;emsp;本博客长期更新，欢迎大家收藏、订阅！">
+<meta property="og:locale">
+<meta property="article:published_time" content="2019-07-01T16:37:47.000Z">
+<meta property="article:modified_time" content="2021-06-22T18:33:07.137Z">
+<meta property="article:author" content="Leungyukshing">
+<meta property="article:tag" content="面试总结">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://leungyukshing.github.io/archives/Interview-Database-basic.html">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-Hans'
+  };
+</script>
+
+  <title>实习面经-数据库基础 | Halo</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+<!-- hexo injector head_end end --><link rel="alternate" href="/atom.xml" title="Halo" type="application/atom+xml"><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Halo</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">A magic place for coding</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>About</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>Tags</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>Search
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="Searching..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+  <a href="https://github.com/leungyukshing" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="https://leungyukshing.github.io/archives/Interview-Database-basic.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="Leungyukshing">
+      <meta itemprop="description" content="A blog for code, programme sharing.">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Halo">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          实习面经-数据库基础
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2019-07-01 12:37:47" itemprop="dateCreated datePublished" datetime="2019-07-01T12:37:47-04:00">2019-07-01</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2021-06-22 14:33:07" itemprop="dateModified" datetime="2021-06-22T14:33:07-04:00">2021-06-22</time>
+              </span>
+
+          
+            <span class="post-meta-item" title="Views" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">Views: </span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine: </span>
+    
+    <a title="valine" href="/archives/Interview-Database-basic.html#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/archives/Interview-Database-basic.html" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="面试总结之数据库原理基础"><a href="#面试总结之数据库原理基础" class="headerlink" title="面试总结之数据库原理基础"></a>面试总结之数据库原理基础</h1><p>&emsp;&emsp;数据库操作是后端开发的基础，数据库的操作涉及到许多实际的细节，以及一些底层的原理，学的时候可能比较凌乱。这里就为大家总结一下常见的考点。总结的部分是结合了教科书、其他面经以及个人的面试经历，相信能够帮助到大家。如果有不足的地方，欢迎大家指出！</p>
+<p>&emsp;&emsp;本博客长期更新，欢迎大家收藏、订阅！</p>
+<a id="more"></a>
+
+
+
+<h2 id="索引"><a href="#索引" class="headerlink" title="索引"></a>索引</h2><h3 id="为什么要有索引"><a href="#为什么要有索引" class="headerlink" title="为什么要有索引"></a>为什么要有索引</h3><p>&emsp;&emsp;如果没有索引，在查询的时候我们就需要<strong>全表扫描</strong>。使用了index，通过缩小一张表中需要查询的记录、行的数目来<strong>加快搜索速度</strong>。举个例子，我们查字典很快是因为字典按照字母的顺序排好了，不然的话我们要查一个单词只能够从头一个一个单词看。</p>
+<h3 id="索引是什么"><a href="#索引是什么" class="headerlink" title="索引是什么"></a>索引是什么</h3><p>&emsp;&emsp;一个索引本身存储两样东西：一是index那一列的值，二是指向表中某一行的指针。这样我们找到这个索引就可以找到这条记录。所以<strong>索引是一种数据结构</strong>应用。一般会把索引建立在B-Tree上。</p>
+<h3 id="索引的分类"><a href="#索引的分类" class="headerlink" title="索引的分类"></a>索引的分类</h3><ul>
+<li><strong>哈希索引（hash index）</strong>：建立在哈希表上的索引，只适用于等值查询，不适合范围查询。因为根据查询值直接哈希就能访问到索引的位置，然后找到表中对应的记录，但是索引本身是无序的，所以没有办法进行范围查询。</li>
+<li><strong>B-Tree索引</strong>：建立在B-Tree上的索引，因为查找、删除、插入操作的时间复杂度都是对数，所以效率很高。同时在B-Tree中的数据是有序的，所以很适合范围查询。</li>
+<li><strong>代价</strong>：占用空间，凡是插入删除操作都需要及时更新。</li>
+</ul>
+<h3 id="什么时候使用索引"><a href="#什么时候使用索引" class="headerlink" title="什么时候使用索引"></a>什么时候使用索引</h3><p>&emsp;&emsp;比如我们使用SQL语句查询一个用户<code>SELECT * FROM User WHERE Name = &#39;John&#39;</code>，这个时候数据库会检查Name这个列上是否有索引，如果有，数据库则会检查使用索引是否合理，若合理则使用索引再进行查询。</p>
+<p>&emsp;&emsp;咦，这里有个问题，<strong>是否合理</strong>是如何理解呢？这里牵涉到索引基数和索引选择度问题，详情请移步到<a target="_blank" rel="noopener" href="http://leungyukshing.cn/archives/DataBase-CardinalityAndSelectivity.html">传送门</a></p>
+<hr>
+<h2 id="B树和B-树"><a href="#B树和B-树" class="headerlink" title="B树和B+树"></a>B树和B+树</h2><p>&emsp;&emsp;两者都应用在<strong>数据库索引</strong>，可以认为是<strong>m叉的多路平衡查找树</strong>。数据库索引存储在磁盘上，搜索的时候逐一加载每一个<strong>磁盘页</strong>（对应索引树的一个结点）。对于树结构而言，<strong>IO的次数就是树的高度</strong>。</p>
+<ul>
+<li><strong>M阶B树</strong><ol>
+<li>定义任意非叶子结点最多只有M个叶子，且$M\gt2$；</li>
+<li>根结点的叶子数为$[2, M]$；</li>
+<li>除根结点外的非叶子结点的叶子数为$[\frac{M}{2}, M]$；</li>
+<li>非叶子结点的key个数=叶子数 - 1；</li>
+<li>所有叶子结点位于同一层；</li>
+<li>$k$个key把结点拆成$k+1$段，分别指向$k+1$个儿子，同时满足查找树的大小关系。</li>
+</ol>
+</li>
+<li><strong>B树的特点</strong><ol>
+<li>key集合分布在整棵树中；</li>
+<li>任何一个key出现且只出现在一个结点中；</li>
+<li>搜索有可能在非叶子结点结束；</li>
+<li>其搜索性能等价于在key全集内做一次<strong>二分查找</strong>。</li>
+</ol>
+</li>
+<li><strong>M阶B+树特征</strong><ol>
+<li>有$n$棵子树的非叶子结点中含有$n$个key（B树是$n-1$个）。这些key本身不存储数据，只用于索引，所有数据都保存在叶子结点。（B树是每个key都保存数据内容）；</li>
+<li>所有叶子结点中包含了全部的key，及指向这些key记录的指针。同时，叶子结点本身按照key的大小，从小到大顺序链接成链表；</li>
+<li>所有非叶子结点可以看成是索引部分，结点中仅含其子树中的最大（最小）key；</li>
+<li>通常在B+树上有两个指针，一个指向树结构的根结点，另一个指向key最小的叶子结点，即链表头；</li>
+<li>同一个数字会在不同结点中重复出现，根节点的最大元素就是B+树的最大元素。</li>
+</ol>
+</li>
+<li><strong>B+树比B树好在哪？</strong><ol>
+<li>B+树的中间结点不保存数据本身的内容，所以磁盘页能够容纳更多的key；</li>
+<li>B+树查询必须到叶子结点，更加稳定；</li>
+<li>对于<strong>范围查找</strong>而言，B+树只需要遍历叶子结点链表即可，B树则需要重复地进行遍历。</li>
+</ol>
+</li>
+</ul>
+<hr>
+<h2 id="MyISAM和InnoDB区别"><a href="#MyISAM和InnoDB区别" class="headerlink" title="MyISAM和InnoDB区别"></a>MyISAM和InnoDB区别</h2><p>&emsp;&emsp;两者是指MySQL中表的类型。</p>
+<ul>
+<li><strong>区别</strong><ol>
+<li>MyISAM<strong>不支持事务处理</strong>，InnoDB支持；</li>
+<li>MyISAM<strong>强调性能</strong>，执行速度快；</li>
+<li>InnoDB提供事务支持以及外部键等高级功能</li>
+</ol>
+</li>
+<li><strong>Details</strong><ol>
+<li>InnoDB不支持FULLTEXT类型的索引；</li>
+<li>InnoDB不保存表的具体行数。执行<code>select count(*) from table</code>时，InnoDB要扫描一遍来计算整个表有多少行，但MyISAM只要读出保存好的行数。当执行<code>count(*)</code>语句时，如果包含<code>where</code>条件时，两种表的操作是一样的；</li>
+<li>对于AUTO_INCREMENT字段，InnoDB中必须包含只有该字段的索引，但是在MyISAM中，可以和其他字段一起建立联合索引；</li>
+<li><code>delete from table</code>时，InnoDB不会重新建表，而是逐行删除；</li>
+<li><code>load table from master</code>对InnoDB无效；</li>
+<li>InnoDB表的行锁也不是绝对的。不确定扫描范围时，InnoDB同样会对整个表上锁。</li>
+</ol>
+</li>
+</ul>
+<hr>
+<h2 id="乐观锁与悲观锁"><a href="#乐观锁与悲观锁" class="headerlink" title="乐观锁与悲观锁"></a>乐观锁与悲观锁</h2><ul>
+<li><strong>悲观锁</strong>：认为数据被并发修改的概率较大，需要在修改之前先加锁。缺点是会产生额外的开销，增加死锁的机会，降低并行性。<ul>
+<li>基本思路：<ol>
+<li>对记录修改前，加上排它锁（exclusive lock）</li>
+<li>若失败，等待或抛出异常</li>
+<li>若成功，允许对记录进行修改，完成后释放锁</li>
+</ol>
+</li>
+<li>实际应用的时候需要关闭数据库的<strong>auto_commit</strong></li>
+</ul>
+</li>
+<li><strong>乐观锁</strong>：假设数据一般情况下不会造成冲突，所以在数据进行提交更新的时候，才会正式对数据的冲突进行检测。<ul>
+<li><strong>CAS（compare and swap）算法</strong>：无锁编程。多个线程使用CAS同时更新同一个变量，只有一个线程能完成更新，其余线程都失败。更新提交的时候，将数据库表对应的记录与第一次取出来的记录作比较。如果相同，则予以更新；否则认为是过期数据，更新失败。</li>
+<li><strong>ABA问题</strong>：CAS算法存在的漏洞，即第一次取出来的记录（A）和当前记录（A）一致，并不能代表数据就是没有被修改过，中间可能存在B，只不过后面又给改回去A了。<strong>解决办法</strong>是：通过一个单独可顺序递增的<code>version</code>字段（或时间戳），提交时检查版本号和数据的版本号，如果一致才予以更新，<code>version</code>递增。</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h2 id="数据库的隔离级别"><a href="#数据库的隔离级别" class="headerlink" title="数据库的隔离级别"></a>数据库的隔离级别</h2><table>
+<thead>
+<tr>
+<th>隔离级别/问题</th>
+<th>脏读</th>
+<th>不可重复读</th>
+<th>幻读</th>
+<th>级别</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Read uncommitted</td>
+<td>√</td>
+<td>√</td>
+<td>√</td>
+<td></td>
+</tr>
+<tr>
+<td>Read committed</td>
+<td>×</td>
+<td>√</td>
+<td>√</td>
+<td>语句级</td>
+</tr>
+<tr>
+<td>Repeatable read</td>
+<td>×</td>
+<td>×</td>
+<td>√</td>
+<td>事务级</td>
+</tr>
+<tr>
+<td>Serializable</td>
+<td>×</td>
+<td>×</td>
+<td>×</td>
+<td>事务级</td>
+</tr>
+</tbody></table>
+<hr>
+<h2 id="数据库连接池"><a href="#数据库连接池" class="headerlink" title="数据库连接池"></a>数据库连接池</h2><p>&emsp;&emsp;如果没有使用数据库做过应用开发的话，可能很多人不知道连接池的作用。但是公司的业务肯定会涉及到的，因此还是有必要了解一下。</p>
+<ul>
+<li><p><strong>为什么要用连接池？</strong></p>
+<ul>
+<li>简单应用$\rightarrow$数据库访问不频繁$\rightarrow$按需创建连接，用完后关闭</li>
+<li>复杂应用$\rightarrow$频繁访问，建立、关闭连接$\rightarrow$减低系统性能（解决办法：<strong>连接复用！！</strong>）</li>
+</ul>
+</li>
+<li><p><strong>基本原理</strong>：在内部对象池中维护一定数量的数据库连接，并对外暴露数据库连接获取和返回方法。如：</p>
+<ul>
+<li>获取连接：<code>getConnection()</code></li>
+<li>释放连接：<code>releaseConnection()</code></li>
+</ul>
+<p>当释放连接的时候，连接并没有真正的关闭，而是由连接池管理器回收，并为下一次使用做好准备。</p>
+</li>
+<li><p><strong>优点</strong></p>
+<ol>
+<li><strong>资源重用</strong>。减少系统开销，增加系统运行环境的平稳性（减少内存碎片、数据库临时进程和线程的数量）；</li>
+<li><strong>更快的系统响应速度</strong>。因为连接已经初始化，缩短了访问时间；</li>
+<li><strong>更好的资源分配手段</strong>。多应用共享同一个数据库，可以通过限制连接数，从而避免某一应用独占所有的数据库资源；</li>
+<li><strong>统一管理</strong>：能够很好地避免连接泄漏问题。通过预先设定占用超市，强制收回被占用的连接。</li>
+</ol>
+</li>
+</ul>
+<hr>
+<h2 id="Reference"><a href="#Reference" class="headerlink" title="Reference"></a>Reference</h2><ol>
+<li><a target="_blank" rel="noopener" href="https://blog.csdn.net/xifeijian/article/details/20316775">MySQL存储引擎–MyISAM和InnoDB的区别</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.jianshu.com/p/687ec4dbaa08">并发控制–乐观锁与悲观锁</a></li>
+<li><a target="_blank" rel="noopener" href="https://juejin.im/post/5b7944c6e51d4538c86cf195">数据库连接池技术详解</a></li>
+<li><a target="_blank" rel="noopener" href="https://blog.csdn.net/weiliangliang111/article/details/51333169">数据库索引是什么</a></li>
+</ol>
+
+    </div>
+
+    
+    
+    
+        <div class="reward-container">
+  <div></div>
+  <button onclick="var qr = document.getElementById('qr'); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    Donate
+  </button>
+  <div id="qr" style="display: none;">
+      
+      <div style="display: inline-block;">
+        <img src="/images/wechat_reward.png" alt="Leungyukshing WeChat Pay">
+        <p>WeChat Pay</p>
+      </div>
+      
+      <div style="display: inline-block;">
+        <img src="/images/alipay_reward.png" alt="Leungyukshing Alipay">
+        <p>Alipay</p>
+      </div>
+
+  </div>
+</div>
+
+        
+
+  <div class="followme">
+    <p>Welcome to my other publishing channels</p>
+
+    <div class="social-list">
+
+        <div class="social-item">
+          <a target="_blank" class="social-link" href="/atom.xml">
+            <span class="icon">
+              <i class="fa fa-rss"></i>
+            </span>
+
+            <span class="label">RSS</span>
+          </a>
+        </div>
+    </div>
+  </div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E9%9D%A2%E8%AF%95%E6%80%BB%E7%BB%93/" rel="tag"># 面试总结</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/archives/Interview-Network-basic.html" rel="prev" title="实习面经--计算机网络基础">
+      <i class="fa fa-chevron-left"></i> 实习面经--计算机网络基础
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/archives/Interview-Redis-basic.html" rel="next" title="实习面经--Redis基础">
+      实习面经--Redis基础 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E9%9D%A2%E8%AF%95%E6%80%BB%E7%BB%93%E4%B9%8B%E6%95%B0%E6%8D%AE%E5%BA%93%E5%8E%9F%E7%90%86%E5%9F%BA%E7%A1%80"><span class="nav-number">1.</span> <span class="nav-text">面试总结之数据库原理基础</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%B4%A2%E5%BC%95"><span class="nav-number">1.1.</span> <span class="nav-text">索引</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E8%A6%81%E6%9C%89%E7%B4%A2%E5%BC%95"><span class="nav-number">1.1.1.</span> <span class="nav-text">为什么要有索引</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%B4%A2%E5%BC%95%E6%98%AF%E4%BB%80%E4%B9%88"><span class="nav-number">1.1.2.</span> <span class="nav-text">索引是什么</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%B4%A2%E5%BC%95%E7%9A%84%E5%88%86%E7%B1%BB"><span class="nav-number">1.1.3.</span> <span class="nav-text">索引的分类</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BB%80%E4%B9%88%E6%97%B6%E5%80%99%E4%BD%BF%E7%94%A8%E7%B4%A2%E5%BC%95"><span class="nav-number">1.1.4.</span> <span class="nav-text">什么时候使用索引</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#B%E6%A0%91%E5%92%8CB-%E6%A0%91"><span class="nav-number">1.2.</span> <span class="nav-text">B树和B+树</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#MyISAM%E5%92%8CInnoDB%E5%8C%BA%E5%88%AB"><span class="nav-number">1.3.</span> <span class="nav-text">MyISAM和InnoDB区别</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B9%90%E8%A7%82%E9%94%81%E4%B8%8E%E6%82%B2%E8%A7%82%E9%94%81"><span class="nav-number">1.4.</span> <span class="nav-text">乐观锁与悲观锁</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E5%BA%93%E7%9A%84%E9%9A%94%E7%A6%BB%E7%BA%A7%E5%88%AB"><span class="nav-number">1.5.</span> <span class="nav-text">数据库的隔离级别</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E5%BA%93%E8%BF%9E%E6%8E%A5%E6%B1%A0"><span class="nav-number">1.6.</span> <span class="nav-text">数据库连接池</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Reference"><span class="nav-number">1.7.</span> <span class="nav-text">Reference</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Leungyukshing"
+      src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">Leungyukshing</p>
+  <div class="site-description" itemprop="description">A blog for code, programme sharing.</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">688</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">27</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/leungyukshing" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;leungyukshing" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:jacky14.liang@gmail.com" title="E-Mail → mailto:jacky14.liang@gmail.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="/atom.xml" title="RSS → &#x2F;atom.xml"><i class="fa fa-rss fa-fw"></i>RSS</a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll motion-element">
+    <div class="links-of-blogroll-title"><i class="fa fa-link fa-fw"></i>
+      Friends
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="http://www.liangjh45.com/" title="http:&#x2F;&#x2F;www.liangjh45.com&#x2F;" rel="noopener" target="_blank">Alva's blog</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="https://sysucarey.github.io/" title="https:&#x2F;&#x2F;sysucarey.github.io&#x2F;" rel="noopener" target="_blank">Carey's blog</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="https://blog.csdn.net/dickdick111/" title="https:&#x2F;&#x2F;blog.csdn.net&#x2F;dickdick111&#x2F;" rel="noopener" target="_blank">Dick's blog</a>
+        </li>
+    </ul>
+  </div>
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2017 – 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Leungyukshing</span>
+</div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="Total Visitors">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="Total Views">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+      
+
+<script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      loader: {
+        source: {
+          '[tex]/amsCd': '[tex]/amscd',
+          '[tex]/AMScd': '[tex]/amscd'
+        }
+      },
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              let target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    (function () {
+      var script = document.createElement('script');
+      script.src = '//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+      script.defer = true;
+      document.head.appendChild(script);
+    })();
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : true,
+      appId      : 'AaLog29QcUdQKTboD6cY2dNP-gzGzoHsz',
+      appKey     : 'dUWNHLnTY9qG1jJwPnTtfMm8',
+      placeholder: "Just go go",
+      avatar     : 'mm',
+      meta       : guest,
+      pageSize   : '10' || 10,
+      visitor    : false,
+      lang       : '' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : false,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+
+</body>
+</html>

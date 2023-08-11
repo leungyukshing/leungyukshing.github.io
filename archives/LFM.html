@@ -1,0 +1,750 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <meta name="google-site-verification" content="FHjCzDi7nry9Mvf4EFOY5cYoco-ZXq9tKjvXZK0nKr4">
+  <meta name="baidu-site-verification" content="code-gpMFPewYUF" />
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="/lib/pace/pace-theme-minimal.min.css">
+  <script src="/lib/pace/pace.min.js"></script>
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"leungyukshing.github.io","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"right","display":"hide","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"appID":"52USYSYESX","apiKey":"20b904c66f55b874f05edea4aca57780","indexName":"blog","hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="Intro&amp;emsp;&amp;emsp;这篇博客就向大家介绍一下常用的推荐算法——LFM。LFM（Latent Factor Model），隐语义模型，是一种非常著名的推荐系统算法，它在NetFlix的推荐算法竞赛中获奖，最早被应用于电影推荐中。这里我将会简单介绍其原理，然后实现一个简单的电影推荐系统。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="LFM--电影推荐系统应用">
+<meta property="og:url" content="https://leungyukshing.github.io/archives/LFM.html">
+<meta property="og:site_name" content="Halo">
+<meta property="og:description" content="Intro&amp;emsp;&amp;emsp;这篇博客就向大家介绍一下常用的推荐算法——LFM。LFM（Latent Factor Model），隐语义模型，是一种非常著名的推荐系统算法，它在NetFlix的推荐算法竞赛中获奖，最早被应用于电影推荐中。这里我将会简单介绍其原理，然后实现一个简单的电影推荐系统。">
+<meta property="og:locale">
+<meta property="og:image" content="https://leungyukshing.github.io/images/movielens_dataset.png">
+<meta property="og:image" content="https://leungyukshing.github.io/images/recommendation_training_progress.png">
+<meta property="og:image" content="https://leungyukshing.github.io/images/recommendation_result.png">
+<meta property="article:published_time" content="2019-02-24T15:02:19.000Z">
+<meta property="article:modified_time" content="2021-06-22T18:33:07.167Z">
+<meta property="article:author" content="Leungyukshing">
+<meta property="article:tag" content="Machine Learning">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://leungyukshing.github.io/images/movielens_dataset.png">
+
+<link rel="canonical" href="https://leungyukshing.github.io/archives/LFM.html">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-Hans'
+  };
+</script>
+
+  <title>LFM--电影推荐系统应用 | Halo</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+<!-- hexo injector head_end end --><link rel="alternate" href="/atom.xml" title="Halo" type="application/atom+xml"><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Halo</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">A magic place for coding</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>About</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>Tags</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>Search
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="Searching..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+  <a href="https://github.com/leungyukshing" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="https://leungyukshing.github.io/archives/LFM.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="Leungyukshing">
+      <meta itemprop="description" content="A blog for code, programme sharing.">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Halo">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          LFM--电影推荐系统应用
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2019-02-24 10:02:19" itemprop="dateCreated datePublished" datetime="2019-02-24T10:02:19-05:00">2019-02-24</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2021-06-22 14:33:07" itemprop="dateModified" datetime="2021-06-22T14:33:07-04:00">2021-06-22</time>
+              </span>
+
+          
+            <span class="post-meta-item" title="Views" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">Views: </span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine: </span>
+    
+    <a title="valine" href="/archives/LFM.html#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/archives/LFM.html" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="Intro"><a href="#Intro" class="headerlink" title="Intro"></a>Intro</h2><p>&emsp;&emsp;这篇博客就向大家介绍一下常用的推荐算法——LFM。LFM（Latent Factor Model），隐语义模型，是一种非常著名的推荐系统算法，它在NetFlix的推荐算法竞赛中获奖，最早被应用于电影推荐中。这里我将会简单介绍其原理，然后实现一个简单的电影推荐系统。</p>
+<a id="more"></a>
+
+<hr>
+<h2 id="原理"><a href="#原理" class="headerlink" title="原理"></a>原理</h2><p>&emsp;&emsp;先看看LFM的基本思想：每个用户（user）都有自己对电影（movie）的偏好。我们认为一部电影带有一些latent factor（如动作片、科幻片、爱情片、纪录片等）。所以我们就有以下两条假设：</p>
+<ul>
+<li>不同的用户对于不同的factor有不同的偏好程度。矩阵P：</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th align="center"></th>
+<th align="center">动作</th>
+<th align="center">爱情</th>
+<th align="center">科幻</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">用户1</td>
+<td align="center">0.6</td>
+<td align="center">0.1</td>
+<td align="center">0.2</td>
+</tr>
+<tr>
+<td align="center">用户2</td>
+<td align="center">0.2</td>
+<td align="center">0.8</td>
+<td align="center">0.3</td>
+</tr>
+</tbody></table>
+<ul>
+<li>不同的电影含有的factor的比重是不同的。矩阵Q：</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th align="center"></th>
+<th align="center">动作</th>
+<th align="center">爱情</th>
+<th align="center">科幻</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">电影A</td>
+<td align="center">0.9</td>
+<td align="center">0.4</td>
+<td align="center">0.1</td>
+</tr>
+<tr>
+<td align="center">电影B</td>
+<td align="center">0.2</td>
+<td align="center">0.2</td>
+<td align="center">0.8</td>
+</tr>
+</tbody></table>
+<p>&emsp;&emsp;根据以上两个矩阵，我们就可以知道用户1对电影A的喜好程度为：<br>$$<br>0.6*0.9 + 0.1*0.4+0.2*0.1 = 0.6<br>$$<br>&emsp;&emsp;对电影B的喜好程度为：<br>$$<br>0.6*0.2+0.1*0.2+0.2*0.8 = 0.3<br>$$<br>&emsp;&emsp;所以我们可以很直观地看出，用户1更喜换电影A。根据这种思路，我们可以计算出每个用户对于每部电影的评分（当然这个评分是我们估计的，直观上看这种估计也是非常合理的）。评分矩阵$\hat{R}$可以这样计算：<br>$$<br>\hat{R}=PQ^T<br>$$<br>&emsp;&emsp;现在估计的问题已经解决，但是LFM最大的问题在于我们如何获得Q和P。在实际应用中，让用户告诉我们对每个类型的偏好系数是不现实的，我们一般获取到的是用户行为，因此我们需要自己构建出一个评分矩阵$R$。我们可以自定义一些规则来将用户行为转变成为评分，如：</p>
+<ul>
+<li>看完整部电影 = 4</li>
+<li>分享给别人 = 3</li>
+<li>收藏 = 2</li>
+<li>搜索该电影名字 = 1</li>
+<li>只观看10分钟 = -2</li>
+</ul>
+<p>&emsp;&emsp;这样我们就可以构建出一个实际的评分矩阵$R$。事实上这是一个非常高维的稀疏矩阵，因为绝大多数的用户都是只看过一小部分的电影。我们可以利用稀疏矩阵这个特性，对$R$作分解。也就是说，我们把构建$R$的问题转化为了用$Q$和$P$两个矩阵的乘积去得到$\hat{R}$。这是一个近似的问题，因此就得到了可优化的代价函数：<br>$$<br>J(\theta) = \sum(R_{u,i} - P_{u,k}Q_{k, i})^2<br>$$<br>&emsp;&emsp;其中$u$是用户，$i$是电影，$k$是laten factor。<strong>特别注意，这里的Q与上面的Q是不同的，上面的Q是电影-类别矩阵，这里的是类别-电影矩阵，刚好是转置。</strong></p>
+<p>&emsp;&emsp;这个就是我们用于优化求解的代价函数。在实际应用中，往往还会在后面加上2范数的罚相$\lambda\parallel P_{u,k} \parallel^2 + \lambda\parallel Q_{k,i} \parallel^2$。最常用的方法就是使用梯度下降法来求解$P$和$Q$。经过学习后，我们就能够得到一个比较理想的$\hat{R}$，然后用这个评分矩阵去估计某一个用户对于某一个电影的感兴趣程度。</p>
+<h3 id="梯度下降法推导"><a href="#梯度下降法推导" class="headerlink" title="梯度下降法推导"></a>梯度下降法推导</h3><p>&emsp;&emsp;我们使用梯度下降法来最优化损失。可以知道，这里我们的参数是P和Q矩阵，所以分别对他们求偏导数。<br>$$<br>\frac{\partial J(\theta)}{\partial P_{u,k}} = -2(R_{u,i}-\sum P_{u,k}Q_{k,i})Q_{k,i}+2\lambda p_{u,k} \<br>\frac{\partial J(\theta)}{\partial Q_{k,i}} = -2(R_{u,i}-\sum P_{u,k}Q_{k,i})P_{u,k}+2\lambda Q_{k,i}<br>$$<br>&emsp;&emsp;分别更新$P_{u,k}$和$Q_{k, i}$：<br>$$<br>P_{u,k}=P_{u,k}+\alpha((R_{u,i}-\sum P_{u,k}Q_{k,i})Q_{k,i} - \lambda P_{u,k}) \<br>Q_{k,i}=P_{u,k}+\alpha((R_{u,i}-\sum P_{u,k}Q_{k,i})P_{u,k} - \lambda Q_{k,i})<br>$$<br>&emsp;&emsp;其中上面的系数2合并到了学习率$\alpha$中。$\alpha$一般选取0.01以下的值，而正则化参数$\lambda$则需要根据不同的数据集来调试。</p>
+<hr>
+<h2 id="实战"><a href="#实战" class="headerlink" title="实战"></a>实战</h2><p>&emsp;&emsp;下面我将实现一个简单的电影推荐系统。首先获取数据集：<a target="_blank" rel="noopener" href="https://grouplens.org/datasets/movielens/">传送门</a>。在<strong>recommended for education and development</strong>中下载<em>Small</em>数据集。</p>
+<p><img src="/images/movielens_dataset.png" alt="电影数据"></p>
+<p>&emsp;&emsp;下载并解压后其实我们可以看到，里面包含了几个csv数据，我们主要用到两个数据<code>ratings.csv</code>（用户对自己看过的电影的评分）和<code>movies.csv</code>（电影信息）。</p>
+<p><strong>注意</strong>：这里的数据是定期更新的，并且官方不会保留历史版本，因此大家实战的时候可能与我的结果不一样。</p>
+<h3 id="数据预处理"><a href="#数据预处理" class="headerlink" title="数据预处理"></a>数据预处理</h3><p>&emsp;&emsp;首先对原始数据进行预处理，主要是将csv读入，然后提取表格中有用的信息。这里有两个特别要注意的：</p>
+<ul>
+<li>我们使用索引号（index）来替代<code>movieId</code>。这是因为<code>movieId</code>很大，构建出来的矩阵会很大，使用索引号替代<code>movieId</code>能提高效率。这一步要做的就是在<code>movies</code>表中建立<code>movieId</code>与<code>index</code>的对应关系，然后将这个表格合并到<code>ratings</code>表中（根据相同的<code>movieId</code>）。</li>
+<li>及时保存处理后的数据。这是在数据处理中一个很好的习惯，因为数据处理需要耗费大量的时间，所以一旦处理后我们应该保存起来。</li>
+</ul>
+<p>Code：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Read Data</span></span><br><span class="line">ratings_df = pd.read_csv(<span class="string">&#x27;ml-latest-small/ratings.csv&#x27;</span>)</span><br><span class="line"></span><br><span class="line">ratings_df.tail()</span><br><span class="line"></span><br><span class="line">movies_df = pd.read_csv(<span class="string">&#x27;ml-latest-small/movies.csv&#x27;</span>)</span><br><span class="line"></span><br><span class="line">movies_df.tail()</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment"># Add a new column, use columnNum to take the place of MovieId</span></span><br><span class="line">movies_df[<span class="string">&#x27;movieRow&#x27;</span>] = movies_df.index</span><br><span class="line"></span><br><span class="line">movies_df.tail()</span><br><span class="line"></span><br><span class="line"><span class="comment"># extract the useful information in the table</span></span><br><span class="line">movies_df = movies_df[[<span class="string">&#x27;movieRow&#x27;</span>, <span class="string">&#x27;movieId&#x27;</span>, <span class="string">&#x27;title&#x27;</span>]]</span><br><span class="line"></span><br><span class="line"><span class="comment"># save the processed data</span></span><br><span class="line">movies_df.to_csv(<span class="string">&#x27;moviesProcessed.csv&#x27;</span>, index=<span class="literal">False</span>, header=<span class="literal">True</span>, encoding=<span class="string">&#x27;utf-8&#x27;</span>)</span><br><span class="line"></span><br><span class="line">movies_df.tail()</span><br><span class="line"></span><br><span class="line"><span class="comment"># Merge two table(ratings_df, movies_df)</span></span><br><span class="line">ratings_df = pd.merge(ratings_df, movies_df, on=<span class="string">&#x27;movieId&#x27;</span>)</span><br><span class="line"></span><br><span class="line">ratings_df.head()</span><br><span class="line"></span><br><span class="line"><span class="comment"># extract the useful information in the table</span></span><br><span class="line">ratings_df = ratings_df[[<span class="string">&#x27;userId&#x27;</span>, <span class="string">&#x27;movieRow&#x27;</span>, <span class="string">&#x27;rating&#x27;</span>]]</span><br><span class="line"></span><br><span class="line"><span class="comment"># save the processed data</span></span><br><span class="line">ratings_df.to_csv(<span class="string">&#x27;ratingProcessed.csv&#x27;</span>, index=<span class="literal">False</span>, header=<span class="literal">True</span>, encoding=<span class="string">&#x27;utf-8&#x27;</span>)</span><br><span class="line"></span><br><span class="line">ratings_df.head()</span><br></pre></td></tr></table></figure>
+
+<h3 id="创建rating矩阵和record矩阵"><a href="#创建rating矩阵和record矩阵" class="headerlink" title="创建rating矩阵和record矩阵"></a>创建rating矩阵和record矩阵</h3><p>&emsp;&emsp;我们先来看看这两个矩阵是什么。</p>
+<ul>
+<li>rating矩阵就是我们之前提到的$R$评分矩阵，它是用户对电影的真实评分，是基于用户数据我们计算出来的。</li>
+<li>record矩阵是记录用户评分记录的矩阵。如果用户$i$与电影$j$有评分记录，那么$record(i,j) = 1$。</li>
+</ul>
+<p>Code:</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">## 创建电影评分矩阵rating和评分记录矩阵record</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># User Number</span></span><br><span class="line">userNo = ratings_df[<span class="string">&#x27;userId&#x27;</span>].<span class="built_in">max</span>() + <span class="number">1</span></span><br><span class="line"><span class="comment"># Movie Number</span></span><br><span class="line">movieNo = ratings_df[<span class="string">&#x27;movieRow&#x27;</span>].<span class="built_in">max</span>() + <span class="number">1</span></span><br><span class="line"></span><br><span class="line">userNo</span><br><span class="line"></span><br><span class="line">movieNo</span><br><span class="line"></span><br><span class="line"><span class="comment"># Initialize the rating matrix</span></span><br><span class="line">rating = np.zeros((movieNo, userNo))</span><br><span class="line"></span><br><span class="line">flag = <span class="number">0</span></span><br><span class="line"></span><br><span class="line">ratings_df_length = np.shape(ratings_df)[<span class="number">0</span>]</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> index, row <span class="keyword">in</span> ratings_df.iterrows():</span><br><span class="line">    rating[<span class="built_in">int</span>(row[<span class="string">&#x27;movieRow&#x27;</span>]), <span class="built_in">int</span>(row[<span class="string">&#x27;userId&#x27;</span>])] = row[<span class="string">&#x27;rating&#x27;</span>]</span><br><span class="line">    flag += <span class="number">1</span></span><br><span class="line">    print(<span class="string">&#x27;processed %d, %d left&#x27;</span> % (flag, ratings_df_length - flag))</span><br><span class="line"></span><br><span class="line"><span class="comment"># Initialize the record matrix</span></span><br><span class="line">record = rating &gt; <span class="number">0</span></span><br><span class="line"></span><br><span class="line">record</span><br><span class="line"></span><br><span class="line"><span class="comment"># Convert from boolean to int</span></span><br><span class="line">record = np.array(record, dtype=<span class="built_in">int</span>)</span><br><span class="line"></span><br><span class="line">record</span><br></pre></td></tr></table></figure>
+
+<h3 id="构建学习模型"><a href="#构建学习模型" class="headerlink" title="构建学习模型"></a>构建学习模型</h3><p>&emsp;&emsp;首先是对数据进行一个标准化处理。这是数据处理经常用的一个步骤，它可以提高数据处理的速度和精度。一般来说可以用sklearn来实现，但这里比较简单，不妨自己写一下。核心的思路就是：<strong>原来的评分-平均评分=标准化后评分</strong>。这样处理后每个评分都集中在一个区间中。</p>
+<p>&emsp;&emsp;然后就使用tensorflow构建学习模型。我们随机初始化$Q$和$P$两个矩阵（使用正态分布）。然后定义好损失函数、优化器等。</p>
+<p>Code:</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">## 构建模型</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">normalizeRatings</span>(<span class="params">rating, record</span>):</span></span><br><span class="line">    m, n = rating.shape</span><br><span class="line">    rating_mean = np.zeros((m, <span class="number">1</span>))</span><br><span class="line">    rating_norm = np.zeros((m, n))</span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(m):</span><br><span class="line">        idx = record[i, :] != <span class="number">0</span></span><br><span class="line">        rating_mean[i] = np.mean(rating[i, idx])</span><br><span class="line">        rating_norm[i, idx] -= rating_mean[i]</span><br><span class="line">    <span class="keyword">return</span> rating_norm, rating_mean</span><br><span class="line"></span><br><span class="line">rating_norm, rating_mean = normalizeRatings(rating, record)</span><br><span class="line"></span><br><span class="line">rating_norm = np.nan_to_num(rating_norm)</span><br><span class="line"></span><br><span class="line">rating_norm</span><br><span class="line"></span><br><span class="line">rating_mean = np.nan_to_num(rating_mean)</span><br><span class="line"></span><br><span class="line">rating_mean</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment"># Features to describe a movie</span></span><br><span class="line">num_features = <span class="number">10</span></span><br><span class="line"></span><br><span class="line">X_parameter = tf.Variable(tf.random_normal([movieNo, num_features], stddev=<span class="number">0.35</span>))</span><br><span class="line"></span><br><span class="line">Theta_parameter = tf.Variable(tf.random_normal([userNo, num_features], stddev=<span class="number">0.35</span>))</span><br><span class="line"></span><br><span class="line"><span class="comment"># Loss Function</span></span><br><span class="line">loss = <span class="number">1</span>/<span class="number">2</span> * tf.reduce_sum(((tf.matmul(X_parameter, Theta_parameter, transpose_b=<span class="literal">True</span>) - rating_norm)*record)**<span class="number">2</span>) + <span class="number">1</span>/<span class="number">2</span> * (tf.reduce_sum(X_parameter**<span class="number">2</span>) + tf.reduce_sum(Theta_parameter**<span class="number">2</span>))</span><br><span class="line"></span><br><span class="line">optimizer = tf.train.AdamOptimizer(<span class="number">1e-4</span>)</span><br><span class="line">train = optimizer.minimize(loss)</span><br></pre></td></tr></table></figure>
+
+<h3 id="训练模型"><a href="#训练模型" class="headerlink" title="训练模型"></a>训练模型</h3><p>&emsp;&emsp;训练模型的部分主要是tensorflow的操作，这里就不仔细讲解了。我们可以使用tensorboard可视化工具来看到训练过程。</p>
+<p><img src="/images/recommendation_training_progress.png" alt="训练过程"></p>
+<p>&emsp;&emsp;可以看出损失函数随着训练次数的增加在下降。</p>
+<p>Code:</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">## 训练模型</span></span><br><span class="line">tf.summary.scalar(<span class="string">&#x27;loss&#x27;</span>, loss)</span><br><span class="line"></span><br><span class="line">summaryMerged = tf.summary.merge_all()</span><br><span class="line"></span><br><span class="line">filename = <span class="string">&#x27;./movie_tensorboard&#x27;</span></span><br><span class="line"></span><br><span class="line">writer = tf.summary.FileWriter(filename)</span><br><span class="line"></span><br><span class="line">sess = tf.Session()</span><br><span class="line"></span><br><span class="line">init = tf.global_variables_initializer()</span><br><span class="line"></span><br><span class="line">sess.run(init)</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">5000</span>):</span><br><span class="line">    _, movie_summary = sess.run([train, summaryMerged])</span><br><span class="line">    writer.add_summary(movie_summary, i)</span><br></pre></td></tr></table></figure>
+
+<h3 id="评估模型"><a href="#评估模型" class="headerlink" title="评估模型"></a>评估模型</h3><p>&emsp;&emsp;从训练结果中获取到用于预测的模型（实质上就是一个预测的评分矩阵$\hat{R}$,$\hat{R}=QP^T$）。同时我们可以输出一下误差。</p>
+<p>Code:</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 评估模型</span></span><br><span class="line">Current_X_parameters, Current_Theta_parameters = sess.run([X_parameter, Theta_parameter])</span><br><span class="line"></span><br><span class="line">predicts = np.dot(Current_X_parameters, Current_Theta_parameters.T) + rating_mean</span><br><span class="line"></span><br><span class="line">errors = np.sqrt(np.<span class="built_in">sum</span>((predicts - rating)**<span class="number">2</span>))</span><br><span class="line"></span><br><span class="line">errors</span><br></pre></td></tr></table></figure>
+
+<h3 id="测试"><a href="#测试" class="headerlink" title="测试"></a>测试</h3><p>&emsp;&emsp;添加用户输入提示，获取一个用户Id，在$\hat{R}$中将该列提取出来并且排序，将评分排名前20的电影信息输出。</p>
+<p>Code:</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 构建完整的电影推荐系统</span></span><br><span class="line">user_id = <span class="built_in">input</span>(<span class="string">&#x27;您要向哪位用户进行推荐？请输入用户编号：&#x27;</span>)</span><br><span class="line"></span><br><span class="line">sortedResult = predicts[:, <span class="built_in">int</span>(user_id)].argsort()[::<span class="number">-1</span>]</span><br><span class="line"></span><br><span class="line">idx = <span class="number">0</span></span><br><span class="line">print(<span class="string">&#x27;为该用户推荐的评分最高的20部电影是：&#x27;</span>.center(<span class="number">80</span>, <span class="string">&#x27;=&#x27;</span>))</span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> sortedResult:</span><br><span class="line">    print(<span class="string">&#x27;评分：%.2f，电影名：%s&#x27;</span> % (predicts[i, <span class="built_in">int</span>(user_id)], movies_df.iloc[i][<span class="string">&#x27;title&#x27;</span>]))</span><br><span class="line">    idx += <span class="number">1</span></span><br><span class="line">    <span class="keyword">if</span> idx == <span class="number">20</span>: <span class="keyword">break</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p><img src="/images/recommendation_result.png" alt="推荐结果"></p>
+<p>&emsp;&emsp;这样，我们就成功构建起一个简单的电影推荐系统了。</p>
+<h3 id="完整代码"><a href="#完整代码" class="headerlink" title="完整代码"></a>完整代码</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># coding: utf-8</span></span><br><span class="line"><span class="comment"># Author: LeungYukshing</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> pandas <span class="keyword">as</span> pd</span><br><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="keyword">import</span> tensorflow <span class="keyword">as</span> tf</span><br><span class="line"></span><br><span class="line"><span class="comment"># Read Data</span></span><br><span class="line">ratings_df = pd.read_csv(<span class="string">&#x27;ml-latest-small/ratings.csv&#x27;</span>)</span><br><span class="line"></span><br><span class="line">ratings_df.tail()</span><br><span class="line"></span><br><span class="line">movies_df = pd.read_csv(<span class="string">&#x27;ml-latest-small/movies.csv&#x27;</span>)</span><br><span class="line"></span><br><span class="line">movies_df.tail()</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment"># Add a new column, use columnNum to take the place of MovieId</span></span><br><span class="line">movies_df[<span class="string">&#x27;movieRow&#x27;</span>] = movies_df.index</span><br><span class="line"></span><br><span class="line">movies_df.tail()</span><br><span class="line"></span><br><span class="line"><span class="comment"># extract the useful information in the table</span></span><br><span class="line">movies_df = movies_df[[<span class="string">&#x27;movieRow&#x27;</span>, <span class="string">&#x27;movieId&#x27;</span>, <span class="string">&#x27;title&#x27;</span>]]</span><br><span class="line"></span><br><span class="line"><span class="comment"># save the processed data</span></span><br><span class="line">movies_df.to_csv(<span class="string">&#x27;moviesProcessed.csv&#x27;</span>, index=<span class="literal">False</span>, header=<span class="literal">True</span>, encoding=<span class="string">&#x27;utf-8&#x27;</span>)</span><br><span class="line"></span><br><span class="line">movies_df.tail()</span><br><span class="line"></span><br><span class="line"><span class="comment"># Merge two table(ratings_df, movies_df)</span></span><br><span class="line">ratings_df = pd.merge(ratings_df, movies_df, on=<span class="string">&#x27;movieId&#x27;</span>)</span><br><span class="line"></span><br><span class="line">ratings_df.head()</span><br><span class="line"></span><br><span class="line"><span class="comment"># extract the useful information in the table</span></span><br><span class="line">ratings_df = ratings_df[[<span class="string">&#x27;userId&#x27;</span>, <span class="string">&#x27;movieRow&#x27;</span>, <span class="string">&#x27;rating&#x27;</span>]]</span><br><span class="line"></span><br><span class="line"><span class="comment"># save the processed data</span></span><br><span class="line">ratings_df.to_csv(<span class="string">&#x27;ratingProcessed.csv&#x27;</span>, index=<span class="literal">False</span>, header=<span class="literal">True</span>, encoding=<span class="string">&#x27;utf-8&#x27;</span>)</span><br><span class="line"></span><br><span class="line">ratings_df.head()</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">## 创建电影评分矩阵rating和评分记录矩阵record</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># User Number</span></span><br><span class="line">userNo = ratings_df[<span class="string">&#x27;userId&#x27;</span>].<span class="built_in">max</span>() + <span class="number">1</span></span><br><span class="line"><span class="comment"># Movie Number</span></span><br><span class="line">movieNo = ratings_df[<span class="string">&#x27;movieRow&#x27;</span>].<span class="built_in">max</span>() + <span class="number">1</span></span><br><span class="line"></span><br><span class="line">userNo</span><br><span class="line"></span><br><span class="line">movieNo</span><br><span class="line"></span><br><span class="line"><span class="comment"># Initialize the rating matrix</span></span><br><span class="line">rating = np.zeros((movieNo, userNo))</span><br><span class="line"></span><br><span class="line">flag = <span class="number">0</span></span><br><span class="line"></span><br><span class="line">ratings_df_length = np.shape(ratings_df)[<span class="number">0</span>]</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> index, row <span class="keyword">in</span> ratings_df.iterrows():</span><br><span class="line">    rating[<span class="built_in">int</span>(row[<span class="string">&#x27;movieRow&#x27;</span>]), <span class="built_in">int</span>(row[<span class="string">&#x27;userId&#x27;</span>])] = row[<span class="string">&#x27;rating&#x27;</span>]</span><br><span class="line">    flag += <span class="number">1</span></span><br><span class="line">    print(<span class="string">&#x27;processed %d, %d left&#x27;</span> % (flag, ratings_df_length - flag))</span><br><span class="line"></span><br><span class="line"><span class="comment"># Initialize the record matrix</span></span><br><span class="line">record = rating &gt; <span class="number">0</span></span><br><span class="line"></span><br><span class="line">record</span><br><span class="line"></span><br><span class="line"><span class="comment"># Convert from boolean to int</span></span><br><span class="line">record = np.array(record, dtype=<span class="built_in">int</span>)</span><br><span class="line"></span><br><span class="line">record</span><br><span class="line"></span><br><span class="line"><span class="comment">## 构建模型</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">normalizeRatings</span>(<span class="params">rating, record</span>):</span></span><br><span class="line">    m, n = rating.shape</span><br><span class="line">    rating_mean = np.zeros((m, <span class="number">1</span>))</span><br><span class="line">    rating_norm = np.zeros((m, n))</span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(m):</span><br><span class="line">        idx = record[i, :] != <span class="number">0</span></span><br><span class="line">        rating_mean[i] = np.mean(rating[i, idx])</span><br><span class="line">        rating_norm[i, idx] -= rating_mean[i]</span><br><span class="line">    <span class="keyword">return</span> rating_norm, rating_mean</span><br><span class="line"></span><br><span class="line">rating_norm, rating_mean = normalizeRatings(rating, record)</span><br><span class="line"></span><br><span class="line">rating_norm = np.nan_to_num(rating_norm)</span><br><span class="line"></span><br><span class="line">rating_norm</span><br><span class="line"></span><br><span class="line">rating_mean = np.nan_to_num(rating_mean)</span><br><span class="line"></span><br><span class="line">rating_mean</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment"># Features to describe a movie</span></span><br><span class="line">num_features = <span class="number">10</span></span><br><span class="line"></span><br><span class="line">X_parameter = tf.Variable(tf.random_normal([movieNo, num_features], stddev=<span class="number">0.35</span>))</span><br><span class="line"></span><br><span class="line">Theta_parameter = tf.Variable(tf.random_normal([userNo, num_features], stddev=<span class="number">0.35</span>))</span><br><span class="line"></span><br><span class="line"><span class="comment"># Loss Function</span></span><br><span class="line">loss = <span class="number">1</span>/<span class="number">2</span> * tf.reduce_sum(((tf.matmul(X_parameter, Theta_parameter, transpose_b=<span class="literal">True</span>) - rating_norm)*record)**<span class="number">2</span>) + <span class="number">1</span>/<span class="number">2</span> * (tf.reduce_sum(X_parameter**<span class="number">2</span>) + tf.reduce_sum(Theta_parameter**<span class="number">2</span>))</span><br><span class="line"></span><br><span class="line">optimizer = tf.train.AdamOptimizer(<span class="number">1e-4</span>)</span><br><span class="line">train = optimizer.minimize(loss)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">## 训练模型</span></span><br><span class="line">tf.summary.scalar(<span class="string">&#x27;loss&#x27;</span>, loss)</span><br><span class="line"></span><br><span class="line">summaryMerged = tf.summary.merge_all()</span><br><span class="line"></span><br><span class="line">filename = <span class="string">&#x27;./movie_tensorboard&#x27;</span></span><br><span class="line"></span><br><span class="line">writer = tf.summary.FileWriter(filename)</span><br><span class="line"></span><br><span class="line">sess = tf.Session()</span><br><span class="line"></span><br><span class="line">init = tf.global_variables_initializer()</span><br><span class="line"></span><br><span class="line">sess.run(init)</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">5000</span>):</span><br><span class="line">    _, movie_summary = sess.run([train, summaryMerged])</span><br><span class="line">    writer.add_summary(movie_summary, i)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 评估模型</span></span><br><span class="line">Current_X_parameters, Current_Theta_parameters = sess.run([X_parameter, Theta_parameter])</span><br><span class="line"></span><br><span class="line">predicts = np.dot(Current_X_parameters, Current_Theta_parameters.T) + rating_mean</span><br><span class="line"></span><br><span class="line">errors = np.sqrt(np.<span class="built_in">sum</span>((predicts - rating)**<span class="number">2</span>))</span><br><span class="line"></span><br><span class="line">errors</span><br><span class="line"></span><br><span class="line"><span class="comment"># 构建完整的电影推荐系统</span></span><br><span class="line">user_id = <span class="built_in">input</span>(<span class="string">&#x27;您要向哪位用户进行推荐？请输入用户编号：&#x27;</span>)</span><br><span class="line"></span><br><span class="line">sortedResult = predicts[:, <span class="built_in">int</span>(user_id)].argsort()[::<span class="number">-1</span>]</span><br><span class="line"></span><br><span class="line">idx = <span class="number">0</span></span><br><span class="line">print(<span class="string">&#x27;为该用户推荐的评分最高的20部电影是：&#x27;</span>.center(<span class="number">80</span>, <span class="string">&#x27;=&#x27;</span>))</span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> sortedResult:</span><br><span class="line">    print(<span class="string">&#x27;评分：%.2f，电影名：%s&#x27;</span> % (predicts[i, <span class="built_in">int</span>(user_id)], movies_df.iloc[i][<span class="string">&#x27;title&#x27;</span>]))</span><br><span class="line">    idx += <span class="number">1</span></span><br><span class="line">    <span class="keyword">if</span> idx == <span class="number">20</span>: <span class="keyword">break</span></span><br></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>&emsp;&emsp;这里通过构建一个简单的电影推荐系统来帮助理解LFM。其实质是矩阵的UV分解和机器学习优化参数。谢谢！</p>
+
+    </div>
+
+    
+    
+    
+        <div class="reward-container">
+  <div></div>
+  <button onclick="var qr = document.getElementById('qr'); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    Donate
+  </button>
+  <div id="qr" style="display: none;">
+      
+      <div style="display: inline-block;">
+        <img src="/images/wechat_reward.png" alt="Leungyukshing WeChat Pay">
+        <p>WeChat Pay</p>
+      </div>
+      
+      <div style="display: inline-block;">
+        <img src="/images/alipay_reward.png" alt="Leungyukshing Alipay">
+        <p>Alipay</p>
+      </div>
+
+  </div>
+</div>
+
+        
+
+  <div class="followme">
+    <p>Welcome to my other publishing channels</p>
+
+    <div class="social-list">
+
+        <div class="social-item">
+          <a target="_blank" class="social-link" href="/atom.xml">
+            <span class="icon">
+              <i class="fa fa-rss"></i>
+            </span>
+
+            <span class="label">RSS</span>
+          </a>
+        </div>
+    </div>
+  </div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Machine-Learning/" rel="tag"># Machine Learning</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/archives/LMS.html" rel="prev" title="LMS--最小均方法">
+      <i class="fa fa-chevron-left"></i> LMS--最小均方法
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/archives/KNN.html" rel="next" title="KNN算法">
+      KNN算法 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Intro"><span class="nav-number">1.</span> <span class="nav-text">Intro</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8E%9F%E7%90%86"><span class="nav-number">2.</span> <span class="nav-text">原理</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%A2%AF%E5%BA%A6%E4%B8%8B%E9%99%8D%E6%B3%95%E6%8E%A8%E5%AF%BC"><span class="nav-number">2.1.</span> <span class="nav-text">梯度下降法推导</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%9E%E6%88%98"><span class="nav-number">3.</span> <span class="nav-text">实战</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E9%A2%84%E5%A4%84%E7%90%86"><span class="nav-number">3.1.</span> <span class="nav-text">数据预处理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%9B%E5%BB%BArating%E7%9F%A9%E9%98%B5%E5%92%8Crecord%E7%9F%A9%E9%98%B5"><span class="nav-number">3.2.</span> <span class="nav-text">创建rating矩阵和record矩阵</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9E%84%E5%BB%BA%E5%AD%A6%E4%B9%A0%E6%A8%A1%E5%9E%8B"><span class="nav-number">3.3.</span> <span class="nav-text">构建学习模型</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%AE%AD%E7%BB%83%E6%A8%A1%E5%9E%8B"><span class="nav-number">3.4.</span> <span class="nav-text">训练模型</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%AF%84%E4%BC%B0%E6%A8%A1%E5%9E%8B"><span class="nav-number">3.5.</span> <span class="nav-text">评估模型</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%B5%8B%E8%AF%95"><span class="nav-number">3.6.</span> <span class="nav-text">测试</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%8C%E6%95%B4%E4%BB%A3%E7%A0%81"><span class="nav-number">3.7.</span> <span class="nav-text">完整代码</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-number">4.</span> <span class="nav-text">总结</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Leungyukshing"
+      src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">Leungyukshing</p>
+  <div class="site-description" itemprop="description">A blog for code, programme sharing.</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">688</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">27</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/leungyukshing" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;leungyukshing" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:jacky14.liang@gmail.com" title="E-Mail → mailto:jacky14.liang@gmail.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="/atom.xml" title="RSS → &#x2F;atom.xml"><i class="fa fa-rss fa-fw"></i>RSS</a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll motion-element">
+    <div class="links-of-blogroll-title"><i class="fa fa-link fa-fw"></i>
+      Friends
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="http://www.liangjh45.com/" title="http:&#x2F;&#x2F;www.liangjh45.com&#x2F;" rel="noopener" target="_blank">Alva's blog</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="https://sysucarey.github.io/" title="https:&#x2F;&#x2F;sysucarey.github.io&#x2F;" rel="noopener" target="_blank">Carey's blog</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="https://blog.csdn.net/dickdick111/" title="https:&#x2F;&#x2F;blog.csdn.net&#x2F;dickdick111&#x2F;" rel="noopener" target="_blank">Dick's blog</a>
+        </li>
+    </ul>
+  </div>
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2017 – 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Leungyukshing</span>
+</div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="Total Visitors">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="Total Views">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+      
+
+<script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      loader: {
+        source: {
+          '[tex]/amsCd': '[tex]/amscd',
+          '[tex]/AMScd': '[tex]/amscd'
+        }
+      },
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              let target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    (function () {
+      var script = document.createElement('script');
+      script.src = '//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+      script.defer = true;
+      document.head.appendChild(script);
+    })();
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : true,
+      appId      : 'AaLog29QcUdQKTboD6cY2dNP-gzGzoHsz',
+      appKey     : 'dUWNHLnTY9qG1jJwPnTtfMm8',
+      placeholder: "Just go go",
+      avatar     : 'mm',
+      meta       : guest,
+      pageSize   : '10' || 10,
+      visitor    : false,
+      lang       : '' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : false,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+
+</body>
+</html>

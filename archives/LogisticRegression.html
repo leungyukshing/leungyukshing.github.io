@@ -1,0 +1,714 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <meta name="google-site-verification" content="FHjCzDi7nry9Mvf4EFOY5cYoco-ZXq9tKjvXZK0nKr4">
+  <meta name="baidu-site-verification" content="code-gpMFPewYUF" />
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="/lib/pace/pace-theme-minimal.min.css">
+  <script src="/lib/pace/pace.min.js"></script>
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"leungyukshing.github.io","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"right","display":"hide","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"appID":"52USYSYESX","apiKey":"20b904c66f55b874f05edea4aca57780","indexName":"blog","hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="Intro&amp;emsp;&amp;emsp;Logistic Regression，逻辑回归，实质上解决的是一个分类问题（我们之前说过，机器学习主要解决两类问题：回归和分类）。那为什么它又叫Regression呢？这是因为它用到了一个非线性函数——sigmoid函数，它给出的结果是一个概率值，而不是一个用于直接确定分类的离散值。下面我们就来仔细看看这个非常常用的分类算法。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="逻辑回归--LogisticRegression">
+<meta property="og:url" content="https://leungyukshing.github.io/archives/LogisticRegression.html">
+<meta property="og:site_name" content="Halo">
+<meta property="og:description" content="Intro&amp;emsp;&amp;emsp;Logistic Regression，逻辑回归，实质上解决的是一个分类问题（我们之前说过，机器学习主要解决两类问题：回归和分类）。那为什么它又叫Regression呢？这是因为它用到了一个非线性函数——sigmoid函数，它给出的结果是一个概率值，而不是一个用于直接确定分类的离散值。下面我们就来仔细看看这个非常常用的分类算法。">
+<meta property="og:locale">
+<meta property="og:image" content="https://leungyukshing.github.io/images/sigmoid.png">
+<meta property="og:image" content="https://leungyukshing.github.io/images/LRcostfunction.png">
+<meta property="article:published_time" content="2019-03-18T08:04:30.000Z">
+<meta property="article:modified_time" content="2021-06-22T18:33:08.431Z">
+<meta property="article:author" content="Leungyukshing">
+<meta property="article:tag" content="Machine Learning">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://leungyukshing.github.io/images/sigmoid.png">
+
+<link rel="canonical" href="https://leungyukshing.github.io/archives/LogisticRegression.html">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-Hans'
+  };
+</script>
+
+  <title>逻辑回归--LogisticRegression | Halo</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+<!-- hexo injector head_end end --><link rel="alternate" href="/atom.xml" title="Halo" type="application/atom+xml"><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Halo</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">A magic place for coding</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>About</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>Tags</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>Search
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="Searching..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+  <a href="https://github.com/leungyukshing" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="https://leungyukshing.github.io/archives/LogisticRegression.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="Leungyukshing">
+      <meta itemprop="description" content="A blog for code, programme sharing.">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Halo">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          逻辑回归--LogisticRegression
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2019-03-18 04:04:30" itemprop="dateCreated datePublished" datetime="2019-03-18T04:04:30-04:00">2019-03-18</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2021-06-22 14:33:08" itemprop="dateModified" datetime="2021-06-22T14:33:08-04:00">2021-06-22</time>
+              </span>
+
+          
+            <span class="post-meta-item" title="Views" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">Views: </span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine: </span>
+    
+    <a title="valine" href="/archives/LogisticRegression.html#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/archives/LogisticRegression.html" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="Intro"><a href="#Intro" class="headerlink" title="Intro"></a>Intro</h2><p>&emsp;&emsp;Logistic Regression，逻辑回归，实质上解决的是一个<strong>分类问题</strong>（我们之前说过，机器学习主要解决两类问题：回归和分类）。那为什么它又叫Regression呢？这是因为它用到了一个非线性函数——<strong>sigmoid函数</strong>，它给出的结果是一个概率值，而不是一个用于直接确定分类的离散值。下面我们就来仔细看看这个非常常用的分类算法。</p>
+<a id="more"></a>
+
+<hr>
+<h2 id="原理"><a href="#原理" class="headerlink" title="原理"></a>原理</h2><p>&emsp;&emsp;首先我们还是基于传统的线性回归（Linear Regression）去思考一个分类问题，假设我们的模型预测值是$h_\theta(x)$，这个值的范围是不确定的，我们很难去找到一个不错的阈值去划分两类（因为模型的输出会受数据分布的影响，0.5并不是一个很科学的阈值）。这个时候我们就需要将$h_\theta(x)$的值压缩到一个相对小的区间中，最理想的情况就是压缩到[0,1]中，这样输出的就可以是一个概率了。</p>
+<p>&emsp;&emsp;幸运的是，我们能找到这样的函数——<strong>Sigmoid function</strong>（Logistic function）。它的曲线是这样的：</p>
+<img src='/images/sigmoid.png' width='400px'>
+
+<p>&emsp;&emsp;从sigmoid的图像中我们可以看到一些我们想要的特性：</p>
+<ul>
+<li><p>当$z\rightarrow\infty$时，$g(z)\rightarrow1$；当$z\rightarrow -\infty$时，$g(z)\rightarrow 0$</p>
+</li>
+<li><p>$g(z)$的值被限制在了[0, 1]</p>
+</li>
+<li><p>sigmoid是光滑的，他的导数也是很容易求得：<br>$$<br>\begin{aligned}<br>g^{‘}(x) &amp;= \frac{d}{dz}\frac{1}{1+e^{-z}} \<br>&amp;=\frac{1}{(1+e^{-z})^2}(e^{-z}) \<br>&amp;= \frac{1}{(1+e^{-z})} \cdot(1 - \frac{1}{(1+e^{-z})}) \<br>&amp;= g(z)(1-g(z))<br>\end{aligned}<br>$$</p>
+</li>
+</ul>
+<p>&emsp;&emsp;于是模型的输出就变为：<br>$$<br>h_\theta(x)=g(\theta^Tx)=\frac{1}{1+e^{-\theta^Tx}}<br>$$<br>&emsp;&emsp;建立好模型后，我们的工作就是需要找到这个最佳的$\theta$。之前我们用的是LMS，但是这里使用LMS得到的并不是一个凸函数，我们需要换另一种方式——最大似然法。</p>
+<img src='/images/LRcostfunction.png' width='400px'>
+
+<p>&emsp;&emsp;最大似然法的思路是：我已经知道了若干个测试结果，我需要找出一组参数$\theta$，使得它们能够很好地模拟出这些测试结果。将每一个模拟的概率乘起来，极大化这个概率，我们就能得到最好的$\theta$。下面我们就来表示这些概率。</p>
+<p>&emsp;&emsp;首先我们假设：<br>$$<br>\begin{aligned}<br>&amp;P(y=1|x;\theta)=h_\theta(x) \<br>&amp;P(y=0|x;\theta)=1-h_\theta(x)<br>\end{aligned}<br>$$<br>&emsp;&emsp;从条件概率的角度看，这两条式子的意思是：对于给定的$x$和$\theta$，模型的输出就是$x$属于类别1的概率。这个可以看作一个二项分布问题，所以我们可以将两条式子合并到一起：<br>$$<br>p(y|x;\theta)=(h_\theta(x))^y(1-h_\theta(x))^{1-y}<br>$$<br>&emsp;&emsp;假设$m$个训练样本都是相互独立的，我们可以应用最大似然估计：<br>$$<br>\begin{aligned}<br>L(\theta) &amp;= p(\hat{y}|X;\theta) \<br>&amp;= \prod_{i=1}^mp(y^{(i)}|x^{(i)};\theta) \<br>&amp;= \prod_{i=1}^m(h_\theta(x^{(i)}))^{y^{(i)}}(1-h_\theta(x^{(i)}))^{1-y^{(i)}}<br>\end{aligned}<br>$$<br>&emsp;&emsp;一般来说，我们都不会直接极大化$L(\theta)$，而是极大化它的对数：<br>$$<br>\begin{aligned}<br>l(\theta) &amp;= logL(\theta) \<br>&amp;= \sum_{i=1}^my^{(i)}logh(x^{(i)}) + (1-y^{(i)})log(1-h(x^{(i)}))<br>\end{aligned}<br>$$<br>&emsp;&emsp;极大化$l(\theta)$对我们来说就不是一件困难的事了，我们可以简单地使用GA（Gradient Ascend）。（特别注意，因为这里是要极大值，所以使用的Gradient Ascend）。推导过程如下：<br>$$<br>\begin{aligned}<br>\frac{\partial}{\partial\theta_j}l(\theta) &amp;= (y\frac{1}{g(\theta^Tx)} -(1-y)\frac{1}{1-g(\theta^Tx)})\frac{\partial}{\partial\theta_j}g(\theta^Tx) \<br>&amp;= (y\frac{1}{g(\theta^Tx)} -(1-y)\frac{1}{1-g(\theta^Tx)})g(\theta^Tx)(1-g(\theta^Tx))\frac{\partial}{\partial\theta_j}\theta^Tx \<br>&amp;= (y(1-g(\theta^Tx))-(1-y)g(\theta^Tx))x_j \<br>&amp;= (y-h_\theta(x))x_j<br>\end{aligned}<br>$$<br>&emsp;&emsp;因此，最后的更新规则为：<br>$$<br>\theta_j := \theta_j+\alpha(y^{(i)} - h_\theta(x^{(i)}))x_j^{(i)}<br>$$<br>&emsp;&emsp;有没有发现很眼熟？这个更新规则和LMS的更新规则是一样的！但是两者从本质上是不同的，这里的$h_\theta(x^{(i)})$是sigmoid函数。</p>
+<p>&emsp;&emsp;至此，Logistic Regression的原理推导就完成了！大家最好能够自己手动推导一次。</p>
+<h2 id="实战"><a href="#实战" class="headerlink" title="实战"></a>实战</h2><p>&emsp;&emsp;这里我用逻辑回归来预测疝气病马的存活问题。数据集来自UCI：<a target="_blank" rel="noopener" href="https://archive.ics.uci.edu/ml/datasets/Horse+Colic">传送门</a></p>
+<h3 id="数据预处理"><a href="#数据预处理" class="headerlink" title="数据预处理"></a>数据预处理</h3><p>&emsp;&emsp;之前的博客给过处理UCI数据的一些代码模板，需要特别注意，这次的数据存在许多缺漏，因此我们需要手动处理一下。</p>
+<p>&emsp;&emsp;这里也简单地介绍一下如何处理缺失数据。处理缺失数据是特征工程一个很重要的部分，因为随便填补或删除会使得数据有可能加入了人为的噪声，所以我们需要有多种方法去填补。以下是几个典型的方法：</p>
+<ul>
+<li>使用可用特征的均值（或众数）来填补缺失值；</li>
+<li>使用特殊值来填补缺失值，如-1（相当于添加了一个新的类别）</li>
+<li>直接忽略掉有缺失值的样本（对于缺失属性较多的样本可以这样做）</li>
+<li>使用相似样本的均值填补缺失值</li>
+<li>使用其他机器学习的方法预测缺失值（如使用随机森林来预测，相当于根据已知特征来预测缺失的特征）</li>
+</ul>
+<p>&emsp;&emsp;对于这个样本，我的处理主要有两个：</p>
+<ul>
+<li>使用0来填补缺失值，因为0对回归系数不会有影响，不会添加人为的bias。</li>
+<li>如果某个样例的标签（label）缺失，则直接丢弃这个样例。（相当于不知道答案就不用做题）</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"></span><br><span class="line">frTrain = <span class="built_in">open</span>(<span class="string">&#x27;./horse_colic_data.txt&#x27;</span>)<span class="comment">#训练数据</span></span><br><span class="line">frTest = <span class="built_in">open</span>(<span class="string">&#x27;./horse_colic_test.txt&#x27;</span>)<span class="comment">#测试数据</span></span><br><span class="line">trainSet=[]</span><br><span class="line"><span class="keyword">for</span> line <span class="keyword">in</span> frTrain.readlines():</span><br><span class="line">    currLine=line.strip().replace(<span class="string">&#x27;?&#x27;</span>, <span class="string">&#x27;0&#x27;</span>).split(<span class="string">&#x27;\t&#x27;</span>)</span><br><span class="line">    temp = currLine[<span class="number">0</span>].split(<span class="string">&#x27; &#x27;</span>)</span><br><span class="line">    lineArr=[]</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">22</span>):</span><br><span class="line">        <span class="keyword">if</span> i == <span class="number">2</span>:</span><br><span class="line">            <span class="keyword">continue</span></span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            lineArr.append(<span class="built_in">float</span>(temp[i]))</span><br><span class="line">    <span class="keyword">if</span> (temp[<span class="number">22</span>] == <span class="string">&#x27;1&#x27;</span>):</span><br><span class="line">        lineArr.append(<span class="number">1</span>)</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        lineArr.append(<span class="number">0</span>)</span><br><span class="line">    <span class="comment">#print(lineArr)</span></span><br><span class="line">    trainSet.append(lineArr)</span><br><span class="line">trainSet.pop(<span class="number">132</span>)</span><br><span class="line">print(<span class="built_in">type</span>(trainSet))</span><br><span class="line">np.savetxt(<span class="string">&#x27;processedHorseColicTraining.txt&#x27;</span>, trainSet, fmt=<span class="string">&#x27;%.6f&#x27;</span>, delimiter=<span class="string">&#x27;\t&#x27;</span>)</span><br><span class="line"></span><br><span class="line">testSet = []</span><br><span class="line"><span class="keyword">for</span> line <span class="keyword">in</span> frTest.readlines():</span><br><span class="line">    currLine=line.strip().replace(<span class="string">&#x27;?&#x27;</span>, <span class="string">&#x27;0&#x27;</span>).split(<span class="string">&#x27;\t&#x27;</span>)</span><br><span class="line">    temp = currLine[<span class="number">0</span>].split(<span class="string">&#x27; &#x27;</span>)</span><br><span class="line">    lineArr=[]</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">22</span>):</span><br><span class="line">        <span class="keyword">if</span> i == <span class="number">2</span>:</span><br><span class="line">            <span class="keyword">continue</span></span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            lineArr.append(<span class="built_in">float</span>(temp[i]))</span><br><span class="line">    <span class="comment">#print(type(temp[22]))</span></span><br><span class="line">    <span class="keyword">if</span> (temp[<span class="number">22</span>] == <span class="string">&#x27;1&#x27;</span>):</span><br><span class="line">        lineArr.append(<span class="number">1</span>)</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        lineArr.append(<span class="number">0</span>)</span><br><span class="line">    <span class="comment">#print(len(lineArr))</span></span><br><span class="line">    testSet.append(lineArr)</span><br><span class="line">    np.savetxt(<span class="string">&#x27;processedHorseColicTest.txt&#x27;</span>, testSet, fmt=<span class="string">&#x27;%.6f&#x27;</span>, delimiter=<span class="string">&#x27;\t&#x27;</span>)</span><br></pre></td></tr></table></figure>
+
+<h3 id="构建Logistic回归分类器"><a href="#构建Logistic回归分类器" class="headerlink" title="构建Logistic回归分类器"></a>构建Logistic回归分类器</h3><p>&emsp;&emsp;定义sigmoid函数，使用梯度上升法求解。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> numpy <span class="keyword">import</span> *</span><br><span class="line"><span class="keyword">import</span> pandas <span class="keyword">as</span> pd</span><br><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">loadDataSet</span>():</span></span><br><span class="line">    file = <span class="string">&#x27;./processedHorseColicTraining.txt&#x27;</span></span><br><span class="line">    df = np.loadtxt(file)</span><br><span class="line">    dataMat = df[:, <span class="number">0</span>:<span class="number">-1</span>]</span><br><span class="line">    <span class="comment">#dataMat = np.insert(dataMat, 0, 1, axis=1)</span></span><br><span class="line">    labelMat = df[:, <span class="number">-1</span>]</span><br><span class="line">    <span class="keyword">return</span> dataMat, labelMat</span><br><span class="line"></span><br><span class="line">dataMat, labelMat = loadDataSet()</span><br><span class="line">print(dataMat.shape)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">sigmoid</span>(<span class="params">x</span>):</span></span><br><span class="line">    <span class="keyword">return</span> <span class="number">1</span>/(<span class="number">1</span>+exp(-x))</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">gradientAscent</span>(<span class="params">dataMatIn, classLabels</span>):</span></span><br><span class="line">    m,n=shape(dataMatIn)</span><br><span class="line">    print(n)</span><br><span class="line">    classLabels = np.array([classLabels]).T</span><br><span class="line">    weights = np.ones((n,<span class="number">1</span>))</span><br><span class="line">    alpha = <span class="number">0.001</span></span><br><span class="line">    max_iter = <span class="number">500</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> _ <span class="keyword">in</span> <span class="built_in">range</span>(max_iter):</span><br><span class="line">        h = sigmoid(np.dot(dataMatIn, weights))</span><br><span class="line">        error = classLabels - h</span><br><span class="line">        weights += alpha * np.dot(dataMatIn.T,error)</span><br><span class="line">    <span class="keyword">return</span> weights</span><br></pre></td></tr></table></figure>
+
+<h3 id="随机梯度上升法"><a href="#随机梯度上升法" class="headerlink" title="随机梯度上升法"></a>随机梯度上升法</h3><p>&emsp;&emsp;这里试用随机梯度上升法，每次梯度更新仅用到了一个样例。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">stochasticGradientAscent</span>(<span class="params">dataMatIn, classLabels</span>):</span></span><br><span class="line">    m, n = np.shape(dataMatIn)</span><br><span class="line">    alpha = <span class="number">0.01</span></span><br><span class="line">    weights = np.ones(n)</span><br><span class="line">    <span class="keyword">for</span> idx <span class="keyword">in</span> <span class="built_in">range</span>(m):</span><br><span class="line">        h = sigmoid(<span class="built_in">sum</span>(dataMatIn[idx] * weights))</span><br><span class="line">        error = classLabels[idx] - h</span><br><span class="line">        weights += alpha * error * dataMatIn[idx]</span><br><span class="line">    <span class="keyword">return</span> weights</span><br></pre></td></tr></table></figure>
+
+<h3 id="构建输出部分"><a href="#构建输出部分" class="headerlink" title="构建输出部分"></a>构建输出部分</h3><p>&emsp;&emsp;前面提到，Logistic Regression的输出是一个概率值，我们需要将这个概率值转化为一个类别，用0.5作为阈值是一个不错的选择。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">classifyVector</span>(<span class="params">inX, trainWeights</span>):</span></span><br><span class="line">    prob = sigmoid(<span class="built_in">sum</span>(np.dot(inX,trainWeights)))</span><br><span class="line">    <span class="keyword">if</span> prob &gt; <span class="number">0.5</span>:</span><br><span class="line">        <span class="keyword">return</span> <span class="number">1</span></span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        <span class="keyword">return</span> <span class="number">0</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="测试"><a href="#测试" class="headerlink" title="测试"></a>测试</h3><p>&emsp;&emsp;使用测试集来评估模型的效果。同时还可以对比两种不同的梯度上升法</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">test_file = <span class="string">&#x27;./processedHorseColicTest.txt&#x27;</span></span><br><span class="line">df_test = np.loadtxt(test_file)</span><br><span class="line">testDataMat = df_test[:, <span class="number">0</span>:<span class="number">-1</span>]</span><br><span class="line">testLabelMat = df_test[:, <span class="number">-1</span>]</span><br><span class="line">print(testDataMat)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> time</span><br><span class="line">start = time.clock()</span><br><span class="line"></span><br><span class="line">result2 = advancedStochasticGradientAscent(dataMat, labelMat, <span class="number">500</span>)</span><br><span class="line"></span><br><span class="line">end = time.clock()</span><br><span class="line"><span class="built_in">print</span> (end - start)</span><br><span class="line"></span><br><span class="line">errorCount = <span class="number">0</span>;numTestVec = <span class="number">0</span>;</span><br><span class="line">[rows, cols] = testDataMat.shape</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(rows):</span><br><span class="line">    numTestVec += <span class="number">1</span></span><br><span class="line">    <span class="keyword">if</span> classifyVector(array(testDataMat[i, :]), result2) != <span class="built_in">int</span>(testLabelMat[i]):</span><br><span class="line">        errorCount += <span class="number">1</span></span><br><span class="line"></span><br><span class="line">print(errorCount, numTestVec)</span><br><span class="line">errorRate = (<span class="built_in">float</span>(errorCount) / numTestVec)</span><br><span class="line">print(<span class="string">&#x27;the error rate of this test is: %f&#x27;</span> % errorRate)</span><br></pre></td></tr></table></figure>
+
+<p>&emsp;&emsp;测试结果：</p>
+<ul>
+<li><p>随机梯度上升法，错误率约37%</p>
+</li>
+<li><p>常规的梯度上升法，错误率约29%</p>
+<p>考虑到整个数据集的缺失率在30%左右，这个错误率也是可以接受的范围了。</p>
+</li>
+</ul>
+<h2 id="使用Sklearn"><a href="#使用Sklearn" class="headerlink" title="使用Sklearn"></a>使用Sklearn</h2><p>&emsp;&emsp;使用Sklearn构建LogisticRegression模型非常简单，只需要定义几个变量就可以了。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> sklearn.linear_model <span class="keyword">import</span> LogisticRegression</span><br><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">colicSKlearn</span>():</span></span><br><span class="line">    file = <span class="string">&#x27;./processedHorseColicTraining.txt&#x27;</span></span><br><span class="line">    df = np.loadtxt(file)</span><br><span class="line">    dataMat = df[:, <span class="number">0</span>:<span class="number">-1</span>]</span><br><span class="line">    labelMat = df[:, <span class="number">-1</span>]</span><br><span class="line"></span><br><span class="line">    test_file = <span class="string">&#x27;./processedHorseColicTest.txt&#x27;</span></span><br><span class="line">    df_test = np.loadtxt(test_file)</span><br><span class="line">    testDataMat = df_test[:, <span class="number">0</span>:<span class="number">-1</span>]</span><br><span class="line">    testLabelMat = df_test[:, <span class="number">-1</span>]</span><br><span class="line"></span><br><span class="line">    classifier1 = LogisticRegression(solver=<span class="string">&#x27;liblinear&#x27;</span>, max_iter=<span class="number">20</span>).fit(dataMat, labelMat)</span><br><span class="line">    classifier2 = LogisticRegression(solver=<span class="string">&#x27;sag&#x27;</span>, max_iter=<span class="number">5000</span>).fit(dataMat, labelMat)</span><br><span class="line"></span><br><span class="line">    test_accuracy = classifier1.score(testDataMat, testLabelMat) * <span class="number">100</span></span><br><span class="line">    print(<span class="string">&#x27;Accuracy: %f%%&#x27;</span> % test_accuracy)</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&#x27;__main__&#x27;</span>:</span><br><span class="line">    colicSKlearn()</span><br></pre></td></tr></table></figure>
+
+<p>&emsp;&emsp;这里简单解释一下模型的参数：</p>
+<ul>
+<li><code>solver</code>：优化算法。选项为：<ul>
+<li><code>liblinear</code>：坐标下降法</li>
+<li><code>lbfgs</code>：拟牛顿法，使用二阶导数来优化（海森矩阵）。</li>
+<li><code>newton-cg</code>：牛顿法的一种。</li>
+<li><code>sag</code>：随机平均梯度下降</li>
+<li><code>saga</code>：SAG的加速版本</li>
+</ul>
+</li>
+</ul>
+<p>&emsp;&emsp;测试的结果正确率为73.529412%，似乎比我们自己写的要好一点点。</p>
+<hr>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>&emsp;&emsp;Logistic Regression是机器学习中分类算法的基础，应用的范围非常广，实际效果也非常不错。一定要注意区分它和线性回归，它的数学原理推导部分是重点！至于实际应用，调用sklearn的模型就可以了。</p>
+
+    </div>
+
+    
+    
+    
+        <div class="reward-container">
+  <div></div>
+  <button onclick="var qr = document.getElementById('qr'); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    Donate
+  </button>
+  <div id="qr" style="display: none;">
+      
+      <div style="display: inline-block;">
+        <img src="/images/wechat_reward.png" alt="Leungyukshing WeChat Pay">
+        <p>WeChat Pay</p>
+      </div>
+      
+      <div style="display: inline-block;">
+        <img src="/images/alipay_reward.png" alt="Leungyukshing Alipay">
+        <p>Alipay</p>
+      </div>
+
+  </div>
+</div>
+
+        
+
+  <div class="followme">
+    <p>Welcome to my other publishing channels</p>
+
+    <div class="social-list">
+
+        <div class="social-item">
+          <a target="_blank" class="social-link" href="/atom.xml">
+            <span class="icon">
+              <i class="fa fa-rss"></i>
+            </span>
+
+            <span class="label">RSS</span>
+          </a>
+        </div>
+    </div>
+  </div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Machine-Learning/" rel="tag"># Machine Learning</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/archives/SoftwareTest1.html" rel="prev" title="软件测试作业1">
+      <i class="fa fa-chevron-left"></i> 软件测试作业1
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/archives/SVM.html" rel="next" title="支持向量机--SVM">
+      支持向量机--SVM <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Intro"><span class="nav-number">1.</span> <span class="nav-text">Intro</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8E%9F%E7%90%86"><span class="nav-number">2.</span> <span class="nav-text">原理</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%9E%E6%88%98"><span class="nav-number">3.</span> <span class="nav-text">实战</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E9%A2%84%E5%A4%84%E7%90%86"><span class="nav-number">3.1.</span> <span class="nav-text">数据预处理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9E%84%E5%BB%BALogistic%E5%9B%9E%E5%BD%92%E5%88%86%E7%B1%BB%E5%99%A8"><span class="nav-number">3.2.</span> <span class="nav-text">构建Logistic回归分类器</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%9A%8F%E6%9C%BA%E6%A2%AF%E5%BA%A6%E4%B8%8A%E5%8D%87%E6%B3%95"><span class="nav-number">3.3.</span> <span class="nav-text">随机梯度上升法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9E%84%E5%BB%BA%E8%BE%93%E5%87%BA%E9%83%A8%E5%88%86"><span class="nav-number">3.4.</span> <span class="nav-text">构建输出部分</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%B5%8B%E8%AF%95"><span class="nav-number">3.5.</span> <span class="nav-text">测试</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8Sklearn"><span class="nav-number">4.</span> <span class="nav-text">使用Sklearn</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-number">5.</span> <span class="nav-text">总结</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Leungyukshing"
+      src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">Leungyukshing</p>
+  <div class="site-description" itemprop="description">A blog for code, programme sharing.</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">688</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">27</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/leungyukshing" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;leungyukshing" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:jacky14.liang@gmail.com" title="E-Mail → mailto:jacky14.liang@gmail.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="/atom.xml" title="RSS → &#x2F;atom.xml"><i class="fa fa-rss fa-fw"></i>RSS</a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll motion-element">
+    <div class="links-of-blogroll-title"><i class="fa fa-link fa-fw"></i>
+      Friends
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="http://www.liangjh45.com/" title="http:&#x2F;&#x2F;www.liangjh45.com&#x2F;" rel="noopener" target="_blank">Alva's blog</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="https://sysucarey.github.io/" title="https:&#x2F;&#x2F;sysucarey.github.io&#x2F;" rel="noopener" target="_blank">Carey's blog</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="https://blog.csdn.net/dickdick111/" title="https:&#x2F;&#x2F;blog.csdn.net&#x2F;dickdick111&#x2F;" rel="noopener" target="_blank">Dick's blog</a>
+        </li>
+    </ul>
+  </div>
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2017 – 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Leungyukshing</span>
+</div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="Total Visitors">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="Total Views">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+      
+
+<script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      loader: {
+        source: {
+          '[tex]/amsCd': '[tex]/amscd',
+          '[tex]/AMScd': '[tex]/amscd'
+        }
+      },
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              let target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    (function () {
+      var script = document.createElement('script');
+      script.src = '//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+      script.defer = true;
+      document.head.appendChild(script);
+    })();
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : true,
+      appId      : 'AaLog29QcUdQKTboD6cY2dNP-gzGzoHsz',
+      appKey     : 'dUWNHLnTY9qG1jJwPnTtfMm8',
+      placeholder: "Just go go",
+      avatar     : 'mm',
+      meta       : guest,
+      pageSize   : '10' || 10,
+      visitor    : false,
+      lang       : '' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : false,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+
+</body>
+</html>

@@ -1,0 +1,617 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <meta name="google-site-verification" content="FHjCzDi7nry9Mvf4EFOY5cYoco-ZXq9tKjvXZK0nKr4">
+  <meta name="baidu-site-verification" content="code-gpMFPewYUF" />
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="/lib/pace/pace-theme-minimal.min.css">
+  <script src="/lib/pace/pace.min.js"></script>
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"leungyukshing.github.io","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"right","display":"hide","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"appID":"52USYSYESX","apiKey":"20b904c66f55b874f05edea4aca57780","indexName":"blog","hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="介绍&amp;emsp;&amp;emsp;本实验主要涉及到两个内容：进程通信和shell实现。进程通信的核心是使用一个共享内存区域，shell的实现是为了更好地理解命令解释器。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="操作系统实验2--进程通信与shell实现">
+<meta property="og:url" content="https://leungyukshing.github.io/archives/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%AE%9E%E9%AA%8C2--%E8%BF%9B%E7%A8%8B%E9%80%9A%E4%BF%A1%E4%B8%8Eshell%E5%AE%9E%E7%8E%B0.html">
+<meta property="og:site_name" content="Halo">
+<meta property="og:description" content="介绍&amp;emsp;&amp;emsp;本实验主要涉及到两个内容：进程通信和shell实现。进程通信的核心是使用一个共享内存区域，shell的实现是为了更好地理解命令解释器。">
+<meta property="og:locale">
+<meta property="og:image" content="https://leungyukshing.github.io/images/fib.png">
+<meta property="og:image" content="https://leungyukshing.github.io/images/shell.png">
+<meta property="article:published_time" content="2018-08-12T05:14:24.000Z">
+<meta property="article:modified_time" content="2021-06-22T18:33:08.740Z">
+<meta property="article:author" content="Leungyukshing">
+<meta property="article:tag" content="Operating System">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://leungyukshing.github.io/images/fib.png">
+
+<link rel="canonical" href="https://leungyukshing.github.io/archives/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%AE%9E%E9%AA%8C2--%E8%BF%9B%E7%A8%8B%E9%80%9A%E4%BF%A1%E4%B8%8Eshell%E5%AE%9E%E7%8E%B0.html">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-Hans'
+  };
+</script>
+
+  <title>操作系统实验2--进程通信与shell实现 | Halo</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+<!-- hexo injector head_end end --><link rel="alternate" href="/atom.xml" title="Halo" type="application/atom+xml"><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Halo</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">A magic place for coding</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>About</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>Tags</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>Search
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="Searching..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+  <a href="https://github.com/leungyukshing" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="https://leungyukshing.github.io/archives/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%AE%9E%E9%AA%8C2--%E8%BF%9B%E7%A8%8B%E9%80%9A%E4%BF%A1%E4%B8%8Eshell%E5%AE%9E%E7%8E%B0.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="Leungyukshing">
+      <meta itemprop="description" content="A blog for code, programme sharing.">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Halo">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          操作系统实验2--进程通信与shell实现
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2018-08-12 01:14:24" itemprop="dateCreated datePublished" datetime="2018-08-12T01:14:24-04:00">2018-08-12</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2021-06-22 14:33:08" itemprop="dateModified" datetime="2021-06-22T14:33:08-04:00">2021-06-22</time>
+              </span>
+
+          
+            <span class="post-meta-item" title="Views" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">Views: </span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine: </span>
+    
+    <a title="valine" href="/archives/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%AE%9E%E9%AA%8C2--%E8%BF%9B%E7%A8%8B%E9%80%9A%E4%BF%A1%E4%B8%8Eshell%E5%AE%9E%E7%8E%B0.html#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/archives/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%AE%9E%E9%AA%8C2--%E8%BF%9B%E7%A8%8B%E9%80%9A%E4%BF%A1%E4%B8%8Eshell%E5%AE%9E%E7%8E%B0.html" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="介绍"><a href="#介绍" class="headerlink" title="介绍"></a>介绍</h2><p>&emsp;&emsp;本实验主要涉及到两个内容：进程通信和shell实现。进程通信的核心是使用一个<strong>共享内存区域</strong>，shell的实现是为了更好地理解<strong>命令解释器</strong>。</p>
+<a id="more"></a>
+
+<h2 id="进程通信"><a href="#进程通信" class="headerlink" title="进程通信"></a>进程通信</h2><p>&emsp;&emsp;进程间的数据是不共享的，如果我们需要若干个进程共享数据，就必须人为地创建一个数据共享区域。在这个实验中，我们使用子进程来生成一个Fibonacci数列，然后使用父进程来打印这个数列。</p>
+<h3 id="共享内存区域"><a href="#共享内存区域" class="headerlink" title="共享内存区域"></a>共享内存区域</h3><p>&emsp;&emsp;共享内存区域用于存储一个Fibonacci数列，定义如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> &#123;</span></span><br><span class="line">  <span class="keyword">long</span> fib_sequence[MAX_SEQUENCES];</span><br><span class="line">  <span class="keyword">int</span> sequence_size;</span><br><span class="line">&#125; share_data;</span><br></pre></td></tr></table></figure>
+
+<h3 id="共享内存函数调用"><a href="#共享内存函数调用" class="headerlink" title="共享内存函数调用"></a>共享内存函数调用</h3><p>&emsp;&emsp;以下是几个共享内存函数的调用：</p>
+<ul>
+<li>创建或打开共享存储区(shmget)：依据用户给出的整数值key，创建新区或打开现有区，返回一个共享存储区ID。</li>
+<li>连接共享存储区(shmat)：连接共享存储区到本进程的地址空间，返回共享存储区首地址。父进程已连接的共享存储区可被fork创建的子进程继承。</li>
+<li>拆除共享存储区连接(shmdt)：拆除共享存储区与本进程地址空间的连接。</li>
+<li>共享存储区控制(shmctl)：对共享存储区进行控制。如：共享存储区的删除需要显式调用shmctl(shmid, IPC_RMID, 0)；</li>
+</ul>
+<p>&emsp;&emsp;简要的用法是：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/shm.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/stat.h&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="comment">/* the identifier for the shared memory segment */</span></span><br><span class="line">	<span class="keyword">int</span> segment_id;</span><br><span class="line">	<span class="comment">/* a pointer to the shared memory segment */</span></span><br><span class="line">	<span class="keyword">char</span>* shared_memory;</span><br><span class="line">	<span class="comment">/* the size (in bytes) of the shared memory segment */</span></span><br><span class="line">	<span class="keyword">const</span> <span class="keyword">int</span> segment_size = <span class="number">4096</span>;</span><br><span class="line">	<span class="comment">/** allocate  a shared memory segment */</span></span><br><span class="line">	segment_id = shmget(IPC_PRIVATE, segment_size, S_IRUSR | S_IWUSR);</span><br><span class="line">	<span class="comment">/** attach the shared memory segment */</span></span><br><span class="line">	shared_memory = (<span class="keyword">char</span> *) shmat(segment_id, <span class="literal">NULL</span>, <span class="number">0</span>);</span><br><span class="line">	<span class="built_in">printf</span>(<span class="string">&quot;shared memory segment %d attached at address %p\n&quot;</span>, segment_id, shared_memory);</span><br><span class="line">	<span class="comment">/** write a message to the shared memory segment   */</span></span><br><span class="line">	<span class="built_in">sprintf</span>(shared_memory, <span class="string">&quot;Hi there!&quot;</span>);</span><br><span class="line">	<span class="comment">/** now print out the string from shared memory */</span></span><br><span class="line">	<span class="built_in">printf</span>(<span class="string">&quot;*%s*\n&quot;</span>, shared_memory);</span><br><span class="line">	<span class="comment">/** now detach the shared memory segment */</span></span><br><span class="line">	<span class="keyword">if</span> ( shmdt(shared_memory) == <span class="number">-1</span>) &#123;</span><br><span class="line">		<span class="built_in">fprintf</span>(<span class="built_in">stderr</span>, <span class="string">&quot;Unable to detach\n&quot;</span>);</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="comment">/** now remove the shared memory segment */</span></span><br><span class="line">	shmctl(segment_id, IPC_RMID, <span class="literal">NULL</span>);</span><br><span class="line">	<span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="代码实现"><a href="#代码实现" class="headerlink" title="代码实现"></a>代码实现</h3><p>&emsp;&emsp;我们需要先连接共享内存区域，然后再使用<code>fork()</code>来创建子进程，生成数列，最后使用父进程打印数列。完整代码如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/shm.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/stat.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> MAX_SEQUENCES 10</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">ifndef</span> SHARE_H</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> SHARE_H</span></span><br><span class="line"><span class="class"><span class="keyword">struct</span> &#123;</span></span><br><span class="line">  <span class="keyword">long</span> fib_sequence[MAX_SEQUENCES];</span><br><span class="line">  <span class="keyword">int</span> sequence_size;</span><br><span class="line">&#125; share_data;</span><br><span class="line"><span class="meta">#<span class="meta-keyword">endif</span></span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">int</span> argc, <span class="keyword">char</span> <span class="keyword">const</span> *argv[])</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="keyword">int</span> i, sequenceSize;</span><br><span class="line">  <span class="comment">/* handle argv */</span></span><br><span class="line">  <span class="keyword">if</span> (argc != <span class="number">2</span>) &#123;</span><br><span class="line">    <span class="built_in">fprintf</span>(<span class="built_in">stderr</span>, <span class="string">&quot;Usage: ./fib &lt;size&gt;\n&quot;</span>);</span><br><span class="line">    <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">  &#125;</span><br><span class="line">  sequenceSize = atoi(argv[<span class="number">1</span>]);</span><br><span class="line"></span><br><span class="line">  <span class="keyword">if</span> (sequenceSize &gt; MAX_SEQUENCES) &#123;</span><br><span class="line">    <span class="built_in">fprintf</span>(<span class="built_in">stderr</span>, <span class="string">&quot;sequence size should be less than &lt; %d\n&quot;</span>, MAX_SEQUENCES);</span><br><span class="line">    <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="comment">/* the identifier for the shared memory segment */</span></span><br><span class="line">  <span class="keyword">int</span> segment_id;</span><br><span class="line">  <span class="comment">/* a pointer to the shared memory segment */</span></span><br><span class="line">  <span class="class"><span class="keyword">struct</span> <span class="title">share_data</span>* <span class="title">shared_memory</span>;</span></span><br><span class="line"></span><br><span class="line">  <span class="comment">/* allocate a shared memory segment */</span></span><br><span class="line">  segment_id = shmget(IPC_PRIVATE, <span class="keyword">sizeof</span>(share_data), S_IRUSR | S_IWUSR);</span><br><span class="line">  <span class="keyword">if</span> (segment_id == <span class="number">-1</span>) &#123;</span><br><span class="line">    <span class="built_in">fprintf</span>(<span class="built_in">stderr</span>, <span class="string">&quot;Allocate Shared Memory Fail!\n&quot;</span>);</span><br><span class="line">    <span class="keyword">return</span> <span class="number">1</span>;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="built_in">printf</span>(<span class="string">&quot;Create Shared Memory Successfully, segment_id = %d\n&quot;</span>, segment_id);</span><br><span class="line"></span><br><span class="line">  <span class="comment">/* attach the shared memory segment */</span></span><br><span class="line">  shared_memory = (share_data *) shmat(segment_id, <span class="literal">NULL</span>, <span class="number">0</span>);</span><br><span class="line">  <span class="keyword">if</span> (shared_memory == (share_data *)<span class="number">-1</span>) &#123;</span><br><span class="line">    <span class="built_in">fprintf</span>(<span class="built_in">stderr</span>, <span class="string">&quot;Attach Shared Memory Fail!\n&quot;</span>);</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  shared_memory-&gt;sequence_size = sequenceSize;</span><br><span class="line">  <span class="keyword">pid_t</span> pid = fork();</span><br><span class="line">  <span class="keyword">if</span> (pid &lt; <span class="number">0</span>) &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">1</span>;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="comment">/* child */</span></span><br><span class="line">  <span class="keyword">else</span> <span class="keyword">if</span> (pid == <span class="number">0</span>) &#123;</span><br><span class="line">    shared_memory-&gt;fib_sequence[<span class="number">0</span>] = <span class="number">0</span>;</span><br><span class="line">    shared_memory-&gt;fib_sequence[<span class="number">1</span>] = <span class="number">1</span>;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">2</span>; i &lt; shared_memory-&gt;sequence_size; i++) &#123;</span><br><span class="line">      shared_memory-&gt;fib_sequence[i] = shared_memory-&gt;fib_sequence[i - <span class="number">1</span>] + shared_memory-&gt;fib_sequence[i - <span class="number">2</span>];</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">/* now detach the shared memory segment */</span></span><br><span class="line">    shmdt(shared_memory);</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="comment">/* parent */</span></span><br><span class="line">  <span class="keyword">else</span> &#123;</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;In Parent Process:\n&quot;</span>);</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; shared_memory-&gt;sequence_size; i++) &#123;</span><br><span class="line">      <span class="built_in">printf</span>(<span class="string">&quot;shared_memory-&gt;fib_sequence[%d] = %d\n&quot;</span>, i, shared_memory-&gt;fib_sequence[i]);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">/* now detach the shared memory segment */</span></span><br><span class="line">    shmdt(shared_memory);</span><br><span class="line">    <span class="comment">/* now remove the shared memory segment */</span></span><br><span class="line">    shmctl(segment_id, IPC_RMID, <span class="literal">NULL</span>);</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>运行结果如下：<br><img src="/images/fib.png" alt="进程通信"></p>
+<h2 id="shell的简单实现"><a href="#shell的简单实现" class="headerlink" title="shell的简单实现"></a>shell的简单实现</h2><p>&emsp;&emsp;shell是一个简单的命令解释器，这里我们需要实现一个能够处理简单的命令的shell。关键是使用<code>execvp()</code>来执行系统调用，从而执行我们输入的命令。同时，我们还需要这个shell具有记录历史输入的功能，用户输入<code>Ctrl+c</code>后，命令行显示历史记录并退出。</p>
+<h3 id="思路"><a href="#思路" class="headerlink" title="思路"></a>思路</h3><p>&emsp;&emsp;我们需要创建一个共享内存区域存储执行过的命令，在每一次执行命令前都先将命令存储，在执行后<strong>通过检查<code>execvp()</code>的返回值来判断是否成功执行</strong>。若执行失败，则在共享内存中将该记录删除。为了实现后台，还需要使用<code>background</code>变量来判断该命令是在前台执行还是在后台执行。<strong>在前台执行的命令需要等待子进程完成</strong>。</p>
+<h3 id="代码实现-1"><a href="#代码实现-1" class="headerlink" title="代码实现"></a>代码实现</h3><p>&emsp;&emsp;这里直接给出完整代码，里面含有详细的注释：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;unistd.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/wait.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;string.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;signal.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/shm.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/stat.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/types.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;wait.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> MAX_LINE 80</span></span><br><span class="line"><span class="comment">/* setup() 用于读入下一行输入的命令，并将它分成没有空格的命令和参数存于数组 args[]中，用NULL作为数组结束的标志 */</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> &#123;</span></span><br><span class="line">  <span class="comment">//char *history[10][MAX_LINE];</span></span><br><span class="line">  <span class="keyword">char</span> history[<span class="number">10</span>][MAX_LINE];</span><br><span class="line">  <span class="keyword">int</span> po;</span><br><span class="line">  <span class="keyword">int</span> flag; <span class="comment">// 0 for false; 1 for true</span></span><br><span class="line">&#125; shared_data;</span><br><span class="line"></span><br><span class="line"><span class="comment">/* the identifier for the shared memory segment */</span></span><br><span class="line">  <span class="keyword">int</span> segment_id;</span><br><span class="line">  <span class="comment">/* a pointer to the shared memory segment */</span></span><br><span class="line">  shared_data* shared_memory;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">setup</span><span class="params">(<span class="keyword">char</span> inputBuffer[], <span class="keyword">char</span> *args[],<span class="keyword">int</span> *background)</span> </span>&#123;</span><br><span class="line">  <span class="keyword">int</span> length, <span class="comment">/* 命令的字符数目 */</span></span><br><span class="line">      i,      <span class="comment">/* 循环变量 */</span></span><br><span class="line">      start,  <span class="comment">/* 命令的第一个字符位置 */</span></span><br><span class="line">      ct;     <span class="comment">/* 下一个参数存入args[]的位置 */</span></span><br><span class="line"></span><br><span class="line">  ct = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">  <span class="comment">/* 读入命令行字符，存入inputBuffer */</span></span><br><span class="line">  length = read(STDIN_FILENO, inputBuffer, MAX_LINE);</span><br><span class="line"></span><br><span class="line">  start = <span class="number">-1</span>;</span><br><span class="line">  <span class="keyword">if</span> (length == <span class="number">0</span>) <span class="built_in">exit</span>(<span class="number">0</span>);            <span class="comment">/* 输入ctrl+d，结束shell程序 */</span></span><br><span class="line">  <span class="keyword">if</span> (length &lt; <span class="number">0</span>) &#123;</span><br><span class="line">      perror(<span class="string">&quot;error reading the command&quot;</span>);</span><br><span class="line">    <span class="built_in">exit</span>(<span class="number">-1</span>);           <span class="comment">/* 出错时用错误码-1结束shell */</span></span><br><span class="line">  &#125;</span><br><span class="line">  <span class="comment">/* 检查inputBuffer中的每一个字符 */</span></span><br><span class="line">  <span class="keyword">for</span> (i=<span class="number">0</span>;i&lt;length;i++) &#123;</span><br><span class="line">    <span class="keyword">switch</span> (inputBuffer[i]) &#123;</span><br><span class="line">      <span class="keyword">case</span> <span class="string">&#x27; &#x27;</span>:</span><br><span class="line">      <span class="keyword">case</span> <span class="string">&#x27;\t&#x27;</span> :               <span class="comment">/* 字符为分割参数的空格或制表符(tab)&#x27;\t&#x27;*/</span></span><br><span class="line">      <span class="keyword">if</span> (start != <span class="number">-1</span>) &#123;</span><br><span class="line">        args[ct] = &amp;inputBuffer[start];</span><br><span class="line">        ct++;</span><br><span class="line">      &#125;</span><br><span class="line">      inputBuffer[i] = <span class="string">&#x27;\0&#x27;</span>; <span class="comment">/* 设置 C string 的结束符 */</span></span><br><span class="line">      start = <span class="number">-1</span>;</span><br><span class="line">      <span class="keyword">break</span>;</span><br><span class="line"></span><br><span class="line">      <span class="keyword">case</span> <span class="string">&#x27;\n&#x27;</span>:                 <span class="comment">/* 命令行结束 */</span></span><br><span class="line">      <span class="keyword">if</span> (start != <span class="number">-1</span>) &#123;</span><br><span class="line">        args[ct] = &amp;inputBuffer[start];</span><br><span class="line">        ct++;</span><br><span class="line">      &#125;</span><br><span class="line">      inputBuffer[i] = <span class="string">&#x27;\0&#x27;</span>;</span><br><span class="line">      args[ct] = <span class="literal">NULL</span>; <span class="comment">/* 命令及参数结束 */</span></span><br><span class="line">      <span class="keyword">break</span>;</span><br><span class="line"></span><br><span class="line">      <span class="keyword">default</span> :             <span class="comment">/* 其他字符 */</span></span><br><span class="line">      <span class="keyword">if</span> (start == <span class="number">-1</span>)</span><br><span class="line">        start = i;</span><br><span class="line">      <span class="keyword">if</span> (inputBuffer[i] == <span class="string">&#x27;&amp;&#x27;</span>) &#123;</span><br><span class="line">        *background  = <span class="number">1</span>;          <span class="comment">/*置命令在后台运行*/</span></span><br><span class="line">        inputBuffer[i] = <span class="string">&#x27;\0&#x27;</span>;</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">  args[ct] = <span class="literal">NULL</span>; <span class="comment">/* 命令字符数 &gt; 80 */</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">handle_SIGINT</span><span class="params">()</span> </span>&#123;</span><br><span class="line">  <span class="keyword">if</span> (shared_memory-&gt;flag == <span class="number">1</span>) &#123;</span><br><span class="line">    <span class="built_in">exit</span>(<span class="number">0</span>);</span><br><span class="line">  &#125;</span><br><span class="line">  shared_memory-&gt;flag = <span class="number">1</span>;</span><br><span class="line">  <span class="built_in">printf</span>(<span class="string">&quot;\nHistory:\n&quot;</span>);</span><br><span class="line">  <span class="keyword">int</span> i, j;</span><br><span class="line">  <span class="keyword">for</span> (i = <span class="number">0</span>; i &lt; shared_memory-&gt;po; i++) &#123;</span><br><span class="line">      <span class="built_in">printf</span>(<span class="string">&quot;%s\n&quot;</span>, shared_memory-&gt;history[i]);</span><br><span class="line">  &#125;</span><br><span class="line">  signal(SIGINT, SIG_IGN);</span><br><span class="line">  <span class="built_in">exit</span>(<span class="number">0</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">  <span class="keyword">char</span> inputBuffer[MAX_LINE]; <span class="comment">/* 这个缓存用来存放输入的命令 */</span></span><br><span class="line">  <span class="keyword">int</span> background; <span class="comment">/* ==1时，表示在后台运行命令，即在命令后加上&#x27;&amp;&#x27; */</span></span><br><span class="line">  <span class="keyword">char</span> *args[MAX_LINE/<span class="number">2</span> + <span class="number">1</span>]; <span class="comment">/* 命令最多40个参数 */</span></span><br><span class="line">  <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; MAX_LINE/<span class="number">2</span> + <span class="number">1</span>; i++) &#123;</span><br><span class="line">    args[i] = <span class="literal">NULL</span>;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">pid_t</span> pid;</span><br><span class="line">  <span class="comment">/*set up the signal handler */</span></span><br><span class="line">  <span class="class"><span class="keyword">struct</span> <span class="title">sigaction</span> <span class="title">handler</span>;</span></span><br><span class="line">  handler.sa_handler = handle_SIGINT;</span><br><span class="line">  sigaction(SIGINT, &amp;handler, <span class="literal">NULL</span>);</span><br><span class="line"></span><br><span class="line">  <span class="comment">/* allocate a shared memory segment */</span></span><br><span class="line">  segment_id = shmget(IPC_PRIVATE, <span class="keyword">sizeof</span>(shared_data), S_IRUSR | S_IWUSR);</span><br><span class="line">  <span class="keyword">if</span> (segment_id == <span class="number">-1</span>) &#123;</span><br><span class="line">    <span class="built_in">fprintf</span>(<span class="built_in">stderr</span>, <span class="string">&quot;Allocate Shared Memory Fail!\n&quot;</span>);</span><br><span class="line">    <span class="keyword">return</span> <span class="number">1</span>;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="built_in">printf</span>(<span class="string">&quot;Create Shared Memory Successfully, segment_id = %d\n&quot;</span>, segment_id);</span><br><span class="line">  <span class="comment">/* attach the shared memory segment */</span></span><br><span class="line">  shared_memory = (shared_data *)shmat(segment_id, <span class="literal">NULL</span>, <span class="number">0</span>);</span><br><span class="line">  <span class="keyword">if</span> (shared_memory == (shared_data *)<span class="number">-1</span>) &#123;</span><br><span class="line">    <span class="built_in">fprintf</span>(<span class="built_in">stderr</span>, <span class="string">&quot;Attach Shared Memory Fail!\n&quot;</span>);</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">  &#125;</span><br><span class="line">  shared_memory-&gt;flag = <span class="number">0</span>;</span><br><span class="line">  <span class="comment">/* 程序在setup中正常结束 */</span></span><br><span class="line">  <span class="keyword">while</span> (<span class="number">1</span>) &#123;</span><br><span class="line">    background = <span class="number">0</span>;</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;COMMAND-&gt;&quot;</span>);</span><br><span class="line">    fflush(<span class="built_in">stdout</span>); <span class="comment">// 输出缓存内容</span></span><br><span class="line">    setup(inputBuffer, args, &amp;background); <span class="comment">/* 获取下一个输入的命令 */</span></span><br><span class="line">    pid = fork();</span><br><span class="line">    <span class="comment">/* 创建失败 */</span></span><br><span class="line">    <span class="keyword">if</span> (pid == <span class="number">-1</span>) &#123;</span><br><span class="line">      <span class="built_in">printf</span>(<span class="string">&quot;Fork Error.\n&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">else</span> <span class="keyword">if</span> (pid == <span class="number">0</span>) &#123;</span><br><span class="line">        <span class="keyword">int</span> j;</span><br><span class="line">        <span class="keyword">int</span> k = <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">for</span> (j = <span class="number">0</span>; j &lt; <span class="keyword">sizeof</span>(args); j++) &#123;</span><br><span class="line">          <span class="keyword">if</span> (args[j] != <span class="literal">NULL</span>) &#123;</span><br><span class="line">            <span class="keyword">for</span> (<span class="keyword">int</span> c = <span class="number">0</span>; c &lt; <span class="built_in">strlen</span>(args[j]); c++,k++) &#123;</span><br><span class="line">              shared_memory-&gt;history[shared_memory-&gt;po][k] = args[j][c];</span><br><span class="line">            &#125;</span><br><span class="line">            shared_memory-&gt;history[shared_memory-&gt;po][k++] = <span class="string">&#x27; &#x27;</span>;</span><br><span class="line">          &#125;</span><br><span class="line">          <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line">          &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        shared_memory-&gt;history[shared_memory-&gt;po][k] = <span class="string">&#x27;\0&#x27;</span>;</span><br><span class="line">        shared_memory-&gt;po = (shared_memory-&gt;po + <span class="number">1</span>) % <span class="number">10</span>;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">int</span> error = execvp(args[<span class="number">0</span>], args);</span><br><span class="line">        <span class="keyword">if</span> (error == <span class="number">-1</span>) &#123;</span><br><span class="line">          shared_memory-&gt;po == <span class="number">0</span> ? shared_memory-&gt;po = <span class="number">0</span> : shared_memory-&gt;po--;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> (background == <span class="number">0</span>) &#123;</span><br><span class="line">      wait(<span class="number">0</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">else</span> &#123;</span><br><span class="line">      setup(inputBuffer, args, &amp;background);</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>&emsp;&emsp;运行后结果如下：<br><img src="/images/shell.png" alt="shell命令"></p>
+<ul>
+<li>① 使用 ls -a命令查看当前目录下的所有文件 （包含隐藏文件） 。</li>
+<li>② 使用 <code>touch test.md</code>命令创建一个名为<code>test.md</code>的文件。</li>
+<li>③ 使用 <code>subl test.md</code>命令用sublimeText打开这个文件。</li>
+<li>④ 使用 <code>ls</code>命令查看当前目录下的所有文件（不包含隐藏）。</li>
+<li>⑤ <code>Ctrl+c</code>命令查看历史输入的命令记录并退出程序，历史记录中只记录正确输入并成功执行的命令。<h2 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h2>&emsp;&emsp;相信完成这两个实验后，大家对于进程间的通讯有了一定的了解，并且也能够自己实现简单的shell，这个实验的分享就到这里，谢谢！</li>
+</ul>
+
+    </div>
+
+    
+    
+    
+        <div class="reward-container">
+  <div></div>
+  <button onclick="var qr = document.getElementById('qr'); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    Donate
+  </button>
+  <div id="qr" style="display: none;">
+      
+      <div style="display: inline-block;">
+        <img src="/images/wechat_reward.png" alt="Leungyukshing WeChat Pay">
+        <p>WeChat Pay</p>
+      </div>
+      
+      <div style="display: inline-block;">
+        <img src="/images/alipay_reward.png" alt="Leungyukshing Alipay">
+        <p>Alipay</p>
+      </div>
+
+  </div>
+</div>
+
+        
+
+  <div class="followme">
+    <p>Welcome to my other publishing channels</p>
+
+    <div class="social-list">
+
+        <div class="social-item">
+          <a target="_blank" class="social-link" href="/atom.xml">
+            <span class="icon">
+              <i class="fa fa-rss"></i>
+            </span>
+
+            <span class="label">RSS</span>
+          </a>
+        </div>
+    </div>
+  </div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Operating-System/" rel="tag"># Operating System</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/archives/fork%E8%BF%87%E7%A8%8B%E8%AF%A6%E8%A7%A3.html" rel="prev" title="fork过程详解">
+      <i class="fa fa-chevron-left"></i> fork过程详解
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/archives/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%AE%9E%E9%AA%8C3--%E7%BA%BF%E7%A8%8B%E5%AE%9E%E9%AA%8C.html" rel="next" title="操作系统实验3--线程实验">
+      操作系统实验3--线程实验 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BB%8B%E7%BB%8D"><span class="nav-number">1.</span> <span class="nav-text">介绍</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%BF%9B%E7%A8%8B%E9%80%9A%E4%BF%A1"><span class="nav-number">2.</span> <span class="nav-text">进程通信</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%B1%E4%BA%AB%E5%86%85%E5%AD%98%E5%8C%BA%E5%9F%9F"><span class="nav-number">2.1.</span> <span class="nav-text">共享内存区域</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%B1%E4%BA%AB%E5%86%85%E5%AD%98%E5%87%BD%E6%95%B0%E8%B0%83%E7%94%A8"><span class="nav-number">2.2.</span> <span class="nav-text">共享内存函数调用</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BB%A3%E7%A0%81%E5%AE%9E%E7%8E%B0"><span class="nav-number">2.3.</span> <span class="nav-text">代码实现</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#shell%E7%9A%84%E7%AE%80%E5%8D%95%E5%AE%9E%E7%8E%B0"><span class="nav-number">3.</span> <span class="nav-text">shell的简单实现</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%80%9D%E8%B7%AF"><span class="nav-number">3.1.</span> <span class="nav-text">思路</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BB%A3%E7%A0%81%E5%AE%9E%E7%8E%B0-1"><span class="nav-number">3.2.</span> <span class="nav-text">代码实现</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B0%8F%E7%BB%93"><span class="nav-number">4.</span> <span class="nav-text">小结</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Leungyukshing"
+      src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">Leungyukshing</p>
+  <div class="site-description" itemprop="description">A blog for code, programme sharing.</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">688</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">27</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/leungyukshing" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;leungyukshing" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:jacky14.liang@gmail.com" title="E-Mail → mailto:jacky14.liang@gmail.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="/atom.xml" title="RSS → &#x2F;atom.xml"><i class="fa fa-rss fa-fw"></i>RSS</a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll motion-element">
+    <div class="links-of-blogroll-title"><i class="fa fa-link fa-fw"></i>
+      Friends
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="http://www.liangjh45.com/" title="http:&#x2F;&#x2F;www.liangjh45.com&#x2F;" rel="noopener" target="_blank">Alva's blog</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="https://sysucarey.github.io/" title="https:&#x2F;&#x2F;sysucarey.github.io&#x2F;" rel="noopener" target="_blank">Carey's blog</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="https://blog.csdn.net/dickdick111/" title="https:&#x2F;&#x2F;blog.csdn.net&#x2F;dickdick111&#x2F;" rel="noopener" target="_blank">Dick's blog</a>
+        </li>
+    </ul>
+  </div>
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2017 – 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Leungyukshing</span>
+</div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="Total Visitors">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="Total Views">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : true,
+      appId      : 'AaLog29QcUdQKTboD6cY2dNP-gzGzoHsz',
+      appKey     : 'dUWNHLnTY9qG1jJwPnTtfMm8',
+      placeholder: "Just go go",
+      avatar     : 'mm',
+      meta       : guest,
+      pageSize   : '10' || 10,
+      visitor    : false,
+      lang       : '' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : false,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+
+</body>
+</html>

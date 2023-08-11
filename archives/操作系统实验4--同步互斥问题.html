@@ -1,0 +1,632 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <meta name="google-site-verification" content="FHjCzDi7nry9Mvf4EFOY5cYoco-ZXq9tKjvXZK0nKr4">
+  <meta name="baidu-site-verification" content="code-gpMFPewYUF" />
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="/lib/pace/pace-theme-minimal.min.css">
+  <script src="/lib/pace/pace.min.js"></script>
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"leungyukshing.github.io","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"right","display":"hide","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"appID":"52USYSYESX","apiKey":"20b904c66f55b874f05edea4aca57780","indexName":"blog","hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="介绍&amp;emsp;&amp;emsp;同步互斥问题是操作系统学科中一个很重要的问题，要讲明白同步互斥问题，我先来介绍竞争状态。所谓竞争状态，是指多个进程对于同一块数据进行访问，其访问顺序会影响执行结果。对于这一类数据，我们需要对访问它的进程作限制，即保持该数据访问的互斥性。但是，如果我们只是读取该数据，访问顺序将不会影响执行结果；如果是写，这就是同步互斥问题的主要内容。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="操作系统实验4--同步互斥问题">
+<meta property="og:url" content="https://leungyukshing.github.io/archives/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%AE%9E%E9%AA%8C4--%E5%90%8C%E6%AD%A5%E4%BA%92%E6%96%A5%E9%97%AE%E9%A2%98.html">
+<meta property="og:site_name" content="Halo">
+<meta property="og:description" content="介绍&amp;emsp;&amp;emsp;同步互斥问题是操作系统学科中一个很重要的问题，要讲明白同步互斥问题，我先来介绍竞争状态。所谓竞争状态，是指多个进程对于同一块数据进行访问，其访问顺序会影响执行结果。对于这一类数据，我们需要对访问它的进程作限制，即保持该数据访问的互斥性。但是，如果我们只是读取该数据，访问顺序将不会影响执行结果；如果是写，这就是同步互斥问题的主要内容。">
+<meta property="og:locale">
+<meta property="og:image" content="https://leungyukshing.github.io/images/Producer-Consumer.png">
+<meta property="og:image" content="https://leungyukshing.github.io/images/reader_first.png">
+<meta property="og:image" content="https://leungyukshing.github.io/images/writer_first.png">
+<meta property="article:published_time" content="2018-08-18T11:06:14.000Z">
+<meta property="article:modified_time" content="2021-06-22T18:33:08.744Z">
+<meta property="article:author" content="Leungyukshing">
+<meta property="article:tag" content="Operating System">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://leungyukshing.github.io/images/Producer-Consumer.png">
+
+<link rel="canonical" href="https://leungyukshing.github.io/archives/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%AE%9E%E9%AA%8C4--%E5%90%8C%E6%AD%A5%E4%BA%92%E6%96%A5%E9%97%AE%E9%A2%98.html">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-Hans'
+  };
+</script>
+
+  <title>操作系统实验4--同步互斥问题 | Halo</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+<!-- hexo injector head_end end --><link rel="alternate" href="/atom.xml" title="Halo" type="application/atom+xml"><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Halo</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">A magic place for coding</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>About</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>Tags</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>Search
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="Searching..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+  <a href="https://github.com/leungyukshing" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="https://leungyukshing.github.io/archives/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%AE%9E%E9%AA%8C4--%E5%90%8C%E6%AD%A5%E4%BA%92%E6%96%A5%E9%97%AE%E9%A2%98.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="Leungyukshing">
+      <meta itemprop="description" content="A blog for code, programme sharing.">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Halo">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          操作系统实验4--同步互斥问题
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2018-08-18 07:06:14" itemprop="dateCreated datePublished" datetime="2018-08-18T07:06:14-04:00">2018-08-18</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2021-06-22 14:33:08" itemprop="dateModified" datetime="2021-06-22T14:33:08-04:00">2021-06-22</time>
+              </span>
+
+          
+            <span class="post-meta-item" title="Views" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">Views: </span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine: </span>
+    
+    <a title="valine" href="/archives/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%AE%9E%E9%AA%8C4--%E5%90%8C%E6%AD%A5%E4%BA%92%E6%96%A5%E9%97%AE%E9%A2%98.html#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/archives/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%AE%9E%E9%AA%8C4--%E5%90%8C%E6%AD%A5%E4%BA%92%E6%96%A5%E9%97%AE%E9%A2%98.html" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="介绍"><a href="#介绍" class="headerlink" title="介绍"></a>介绍</h2><p>&emsp;&emsp;同步互斥问题是操作系统学科中一个很重要的问题，要讲明白同步互斥问题，我先来介绍<strong>竞争状态</strong>。所谓<strong>竞争状态</strong>，是指多个进程对于同一块数据进行访问，其访问顺序会影响执行结果。对于这一类数据，我们需要对访问它的进程作限制，即保持该数据访问的互斥性。但是，如果我们只是<strong>读取</strong>该数据，访问顺序将不会影响执行结果；如果是<strong>写</strong>，这就是同步互斥问题的主要内容。</p>
+<a id="more"></a>
+<p>&emsp;&emsp;解决同步互斥问题有三个要求：</p>
+<ul>
+<li>互斥性：即当一个进程访问临界资源的时候，互斥的进程不能访问该数据。</li>
+<li>有空让进：当临界资源没有被占有的时候，在等待的进程可以访问到该资源，这里涉及到进程的调度算法。</li>
+<li>有限等待：一个进程请求资源的等待时间是有限的。等待方式有<strong>忙等待</strong>和<strong>让权等待</strong>。忙等待指该进程占有CPU等待访问该资源，优点是可以降低系统的多道程序的度，缺点是占有CPU。让权等待指请求资源的进程让出CPU，直至该资源可以被占有。优点是可以让出CPU用作其他地方，缺点是需要进行上下文切换，可能引起系统抖动现象。</li>
+</ul>
+<p>&emsp;&emsp;这个实验包括两个很经典的问题：</p>
+<ul>
+<li>（1）生产者-消费者问题</li>
+<li>（2）读者-写者问题</li>
+</ul>
+<h2 id="生产者-消费者问题"><a href="#生产者-消费者问题" class="headerlink" title="生产者-消费者问题"></a>生产者-消费者问题</h2><h3 id="问题要求"><a href="#问题要求" class="headerlink" title="问题要求"></a>问题要求</h3><p>&emsp;&emsp;设计一个程序来解决有限缓冲问题，其中的生产者与消费者进程如图6.10 与图6.11 所示。<br>&emsp;&emsp;在6.6.1 小节中，使用了三个信号量: <strong>empty</strong>（以记录有多少空位）、<strong>full</strong>（以记录有多少满位）以及<strong>mutex</strong>（二进制信号量或互斥信号量，以保护对缓冲插入与删除的操作）。对于本项目，<strong>empty与full将采用标准计数信号量</strong>，而<strong>mutex将采用二进制信号量</strong>。生产者与消费者作为独立线程，在empty、full、mutex 的同步前提下，对缓冲进行插入与删除。</p>
+<h3 id="输入格式"><a href="#输入格式" class="headerlink" title="输入格式"></a>输入格式</h3><p>&emsp;&emsp;测试数据文件包括n行测试数据，分别描述创建的n个线程是生产者还是消费者，以及生产者或消费者存放或取产品的开始时间和持续时间。每行测试数据包括四个字段，各个字段间用空格分隔。第一字段为一个正整数，表示线程序号。第二字段表示相应线程角色，P表示生产者，C表示消费者。第三字段为一个正数，表示存放或取出操作的开始时间：线程创建后，延迟相应时间(单位为秒)后发出对共享资源的使用申请。第四字段为一个正数，表示操作的持续时间。第五字段为一个正数（仅生产者有），表示生产的产品号。当线程申请成功后，开始对共享资源的操作，该操作持续相应时间后结束，并释放共享资源。</p>
+<h3 id="输入"><a href="#输入" class="headerlink" title="输入"></a>输入</h3><blockquote>
+<p>1  C  3    5<br>2  P  4    5   1<br>3  C  5    2<br>4  C  6    5<br>5  P  7    3   2<br>6  P  8    4   3</p>
+</blockquote>
+<p>&emsp;&emsp;<strong>注意</strong>：在创建数据文件时，由于涉及到文件格式问题，最好在记事本中手工逐个键入数据，而不要拷贝粘贴数据，否则，本示例程序运行时可能会出现不可预知的错误。</p>
+<h3 id="代码实现"><a href="#代码实现" class="headerlink" title="代码实现"></a>代码实现</h3><p><code>buffer.h</code>文件如下:</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="keyword">int</span> buffer_item;</span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> BUFFER_SIZE 5</span></span><br></pre></td></tr></table></figure>
+
+<p><code>pc.cpp</code>文件如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&quot;buffer.h&quot;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;semaphore.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;pthread.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;unistd.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="comment">// empty: for producer</span></span><br><span class="line"><span class="comment">// full: for consumer</span></span><br><span class="line"><span class="comment">// mutex: buffer</span></span><br><span class="line"><span class="keyword">sem_t</span> empty, full, mutex;</span><br><span class="line"></span><br><span class="line"><span class="comment">/* the buffer */</span></span><br><span class="line">buffer_item buffer[BUFFER_SIZE];</span><br><span class="line"></span><br><span class="line"><span class="keyword">int</span> nextp = <span class="number">0</span>;</span><br><span class="line"><span class="keyword">int</span> nextc = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">/* data struct */</span></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">cmd</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line">  <span class="keyword">int</span> pid;</span><br><span class="line">  <span class="keyword">char</span> type;</span><br><span class="line">  <span class="keyword">int</span> startTime;</span><br><span class="line">  <span class="keyword">int</span> lastTime;</span><br><span class="line">  <span class="keyword">int</span> num;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="comment">// insert operation</span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">insert_item</span><span class="params">(buffer_item item)</span> </span>&#123;</span><br><span class="line">  buffer[nextp] = item;</span><br><span class="line">  nextp = (nextp + <span class="number">1</span>) % BUFFER_SIZE;</span><br><span class="line">  <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// remove operation</span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">remove_item</span><span class="params">(buffer_item* item)</span> </span>&#123;</span><br><span class="line">  *item = buffer[nextc];</span><br><span class="line">  buffer[nextc] = <span class="number">0</span>;</span><br><span class="line">  nextc = (nextc + <span class="number">1</span>) % BUFFER_SIZE;</span><br><span class="line">  <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/* producer */</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> *<span class="title">producer</span><span class="params">(<span class="keyword">void</span> *param)</span> </span>&#123;</span><br><span class="line">  <span class="class"><span class="keyword">struct</span> <span class="title">cmd</span>* <span class="title">item</span> =</span> (struct cmd*)param;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">while</span> (<span class="number">1</span>) &#123;</span><br><span class="line">    sleep(item-&gt;startTime);</span><br><span class="line">    sem_wait(&amp;empty); <span class="comment">// There is empty place</span></span><br><span class="line">    sem_wait(&amp;mutex);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// critical section</span></span><br><span class="line">    <span class="comment">// add nextp to buffer</span></span><br><span class="line"></span><br><span class="line">    insert_item(item-&gt;num);</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;Producer No.%d produces product No.%d\n&quot;</span>, item-&gt;pid, item-&gt;num);</span><br><span class="line"></span><br><span class="line">    sleep(item-&gt;lastTime);</span><br><span class="line">    sem_post(&amp;mutex);</span><br><span class="line">    sem_post(&amp;full); <span class="comment">// One more available commodity</span></span><br><span class="line"></span><br><span class="line">    pthread_exit(<span class="number">0</span>);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/* consumer */</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> *<span class="title">consumer</span><span class="params">(<span class="keyword">void</span>* param)</span> </span>&#123;</span><br><span class="line">  <span class="class"><span class="keyword">struct</span> <span class="title">cmd</span>* <span class="title">item</span> =</span> (struct cmd*)param;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">while</span> (<span class="number">1</span>) &#123;</span><br><span class="line">    sleep(item-&gt;startTime);</span><br><span class="line">    sem_wait(&amp;full); <span class="comment">// There is commodity.</span></span><br><span class="line">    sem_wait(&amp;mutex);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// critical section</span></span><br><span class="line">    <span class="comment">// remove an item from buffer to nextc</span></span><br><span class="line"></span><br><span class="line">    remove_item(&amp;item-&gt;num);</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;Consumer No.%d consumes product No.%d\n&quot;</span>, item-&gt;pid, item-&gt;num);</span><br><span class="line"></span><br><span class="line">    sleep(item-&gt;lastTime);</span><br><span class="line">    sem_post(&amp;mutex);</span><br><span class="line">    sem_post(&amp;empty); <span class="comment">// consume one commodity</span></span><br><span class="line"></span><br><span class="line">    pthread_exit(<span class="number">0</span>);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">int</span> argc, <span class="keyword">char</span> <span class="keyword">const</span> *argv[])</span> </span>&#123;</span><br><span class="line">  <span class="comment">/* code */</span></span><br><span class="line">  <span class="keyword">int</span> threadNum = atoi(argv[<span class="number">1</span>]);</span><br><span class="line">  <span class="class"><span class="keyword">struct</span> <span class="title">cmd</span> <span class="title">commands</span>[<span class="title">threadNum</span>];</span></span><br><span class="line">  <span class="keyword">pthread_t</span> pid[threadNum];</span><br><span class="line"></span><br><span class="line">  <span class="comment">/* initialize the semaphores */</span></span><br><span class="line">  sem_init(&amp;empty, <span class="number">0</span>, BUFFER_SIZE);</span><br><span class="line">  sem_init(&amp;full, <span class="number">0</span>, <span class="number">0</span>);</span><br><span class="line">  sem_init(&amp;mutex, <span class="number">0</span>, <span class="number">1</span>);</span><br><span class="line"></span><br><span class="line">  <span class="keyword">int</span> nextp = <span class="number">0</span>;</span><br><span class="line">  <span class="keyword">int</span> nextc = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; BUFFER_SIZE; i++) &#123;</span><br><span class="line">    buffer[i] = <span class="number">0</span>;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="comment">// input</span></span><br><span class="line">  <span class="keyword">char</span> text[<span class="number">256</span>];</span><br><span class="line">  <span class="keyword">int</span> j = <span class="number">0</span>;</span><br><span class="line">  <span class="keyword">char</span> ch;</span><br><span class="line">    <span class="comment">// Read from file</span></span><br><span class="line">    FILE *fpRead=fopen(<span class="string">&quot;test.txt&quot;</span>,<span class="string">&quot;r&quot;</span>);</span><br><span class="line">    <span class="keyword">if</span>(fpRead==<span class="literal">NULL</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">while</span> ((ch=fgetc(fpRead))!=EOF) &#123;</span><br><span class="line">      <span class="keyword">if</span> (ch != <span class="string">&#x27; &#x27;</span> &amp;&amp; ch != <span class="string">&#x27;\n&#x27;</span> &amp;&amp; ch != <span class="string">&#x27;\r&#x27;</span>)</span><br><span class="line">        text[j++] = ch;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">  j = <span class="number">0</span>;</span><br><span class="line">  <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; threadNum; i++) &#123;</span><br><span class="line">    commands[i].pid = text[j++] - <span class="string">&#x27;0&#x27;</span>;</span><br><span class="line">    commands[i].type = text[j++];</span><br><span class="line">    commands[i].startTime = text[j++] - <span class="string">&#x27;0&#x27;</span>;</span><br><span class="line">    commands[i].lastTime = text[j++] - <span class="string">&#x27;0&#x27;</span>;</span><br><span class="line">    <span class="keyword">if</span> (commands[i].type == <span class="string">&#x27;P&#x27;</span>) &#123;</span><br><span class="line">      commands[i].num = text[j++] - <span class="string">&#x27;0&#x27;</span>;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="comment">// generate threads</span></span><br><span class="line">  <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; threadNum; i++) &#123;</span><br><span class="line">    <span class="comment">// genrate consumers</span></span><br><span class="line">    <span class="keyword">if</span> (commands[i].type == <span class="string">&#x27;C&#x27;</span>) &#123;</span><br><span class="line">      pthread_create(&amp;pid[i], <span class="literal">NULL</span>, consumer, &amp;commands[i]);</span><br><span class="line">      <span class="built_in">printf</span>(<span class="string">&quot;Create Consumer\n&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// generate producers</span></span><br><span class="line">    <span class="keyword">else</span> &#123;</span><br><span class="line">      pthread_create(&amp;pid[i], <span class="literal">NULL</span>, producer, &amp;commands[i]);</span><br><span class="line">      <span class="built_in">printf</span>(<span class="string">&quot;Create Producer\n&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="comment">// execute threads</span></span><br><span class="line">  <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; threadNum; i++) &#123;</span><br><span class="line">    pthread_join(pid[i], <span class="literal">NULL</span>);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="comment">// destroys semaphores</span></span><br><span class="line">  sem_destroy(&amp;mutex);</span><br><span class="line">  sem_destroy(&amp;full);</span><br><span class="line">  sem_destroy(&amp;empty);</span><br><span class="line">  <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;编译执行上述代码，结果如下：<br><img src="/images/Producer-Consumer.png" alt="Producer-Consumer"><br>&emsp;&emsp;运行两次有不同的顺序，可以从生产的商品顺序以及消费的商品顺序看出同步互斥的现象。</p>
+<h2 id="读者-写者问题"><a href="#读者-写者问题" class="headerlink" title="读者-写者问题"></a>读者-写者问题</h2><h3 id="问题要求-1"><a href="#问题要求-1" class="headerlink" title="问题要求"></a>问题要求</h3><p>&emsp;&emsp;在Linux环境下，创建一个进程，此进程包含n个线程。用这n个线程来表示n个读者或写者。每个线程按相应测试数据文件(后面有介绍)的要求进行读写操作。用信号量机制分别实现读者优先和写者优先的读者-写者问题。</p>
+<p>&emsp;&emsp;读者-写者问题的读写操作限制(仅读者优先或写者优先)：</p>
+<ul>
+<li>1)写-写互斥，即不能有两个写者同时进行写操作。</li>
+<li>2)读-写互斥，即不能同时有一个线程在读，而另一个线程在写。</li>
+<li>3)读-读允许，即可以有一个或多个读者在读。</li>
+</ul>
+<p>&emsp;&emsp;读者优先的附加限制：如果一个读者申请进行读操作时已有另一个读者正在进行读操作，则该读者可直接开始读操作。<br>&emsp;&emsp;写者优先的附加限制：如果一个读者申请进行读操作时已有另一写者在等待访问共享资源，则该读者必须等到没有写者处于等待状态后才能开始读操作。<br>&emsp;&emsp;运行结果显示要求：要求在每个线程创建、发出读写操作申请、开始读写操作和结束读写操作时分别显示一行提示信息，以确定所有处理都遵守相应的读写操作限制。</p>
+<h3 id="输入格式-1"><a href="#输入格式-1" class="headerlink" title="输入格式"></a>输入格式</h3><p>&emsp;&emsp;测试数据文件包括n行测试数据，分别描述创建的n个线程是读者还是写者，以及读写操作的开始时间和持续时间。每行测试数据包括四个字段，各个字段间用空格分隔。第一字段为一个正整数，表示线程序号。第二字段表示相应线程角色，R表示读者，W表示写者。第三字段为一个正数，表示读写操作的开始时间：线程创建后，延迟相应时间(单位为秒)后发出对共享资源的读写申请。第四字段为一个正数，表示读写操作的持续时间。当线程读写申请成功后，开始对共享资源的读写操作，该操作持续相应时间后结束，并释放共享资源</p>
+<h3 id="输入-1"><a href="#输入-1" class="headerlink" title="输入"></a>输入</h3><blockquote>
+<p>1  R  3    5<br>2  W  4    5<br>3  R  5    2<br>4  R  6    5<br>5  W  7    3</p>
+</blockquote>
+<h3 id="读者优先"><a href="#读者优先" class="headerlink" title="读者优先"></a>读者优先</h3><p>&emsp;&emsp;读者优先指的是除非有写者在写文件，否则读者不需要等待。所以可以<strong>用一个整型变量read_count记录当前的读者数目</strong>，用于确定是否需要释放正在等待的写者线程（当read_count=0时，表明所有的读者读完，需要释放写者等待队列中的一个写者）。<strong>每一个读者开始读文件时，必须修改read_count变量</strong>。因此需要一个互斥对象mutex来实现对全局变量read_count修改时的互斥。<br>&emsp;&emsp;另外，为了实现写-写互斥，需要增加一个临界区对象write。当写者发出写请求时，必须申请临界区对象的所有权。通过这种方法，也可以实现读-写互斥，当read_count=1时（即第一个读者到来时），读者线程也必须申请临界区对象的所有权。<br>&emsp;&emsp;当读者拥有临界区的所有权时，写者阻塞在临界区对象write上。当写者拥有临界区的所有权时，第一个读者判断完“read_count==1”后阻塞在write上，其余的读者由于等待对read_count的判断，阻塞在mutex上。</p>
+<p><code>ReaderWriter.cpp</code>文件如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;semaphore.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;pthread.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;unistd.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">int</span> source; <span class="comment">// shared data</span></span><br><span class="line"><span class="keyword">int</span> read_count = <span class="number">0</span>; <span class="comment">// total readers</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// mutex: read_count</span></span><br><span class="line"><span class="comment">// wrt: to make writers waiting if readers are reading</span></span><br><span class="line"><span class="keyword">sem_t</span> mutex, wrt;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">cmd</span> &#123;</span></span><br><span class="line">  <span class="keyword">int</span> pid;</span><br><span class="line">  <span class="keyword">char</span> type;</span><br><span class="line">  <span class="keyword">int</span> startTime;</span><br><span class="line">  <span class="keyword">int</span> lastTime;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="comment">// write operations</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">write_data</span><span class="params">()</span> </span>&#123;</span><br><span class="line">  <span class="keyword">int</span> old_source = source;</span><br><span class="line">  source++;</span><br><span class="line">  <span class="built_in">printf</span>(<span class="string">&quot;Writing: from %d to %d.\n&quot;</span>, old_source, source);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// read operations</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">read_data</span><span class="params">()</span> </span>&#123;</span><br><span class="line">  <span class="built_in">printf</span>(<span class="string">&quot;Reading: source value is %d\n&quot;</span>, source);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/* reader process */</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> *<span class="title">reader</span><span class="params">(<span class="keyword">void</span> *param)</span> </span>&#123;</span><br><span class="line">  <span class="class"><span class="keyword">struct</span> <span class="title">cmd</span>* <span class="title">item</span> =</span> (struct cmd*)param;</span><br><span class="line">  <span class="keyword">while</span> (<span class="number">1</span>) &#123;</span><br><span class="line">    sleep(item-&gt;startTime);</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;Reader%d request to read.\n&quot;</span>, item-&gt;pid);</span><br><span class="line">    sem_wait(&amp;mutex);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// critical section</span></span><br><span class="line">    read_count++;</span><br><span class="line">    <span class="keyword">if</span> (read_count == <span class="number">1</span>) &#123;</span><br><span class="line">      sem_wait(&amp;wrt); <span class="comment">// This prioritize the reader!</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    sem_post(&amp;mutex);</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;Reader%d begins to read.\n&quot;</span>, item-&gt;pid);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// reading</span></span><br><span class="line">    read_data();</span><br><span class="line"></span><br><span class="line">    sleep(item-&gt;lastTime);</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;Reader%d finishes reading.\n&quot;</span>, item-&gt;pid);</span><br><span class="line">    sem_wait(&amp;mutex);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// critical section</span></span><br><span class="line">    read_count--;</span><br><span class="line">    <span class="comment">// If there is no reader, let writer in</span></span><br><span class="line">    <span class="keyword">if</span> (read_count == <span class="number">0</span>) &#123;</span><br><span class="line">      sem_post(&amp;wrt);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    sem_post(&amp;mutex);</span><br><span class="line"></span><br><span class="line">    pthread_exit(<span class="number">0</span>);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/* writer process */</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> *<span class="title">writer</span><span class="params">(<span class="keyword">void</span> *param)</span> </span>&#123;</span><br><span class="line">  <span class="class"><span class="keyword">struct</span> <span class="title">cmd</span>* <span class="title">item</span> =</span> (struct cmd*)param;</span><br><span class="line">  <span class="keyword">while</span> (<span class="number">1</span>) &#123;</span><br><span class="line">    sleep(item-&gt;startTime);</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;Writer%d request to write.\n&quot;</span>, item-&gt;pid);</span><br><span class="line">    sem_wait(&amp;wrt);</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;Writer%d begins to write.\n&quot;</span>, item-&gt;pid);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// writing</span></span><br><span class="line">    write_data();</span><br><span class="line"></span><br><span class="line">    sleep(item-&gt;lastTime);</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;Writer%d finishes writing.\n&quot;</span>, item-&gt;pid);</span><br><span class="line">    sem_post(&amp;wrt);</span><br><span class="line">    pthread_exit(<span class="number">0</span>);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">int</span> argc, <span class="keyword">char</span> <span class="keyword">const</span> *argv[])</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="comment">/* code */</span></span><br><span class="line">  <span class="keyword">int</span> threadNum = atoi(argv[<span class="number">1</span>]);</span><br><span class="line">  <span class="class"><span class="keyword">struct</span> <span class="title">cmd</span> <span class="title">commands</span>[<span class="title">threadNum</span>];</span></span><br><span class="line">  <span class="keyword">pthread_t</span> pid[threadNum];</span><br><span class="line"></span><br><span class="line">  <span class="comment">/* initialize the semaphores */</span></span><br><span class="line">  sem_init(&amp;wrt, <span class="number">0</span>, <span class="number">1</span>);</span><br><span class="line">  sem_init(&amp;mutex, <span class="number">0</span>, <span class="number">1</span>);</span><br><span class="line"></span><br><span class="line">  <span class="comment">// input</span></span><br><span class="line">  <span class="keyword">char</span> text[<span class="number">256</span>];</span><br><span class="line">  <span class="keyword">int</span> j = <span class="number">0</span>;</span><br><span class="line">  <span class="keyword">char</span> ch;</span><br><span class="line"></span><br><span class="line">  <span class="comment">// Read from file</span></span><br><span class="line">    FILE *fpRead=fopen(<span class="string">&quot;test2.txt&quot;</span>,<span class="string">&quot;r&quot;</span>);</span><br><span class="line">    <span class="keyword">if</span>(fpRead==<span class="literal">NULL</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">while</span> ((ch=fgetc(fpRead))!=EOF) &#123;</span><br><span class="line">      <span class="keyword">if</span> (ch != <span class="string">&#x27; &#x27;</span> &amp;&amp; ch != <span class="string">&#x27;\n&#x27;</span> &amp;&amp; ch != <span class="string">&#x27;\r&#x27;</span>)</span><br><span class="line">        text[j++] = ch;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">  j = <span class="number">0</span>;</span><br><span class="line">  <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; threadNum; i++) &#123;</span><br><span class="line">    commands[i].pid = text[j++] - <span class="string">&#x27;0&#x27;</span>;</span><br><span class="line">    commands[i].type = text[j++];</span><br><span class="line">    commands[i].startTime = text[j++] - <span class="string">&#x27;0&#x27;</span>;</span><br><span class="line">    commands[i].lastTime = text[j++] - <span class="string">&#x27;0&#x27;</span>;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="comment">// generate threads</span></span><br><span class="line">  <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; threadNum; i++) &#123;</span><br><span class="line">    <span class="comment">// genrate readers</span></span><br><span class="line">    <span class="keyword">if</span> (commands[i].type == <span class="string">&#x27;R&#x27;</span>) &#123;</span><br><span class="line">      pthread_create(&amp;pid[i], <span class="literal">NULL</span>, reader, &amp;commands[i]);</span><br><span class="line">      <span class="built_in">printf</span>(<span class="string">&quot;Create Reader\n&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// generate writers</span></span><br><span class="line">    <span class="keyword">else</span> &#123;</span><br><span class="line">      pthread_create(&amp;pid[i], <span class="literal">NULL</span>, writer, &amp;commands[i]);</span><br><span class="line">      <span class="built_in">printf</span>(<span class="string">&quot;Create Writer\n&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="comment">// execute threads</span></span><br><span class="line">  <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; threadNum; i++) &#123;</span><br><span class="line">    pthread_join(pid[i], <span class="literal">NULL</span>);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="comment">// destroys semaphores</span></span><br><span class="line">  sem_destroy(&amp;mutex);</span><br><span class="line">  sem_destroy(&amp;wrt);</span><br><span class="line">  <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="写者优先"><a href="#写者优先" class="headerlink" title="写者优先"></a>写者优先</h3><p>&emsp;&emsp;写者优先与读者优先类似。不同之处在于一旦一个写者到来，它应该尽快对文件进行写操作，如果有一个写者在等待，则新到来的读者不允许进行读操作。为此应当添加一个整型变量write_count，用于记录正在等待的写者的数目，当write_count=0时，才可以释放等待的读者线程队列。<br>&emsp;&emsp;为了对全局变量write_count实现互斥，必须增加一个互斥对象mutex2。<br>&emsp;&emsp;为了实现写者优先，应当添加一个临界区对象read，当有写者在写文件或等待时，读者必须阻塞在read上。同样，有读者读时，写者必须等待。于是，必须有一个互斥对象RW_mutex来实现这个互斥。<br>有写者在写时，写者必须等待。<br>&emsp;&emsp;读者线程要对全局变量read_count实现操作上的互斥，必须有一个互斥对象命名为mutex1。</p>
+<p><code>ReaderWriter2.cpp</code>文件如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br><span class="line">170</span><br><span class="line">171</span><br><span class="line">172</span><br><span class="line">173</span><br><span class="line">174</span><br><span class="line">175</span><br><span class="line">176</span><br><span class="line">177</span><br><span class="line">178</span><br><span class="line">179</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;semaphore.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;pthread.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;unistd.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">int</span> source; <span class="comment">// shared data</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">int</span> write_count; <span class="comment">// total writers</span></span><br><span class="line"><span class="keyword">int</span> read_count; <span class="comment">// total readers</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// mutex1: read_count</span></span><br><span class="line"><span class="comment">// mutex2: write_count</span></span><br><span class="line"><span class="comment">// RW_mutex: source</span></span><br><span class="line"><span class="comment">// rd: to make readers waiting if writers are writing</span></span><br><span class="line"><span class="keyword">sem_t</span> mutex1, mutex2, rd, RW_mutex;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">cmd</span> &#123;</span></span><br><span class="line">  <span class="keyword">int</span> pid;</span><br><span class="line">  <span class="keyword">char</span> type;</span><br><span class="line">  <span class="keyword">int</span> startTime;</span><br><span class="line">  <span class="keyword">int</span> lastTime;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="comment">// write operation</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">write_data</span><span class="params">()</span> </span>&#123;</span><br><span class="line">  <span class="keyword">int</span> old_source = source;</span><br><span class="line">  source++;</span><br><span class="line">  <span class="built_in">printf</span>(<span class="string">&quot;Writing: from %d to %d.\n&quot;</span>, old_source, source);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// read operation</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">read_data</span><span class="params">()</span> </span>&#123;</span><br><span class="line">  <span class="built_in">printf</span>(<span class="string">&quot;Reading: source value is %d\n&quot;</span>, source);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/* reader process */</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> *<span class="title">reader</span><span class="params">(<span class="keyword">void</span> *param)</span> </span>&#123;</span><br><span class="line">  <span class="class"><span class="keyword">struct</span> <span class="title">cmd</span>* <span class="title">item</span> =</span> (struct cmd*)param;</span><br><span class="line">  <span class="keyword">while</span> (<span class="number">1</span>) &#123;</span><br><span class="line">    sleep(item-&gt;startTime);</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;Reader %d request to read.\n&quot;</span>, item-&gt;pid);</span><br><span class="line"></span><br><span class="line">    sem_wait(&amp;rd); <span class="comment">// This is important to prioritize writer!</span></span><br><span class="line">    sem_wait(&amp;mutex1);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// critical section</span></span><br><span class="line">    read_count++;</span><br><span class="line">    <span class="keyword">if</span> (read_count == <span class="number">1</span>) &#123;</span><br><span class="line">      sem_wait(&amp;RW_mutex);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    sem_post(&amp;mutex1);</span><br><span class="line">    sem_post(&amp;rd);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// read</span></span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;Reader %d begins to read.\n&quot;</span>, item-&gt;pid);</span><br><span class="line">    read_data();</span><br><span class="line"></span><br><span class="line">    sleep(item-&gt;lastTime);</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;Reader %d finishes reading.\n&quot;</span>, item-&gt;pid);</span><br><span class="line"></span><br><span class="line">    sem_wait(&amp;mutex1);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// critical section</span></span><br><span class="line">    read_count--;</span><br><span class="line">    <span class="comment">// If there is no reader, let writer in</span></span><br><span class="line">    <span class="keyword">if</span> (read_count == <span class="number">0</span>) &#123;</span><br><span class="line">      sem_post(&amp;RW_mutex);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    sem_post(&amp;mutex1);</span><br><span class="line">    pthread_exit(<span class="number">0</span>);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/* writer process */</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> *<span class="title">writer</span><span class="params">(<span class="keyword">void</span> *param)</span> </span>&#123;</span><br><span class="line">  <span class="class"><span class="keyword">struct</span> <span class="title">cmd</span>* <span class="title">item</span> =</span> (struct cmd*)param;</span><br><span class="line">  <span class="keyword">while</span> (<span class="number">1</span>) &#123;</span><br><span class="line">    sleep(item-&gt;startTime);</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;Writer %d request to write.\n&quot;</span>, item-&gt;pid);</span><br><span class="line">    sem_wait(&amp;mutex2);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// critical section</span></span><br><span class="line">    write_count++;</span><br><span class="line">    <span class="keyword">if</span> (write_count == <span class="number">1</span>) &#123;</span><br><span class="line">      sem_wait(&amp;rd); <span class="comment">// Writer has the priority!</span></span><br><span class="line">    &#125;</span><br><span class="line">    sem_post(&amp;mutex2);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// If there is no other readers or writer accessing the data</span></span><br><span class="line">    sem_wait(&amp;RW_mutex);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// critical section</span></span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;Writer %d begins to write\n&quot;</span>, item-&gt;pid);</span><br><span class="line">    write_data();</span><br><span class="line"></span><br><span class="line">    sleep(item-&gt;lastTime);</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;Writer %d finishes writing\n&quot;</span>, item-&gt;pid);</span><br><span class="line">    sem_post(&amp;RW_mutex);</span><br><span class="line"></span><br><span class="line">    sem_wait(&amp;mutex2);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// critical section</span></span><br><span class="line">    write_count--;</span><br><span class="line">    <span class="comment">// If there is no writers, let reader in</span></span><br><span class="line">    <span class="keyword">if</span> (write_count == <span class="number">0</span>) &#123;</span><br><span class="line">      sem_post(&amp;rd);</span><br><span class="line">    &#125;</span><br><span class="line">    sem_post(&amp;mutex2);</span><br><span class="line">    pthread_exit(<span class="number">0</span>);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">int</span> argc, <span class="keyword">char</span> <span class="keyword">const</span> *argv[])</span> </span>&#123;</span><br><span class="line">  <span class="comment">/* code */</span></span><br><span class="line">  <span class="keyword">int</span> threadNum = atoi(argv[<span class="number">1</span>]);</span><br><span class="line">  <span class="class"><span class="keyword">struct</span> <span class="title">cmd</span> <span class="title">commands</span>[<span class="title">threadNum</span>];</span></span><br><span class="line">  <span class="keyword">pthread_t</span> pid[threadNum];</span><br><span class="line"></span><br><span class="line">  <span class="comment">/* initialize the semaphores */</span></span><br><span class="line">  sem_init(&amp;mutex1, <span class="number">0</span>, <span class="number">1</span>);</span><br><span class="line">  sem_init(&amp;mutex2, <span class="number">0</span>, <span class="number">1</span>);</span><br><span class="line">  sem_init(&amp;RW_mutex, <span class="number">0</span>, <span class="number">1</span>);</span><br><span class="line">  sem_init(&amp;rd, <span class="number">0</span>, <span class="number">1</span>);</span><br><span class="line"></span><br><span class="line">  <span class="comment">// input</span></span><br><span class="line">  <span class="keyword">char</span> text[<span class="number">256</span>];</span><br><span class="line">  <span class="keyword">int</span> j = <span class="number">0</span>;</span><br><span class="line">  <span class="keyword">char</span> ch;</span><br><span class="line"></span><br><span class="line">  <span class="comment">// Read from file</span></span><br><span class="line">    FILE *fpRead=fopen(<span class="string">&quot;test2.txt&quot;</span>,<span class="string">&quot;r&quot;</span>);</span><br><span class="line">    <span class="keyword">if</span>(fpRead==<span class="literal">NULL</span>)</span><br><span class="line">    &#123;</span><br><span class="line">      <span class="built_in">printf</span>(<span class="string">&quot;File not exist!\n&quot;</span>);</span><br><span class="line">        <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">while</span> ((ch=fgetc(fpRead))!=EOF) &#123;</span><br><span class="line">      <span class="keyword">if</span> (ch != <span class="string">&#x27; &#x27;</span> &amp;&amp; ch != <span class="string">&#x27;\n&#x27;</span> &amp;&amp; ch != <span class="string">&#x27;\r&#x27;</span>)</span><br><span class="line">        text[j++] = ch;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">  j = <span class="number">0</span>;</span><br><span class="line">  <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; threadNum; i++) &#123;</span><br><span class="line">    commands[i].pid = text[j++] - <span class="string">&#x27;0&#x27;</span>;</span><br><span class="line">    commands[i].type = text[j++];</span><br><span class="line">    commands[i].startTime = text[j++] - <span class="string">&#x27;0&#x27;</span>;</span><br><span class="line">    commands[i].lastTime = text[j++] - <span class="string">&#x27;0&#x27;</span>;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="comment">// generate threads</span></span><br><span class="line">  <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; threadNum; i++) &#123;</span><br><span class="line">    <span class="comment">// genrate readers</span></span><br><span class="line">    <span class="keyword">if</span> (commands[i].type == <span class="string">&#x27;R&#x27;</span>) &#123;</span><br><span class="line">      pthread_create(&amp;pid[i], <span class="literal">NULL</span>, reader, &amp;commands[i]);</span><br><span class="line">      <span class="built_in">printf</span>(<span class="string">&quot;Create Reader\n&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// generate writers</span></span><br><span class="line">    <span class="keyword">else</span> &#123;</span><br><span class="line">      pthread_create(&amp;pid[i], <span class="literal">NULL</span>, writer, &amp;commands[i]);</span><br><span class="line">      <span class="built_in">printf</span>(<span class="string">&quot;Create Writer\n&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="comment">// execute threads</span></span><br><span class="line">  <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; threadNum; i++) &#123;</span><br><span class="line">    pthread_join(pid[i], <span class="literal">NULL</span>);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="comment">// destroys semaphores</span></span><br><span class="line">  sem_destroy(&amp;mutex1);</span><br><span class="line">  sem_destroy(&amp;mutex2);</span><br><span class="line">  sem_destroy(&amp;rd);</span><br><span class="line">  sem_destroy(&amp;RW_mutex);</span><br><span class="line">  <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="结果分析"><a href="#结果分析" class="headerlink" title="结果分析"></a>结果分析</h3><p>读者优先结果：<br><img src="/images/reader_first.png" alt="读者优先"><br>写者优先结果：<br><img src="/images/writer_first.png" alt="写者优先"><br>&emsp;&emsp;可以看出，读者优先的情况下，当有读者在读的时候，后续的读者同样可以对数据进行读操作，仅当没有读者的时候，写者才进入临界区进行写操作。<br>&emsp;&emsp;写者优先的情况下，当有写者在等待时，新进来的读者不允许进行读操作。</p>
+<h2 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h2><p>&emsp;&emsp;同步互斥问题主要依赖于信号量来解决，我们需要合理地使用信号量，同步与互斥的信号量的顺序摆放也会决定死锁是否会出现。这两个问题只是很简单的同步互斥问题，但它们涵盖了这个问题的精髓。日后有机会再和大家分享有关的内容，谢谢！</p>
+
+    </div>
+
+    
+    
+    
+        <div class="reward-container">
+  <div></div>
+  <button onclick="var qr = document.getElementById('qr'); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    Donate
+  </button>
+  <div id="qr" style="display: none;">
+      
+      <div style="display: inline-block;">
+        <img src="/images/wechat_reward.png" alt="Leungyukshing WeChat Pay">
+        <p>WeChat Pay</p>
+      </div>
+      
+      <div style="display: inline-block;">
+        <img src="/images/alipay_reward.png" alt="Leungyukshing Alipay">
+        <p>Alipay</p>
+      </div>
+
+  </div>
+</div>
+
+        
+
+  <div class="followme">
+    <p>Welcome to my other publishing channels</p>
+
+    <div class="social-list">
+
+        <div class="social-item">
+          <a target="_blank" class="social-link" href="/atom.xml">
+            <span class="icon">
+              <i class="fa fa-rss"></i>
+            </span>
+
+            <span class="label">RSS</span>
+          </a>
+        </div>
+    </div>
+  </div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Operating-System/" rel="tag"># Operating System</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/archives/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%AE%9E%E9%AA%8C3--%E7%BA%BF%E7%A8%8B%E5%AE%9E%E9%AA%8C.html" rel="prev" title="操作系统实验3--线程实验">
+      <i class="fa fa-chevron-left"></i> 操作系统实验3--线程实验
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/archives/Android%E9%94%99%E8%AF%AF.html" rel="next" title="Android运行错误之xml控件问题">
+      Android运行错误之xml控件问题 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BB%8B%E7%BB%8D"><span class="nav-number">1.</span> <span class="nav-text">介绍</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%94%9F%E4%BA%A7%E8%80%85-%E6%B6%88%E8%B4%B9%E8%80%85%E9%97%AE%E9%A2%98"><span class="nav-number">2.</span> <span class="nav-text">生产者-消费者问题</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%97%AE%E9%A2%98%E8%A6%81%E6%B1%82"><span class="nav-number">2.1.</span> <span class="nav-text">问题要求</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BE%93%E5%85%A5%E6%A0%BC%E5%BC%8F"><span class="nav-number">2.2.</span> <span class="nav-text">输入格式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BE%93%E5%85%A5"><span class="nav-number">2.3.</span> <span class="nav-text">输入</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BB%A3%E7%A0%81%E5%AE%9E%E7%8E%B0"><span class="nav-number">2.4.</span> <span class="nav-text">代码实现</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%AF%BB%E8%80%85-%E5%86%99%E8%80%85%E9%97%AE%E9%A2%98"><span class="nav-number">3.</span> <span class="nav-text">读者-写者问题</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%97%AE%E9%A2%98%E8%A6%81%E6%B1%82-1"><span class="nav-number">3.1.</span> <span class="nav-text">问题要求</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BE%93%E5%85%A5%E6%A0%BC%E5%BC%8F-1"><span class="nav-number">3.2.</span> <span class="nav-text">输入格式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BE%93%E5%85%A5-1"><span class="nav-number">3.3.</span> <span class="nav-text">输入</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%AF%BB%E8%80%85%E4%BC%98%E5%85%88"><span class="nav-number">3.4.</span> <span class="nav-text">读者优先</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%86%99%E8%80%85%E4%BC%98%E5%85%88"><span class="nav-number">3.5.</span> <span class="nav-text">写者优先</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BB%93%E6%9E%9C%E5%88%86%E6%9E%90"><span class="nav-number">3.6.</span> <span class="nav-text">结果分析</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B0%8F%E7%BB%93"><span class="nav-number">4.</span> <span class="nav-text">小结</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Leungyukshing"
+      src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">Leungyukshing</p>
+  <div class="site-description" itemprop="description">A blog for code, programme sharing.</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">688</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">27</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/leungyukshing" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;leungyukshing" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:jacky14.liang@gmail.com" title="E-Mail → mailto:jacky14.liang@gmail.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="/atom.xml" title="RSS → &#x2F;atom.xml"><i class="fa fa-rss fa-fw"></i>RSS</a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll motion-element">
+    <div class="links-of-blogroll-title"><i class="fa fa-link fa-fw"></i>
+      Friends
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="http://www.liangjh45.com/" title="http:&#x2F;&#x2F;www.liangjh45.com&#x2F;" rel="noopener" target="_blank">Alva's blog</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="https://sysucarey.github.io/" title="https:&#x2F;&#x2F;sysucarey.github.io&#x2F;" rel="noopener" target="_blank">Carey's blog</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="https://blog.csdn.net/dickdick111/" title="https:&#x2F;&#x2F;blog.csdn.net&#x2F;dickdick111&#x2F;" rel="noopener" target="_blank">Dick's blog</a>
+        </li>
+    </ul>
+  </div>
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2017 – 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Leungyukshing</span>
+</div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="Total Visitors">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="Total Views">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : true,
+      appId      : 'AaLog29QcUdQKTboD6cY2dNP-gzGzoHsz',
+      appKey     : 'dUWNHLnTY9qG1jJwPnTtfMm8',
+      placeholder: "Just go go",
+      avatar     : 'mm',
+      meta       : guest,
+      pageSize   : '10' || 10,
+      visitor    : false,
+      lang       : '' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : false,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+
+</body>
+</html>

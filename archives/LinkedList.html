@@ -1,0 +1,640 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <meta name="google-site-verification" content="FHjCzDi7nry9Mvf4EFOY5cYoco-ZXq9tKjvXZK0nKr4">
+  <meta name="baidu-site-verification" content="code-gpMFPewYUF" />
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="/lib/pace/pace-theme-minimal.min.css">
+  <script src="/lib/pace/pace.min.js"></script>
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"leungyukshing.github.io","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"right","display":"hide","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"appID":"52USYSYESX","apiKey":"20b904c66f55b874f05edea4aca57780","indexName":"blog","hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="IntroductionThis post will show you a List implemented by using dynamic storage.Noted that we use the Node structure the same as which we have used in the previous containers. If you still have questi">
+<meta property="og:type" content="article">
+<meta property="og:title" content="LinkedList">
+<meta property="og:url" content="https://leungyukshing.github.io/archives/LinkedList.html">
+<meta property="og:site_name" content="Halo">
+<meta property="og:description" content="IntroductionThis post will show you a List implemented by using dynamic storage.Noted that we use the Node structure the same as which we have used in the previous containers. If you still have questi">
+<meta property="og:locale">
+<meta property="article:published_time" content="2018-02-03T14:36:55.000Z">
+<meta property="article:modified_time" content="2021-06-22T18:33:08.421Z">
+<meta property="article:author" content="Leungyukshing">
+<meta property="article:tag" content="STL">
+<meta property="article:tag" content="List">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://leungyukshing.github.io/archives/LinkedList.html">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-Hans'
+  };
+</script>
+
+  <title>LinkedList | Halo</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+<!-- hexo injector head_end end --><link rel="alternate" href="/atom.xml" title="Halo" type="application/atom+xml"><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Halo</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">A magic place for coding</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>About</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>Tags</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>Search
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="Searching..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+  <a href="https://github.com/leungyukshing" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="https://leungyukshing.github.io/archives/LinkedList.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="Leungyukshing">
+      <meta itemprop="description" content="A blog for code, programme sharing.">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Halo">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          LinkedList
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2018-02-03 09:36:55" itemprop="dateCreated datePublished" datetime="2018-02-03T09:36:55-05:00">2018-02-03</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2021-06-22 14:33:08" itemprop="dateModified" datetime="2021-06-22T14:33:08-04:00">2021-06-22</time>
+              </span>
+
+          
+            <span class="post-meta-item" title="Views" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">Views: </span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine: </span>
+    
+    <a title="valine" href="/archives/LinkedList.html#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/archives/LinkedList.html" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="Introduction"><a href="#Introduction" class="headerlink" title="Introduction"></a>Introduction</h2><p>This post will show you a List implemented by using dynamic storage.<br>Noted that we use the Node structure the same as which we have used in the previous containers. If you still have question about that, you can search <strong>Node</strong> in this station.</p>
+<a id="more"></a>
+
+<h3 id="Implementation"><a href="#Implementation" class="headerlink" title="Implementation"></a>Implementation</h3><p>Here I give the definition of LinkedList.(LinkedList.hpp)</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span> &lt;<span class="class"><span class="keyword">class</span> <span class="title">List_entry</span>&gt;</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">LinkedList</span> &#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">	LinkedList();</span><br><span class="line">	<span class="function"><span class="keyword">int</span> <span class="title">size</span><span class="params">()</span> <span class="keyword">const</span></span>;</span><br><span class="line">	<span class="comment">//bool full() const;</span></span><br><span class="line">	<span class="function"><span class="keyword">bool</span> <span class="title">empty</span><span class="params">()</span> <span class="keyword">const</span></span>;</span><br><span class="line">	<span class="function"><span class="keyword">void</span> <span class="title">clear</span><span class="params">()</span></span>;</span><br><span class="line">	<span class="function"><span class="keyword">void</span> <span class="title">traverse</span><span class="params">(<span class="keyword">void</span> (*visit)(List_entry&amp;))</span></span>;</span><br><span class="line">	<span class="function">Error_code <span class="title">retrieve</span><span class="params">(<span class="keyword">int</span> position, List_entry &amp;x)</span> <span class="keyword">const</span></span>;</span><br><span class="line">	<span class="function">Error_code <span class="title">replace</span><span class="params">(<span class="keyword">int</span> position, <span class="keyword">const</span> List_entry &amp;x)</span></span>;</span><br><span class="line">	<span class="function">Error_code <span class="title">remove</span><span class="params">(<span class="keyword">int</span> position, List_entry &amp;x)</span></span>;</span><br><span class="line">	<span class="function">Error_code <span class="title">insert</span><span class="params">(<span class="keyword">int</span> position, <span class="keyword">const</span> List_entry &amp;x)</span></span>;</span><br><span class="line">	~LinkedList();</span><br><span class="line">	LinkedList(<span class="keyword">const</span> LinkedList&lt;List_entry&gt; &amp;copy);</span><br><span class="line">	<span class="keyword">void</span> <span class="keyword">operator</span>=(<span class="keyword">const</span> LinkedList&lt;List_entry&gt; &amp;copy);</span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">	<span class="keyword">int</span> count;</span><br><span class="line">	Node&lt;List_entry&gt; *head;</span><br><span class="line"></span><br><span class="line">	<span class="comment">//auxiliary function used to locate list positions</span></span><br><span class="line">	<span class="function">Node&lt;List_entry&gt; *<span class="title">set_position</span><span class="params">(<span class="keyword">int</span> position)</span> <span class="keyword">const</span></span>;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<p>Please pay attention that I have included an auxiliary function <strong>set_position()</strong> which will prove useful in our implementations of the methods.</p>
+<h4 id="LinkedList"><a href="#LinkedList" class="headerlink" title="LinkedList()"></a>LinkedList()</h4><p><em>precondition</em>: None.<br><em>postcondition</em>: The <em>List</em> has been created and is initialized to be empty.</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span> &lt;<span class="class"><span class="keyword">class</span> <span class="title">List_entry</span>&gt;</span></span><br><span class="line">LinkedList&lt;List_entry&gt;::LinkedList() &#123;</span><br><span class="line">	count = <span class="number">0</span>;</span><br><span class="line">	head = <span class="literal">NULL</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="size"><a href="#size" class="headerlink" title="size()"></a>size()</h4><p><em>precondition</em>: None.<br><em>postcondition</em>: The function returns the number of items in the <em>List</em>.</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span> &lt;<span class="class"><span class="keyword">class</span> <span class="title">List_entry</span>&gt;</span></span><br><span class="line"><span class="keyword">int</span> LinkedList&lt;List_entry&gt;::size() <span class="keyword">const</span> &#123; <span class="keyword">return</span> count; &#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="empty"><a href="#empty" class="headerlink" title="empty()"></a>empty()</h4><p><em>precondition</em>: None.<br><em>postcondition</em>: The function returns <strong>true</strong> or <strong>false</strong> according to whether the <em>List</em> is empty or not.</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span> &lt;<span class="class"><span class="keyword">class</span> <span class="title">List_entry</span>&gt;</span></span><br><span class="line"><span class="keyword">bool</span> LinkedList&lt;List_entry&gt;::empty() <span class="keyword">const</span> &#123; <span class="keyword">return</span> count == <span class="number">0</span>; &#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="clear"><a href="#clear" class="headerlink" title="clear()"></a>clear()</h4><p><em>precondition</em>: None.<br><em>postcondition</em>: All <em>List</em> items have been removed; the <em>List</em> is empty.</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span> &lt;<span class="class"><span class="keyword">class</span> <span class="title">List_entry</span>&gt;</span></span><br><span class="line"><span class="keyword">void</span> LinkedList&lt;List_entry&gt;::clear() &#123;</span><br><span class="line">	Node&lt;List_entry&gt;* p1 = head;</span><br><span class="line">	<span class="keyword">while</span> (p1 != <span class="literal">NULL</span>)</span><br><span class="line">	&#123;</span><br><span class="line">		Node&lt;List_entry&gt;* temp = p1;</span><br><span class="line">		p1 = p1-&gt;next;</span><br><span class="line">		<span class="keyword">delete</span> temp;</span><br><span class="line">	&#125;</span><br><span class="line">	head = <span class="literal">NULL</span>;</span><br><span class="line">	count = <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="traverse-void-visit-List-entry-amp"><a href="#traverse-void-visit-List-entry-amp" class="headerlink" title="traverse(void (*visit)(List_entry&amp;))"></a>traverse(void (*visit)(List_entry&amp;))</h4><p><em>precondition</em>: None.<br><em>postcondition</em>: The action specified by function *visit has been performed on every item of the List, beginning at position 0 and doing each in turn.</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span> &lt;<span class="class"><span class="keyword">class</span> <span class="title">List_entry</span>&gt;</span></span><br><span class="line"><span class="keyword">void</span> LinkedList&lt;List_entry&gt;::traverse(<span class="keyword">void</span> (*visit)(List_entry&amp;)) &#123;</span><br><span class="line">	Node&lt;List_entry&gt;* p1 = head;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; count; i++) &#123;</span><br><span class="line">		(*visit)(p1-&gt;entry);</span><br><span class="line">		p1 = p1-&gt;next;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="retrieve-int-position-List-entry-amp-x"><a href="#retrieve-int-position-List-entry-amp-x" class="headerlink" title="retrieve(int position, List_entry &amp;x)"></a>retrieve(int position, List_entry &amp;x)</h4><p><em>precondition</em>: None.<br><em>postcondition</em>: If 0 ≤ position &lt; n, where n is the number of items in the <em>List</em>, the function succeeds: The item at position is copied to x; all <em>List</em> items remain unchanged. Else: The function fails with a diagnostic error code.</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span> &lt;<span class="class"><span class="keyword">class</span> <span class="title">List_entry</span>&gt;</span></span><br><span class="line">Error_code LinkedList&lt;List_entry&gt;::retrieve(<span class="keyword">int</span> position, List_entry &amp;x) <span class="keyword">const</span> &#123;</span><br><span class="line">  <span class="keyword">if</span> (empty()) &#123;</span><br><span class="line">    <span class="keyword">return</span> UnderFlow;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">if</span> (position &lt; <span class="number">0</span> || position &gt;= count) &#123;</span><br><span class="line">    <span class="keyword">return</span> Range_over;</span><br><span class="line">  &#125;</span><br><span class="line">  Node&lt;List_entry&gt;* p = set_position(position);</span><br><span class="line">  x = p-&gt;entry;</span><br><span class="line">  <span class="keyword">return</span> Success;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="replace-int-position-const-List-entry-amp-x"><a href="#replace-int-position-const-List-entry-amp-x" class="headerlink" title="replace(int position, const List_entry &amp;x)"></a>replace(int position, <strong>const</strong> List_entry &amp;x)</h4><p><em>precondition</em>: None.<br><em>postcondition</em>: If 0 ≤ position &lt; n, where n is the number of items in the <em>List</em>, the function succeeds: The item at position is replaced by x; all other items remain unchanged. Else: The function fails with a diagnostic error code.</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span> &lt;<span class="class"><span class="keyword">class</span> <span class="title">List_entry</span>&gt;</span></span><br><span class="line">Error_code LinkedList&lt;List_entry&gt;::replace(<span class="keyword">int</span> position, <span class="keyword">const</span> List_entry &amp;x) &#123;</span><br><span class="line">  <span class="keyword">if</span> (empty()) &#123;</span><br><span class="line">    <span class="keyword">return</span> UnderFlow;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">if</span> (position &lt; <span class="number">0</span> || position &gt;= count) &#123;</span><br><span class="line">    <span class="keyword">return</span> Range_over;</span><br><span class="line">  &#125;</span><br><span class="line">  Node&lt;List_entry&gt;* p = set_position(position);</span><br><span class="line">  p-&gt;entry = x;</span><br><span class="line">  <span class="keyword">return</span> Success;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="remove-int-position-List-entry-amp-x"><a href="#remove-int-position-List-entry-amp-x" class="headerlink" title="remove(int position, List_entry &amp;x)"></a>remove(int position, List_entry &amp;x)</h4><p><em>precondition</em>: None.<br><em>postcondition</em>: If 0 ≤ position &lt; n, where n is the number of items in the <em>List</em>, the function succeeds: The item at position is removed from the <em>List</em>. The parameter x records a copy of the item formerly at position. Else: The function fails with a diagnostic error code.</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span> &lt;<span class="class"><span class="keyword">class</span> <span class="title">List_entry</span>&gt;</span></span><br><span class="line">Error_code LinkedList&lt;List_entry&gt;::remove(<span class="keyword">int</span> position, List_entry &amp;x) &#123;</span><br><span class="line">  <span class="keyword">if</span> (empty()) &#123;</span><br><span class="line">    <span class="keyword">return</span> UnderFlow;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">if</span> (position &lt; <span class="number">0</span> || position &gt;= count) &#123;</span><br><span class="line">    <span class="keyword">return</span> Range_over;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">if</span> (count == <span class="number">1</span>) &#123;</span><br><span class="line">    <span class="keyword">delete</span> head;</span><br><span class="line">    head = <span class="literal">NULL</span>;</span><br><span class="line">    count = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">return</span> Success;</span><br><span class="line">  &#125;</span><br><span class="line">  Node&lt;List_entry&gt;* pre = set_position(position - <span class="number">1</span>);</span><br><span class="line">  Node&lt;List_entry&gt;* p = set_position(position);</span><br><span class="line">  pre-&gt;next = p-&gt;next;</span><br><span class="line">  x = p-&gt;entry;</span><br><span class="line">  <span class="keyword">delete</span> p;</span><br><span class="line">  count--;</span><br><span class="line">  <span class="keyword">return</span> Success;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="insert-int-position-const-List-entry-amp-x"><a href="#insert-int-position-const-List-entry-amp-x" class="headerlink" title="insert(int position, const List_entry &amp;x)"></a>insert(int position, const List_entry &amp;x)</h4><p><em>precondition</em>: None.<br><em>postcondition</em>: If the <em>List</em> is not full and 0 ≤ position ≤ n, where n is the number of items in the <em>List</em>, the function succeeds: x is inserted at position of the <em>List</em>. Else: the function fails with a diagnostic error code.</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span> &lt;<span class="class"><span class="keyword">class</span> <span class="title">List_entry</span>&gt;</span></span><br><span class="line">Error_code LinkedList&lt;List_entry&gt;::insert(<span class="keyword">int</span> position, <span class="keyword">const</span> List_entry &amp;x) &#123;</span><br><span class="line">  <span class="keyword">if</span> (position &lt; <span class="number">0</span> || position &gt; count) &#123;</span><br><span class="line">    <span class="comment">//cout &lt;&lt; &quot;hello&quot; &lt;&lt; endl;</span></span><br><span class="line">    <span class="keyword">return</span> Range_over;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">if</span> (position == <span class="number">0</span>) &#123;</span><br><span class="line">    Node&lt;List_entry&gt;* p = <span class="keyword">new</span> Node&lt;List_entry&gt;(x);</span><br><span class="line">    p-&gt;next = head;</span><br><span class="line">    head = p;</span><br><span class="line">    count++;</span><br><span class="line">    <span class="keyword">return</span> Success;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">else</span> &#123;</span><br><span class="line">    Node&lt;List_entry&gt;* p = <span class="keyword">new</span> Node&lt;List_entry&gt;(x);</span><br><span class="line">    Node&lt;List_entry&gt;* pre = set_position(position - <span class="number">1</span>);</span><br><span class="line">    p-&gt;next = pre-&gt;next;</span><br><span class="line">    pre-&gt;next = p;</span><br><span class="line">    count++;</span><br><span class="line">    <span class="keyword">return</span> Success;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="LinkedList-1"><a href="#LinkedList-1" class="headerlink" title="~LinkedList()"></a>~LinkedList()</h4><p><em>precondition</em>: None.<br><em>postcondition</em>: Clear the <em>List</em> itself.</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span> &lt;<span class="class"><span class="keyword">class</span> <span class="title">List_entry</span>&gt;</span></span><br><span class="line">LinkedList&lt;List_entry&gt;::~LinkedList() &#123;</span><br><span class="line">	count = <span class="number">0</span>;</span><br><span class="line">	clear();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="LinkedList-const-LinkedList-lt-List-entry-gt-amp-copy"><a href="#LinkedList-const-LinkedList-lt-List-entry-gt-amp-copy" class="headerlink" title="LinkedList(const LinkedList&lt; List_entry &gt; &amp;copy)"></a>LinkedList(const LinkedList&lt; List_entry &gt; &amp;copy)</h4><p><em>precondition</em>: None.<br><em>postcondition</em>: The <em>List</em> is initialized as a copy of <em>List</em> copy.</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span> &lt;<span class="class"><span class="keyword">class</span> <span class="title">List_entry</span>&gt;</span></span><br><span class="line">LinkedList&lt;List_entry&gt;::LinkedList(<span class="keyword">const</span> LinkedList&lt;List_entry&gt; &amp;copy) &#123;</span><br><span class="line">	<span class="keyword">if</span> (copy.head == <span class="literal">NULL</span>) &#123;</span><br><span class="line">		<span class="keyword">this</span>-&gt;head = <span class="literal">NULL</span>;</span><br><span class="line">		<span class="keyword">this</span>-&gt;count = <span class="number">0</span>;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">else</span> &#123;</span><br><span class="line">		Node&lt;List_entry&gt;* p2 = copy.head;</span><br><span class="line">		<span class="keyword">this</span>.head = <span class="keyword">new</span> Node&lt;List_entry&gt;(p2-&gt;entry);</span><br><span class="line">		p2 = p2-&gt;next;</span><br><span class="line">		Node&lt;List_entry&gt;* p1 = <span class="keyword">this</span>.head;</span><br><span class="line">		<span class="keyword">this</span>.count = copy.count;</span><br><span class="line"></span><br><span class="line">		<span class="keyword">while</span> (p2 != <span class="literal">NULL</span>) &#123;</span><br><span class="line">			p1-&gt;next = <span class="keyword">new</span> Node&lt;List_entry&gt;(p2-&gt;entry);</span><br><span class="line">			p1 = p1-&gt;next;</span><br><span class="line">			p2 = p2-&gt;next;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="operator-const-LinkedList-lt-List-entry-gt-amp-copy"><a href="#operator-const-LinkedList-lt-List-entry-gt-amp-copy" class="headerlink" title="operator=(const LinkedList&lt; List_entry &gt; &amp;copy)"></a>operator=(const LinkedList&lt; List_entry &gt; &amp;copy)</h4><p><em>precondition</em>: None.<br><em>postcondition</em>: The <em>List</em> is reset as a copy of <em>List</em> copy.</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span> &lt;<span class="class"><span class="keyword">class</span> <span class="title">List_entry</span>&gt;</span></span><br><span class="line"><span class="keyword">void</span> LinkedList&lt;List_entry&gt;::<span class="keyword">operator</span>=(<span class="keyword">const</span> LinkedList&lt;List_entry&gt; &amp;copy) &#123;</span><br><span class="line">  <span class="keyword">if</span> (*<span class="keyword">this</span> == copy) &#123;</span><br><span class="line">    <span class="keyword">return</span>;</span><br><span class="line">  &#125;</span><br><span class="line">  clear();</span><br><span class="line">  <span class="keyword">if</span> (copy.head == <span class="literal">NULL</span>) &#123;</span><br><span class="line">    <span class="keyword">this</span>-&gt;head = <span class="literal">NULL</span>;</span><br><span class="line">    <span class="keyword">this</span>-&gt;count = <span class="number">0</span>;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">else</span> &#123;</span><br><span class="line">    Node&lt;List_entry&gt;* p2 = copy.head;</span><br><span class="line">    <span class="keyword">this</span>.head = <span class="keyword">new</span> Node&lt;List_entry&gt;(p2-&gt;entry);</span><br><span class="line">    p2 = p2-&gt;next;</span><br><span class="line">    Node&lt;List_entry&gt;* p1 = <span class="keyword">this</span>.head;</span><br><span class="line">    <span class="keyword">this</span>.count = copy.count;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">while</span> (p2 != <span class="literal">NULL</span>) &#123;</span><br><span class="line">      p1-&gt;next = <span class="keyword">new</span> Node&lt;List_entry&gt;(p2-&gt;entry);</span><br><span class="line">      p1 = p1-&gt;next;</span><br><span class="line">      p2 = p2-&gt;next;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="set-position-int-position"><a href="#set-position-int-position" class="headerlink" title="set_position(int position)"></a>set_position(int position)</h4><p><em>precondition</em>: position is a valid position in the <em>List</em>; 0 ≤ position &lt; count.<br><em>postcondition</em>: Returns a pointer to the Node in position.</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span> &lt;<span class="class"><span class="keyword">class</span> <span class="title">List_entry</span>&gt;</span></span><br><span class="line">Node&lt;List_entry&gt; *LinkedList&lt;List_entry&gt;::set_position(<span class="keyword">int</span> position) <span class="keyword">const</span> &#123;</span><br><span class="line">  Node&lt;List_entry&gt;* p1 = head;</span><br><span class="line">  <span class="keyword">if</span> (position &lt; <span class="number">0</span> || position &gt;= count) &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">NULL</span>;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">while</span> (position--) &#123;</span><br><span class="line">    p1 = p1-&gt;next;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> p1;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>Above is the definition and its implementations of a LinkedList. In this post, I’d like to make a comparation between a <em>contiguous</em> list and a <em>linked</em> list concerning to their time complexity.<br>The contiguous list:</p>
+<ul>
+<li><strong>insert</strong> and <strong>remove</strong> require time approximately proportional to <strong>n</strong>(<strong>O(n)</strong>).</li>
+<li><strong>List</strong>, <strong>clear</strong>, <strong>empty</strong>, <strong>full</strong>, <strong>size</strong>, <strong>replace</strong>, and <strong>retrieve</strong> operate in constant time(<strong>O(1)</strong>).</li>
+</ul>
+<p>The linked list:</p>
+<ul>
+<li><strong>clear</strong>, <strong>insert</strong>, <strong>remove</strong>, <strong>retrieve</strong>, and <strong>replace</strong> require time approximately proportional to <strong>n</strong>(<strong>O(n)</strong>).</li>
+<li><strong>List</strong>, <strong>empty</strong>, <strong>full</strong>, and <strong>size</strong> operate in constant time(<strong>O(1)</strong>).</li>
+</ul>
+<p>Noted that I havn’t included <strong>traverse</strong> in this discussion, since its time depends on the time used by its parameter <strong>visit</strong>, which we don’t know.</p>
+<p>This is all the content of this post. Hope it can be useful to your. Thank you very much!</p>
+
+    </div>
+
+    
+    
+    
+        <div class="reward-container">
+  <div></div>
+  <button onclick="var qr = document.getElementById('qr'); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    Donate
+  </button>
+  <div id="qr" style="display: none;">
+      
+      <div style="display: inline-block;">
+        <img src="/images/wechat_reward.png" alt="Leungyukshing WeChat Pay">
+        <p>WeChat Pay</p>
+      </div>
+      
+      <div style="display: inline-block;">
+        <img src="/images/alipay_reward.png" alt="Leungyukshing Alipay">
+        <p>Alipay</p>
+      </div>
+
+  </div>
+</div>
+
+        
+
+  <div class="followme">
+    <p>Welcome to my other publishing channels</p>
+
+    <div class="social-list">
+
+        <div class="social-item">
+          <a target="_blank" class="social-link" href="/atom.xml">
+            <span class="icon">
+              <i class="fa fa-rss"></i>
+            </span>
+
+            <span class="label">RSS</span>
+          </a>
+        </div>
+    </div>
+  </div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/STL/" rel="tag"># STL</a>
+              <a href="/tags/List/" rel="tag"># List</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/archives/List.html" rel="prev" title="List">
+      <i class="fa fa-chevron-left"></i> List
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/archives/DoublyLinkedList.html" rel="next" title="DoublyLinkedList">
+      DoublyLinkedList <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Introduction"><span class="nav-number">1.</span> <span class="nav-text">Introduction</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Implementation"><span class="nav-number">1.1.</span> <span class="nav-text">Implementation</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#LinkedList"><span class="nav-number">1.1.1.</span> <span class="nav-text">LinkedList()</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#size"><span class="nav-number">1.1.2.</span> <span class="nav-text">size()</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#empty"><span class="nav-number">1.1.3.</span> <span class="nav-text">empty()</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#clear"><span class="nav-number">1.1.4.</span> <span class="nav-text">clear()</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#traverse-void-visit-List-entry-amp"><span class="nav-number">1.1.5.</span> <span class="nav-text">traverse(void (*visit)(List_entry&amp;))</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#retrieve-int-position-List-entry-amp-x"><span class="nav-number">1.1.6.</span> <span class="nav-text">retrieve(int position, List_entry &amp;x)</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#replace-int-position-const-List-entry-amp-x"><span class="nav-number">1.1.7.</span> <span class="nav-text">replace(int position, const List_entry &amp;x)</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#remove-int-position-List-entry-amp-x"><span class="nav-number">1.1.8.</span> <span class="nav-text">remove(int position, List_entry &amp;x)</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#insert-int-position-const-List-entry-amp-x"><span class="nav-number">1.1.9.</span> <span class="nav-text">insert(int position, const List_entry &amp;x)</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#LinkedList-1"><span class="nav-number">1.1.10.</span> <span class="nav-text">~LinkedList()</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#LinkedList-const-LinkedList-lt-List-entry-gt-amp-copy"><span class="nav-number">1.1.11.</span> <span class="nav-text">LinkedList(const LinkedList&lt; List_entry &gt; &amp;copy)</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#operator-const-LinkedList-lt-List-entry-gt-amp-copy"><span class="nav-number">1.1.12.</span> <span class="nav-text">operator&#x3D;(const LinkedList&lt; List_entry &gt; &amp;copy)</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#set-position-int-position"><span class="nav-number">1.1.13.</span> <span class="nav-text">set_position(int position)</span></a></li></ol></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Leungyukshing"
+      src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">Leungyukshing</p>
+  <div class="site-description" itemprop="description">A blog for code, programme sharing.</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">688</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">27</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/leungyukshing" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;leungyukshing" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:jacky14.liang@gmail.com" title="E-Mail → mailto:jacky14.liang@gmail.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="/atom.xml" title="RSS → &#x2F;atom.xml"><i class="fa fa-rss fa-fw"></i>RSS</a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll motion-element">
+    <div class="links-of-blogroll-title"><i class="fa fa-link fa-fw"></i>
+      Friends
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="http://www.liangjh45.com/" title="http:&#x2F;&#x2F;www.liangjh45.com&#x2F;" rel="noopener" target="_blank">Alva's blog</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="https://sysucarey.github.io/" title="https:&#x2F;&#x2F;sysucarey.github.io&#x2F;" rel="noopener" target="_blank">Carey's blog</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="https://blog.csdn.net/dickdick111/" title="https:&#x2F;&#x2F;blog.csdn.net&#x2F;dickdick111&#x2F;" rel="noopener" target="_blank">Dick's blog</a>
+        </li>
+    </ul>
+  </div>
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2017 – 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Leungyukshing</span>
+</div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="Total Visitors">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="Total Views">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : true,
+      appId      : 'AaLog29QcUdQKTboD6cY2dNP-gzGzoHsz',
+      appKey     : 'dUWNHLnTY9qG1jJwPnTtfMm8',
+      placeholder: "Just go go",
+      avatar     : 'mm',
+      meta       : guest,
+      pageSize   : '10' || 10,
+      visitor    : false,
+      lang       : '' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : false,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+
+</body>
+</html>

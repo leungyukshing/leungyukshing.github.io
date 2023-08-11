@@ -1,0 +1,382 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>Halo</title>
+  
+  <subtitle>A magic place for coding</subtitle>
+  <link href="https://leungyukshing.github.io/atom.xml" rel="self"/>
+  
+  <link href="https://leungyukshing.github.io/"/>
+  <updated>2023-08-11T06:02:19.931Z</updated>
+  <id>https://leungyukshing.github.io/</id>
+  
+  <author>
+    <name>Leungyukshing</name>
+    
+  </author>
+  
+  <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>Cookiecutter</title>
+    <link href="https://leungyukshing.github.io/archives/Cookiecutter.html"/>
+    <id>https://leungyukshing.github.io/archives/Cookiecutter.html</id>
+    <published>2023-07-01T03:38:23.000Z</published>
+    <updated>2023-08-11T06:02:19.931Z</updated>
+    
+    
+    <summary type="html">&lt;h1 id=&quot;Cookiecutter&quot;&gt;&lt;a href=&quot;#Cookiecutter&quot; class=&quot;headerlink&quot; title=&quot;Cookiecutter&quot;&gt;&lt;/a&gt;Cookiecutter&lt;/h1&gt;&lt;p&gt;Cookiecutter is a command-line tool used to create structured projects from a template. It’s a widely-used tool in the industry and it also support engineers to customize their own templates and share with others. In this post, I would like to.share some basic information about cookiecutter.&lt;/p&gt;</summary>
+    
+    
+    
+    
+  </entry>
+  
+  <entry>
+    <title>Docker TTY</title>
+    <link href="https://leungyukshing.github.io/archives/Docker-tty.html"/>
+    <id>https://leungyukshing.github.io/archives/Docker-tty.html</id>
+    <published>2023-06-25T04:39:18.000Z</published>
+    <updated>2023-08-11T06:02:19.931Z</updated>
+    
+    
+    <summary type="html">&lt;h1 id=&quot;What-is-“tty”-in-Docker&quot;&gt;&lt;a href=&quot;#What-is-“tty”-in-Docker&quot; class=&quot;headerlink&quot; title=&quot;What is “tty” in Docker&quot;&gt;&lt;/a&gt;What is “tty” in Docker&lt;/h1&gt;&lt;p&gt;Many &lt;code&gt;docker-compose.yml&lt;/code&gt; files will contain a line &lt;code&gt;tty:true&lt;/code&gt;. A lot of engineers only copy this line when they create a new one but few of them actually know what it is for. Why do we need to write it down in our service? Do we really need it? In this post, I’ll explain why we use it and how can we use it.&lt;/p&gt;</summary>
+    
+    
+    
+    
+  </entry>
+  
+  <entry>
+    <title>SoccerLive Release</title>
+    <link href="https://leungyukshing.github.io/archives/SoccerLive-Release.html"/>
+    <id>https://leungyukshing.github.io/archives/SoccerLive-Release.html</id>
+    <published>2023-06-08T01:09:13.000Z</published>
+    <updated>2023-08-11T06:02:19.963Z</updated>
+    
+    
+      
+      
+        
+        
+    <summary type="html">&lt;h1 id=&quot;SoccerLive-Release&quot;&gt;&lt;a href=&quot;#SoccerLive-Release&quot; class=&quot;headerlink&quot; title=&quot;SoccerLive Release&quot;&gt;&lt;/a&gt;SoccerLive Release&lt;/h1&gt;&lt;p&gt;Hey</summary>
+        
+      
+    
+    
+    
+    
+  </entry>
+  
+  <entry>
+    <title>Github Updates RSA Key</title>
+    <link href="https://leungyukshing.github.io/archives/Github-Update-RSA-Key.html"/>
+    <id>https://leungyukshing.github.io/archives/Github-Update-RSA-Key.html</id>
+    <published>2023-05-16T00:38:23.000Z</published>
+    <updated>2023-08-11T06:02:19.931Z</updated>
+    
+    
+    <summary type="html">&lt;h1 id=&quot;Introduction&quot;&gt;&lt;a href=&quot;#Introduction&quot; class=&quot;headerlink&quot; title=&quot;Introduction&quot;&gt;&lt;/a&gt;Introduction&lt;/h1&gt;&lt;p&gt;Hey, it’s been a long time since my last post. It’s been a difficult time for me in the past few months and I’m very happy to return to update my blog! Let’s start with a news about Github!&lt;/p&gt;</summary>
+    
+    
+    
+    
+  </entry>
+  
+  <entry>
+    <title>Introduction on eBPF</title>
+    <link href="https://leungyukshing.github.io/archives/eBPF.html"/>
+    <id>https://leungyukshing.github.io/archives/eBPF.html</id>
+    <published>2022-06-18T22:47:36.000Z</published>
+    <updated>2023-08-11T06:02:19.963Z</updated>
+    
+    
+    <summary type="html">&lt;h1 id=&quot;Introduction&quot;&gt;&lt;a href=&quot;#Introduction&quot; class=&quot;headerlink&quot; title=&quot;Introduction&quot;&gt;&lt;/a&gt;Introduction&lt;/h1&gt;&lt;p&gt;&lt;a href=&quot;https://ebpf.io/&quot;&gt;eBPF&lt;/a&gt; (&lt;strong&gt;e&lt;/strong&gt;xternal &lt;strong&gt;B&lt;/strong&gt;erkerly &lt;strong&gt;P&lt;/strong&gt;acket &lt;strong&gt;F&lt;/strong&gt;ilter) is a technology originated in the Linux kernel that can run sandboxed programs in the OS kernel. It provides users with the ability to ingest user-defined program into the OS kernel without modifying the kernel code.&lt;/p&gt;
+&lt;p&gt;In this post, I will share some basics about eBPF and write a simple eBPF program.&lt;/p&gt;</summary>
+    
+    
+    
+    
+  </entry>
+  
+  <entry>
+    <title>LeetCode解题报告（519）-- 2174. Remove All Ones With Row and Column Flips II</title>
+    <link href="https://leungyukshing.github.io/archives/LeetCode%E8%A7%A3%E9%A2%98%E6%8A%A5%E5%91%8A%EF%BC%88519%EF%BC%89--%202174.%20Remove%20All%20Ones%20With%20Row%20and%20Column%20Flips%20II.html"/>
+    <id>https://leungyukshing.github.io/archives/LeetCode%E8%A7%A3%E9%A2%98%E6%8A%A5%E5%91%8A%EF%BC%88519%EF%BC%89--%202174.%20Remove%20All%20Ones%20With%20Row%20and%20Column%20Flips%20II.html</id>
+    <published>2022-04-13T20:01:23.000Z</published>
+    <updated>2023-08-11T06:02:19.959Z</updated>
+    
+    
+    <summary type="html">&lt;h2 id=&quot;Problem&quot;&gt;&lt;a href=&quot;#Problem&quot; class=&quot;headerlink&quot; title=&quot;Problem&quot;&gt;&lt;/a&gt;Problem&lt;/h2&gt;&lt;p&gt;You are given a &lt;strong&gt;0-indexed&lt;/strong&gt; &lt;code&gt;m x n&lt;/code&gt; &lt;strong&gt;binary&lt;/strong&gt; matrix &lt;code&gt;grid&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;In one operation, you can choose any &lt;code&gt;i&lt;/code&gt; and &lt;code&gt;j&lt;/code&gt; that meet the following conditions:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;0 &amp;lt;= i &amp;lt; m&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;0 &amp;lt;= j &amp;lt; n&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;grid[i][j] == 1&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;and change the values of &lt;strong&gt;all&lt;/strong&gt; cells in row &lt;code&gt;i&lt;/code&gt; and column &lt;code&gt;j&lt;/code&gt; to zero.&lt;/p&gt;
+&lt;p&gt;Return &lt;em&gt;the &lt;strong&gt;minimum&lt;/strong&gt; number of operations needed to remove all&lt;/em&gt; &lt;code&gt;1&lt;/code&gt;&lt;em&gt;‘s from&lt;/em&gt; &lt;code&gt;grid&lt;/code&gt;&lt;em&gt;.&lt;/em&gt;&lt;/p&gt;</summary>
+    
+    
+    
+    
+  </entry>
+  
+  <entry>
+    <title>LeetCode解题报告（518）-- 2128. Remove All Ones With Row and Column Flips</title>
+    <link href="https://leungyukshing.github.io/archives/LeetCode%E8%A7%A3%E9%A2%98%E6%8A%A5%E5%91%8A%EF%BC%88518%EF%BC%89--%202128.%20Remove%20All%20Ones%20With%20Row%20and%20Column%20Flips.html"/>
+    <id>https://leungyukshing.github.io/archives/LeetCode%E8%A7%A3%E9%A2%98%E6%8A%A5%E5%91%8A%EF%BC%88518%EF%BC%89--%202128.%20Remove%20All%20Ones%20With%20Row%20and%20Column%20Flips.html</id>
+    <published>2022-04-13T19:48:15.000Z</published>
+    <updated>2023-08-11T06:02:19.955Z</updated>
+    
+    
+    <summary type="html">&lt;h2 id=&quot;Problem&quot;&gt;&lt;a href=&quot;#Problem&quot; class=&quot;headerlink&quot; title=&quot;Problem&quot;&gt;&lt;/a&gt;Problem&lt;/h2&gt;&lt;p&gt;You are given an &lt;code&gt;m x n&lt;/code&gt; binary matrix &lt;code&gt;grid&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;In one operation, you can choose &lt;strong&gt;any&lt;/strong&gt; row or column and flip each value in that row or column (i.e., changing all &lt;code&gt;0&lt;/code&gt;‘s to &lt;code&gt;1&lt;/code&gt;‘s, and all &lt;code&gt;1&lt;/code&gt;‘s to &lt;code&gt;0&lt;/code&gt;‘s).&lt;/p&gt;
+&lt;p&gt;Return &lt;code&gt;true&lt;/code&gt; &lt;em&gt;if it is possible to remove all&lt;/em&gt; &lt;code&gt;1&lt;/code&gt;&lt;em&gt;‘s from&lt;/em&gt; &lt;code&gt;grid&lt;/code&gt; using &lt;strong&gt;any&lt;/strong&gt; number of operations or &lt;code&gt;false&lt;/code&gt; otherwise.&lt;/p&gt;</summary>
+    
+    
+    
+    
+  </entry>
+  
+  <entry>
+    <title>LeetCode解题报告（517）-- 1381. Design a Stack With Increment Operation</title>
+    <link href="https://leungyukshing.github.io/archives/LeetCode%E8%A7%A3%E9%A2%98%E6%8A%A5%E5%91%8A%EF%BC%88517%EF%BC%89--%201381.%20Design%20a%20Stack%20With%20Increment%20Operation.html"/>
+    <id>https://leungyukshing.github.io/archives/LeetCode%E8%A7%A3%E9%A2%98%E6%8A%A5%E5%91%8A%EF%BC%88517%EF%BC%89--%201381.%20Design%20a%20Stack%20With%20Increment%20Operation.html</id>
+    <published>2022-04-13T15:40:42.000Z</published>
+    <updated>2023-08-11T06:02:19.955Z</updated>
+    
+    
+    <summary type="html">&lt;h2 id=&quot;Problem&quot;&gt;&lt;a href=&quot;#Problem&quot; class=&quot;headerlink&quot; title=&quot;Problem&quot;&gt;&lt;/a&gt;Problem&lt;/h2&gt;&lt;p&gt;Design a stack which supports the following operations.&lt;/p&gt;
+&lt;p&gt;Implement the &lt;code&gt;CustomStack&lt;/code&gt; class:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;CustomStack(int maxSize)&lt;/code&gt; Initializes the object with &lt;code&gt;maxSize&lt;/code&gt; which is the maximum number of elements in the stack or do nothing if the stack reached the &lt;code&gt;maxSize&lt;/code&gt;.&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;void push(int x)&lt;/code&gt; Adds &lt;code&gt;x&lt;/code&gt; to the top of the stack if the stack hasn’t reached the &lt;code&gt;maxSize&lt;/code&gt;.&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;int pop()&lt;/code&gt; Pops and returns the top of stack or &lt;strong&gt;-1&lt;/strong&gt; if the stack is empty.&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;void inc(int k, int val)&lt;/code&gt; Increments the bottom &lt;code&gt;k&lt;/code&gt; elements of the stack by &lt;code&gt;val&lt;/code&gt;. If there are less than &lt;code&gt;k&lt;/code&gt; elements in the stack, just increment all the elements in the stack.&lt;/li&gt;
+&lt;/ul&gt;</summary>
+    
+    
+    
+    
+  </entry>
+  
+  <entry>
+    <title>小红与粉刷匠</title>
+    <link href="https://leungyukshing.github.io/archives/Painter-Problem.html"/>
+    <id>https://leungyukshing.github.io/archives/Painter-Problem.html</id>
+    <published>2022-04-12T03:43:18.000Z</published>
+    <updated>2023-08-11T06:02:19.963Z</updated>
+    
+    
+    <summary type="html">&lt;h2 id=&quot;Problem&quot;&gt;&lt;a href=&quot;#Problem&quot; class=&quot;headerlink&quot; title=&quot;Problem&quot;&gt;&lt;/a&gt;Problem&lt;/h2&gt;&lt;p&gt;&amp;emsp;&amp;emsp;小红遇到了一名粉刷匠。这名粉刷匠有三种颜料，分别是红、黄、蓝。为了方便， 这三种颜料分别命名为 A，B，C。&lt;/p&gt;
+&lt;p&gt;&amp;emsp;&amp;emsp;现在，粉刷匠正在粉刷一面长度为3n 的墙壁。粉刷完之后，三种颜料的数目都相同。由于小红一不小心踢到了颜料桶，使得这面墙的每个地方都被染上了三种颜料中的其中一种，这很让粉刷匠头疼。&lt;/p&gt;
+&lt;p&gt;&amp;emsp;&amp;emsp;粉刷匠每次可以选择一段连续的墙壁进行粉刷，即全部粉刷上同一种颜色（A,B,C 三种中的其中一种）。粉刷匠想知道，他最少需要多少次粉刷才能使得三种颜料的数目都相同？&lt;/p&gt;</summary>
+    
+    
+    
+    
+  </entry>
+  
+  <entry>
+    <title>LeetCode解题报告（516）-- 900. RLE Iterator</title>
+    <link href="https://leungyukshing.github.io/archives/LeetCode%E8%A7%A3%E9%A2%98%E6%8A%A5%E5%91%8A%EF%BC%88516%EF%BC%89--%20900.%20RLE%20Iterator.html"/>
+    <id>https://leungyukshing.github.io/archives/LeetCode%E8%A7%A3%E9%A2%98%E6%8A%A5%E5%91%8A%EF%BC%88516%EF%BC%89--%20900.%20RLE%20Iterator.html</id>
+    <published>2022-01-14T04:30:13.000Z</published>
+    <updated>2023-08-11T06:02:19.955Z</updated>
+    
+    
+    <summary type="html">&lt;h2 id=&quot;Problem&quot;&gt;&lt;a href=&quot;#Problem&quot; class=&quot;headerlink&quot; title=&quot;Problem&quot;&gt;&lt;/a&gt;Problem&lt;/h2&gt;&lt;p&gt;We can use run-length encoding (i.e., &lt;strong&gt;RLE&lt;/strong&gt;) to encode a sequence of integers. In a run-length encoded array of even length &lt;code&gt;encoding&lt;/code&gt; (&lt;strong&gt;0-indexed&lt;/strong&gt;), for all even &lt;code&gt;i&lt;/code&gt;, &lt;code&gt;encoding[i]&lt;/code&gt; tells us the number of times that the non-negative integer value &lt;code&gt;encoding[i + 1]&lt;/code&gt; is repeated in the sequence.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;For example, the sequence &lt;code&gt;arr = [8,8,8,5,5]&lt;/code&gt; can be encoded to be &lt;code&gt;encoding = [3,8,2,5]&lt;/code&gt;. &lt;code&gt;encoding = [3,8,0,9,2,5]&lt;/code&gt; and &lt;code&gt;encoding = [2,8,1,8,2,5]&lt;/code&gt; are also valid &lt;strong&gt;RLE&lt;/strong&gt; of &lt;code&gt;arr&lt;/code&gt;.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Given a run-length encoded array, design an iterator that iterates through it.&lt;/p&gt;
+&lt;p&gt;Implement the &lt;code&gt;RLEIterator&lt;/code&gt; class:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;RLEIterator(int[] encoded)&lt;/code&gt; Initializes the object with the encoded array &lt;code&gt;encoded&lt;/code&gt;.&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;int next(int n)&lt;/code&gt; Exhausts the next &lt;code&gt;n&lt;/code&gt; elements and returns the last element exhausted in this way. If there is no element left to exhaust, return &lt;code&gt;-1&lt;/code&gt; instead.&lt;/li&gt;
+&lt;/ul&gt;</summary>
+    
+    
+    
+    
+  </entry>
+  
+  <entry>
+    <title>LeetCode解题报告（515）-- 1586. Binary Search Tree Iterator II</title>
+    <link href="https://leungyukshing.github.io/archives/LeetCode%E8%A7%A3%E9%A2%98%E6%8A%A5%E5%91%8A%EF%BC%88515%EF%BC%89--%201586.%20Binary%20Search%20Tree%20Iterator%20II.html"/>
+    <id>https://leungyukshing.github.io/archives/LeetCode%E8%A7%A3%E9%A2%98%E6%8A%A5%E5%91%8A%EF%BC%88515%EF%BC%89--%201586.%20Binary%20Search%20Tree%20Iterator%20II.html</id>
+    <published>2022-01-14T04:15:34.000Z</published>
+    <updated>2023-08-11T06:02:19.955Z</updated>
+    
+    
+    <summary type="html">&lt;h2 id=&quot;Problem&quot;&gt;&lt;a href=&quot;#Problem&quot; class=&quot;headerlink&quot; title=&quot;Problem&quot;&gt;&lt;/a&gt;Problem&lt;/h2&gt;&lt;p&gt;Implement the &lt;code&gt;BSTIterator&lt;/code&gt; class that represents an iterator over the &lt;strong&gt;&lt;a href=&quot;https://en.wikipedia.org/wiki/Tree_traversal#In-order_(LNR)&quot;&gt;in-order traversal&lt;/a&gt;&lt;/strong&gt; of a binary search tree (BST):&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;BSTIterator(TreeNode root)&lt;/code&gt; Initializes an object of the &lt;code&gt;BSTIterator&lt;/code&gt; class. The &lt;code&gt;root&lt;/code&gt; of the BST is given as part of the constructor. The pointer should be initialized to a non-existent number smaller than any element in the BST.&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;boolean hasNext()&lt;/code&gt; Returns &lt;code&gt;true&lt;/code&gt; if there exists a number in the traversal to the right of the pointer, otherwise returns &lt;code&gt;false&lt;/code&gt;.&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;int next()&lt;/code&gt; Moves the pointer to the right, then returns the number at the pointer.&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;boolean hasPrev()&lt;/code&gt; Returns &lt;code&gt;true&lt;/code&gt; if there exists a number in the traversal to the left of the pointer, otherwise returns &lt;code&gt;false&lt;/code&gt;.&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;int prev()&lt;/code&gt; Moves the pointer to the left, then returns the number at the pointer.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Notice that by initializing the pointer to a non-existent smallest number, the first call to &lt;code&gt;next()&lt;/code&gt; will return the smallest element in the BST.&lt;/p&gt;
+&lt;p&gt;You may assume that &lt;code&gt;next()&lt;/code&gt; and &lt;code&gt;prev()&lt;/code&gt; calls will always be valid. That is, there will be at least a next/previous number in the in-order traversal when &lt;code&gt;next()&lt;/code&gt;/&lt;code&gt;prev()&lt;/code&gt; is called.&lt;/p&gt;</summary>
+    
+    
+    
+    
+  </entry>
+  
+  <entry>
+    <title>LeetCode解题报告（514）-- 173. Binary Search Tree Iterator</title>
+    <link href="https://leungyukshing.github.io/archives/LeetCode%E8%A7%A3%E9%A2%98%E6%8A%A5%E5%91%8A%EF%BC%88514%EF%BC%89--%20173.%20Binary%20Search%20Tree%20Iterator.html"/>
+    <id>https://leungyukshing.github.io/archives/LeetCode%E8%A7%A3%E9%A2%98%E6%8A%A5%E5%91%8A%EF%BC%88514%EF%BC%89--%20173.%20Binary%20Search%20Tree%20Iterator.html</id>
+    <published>2022-01-13T03:54:38.000Z</published>
+    <updated>2023-08-11T06:02:19.955Z</updated>
+    
+    
+    <summary type="html">&lt;h2 id=&quot;Problem&quot;&gt;&lt;a href=&quot;#Problem&quot; class=&quot;headerlink&quot; title=&quot;Problem&quot;&gt;&lt;/a&gt;Problem&lt;/h2&gt;&lt;p&gt;Implement the &lt;code&gt;BSTIterator&lt;/code&gt; class that represents an iterator over the &lt;strong&gt;&lt;a href=&quot;https://en.wikipedia.org/wiki/Tree_traversal#In-order_(LNR)&quot;&gt;in-order traversal&lt;/a&gt;&lt;/strong&gt; of a binary search tree (BST):&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;BSTIterator(TreeNode root)&lt;/code&gt; Initializes an object of the &lt;code&gt;BSTIterator&lt;/code&gt; class. The &lt;code&gt;root&lt;/code&gt; of the BST is given as part of the constructor. The pointer should be initialized to a non-existent number smaller than any element in the BST.&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;boolean hasNext()&lt;/code&gt; Returns &lt;code&gt;true&lt;/code&gt; if there exists a number in the traversal to the right of the pointer, otherwise returns &lt;code&gt;false&lt;/code&gt;.&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;int next()&lt;/code&gt; Moves the pointer to the right, then returns the number at the pointer.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Notice that by initializing the pointer to a non-existent smallest number, the first call to &lt;code&gt;next()&lt;/code&gt; will return the smallest element in the BST.&lt;/p&gt;
+&lt;p&gt;You may assume that &lt;code&gt;next()&lt;/code&gt; calls will always be valid. That is, there will be at least a next number in the in-order traversal when &lt;code&gt;next()&lt;/code&gt; is called.&lt;/p&gt;</summary>
+    
+    
+    
+    
+  </entry>
+  
+  <entry>
+    <title>LeetCode解题报告（513）-- 1360. Number of Days Between Two Dates</title>
+    <link href="https://leungyukshing.github.io/archives/LeetCode%E8%A7%A3%E9%A2%98%E6%8A%A5%E5%91%8A%EF%BC%88513%EF%BC%89--%201360.%20Number%20of%20Days%20Between%20Two%20Dates.html"/>
+    <id>https://leungyukshing.github.io/archives/LeetCode%E8%A7%A3%E9%A2%98%E6%8A%A5%E5%91%8A%EF%BC%88513%EF%BC%89--%201360.%20Number%20of%20Days%20Between%20Two%20Dates.html</id>
+    <published>2022-01-13T03:31:24.000Z</published>
+    <updated>2023-08-11T06:02:19.955Z</updated>
+    
+    
+    <summary type="html">&lt;h2 id=&quot;Problem&quot;&gt;&lt;a href=&quot;#Problem&quot; class=&quot;headerlink&quot; title=&quot;Problem&quot;&gt;&lt;/a&gt;Problem&lt;/h2&gt;&lt;p&gt;Write a program to count the number of days between two dates.&lt;/p&gt;
+&lt;p&gt;The two dates are given as strings, their format is &lt;code&gt;YYYY-MM-DD&lt;/code&gt; as shown in the examples.&lt;/p&gt;</summary>
+    
+    
+    
+    
+  </entry>
+  
+  <entry>
+    <title>LeetCode解题报告（512）-- 1154. Day of the Year</title>
+    <link href="https://leungyukshing.github.io/archives/LeetCode%E8%A7%A3%E9%A2%98%E6%8A%A5%E5%91%8A%EF%BC%88512%EF%BC%89--%201154.%20Day%20of%20the%20Year.html"/>
+    <id>https://leungyukshing.github.io/archives/LeetCode%E8%A7%A3%E9%A2%98%E6%8A%A5%E5%91%8A%EF%BC%88512%EF%BC%89--%201154.%20Day%20of%20the%20Year.html</id>
+    <published>2022-01-13T03:23:05.000Z</published>
+    <updated>2023-08-11T06:02:19.955Z</updated>
+    
+    
+    <summary type="html">&lt;h2 id=&quot;Problem&quot;&gt;&lt;a href=&quot;#Problem&quot; class=&quot;headerlink&quot; title=&quot;Problem&quot;&gt;&lt;/a&gt;Problem&lt;/h2&gt;&lt;p&gt;Given a string &lt;code&gt;date&lt;/code&gt; representing a &lt;a href=&quot;https://en.wikipedia.org/wiki/Gregorian_calendar&quot;&gt;Gregorian calendar&lt;/a&gt; date formatted as &lt;code&gt;YYYY-MM-DD&lt;/code&gt;, return &lt;em&gt;the day number of the year&lt;/em&gt;.&lt;/p&gt;</summary>
+    
+    
+    
+    
+  </entry>
+  
+  <entry>
+    <title>LeetCode解题报告（511）-- 749. Contain Virus</title>
+    <link href="https://leungyukshing.github.io/archives/LeetCode%E8%A7%A3%E9%A2%98%E6%8A%A5%E5%91%8A%EF%BC%88511%EF%BC%89--%20749.%20Contain%20Virus.html"/>
+    <id>https://leungyukshing.github.io/archives/LeetCode%E8%A7%A3%E9%A2%98%E6%8A%A5%E5%91%8A%EF%BC%88511%EF%BC%89--%20749.%20Contain%20Virus.html</id>
+    <published>2022-01-13T01:57:16.000Z</published>
+    <updated>2023-08-11T06:02:19.955Z</updated>
+    
+    
+    <summary type="html">&lt;h2 id=&quot;Problem&quot;&gt;&lt;a href=&quot;#Problem&quot; class=&quot;headerlink&quot; title=&quot;Problem&quot;&gt;&lt;/a&gt;Problem&lt;/h2&gt;&lt;p&gt;A virus is spreading rapidly, and your task is to quarantine the infected area by installing walls.&lt;/p&gt;
+&lt;p&gt;The world is modeled as an &lt;code&gt;m x n&lt;/code&gt; binary grid &lt;code&gt;isInfected&lt;/code&gt;, where &lt;code&gt;isInfected[i][j] == 0&lt;/code&gt; represents uninfected cells, and &lt;code&gt;isInfected[i][j] == 1&lt;/code&gt; represents cells contaminated with the virus. A wall (and only one wall) can be installed between any two &lt;strong&gt;4-directionally&lt;/strong&gt; adjacent cells, on the shared boundary.&lt;/p&gt;
+&lt;p&gt;Every night, the virus spreads to all neighboring cells in all four directions unless blocked by a wall. Resources are limited. Each day, you can install walls around only one region (i.e., the affected area (continuous block of infected cells) that threatens the most uninfected cells the following night). There &lt;strong&gt;will never be a tie&lt;/strong&gt;.&lt;/p&gt;
+&lt;p&gt;Return &lt;em&gt;the number of walls used to quarantine all the infected regions&lt;/em&gt;. If the world will become fully infected, return the number of walls used.&lt;/p&gt;</summary>
+    
+    
+    
+    
+  </entry>
+  
+  <entry>
+    <title>LeetCode解题报告（510）-- 1778. Shortest Path in a Hidden Grid</title>
+    <link href="https://leungyukshing.github.io/archives/LeetCode%E8%A7%A3%E9%A2%98%E6%8A%A5%E5%91%8A%EF%BC%88510%EF%BC%89--%201778.%20Shortest%20Path%20in%20a%20Hidden%20Grid.html"/>
+    <id>https://leungyukshing.github.io/archives/LeetCode%E8%A7%A3%E9%A2%98%E6%8A%A5%E5%91%8A%EF%BC%88510%EF%BC%89--%201778.%20Shortest%20Path%20in%20a%20Hidden%20Grid.html</id>
+    <published>2022-01-12T05:32:47.000Z</published>
+    <updated>2023-08-11T06:02:19.955Z</updated>
+    
+    
+    <summary type="html">&lt;h2 id=&quot;Problem&quot;&gt;&lt;a href=&quot;#Problem&quot; class=&quot;headerlink&quot; title=&quot;Problem&quot;&gt;&lt;/a&gt;Problem&lt;/h2&gt;&lt;p&gt;This is an &lt;strong&gt;interactive problem&lt;/strong&gt;.&lt;/p&gt;
+&lt;p&gt;There is a robot in a hidden grid, and you are trying to get it from its starting cell to the target cell in this grid. The grid is of size &lt;code&gt;m x n&lt;/code&gt;, and each cell in the grid is either empty or blocked. It is &lt;strong&gt;guaranteed&lt;/strong&gt; that the starting cell and the target cell are different, and neither of them is blocked.&lt;/p&gt;
+&lt;p&gt;You want to find the minimum distance to the target cell. However, you &lt;strong&gt;do not know&lt;/strong&gt; the grid’s dimensions, the starting cell, nor the target cell. You are only allowed to ask queries to the &lt;code&gt;GridMaster&lt;/code&gt; object.&lt;/p&gt;</summary>
+    
+    
+    
+    
+  </entry>
+  
+  <entry>
+    <title>LeetCode解题报告（509）-- 1810. Minimum Path Cost in a Hidden Grid</title>
+    <link href="https://leungyukshing.github.io/archives/LeetCode%E8%A7%A3%E9%A2%98%E6%8A%A5%E5%91%8A%EF%BC%88509%EF%BC%89--%201810.%20Minimum%20Path%20Cost%20in%20a%20Hidden%20Grid.html"/>
+    <id>https://leungyukshing.github.io/archives/LeetCode%E8%A7%A3%E9%A2%98%E6%8A%A5%E5%91%8A%EF%BC%88509%EF%BC%89--%201810.%20Minimum%20Path%20Cost%20in%20a%20Hidden%20Grid.html</id>
+    <published>2022-01-11T03:55:12.000Z</published>
+    <updated>2023-08-11T06:02:19.955Z</updated>
+    
+    
+    <summary type="html">&lt;h2 id=&quot;Problem&quot;&gt;&lt;a href=&quot;#Problem&quot; class=&quot;headerlink&quot; title=&quot;Problem&quot;&gt;&lt;/a&gt;Problem&lt;/h2&gt;&lt;p&gt;This is an &lt;strong&gt;interactive problem&lt;/strong&gt;.&lt;/p&gt;
+&lt;p&gt;There is a robot in a hidden grid, and you are trying to get it from its starting cell to the target cell in this grid. The grid is of size &lt;code&gt;m x n&lt;/code&gt;, and each cell in the grid is either empty or blocked. It is &lt;strong&gt;guaranteed&lt;/strong&gt; that the starting cell and the target cell are different, and neither of them is blocked.&lt;/p&gt;
+&lt;p&gt;Each cell has a &lt;strong&gt;cost&lt;/strong&gt; that you need to pay each time you &lt;strong&gt;move&lt;/strong&gt; to the cell. The starting cell’s cost is &lt;strong&gt;not&lt;/strong&gt; applied before the robot moves.&lt;/p&gt;
+&lt;p&gt;You want to find the minimum total cost to move the robot to the target cell. However, you &lt;strong&gt;do not know&lt;/strong&gt; the grid’s dimensions, the starting cell, nor the target cell. You are only allowed to ask queries to the &lt;code&gt;GridMaster&lt;/code&gt; object.&lt;/p&gt;</summary>
+    
+    
+    
+    
+  </entry>
+  
+  <entry>
+    <title>LeetCode解题报告（508）-- 1966. Binary Searchable Numbers in an Unsorted Array</title>
+    <link href="https://leungyukshing.github.io/archives/LeetCode%E8%A7%A3%E9%A2%98%E6%8A%A5%E5%91%8A%EF%BC%88508%EF%BC%89--%201966.%20Binary%20Searchable%20Numbers%20in%20an%20Unsorted%20Array.html"/>
+    <id>https://leungyukshing.github.io/archives/LeetCode%E8%A7%A3%E9%A2%98%E6%8A%A5%E5%91%8A%EF%BC%88508%EF%BC%89--%201966.%20Binary%20Searchable%20Numbers%20in%20an%20Unsorted%20Array.html</id>
+    <published>2022-01-11T03:39:36.000Z</published>
+    <updated>2023-08-11T06:02:19.955Z</updated>
+    
+    
+    <summary type="html">&lt;h2 id=&quot;Problem&quot;&gt;&lt;a href=&quot;#Problem&quot; class=&quot;headerlink&quot; title=&quot;Problem&quot;&gt;&lt;/a&gt;Problem&lt;/h2&gt;&lt;p&gt;Consider a function that implements an algorithm &lt;strong&gt;similar&lt;/strong&gt; to &lt;a href=&quot;https://leetcode.com/explore/learn/card/binary-search/&quot;&gt;Binary Search&lt;/a&gt;. The function has two input parameters: &lt;code&gt;sequence&lt;/code&gt; is a sequence of integers, and &lt;code&gt;target&lt;/code&gt; is an integer value. The purpose of the function is to find if the &lt;code&gt;target&lt;/code&gt; exists in the &lt;code&gt;sequence&lt;/code&gt;.&lt;/p&gt;</summary>
+    
+    
+    
+    
+  </entry>
+  
+  <entry>
+    <title>LeetCode解题报告（507）-- 643. Maximum Average Subarray I</title>
+    <link href="https://leungyukshing.github.io/archives/LeetCode%E8%A7%A3%E9%A2%98%E6%8A%A5%E5%91%8A%EF%BC%88507%EF%BC%89--%20643.%20Maximum%20Average%20Subarray%20I.html"/>
+    <id>https://leungyukshing.github.io/archives/LeetCode%E8%A7%A3%E9%A2%98%E6%8A%A5%E5%91%8A%EF%BC%88507%EF%BC%89--%20643.%20Maximum%20Average%20Subarray%20I.html</id>
+    <published>2022-01-11T03:28:13.000Z</published>
+    <updated>2023-08-11T06:02:19.955Z</updated>
+    
+    
+    <summary type="html">&lt;h2 id=&quot;Problem&quot;&gt;&lt;a href=&quot;#Problem&quot; class=&quot;headerlink&quot; title=&quot;Problem&quot;&gt;&lt;/a&gt;Problem&lt;/h2&gt;&lt;p&gt;You are given an integer array &lt;code&gt;nums&lt;/code&gt; consisting of &lt;code&gt;n&lt;/code&gt; elements, and an integer &lt;code&gt;k&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;Find a contiguous subarray whose &lt;strong&gt;length is equal to&lt;/strong&gt; &lt;code&gt;k&lt;/code&gt; that has the maximum average value and return &lt;em&gt;this value&lt;/em&gt;. Any answer with a calculation error less than &lt;code&gt;10-5&lt;/code&gt; will be accepted.&lt;/p&gt;</summary>
+    
+    
+    
+    
+  </entry>
+  
+  <entry>
+    <title>LeetCode解题报告（506）-- 888. Fair Candy Swap</title>
+    <link href="https://leungyukshing.github.io/archives/LeetCode%E8%A7%A3%E9%A2%98%E6%8A%A5%E5%91%8A%EF%BC%88506%EF%BC%89--%20888.%20Fair%20Candy%20Swap.html"/>
+    <id>https://leungyukshing.github.io/archives/LeetCode%E8%A7%A3%E9%A2%98%E6%8A%A5%E5%91%8A%EF%BC%88506%EF%BC%89--%20888.%20Fair%20Candy%20Swap.html</id>
+    <published>2022-01-11T03:19:23.000Z</published>
+    <updated>2023-08-11T06:02:19.955Z</updated>
+    
+    
+    <summary type="html">&lt;h2 id=&quot;Problem&quot;&gt;&lt;a href=&quot;#Problem&quot; class=&quot;headerlink&quot; title=&quot;Problem&quot;&gt;&lt;/a&gt;Problem&lt;/h2&gt;&lt;p&gt;Alice and Bob have a different total number of candies. You are given two integer arrays &lt;code&gt;aliceSizes&lt;/code&gt; and &lt;code&gt;bobSizes&lt;/code&gt; where &lt;code&gt;aliceSizes[i]&lt;/code&gt; is the number of candies of the &lt;code&gt;ith&lt;/code&gt; box of candy that Alice has and &lt;code&gt;bobSizes[j]&lt;/code&gt; is the number of candies of the &lt;code&gt;jth&lt;/code&gt; box of candy that Bob has.&lt;/p&gt;
+&lt;p&gt;Since they are friends, they would like to exchange one candy box each so that after the exchange, they both have the same total amount of candy. The total amount of candy a person has is the sum of the number of candies in each box they have.&lt;/p&gt;
+&lt;p&gt;Return a&lt;em&gt;n integer array&lt;/em&gt; &lt;code&gt;answer&lt;/code&gt; &lt;em&gt;where&lt;/em&gt; &lt;code&gt;answer[0]&lt;/code&gt; &lt;em&gt;is the number of candies in the box that Alice must exchange, and&lt;/em&gt; &lt;code&gt;answer[1]&lt;/code&gt; &lt;em&gt;is the number of candies in the box that Bob must exchange&lt;/em&gt;. If there are multiple answers, you may &lt;strong&gt;return any&lt;/strong&gt; one of them. It is guaranteed that at least one answer exists.&lt;/p&gt;</summary>
+    
+    
+    
+    
+  </entry>
+  
+</feed>

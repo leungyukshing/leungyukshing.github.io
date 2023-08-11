@@ -1,0 +1,695 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <meta name="google-site-verification" content="FHjCzDi7nry9Mvf4EFOY5cYoco-ZXq9tKjvXZK0nKr4">
+  <meta name="baidu-site-verification" content="code-gpMFPewYUF" />
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="/lib/pace/pace-theme-minimal.min.css">
+  <script src="/lib/pace/pace.min.js"></script>
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"leungyukshing.github.io","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"right","display":"hide","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"appID":"52USYSYESX","apiKey":"20b904c66f55b874f05edea4aca57780","indexName":"blog","hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="Introduction&amp;emsp;&amp;emsp;上一篇博客介绍了JWT，其中在介绍token验证时提到了CSRF攻击。在今天这篇博客，我将详细地介绍一下CSRF是什么，以及需要怎么防范。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="浅谈CSRF攻击">
+<meta property="og:url" content="https://leungyukshing.github.io/archives/Introduction-CSRF.html">
+<meta property="og:site_name" content="Halo">
+<meta property="og:description" content="Introduction&amp;emsp;&amp;emsp;上一篇博客介绍了JWT，其中在介绍token验证时提到了CSRF攻击。在今天这篇博客，我将详细地介绍一下CSRF是什么，以及需要怎么防范。">
+<meta property="og:locale">
+<meta property="article:published_time" content="2021-08-24T04:41:10.000Z">
+<meta property="article:modified_time" content="2021-08-24T04:41:43.039Z">
+<meta property="article:author" content="Leungyukshing">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://leungyukshing.github.io/archives/Introduction-CSRF.html">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-Hans'
+  };
+</script>
+
+  <title>浅谈CSRF攻击 | Halo</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+<!-- hexo injector head_end end --><link rel="alternate" href="/atom.xml" title="Halo" type="application/atom+xml"><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Halo</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">A magic place for coding</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>About</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>Tags</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>Search
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="Searching..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+  <a href="https://github.com/leungyukshing" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="https://leungyukshing.github.io/archives/Introduction-CSRF.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="Leungyukshing">
+      <meta itemprop="description" content="A blog for code, programme sharing.">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Halo">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          浅谈CSRF攻击
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+              
+
+              <time title="Created: 2021-08-24 00:41:10 / Modified: 00:41:43" itemprop="dateCreated datePublished" datetime="2021-08-24T00:41:10-04:00">2021-08-24</time>
+            </span>
+
+          
+            <span class="post-meta-item" title="Views" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">Views: </span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine: </span>
+    
+    <a title="valine" href="/archives/Introduction-CSRF.html#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/archives/Introduction-CSRF.html" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="Introduction"><a href="#Introduction" class="headerlink" title="Introduction"></a>Introduction</h1><p>&emsp;&emsp;上一篇博客介绍了JWT，其中在介绍token验证时提到了CSRF攻击。在今天这篇博客，我将详细地介绍一下CSRF是什么，以及需要怎么防范。</p>
+<a id="more"></a>
+
+<h1 id="What-is-CSRF"><a href="#What-is-CSRF" class="headerlink" title="What is CSRF"></a>What is CSRF</h1><p>&emsp;&emsp;这里是我第一次介绍安全问题，首先我们大致把问题分成前端和后端，CSRF就是一个很经典的前端安全问题。我们先用一个例子去看看遇到的问题是什么？</p>
+<ol>
+<li>同学A在使用Gmail看邮件，然后突然看到一封垃圾邮件，里面有一个链接，于是好奇地点了进去；</li>
+<li>跳转到浏览器后，发现页面是空白的，好像也没有提示扣钱什么，查了一下自己的银行账户还是安全的，于是同学A就把页面关掉，觉得逃过一劫；</li>
+<li>过了一个月后，同学A突然发现自己的steam账号被偷了，他很好奇对方是怎么登进去的，因为登录是steam是需要验证码的，而验证码会发送到Gmail；</li>
+<li>于是同学A打开Gmail，仔细搜了下验证码的邮件，然后他发现他的发件箱出现了这封邮件，然后就发现问题了，原来他的auto filter中设置了一条转发规则，凡是遇到steam系统发送的邮件，都会自动转发一份到<a href="mailto:&#x78;&#120;&#120;&#x40;&#x61;&#x62;&#x63;&#46;&#99;&#111;&#109;">&#x78;&#120;&#120;&#x40;&#x61;&#x62;&#x63;&#46;&#99;&#111;&#109;</a>（攻击者的邮箱）这个邮箱；</li>
+<li>然后同学A想起了一个月前发生的事情，那条链接，它又找到了那封邮件，点开那条链接，然后看了下源码，发现里面会发起一个POST请求，往自己的auto filter中添加一条转发规则。</li>
+</ol>
+<p>&emsp;&emsp;于是事情就水落石出了，同学A首先登陆了Gmail，所以浏览器就会记录下Gmail的cookie，然后后面攻击的链接点开后，直接发起一个POST请求，请求的时候浏览器会自动带上cookie，对于Gmail来说，对cookie的验证是通过的，所以它认为这是来自用户的合法请求，于是一条转发规则就这样在用户不知情的情况下被创建了。</p>
+<p>&emsp;&emsp;这个就是Gmail著名的CSRF漏洞问题：<a target="_blank" rel="noopener" href="https://www.davidairey.com/google-gmail-security-hijack/">https://www.davidairey.com/google-gmail-security-hijack/</a></p>
+<p>&emsp;&emsp;通过这里例子，我们知道了一个CSRF的攻击到底是怎么样了。然后我们从理论的角度看看CSRF是什么。</p>
+<p>&emsp;&emsp;CSRF（Cross-Site Request Forgery），中文叫跨站请求伪造，指的是攻击者诱导受害者进入第三方网站，在第三方网站中，向被攻击网站发送跨站请求，通过利用受害者在被攻击网站已经获取的认证凭证（cookie），绕过后台的用户认证，达到冒充用户对被攻击的网站执行某种操作的目的。</p>
+<p>&emsp;&emsp;在上述的例子中，第三方网站就是那个垃圾邮件里面的链接，被攻击网站就是Gmail的服务器，受害者当然就是同学A了。所谓跨站就是从第三方网站跨到了被攻击网站。为什么是跨域的呢？因为通常来说本域下的防护会做的比较好，而外域更加有可能被攻击者掌握，所以就叫跨域。但是如果本域下有类似的漏洞，那就会带来更加严重的问题。</p>
+<h1 id="Characteristics-of-CSRF"><a href="#Characteristics-of-CSRF" class="headerlink" title="Characteristics of CSRF"></a>Characteristics of CSRF</h1><ol>
+<li>攻击的发起方一般是第三方网站，而被攻击的网站无法做防护，因为仅凭cookie根本分不清是不是用户的真实操作；</li>
+<li>攻击的手段一般是冒充用户进行提交操作，而不是直接窃取数据，因为浏览器返回的结果是在用户的界面上，根据浏览器的<strong>同源策略</strong>的限制，攻击者也无法获取返回的结果。因此CSRF重点的防护对象是允许用户操作的界面，而对于读请求则风险较低；</li>
+<li>整个攻击过程，攻击者都无法获取用户的身份凭证，他只是冒用，而没有窃取；</li>
+</ol>
+<h1 id="How-to-deal-with-CSRF"><a href="#How-to-deal-with-CSRF" class="headerlink" title="How to deal with CSRF"></a>How to deal with CSRF</h1><p>&emsp;&emsp;我们了解了CSRF的攻击原理后，就来看看怎么对应用做一个基本的防护。</p>
+<ul>
+<li>阻止不明外域的访问<ul>
+<li>访问是也进行同源检测；</li>
+<li>使用samesite cookie；</li>
+</ul>
+</li>
+<li>提交操作请求时，要求带上本域信息<ul>
+<li>CSRF token；</li>
+<li>双重cookie验证；</li>
+</ul>
+</li>
+</ul>
+<h2 id="同源检测"><a href="#同源检测" class="headerlink" title="同源检测"></a>同源检测</h2><p>&emsp;&emsp;既然CSRF攻击的一大特点是从外域进行访问，那么可以直接在访问的时候就判断origin是否来自外域。这里又有一个问题，服务器怎么知道是来自哪个域呢？我们要确保这个信息是可靠的，才能做到同源检测。</p>
+<p>&emsp;&emsp;通常在http协议中，每个异步请求都会携带两个Header，用于标记来源域名：</p>
+<ul>
+<li>Origin Header</li>
+<li>Referer Header</li>
+</ul>
+<p>&emsp;&emsp;这两个header在浏览器发起请求时会自动带上，并且不能由用户自定义内容填写，所以服务器是可以利用这两个header的域名来知道请求的来源域。接下来我们就来看看怎么利用这两个header去做检测。</p>
+<h3 id="Origin-Header"><a href="#Origin-Header" class="headerlink" title="Origin Header"></a>Origin Header</h3><p>&emsp;&emsp;在<strong>部分与CSRF有关的请求中（注意是与CSRF有关的请求，正常的同域名的请求不会带上这个header，F12可以查看）</strong>，请求的Header会带上Origin字段，里面包含了请求的域名。服务端可以直接利用这个信息去做同源检测。</p>
+<p>&emsp;&emsp;但有三种情况Origin字段不存在：</p>
+<ol>
+<li>IE11同源策略：IE11不会在跨站CORS请求上添加Origin，根本原因是IE11对same-origin的定义不同。IE认为如果跨域请求发生在不同端口之间也属于同源，则不会添加Origin字段；同时对于高度信任的域，IE也不会apply同源策略；</li>
+<li>302重定向：302重定向时不会带上Origin，因为Origin被认为是敏感信息，因此浏览器不会把这类信息泄漏到新的服务器上（重定向的服务器）。</li>
+</ol>
+<h3 id="Referer-Header"><a href="#Referer-Header" class="headerlink" title="Referer Header"></a>Referer Header</h3><p>&emsp;&emsp;除了使用Origin字段外，还能使用Referer这个字段，它记录了该http请求的来源地址。这个来源地址，对于ajax请求、资源请求来说，就是发起请求时页面的地址；对于页面跳转来说就是上一个页面的地址。</p>
+<p>&emsp;&emsp;但是这个Referer的值是由浏览器提供的，严格来说也不是绝对安全，具体要看每个浏览器的实现。因此在2014年W3C发布了Referrer Policy草案，对浏览器如何发送Referer做了详细的规定，目前大部分的浏览器都遵循这份草案。目前来说，只要把Referrer Policy设置为same-origin，则符合严格的同源校验要求。</p>
+<p>&emsp;&emsp;这里要注意当https跳转到http页面时，Referer会丢失。</p>
+<p>&emsp;&emsp;对于Origin和Referer都不存在的请求，最保险的做法就是都拒绝掉，但是这里会存在一种误伤。如果用户从搜索引擎搜到某个页面，然后点开，这样大概率是不同源的，那么如何过滤掉这种请求呢？</p>
+<p>&emsp;&emsp;通常来说这种页面请求的Header符合以下特性：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Accept: text&#x2F;html</span><br><span class="line">Method: GET</span><br></pre></td></tr></table></figure>
+
+<p>&emsp;&emsp;这种Header意思是客户端向服务端请求html资源，使用的是GET方法，因此大概率就是普通的页面访问了。所以一般的网站会把这类请求放开，这也说明对于这类请求，CSRF是没有同源检测的。反过来说，对开发者而言，不要在GET的方法中去做用户数据的操作，最好就是只返回一些数据（许多网站为了减少请求次数，会把主文档GET请求带上参数实现一下产品功能，实际上这是一个风险点）。</p>
+<h2 id="CSRF-token"><a href="#CSRF-token" class="headerlink" title="CSRF token"></a>CSRF token</h2><p>&emsp;&emsp;上面使用同源检测的方式实际上还是大家都遵循某个规范，然后服务端信任浏览器传过来的Header，从而进行判断。如果是使用主流的、新版的浏览器就一般没什么问题，但是如果遇到不遵守规范的浏览器就很容易gg了。此时，作为一个成熟的开发者，当然不能把锅甩给用户，就算用户使用了低版本的浏览器，我们同样也需要做好防护。因此CSRF是一种更加彻底的手段。</p>
+<p>&emsp;&emsp;重新理解CSRF的原理，是借用了cookie信息，但是从头到尾攻击者都无法知道用户的cookie具体是什么。所以我们只需要再携带多一个信息，这个信息不能在cookie中，必须是攻击者无法获取的，这样服务端就能利用这个额外的信息去做身份校验，这个额外的信息就是CSRF token。</p>
+<p>&emsp;&emsp;CSRF的验证过程主要有以下步骤：</p>
+<ol>
+<li>页面加载时，遍历整个DOM tree，对其中所有的<code>a</code>和<code>form</code>标签添加token，这样在请求这些资源时给服务器验证。但是对于动态的HTML代码，需要在coding中加入token；</li>
+<li>GET请求会把token放在URL后面，而POST请求则放在form中；</li>
+<li>服务器收到请求后，拿到token，需要判断有效性。服务器生成token一般是通过一个随机生产的字符串加上时间戳组成一个新的字符串，然后加密。所以验证的过程相反，先对token进行解密，然后拿到加密的字符串和时间戳，比对加密的字符串是否一致，同时确保时间还没过期，如果两者都满足要求则验证通过。</li>
+</ol>
+<p>&emsp;&emsp;一般来说服务端会先生成一个csrf token返回给客户端，然后带上一个refresh token，当经过一定时间后，csrf token会过期，需要客户端重新请求，带上用户的登录信息和refresh token，去换取新的csrf token。这样通过过期的方法一定程度上提高了csrf的安全性。</p>
+<p>&emsp;&emsp;虽然CSRF token方法使用起来比同源检测要靠谱得多，但是同时也给服务端带来了压力。这个压力具体指的是，用户的session一般来说会存在单台设备上，或者是partition的存储组件上，如果每次都需要全部扫描一般的话，耗时将会是不可接受的。因此目前的做法是采用Encrypted Token Pattern，这种方式下，CSRF token是由user_id（或其他有业务意义的值）加上时间戳以及随机数再加密生成，这样在解密验证时，第一层解密后就能直接拿到user_id，然后路由到相应的服务器进行处理，实现分布式。</p>
+<h1 id="Summary"><a href="#Summary" class="headerlink" title="Summary"></a>Summary</h1><p>&emsp;&emsp;这篇博客从一个实际的例子出发介绍了CSRF的过程及背后的原理，也简单介绍了两种防范的方法。</p>
+<h1 id="Reference"><a href="#Reference" class="headerlink" title="Reference"></a>Reference</h1><ol>
+<li><a target="_blank" rel="noopener" href="https://tech.meituan.com/2018/10/11/fe-security-csrf.html">美团技术团队-如何防止CSRF攻击</a></li>
+<li><a target="_blank" rel="noopener" href="https://developer.mozilla.org/zh-CN/docs/Web/Security/Same-origin_policy">浏览器的同源策略</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.w3.org/Security/wiki/Same_Origin_Policy">Same Origin Policy</a></li>
+</ol>
+
+    </div>
+
+    
+    
+    
+        <div class="reward-container">
+  <div></div>
+  <button onclick="var qr = document.getElementById('qr'); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    Donate
+  </button>
+  <div id="qr" style="display: none;">
+      
+      <div style="display: inline-block;">
+        <img src="/images/wechat_reward.png" alt="Leungyukshing WeChat Pay">
+        <p>WeChat Pay</p>
+      </div>
+      
+      <div style="display: inline-block;">
+        <img src="/images/alipay_reward.png" alt="Leungyukshing Alipay">
+        <p>Alipay</p>
+      </div>
+
+  </div>
+</div>
+
+        
+
+  <div class="followme">
+    <p>Welcome to my other publishing channels</p>
+
+    <div class="social-list">
+
+        <div class="social-item">
+          <a target="_blank" class="social-link" href="/atom.xml">
+            <span class="icon">
+              <i class="fa fa-rss"></i>
+            </span>
+
+            <span class="label">RSS</span>
+          </a>
+        </div>
+    </div>
+  </div>
+
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/archives/Introduction-JWT.html" rel="prev" title="浅谈JWT">
+      <i class="fa fa-chevron-left"></i> 浅谈JWT
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/archives/Introduction-AccessControl.html" rel="next" title="浅谈Access Contrl">
+      浅谈Access Contrl <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Introduction"><span class="nav-number">1.</span> <span class="nav-text">Introduction</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#What-is-CSRF"><span class="nav-number">2.</span> <span class="nav-text">What is CSRF</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Characteristics-of-CSRF"><span class="nav-number">3.</span> <span class="nav-text">Characteristics of CSRF</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#How-to-deal-with-CSRF"><span class="nav-number">4.</span> <span class="nav-text">How to deal with CSRF</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%90%8C%E6%BA%90%E6%A3%80%E6%B5%8B"><span class="nav-number">4.1.</span> <span class="nav-text">同源检测</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Origin-Header"><span class="nav-number">4.1.1.</span> <span class="nav-text">Origin Header</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Referer-Header"><span class="nav-number">4.1.2.</span> <span class="nav-text">Referer Header</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#CSRF-token"><span class="nav-number">4.2.</span> <span class="nav-text">CSRF token</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Summary"><span class="nav-number">5.</span> <span class="nav-text">Summary</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Reference"><span class="nav-number">6.</span> <span class="nav-text">Reference</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Leungyukshing"
+      src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">Leungyukshing</p>
+  <div class="site-description" itemprop="description">A blog for code, programme sharing.</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">688</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">27</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/leungyukshing" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;leungyukshing" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:jacky14.liang@gmail.com" title="E-Mail → mailto:jacky14.liang@gmail.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="/atom.xml" title="RSS → &#x2F;atom.xml"><i class="fa fa-rss fa-fw"></i>RSS</a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll motion-element">
+    <div class="links-of-blogroll-title"><i class="fa fa-link fa-fw"></i>
+      Friends
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="http://www.liangjh45.com/" title="http:&#x2F;&#x2F;www.liangjh45.com&#x2F;" rel="noopener" target="_blank">Alva's blog</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="https://sysucarey.github.io/" title="https:&#x2F;&#x2F;sysucarey.github.io&#x2F;" rel="noopener" target="_blank">Carey's blog</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="https://blog.csdn.net/dickdick111/" title="https:&#x2F;&#x2F;blog.csdn.net&#x2F;dickdick111&#x2F;" rel="noopener" target="_blank">Dick's blog</a>
+        </li>
+    </ul>
+  </div>
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2017 – 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Leungyukshing</span>
+</div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="Total Visitors">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="Total Views">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+      
+
+<script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      loader: {
+        source: {
+          '[tex]/amsCd': '[tex]/amscd',
+          '[tex]/AMScd': '[tex]/amscd'
+        }
+      },
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              let target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    (function () {
+      var script = document.createElement('script');
+      script.src = '//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+      script.defer = true;
+      document.head.appendChild(script);
+    })();
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : true,
+      appId      : 'AaLog29QcUdQKTboD6cY2dNP-gzGzoHsz',
+      appKey     : 'dUWNHLnTY9qG1jJwPnTtfMm8',
+      placeholder: "Just go go",
+      avatar     : 'mm',
+      meta       : guest,
+      pageSize   : '10' || 10,
+      visitor    : false,
+      lang       : '' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : false,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+
+</body>
+</html>

@@ -1,0 +1,682 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <meta name="google-site-verification" content="FHjCzDi7nry9Mvf4EFOY5cYoco-ZXq9tKjvXZK0nKr4">
+  <meta name="baidu-site-verification" content="code-gpMFPewYUF" />
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="/lib/pace/pace-theme-minimal.min.css">
+  <script src="/lib/pace/pace.min.js"></script>
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"leungyukshing.github.io","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"right","display":"hide","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"appID":"52USYSYESX","apiKey":"20b904c66f55b874f05edea4aca57780","indexName":"blog","hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="Introduction&amp;emsp;&amp;emsp;这篇博客我将和大家讨论一下有关软件设计模式的问题。设计模式有很多种，在实际使用中我们可能并不是完完整整地把一个模式套进去，但更重要的是我们理解每个模式的基本思想，从而帮助我们更好地构建应用。这篇博客我将会based on一个我认为比较好的博客（请看reference），介绍8种常用的设计模式，并且结合我自己的实际开发经历，去解释其中几个我熟悉的。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="浅谈软件架构设计模式">
+<meta property="og:url" content="https://leungyukshing.github.io/archives/Introduction-Software-Architecture-Design-Pattern.html">
+<meta property="og:site_name" content="Halo">
+<meta property="og:description" content="Introduction&amp;emsp;&amp;emsp;这篇博客我将和大家讨论一下有关软件设计模式的问题。设计模式有很多种，在实际使用中我们可能并不是完完整整地把一个模式套进去，但更重要的是我们理解每个模式的基本思想，从而帮助我们更好地构建应用。这篇博客我将会based on一个我认为比较好的博客（请看reference），介绍8种常用的设计模式，并且结合我自己的实际开发经历，去解释其中几个我熟悉的。">
+<meta property="og:locale">
+<meta property="article:published_time" content="2021-12-22T16:44:02.000Z">
+<meta property="article:modified_time" content="2023-08-11T06:02:19.935Z">
+<meta property="article:author" content="Leungyukshing">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://leungyukshing.github.io/archives/Introduction-Software-Architecture-Design-Pattern.html">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-Hans'
+  };
+</script>
+
+  <title>浅谈软件架构设计模式 | Halo</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+<!-- hexo injector head_end end --><link rel="alternate" href="/atom.xml" title="Halo" type="application/atom+xml"><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Halo</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">A magic place for coding</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>About</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>Tags</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>Search
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="Searching..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+  <a href="https://github.com/leungyukshing" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="https://leungyukshing.github.io/archives/Introduction-Software-Architecture-Design-Pattern.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="Leungyukshing">
+      <meta itemprop="description" content="A blog for code, programme sharing.">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Halo">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          浅谈软件架构设计模式
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2021-12-22 11:44:02" itemprop="dateCreated datePublished" datetime="2021-12-22T11:44:02-05:00">2021-12-22</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2023-08-11 02:02:19" itemprop="dateModified" datetime="2023-08-11T02:02:19-04:00">2023-08-11</time>
+              </span>
+
+          
+            <span class="post-meta-item" title="Views" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">Views: </span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine: </span>
+    
+    <a title="valine" href="/archives/Introduction-Software-Architecture-Design-Pattern.html#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/archives/Introduction-Software-Architecture-Design-Pattern.html" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="Introduction"><a href="#Introduction" class="headerlink" title="Introduction"></a>Introduction</h1><p>&emsp;&emsp;这篇博客我将和大家讨论一下有关软件设计模式的问题。设计模式有很多种，在实际使用中我们可能并不是完完整整地把一个模式套进去，但更重要的是我们理解每个模式的基本思想，从而帮助我们更好地构建应用。这篇博客我将会based on一个我认为比较好的博客（请看reference），介绍8种常用的设计模式，并且结合我自己的实际开发经历，去解释其中几个我熟悉的。</p>
+<a id="more"></a>
+
+<h1 id="8-Common-Design-Pattern"><a href="#8-Common-Design-Pattern" class="headerlink" title="8 Common Design Pattern"></a>8 Common Design Pattern</h1><h2 id="Layered-Pattern-（层级模式）"><a href="#Layered-Pattern-（层级模式）" class="headerlink" title="Layered Pattern （层级模式）"></a>Layered Pattern （层级模式）</h2><p>&emsp;&emsp;层级模式把业务逻辑切分不同层级的子任务，每一个子任务都是一个抽象。通常来说有4层模型，包括：</p>
+<ol>
+<li>Presentation Layer (UI Layer)：表示层。这一层负责展示UI，与用户的交互；</li>
+<li>Application Layer (Service Layer)：应用层。这一层负责处理服务逻辑，也就是提供API支持用户的基本操作；</li>
+<li>Business Logic Layer (Domain Layer)：业务逻辑层。这一层负责处理业务逻辑，比如一个登录的功能，Application Layer提供了接口给用户输入用户名和密码，至于校验的部分就属于Business Logic Layer；</li>
+<li>Data Access Layer (Persistence Layer)：数据层。这一层负责处理持久化数据，通常来说应用都需要持久化数据，这一层就负责处理数据的CRUD。</li>
+</ol>
+<p>&emsp;&emsp;这种模式最大的优点就是抽象，某一层对上一层是透明的，只通过提供接口来提供服务，外部不需要知道它具体是如何实现的。目前来说这更像是一种代码习惯，我认为在日常的编程中都应该有这种意识。</p>
+<h2 id="Client-Server-Pattern-（CS模式）"><a href="#Client-Server-Pattern-（CS模式）" class="headerlink" title="Client-Server Pattern （CS模式）"></a>Client-Server Pattern （CS模式）</h2><p>&emsp;&emsp;客户端服务器模式是一种非常通用的模式，这里特别提到，这里的客户端和服务器是很广泛的概念，客户端同时也可以是别人的服务器，服务器同时也可以是客户端。客户端和服务器分别具有以下功能：</p>
+<ol>
+<li>Server：服务器服务多个客户端，这里的花样很多，比如负载均衡，使得多个服务器同时服务多个客户请求；</li>
+<li>Client：客户端发起请求到服务端。</li>
+</ol>
+<h2 id="Master-Slave（主从模式）"><a href="#Master-Slave（主从模式）" class="headerlink" title="Master-Slave（主从模式）"></a>Master-Slave（主从模式）</h2><p>&emsp;&emsp;主从模式是一种非常常用的调度模式，一般来说会有1个主，多个从。master服务负责分发任务，归约结果；slave服务负责计算任务，汇报结果。所有的从服务器都是一样的。这里我可以举两个例子：</p>
+<ol>
+<li>我之前做过数据迁移相关的项目，主要也是使用了这个架构。master服务从数据库中拉取迁移任务，然后放到队列中；slave服务从队列中消费到迁移任务，然后执行具体的迁移动作，最后把结果更新到数据库。这样做的好处是如果我需要扩大吞吐，我可以只扩展slave服务的数量，或者只调整数据库拉取batch的大小，相对来说比较灵活。同时，某一个slave服务的迁移出了问题，并不会影响整体的功能，这个是非常重要的。</li>
+<li>数据库的主从。数据库中广泛应用了这种模式，一般来说写请求只能由master处理，然后通过节点间的一致性同步协议更新到所有的slave节点，而读请求则可以读所有的slave，这样也算是负载均衡的一种。当然这个更像是架构设计方面的内容，而不是开发模式。</li>
+</ol>
+<h2 id="Pipe-Filter（管道过滤器模式）"><a href="#Pipe-Filter（管道过滤器模式）" class="headerlink" title="Pipe-Filter（管道过滤器模式）"></a>Pipe-Filter（管道过滤器模式）</h2><p>&emsp;&emsp;管道过滤器模式听起来很陌生，通俗点说就是流水线。通常是配合消息队列进行开发。这种模式用于处理流数据，每一个处理部分都是一个单独的、封闭的组件。这里也举两个例子：</p>
+<ol>
+<li>比方说邮件系统中，收取外部邮件，大概的流程可能是：检查header判断是否垃圾邮件 -&gt; 检查内容有没有病毒 -&gt; 解析成结构化内容 -&gt; 存入到数据库中。我们可以把多个步骤合在一个component中做，也可以拆开，component之间是通过消息队列沟通，所以是非常灵活的，也能很有效地应对流量高峰。同时，最大的优点是可以支持很灵活的拔插，可以随时增加或减少功能。</li>
+<li>编译器的工作原理实际上就是管道过滤，语法分析 -&gt; 解析 -&gt; 语义分析 -&gt; 代码生成。</li>
+</ol>
+<h2 id="Broker-Pattern（代理模式）"><a href="#Broker-Pattern（代理模式）" class="headerlink" title="Broker Pattern（代理模式）"></a>Broker Pattern（代理模式）</h2><p>&emsp;&emsp;Broker模式通过解耦组件来构建分布式系统，broker组件主要负责协调其他所有组件的通信。服务器向broker发布功能，客户端向broker请求服务，broker再把这个请求路由到合适的服务器。</p>
+<ol>
+<li>Kafka等消息中间件。消费者和生产者都向broker注册，然后发送请求，分别拉取消息或者推送消息。</li>
+<li>如果某个功能有多个服务需要调用到第三方的API，那么最好能抽取出来一个broker来管理这个第三方API的调用，因为API调用涉及到了权限、频率、链接等各种问题，如果有独立的broker来处理会更加清晰和简洁，也易于控制。</li>
+</ol>
+<p>&emsp;&emsp;这种架构最大的好处就是支持非常灵活的变动，比如消费者、生产者的数量改变了，broker就可以很快知道并且协调通信。</p>
+<h2 id="P2P-Pattern（对等模式）"><a href="#P2P-Pattern（对等模式）" class="headerlink" title="P2P Pattern（对等模式）"></a>P2P Pattern（对等模式）</h2><p>&emsp;&emsp;这个模式顾名思义就是没有主从，每个节点都是平等的。好处就是没有单点故障的危险，不会因为master出错而导致整个系统崩溃，也不容易受到大规模的攻击。如果设计合理的话能够最大限度地利用各个节点的资源，提供系统整体的吞吐。目前的应用有文件共享以及多媒体协议。</p>
+<h2 id="EventBus-Pattern（事件总线模式）"><a href="#EventBus-Pattern（事件总线模式）" class="headerlink" title="EventBus Pattern（事件总线模式）"></a>EventBus Pattern（事件总线模式）</h2><p>&emsp;&emsp;EventBus模式更像是一个消费-生产者模式，相当于有一个生产者把各类事件都发布到一个消息总线，然后订阅者订阅不同的事件类型。消息发布到监听者订阅的通道，监听者就会收到通知。主要组件有4个：</p>
+<ol>
+<li>事件源：可以是一个服务，也可以是多个服务。例如可以是数据库的binlog，也可以是很多服务收集到的日志信息；</li>
+<li>监听者：想要处理某个事件类型的服务；</li>
+<li>通道：事件总线中的一个通道，相当于消息类型，同一种类型的消息在同一个通道；</li>
+<li>事件总线：所有消息的队列</li>
+</ol>
+<p>&emsp;&emsp;EventBus常用的地方一个是监听数据库的binlog做异步处理，另一个是Android中通过监听EventBus来处理各种通知。</p>
+<h2 id="Model-View-Controller-（MVC模式）"><a href="#Model-View-Controller-（MVC模式）" class="headerlink" title="Model-View-Controller （MVC模式）"></a>Model-View-Controller （MVC模式）</h2><p>&emsp;&emsp;MVC模式是非常经典的<strong>交互式应用程序</strong>设计模式，许多Web应用都是基于这个设计模式的。顾名思义由三部分组成：</p>
+<ol>
+<li>Model：主要处理业务逻辑和核心数据；</li>
+<li>View：主要处理用户展示部分；</li>
+<li>Controller：主要处理用户交互，如用户的输入</li>
+</ol>
+<p>&emsp;&emsp;解耦成这三部分的原因是提高代码重用率，同时能够把相对独立的模块分离开来，便于维护。</p>
+<h1 id="Summary"><a href="#Summary" class="headerlink" title="Summary"></a>Summary</h1><p>&emsp;&emsp;这篇博客大概介绍了常用的8个软件架构设计模式，我认为设计模式对于软件开发是非常重要的，但我们不能硬套某个模式，而是要充分理解每一个模式的优缺点，以及使用场景，这样在使用的时候才能找到最合适的模式来写代码。</p>
+<h1 id="Reference"><a href="#Reference" class="headerlink" title="Reference"></a>Reference</h1><ol>
+<li><a target="_blank" rel="noopener" href="https://towardsdatascience.com/10-common-software-architectural-patterns-in-a-nutshell-a0b47a1e9013">10 Common Software Architectural Patterns in a nutshell</a></li>
+</ol>
+
+    </div>
+
+    
+    
+    
+        <div class="reward-container">
+  <div></div>
+  <button onclick="var qr = document.getElementById('qr'); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    Donate
+  </button>
+  <div id="qr" style="display: none;">
+      
+      <div style="display: inline-block;">
+        <img src="/images/wechat_reward.png" alt="Leungyukshing WeChat Pay">
+        <p>WeChat Pay</p>
+      </div>
+      
+      <div style="display: inline-block;">
+        <img src="/images/alipay_reward.png" alt="Leungyukshing Alipay">
+        <p>Alipay</p>
+      </div>
+
+  </div>
+</div>
+
+        
+
+  <div class="followme">
+    <p>Welcome to my other publishing channels</p>
+
+    <div class="social-list">
+
+        <div class="social-item">
+          <a target="_blank" class="social-link" href="/atom.xml">
+            <span class="icon">
+              <i class="fa fa-rss"></i>
+            </span>
+
+            <span class="label">RSS</span>
+          </a>
+        </div>
+    </div>
+  </div>
+
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/archives/LeetCode%E8%A7%A3%E9%A2%98%E6%8A%A5%E5%91%8A%EF%BC%88430%EF%BC%89--%201525.%20Number%20of%20Good%20Ways%20to%20Split%20a%20String.html" rel="prev" title="LeetCode解题报告（430）-- 1525. Number of Good Ways to Split a String">
+      <i class="fa fa-chevron-left"></i> LeetCode解题报告（430）-- 1525. Number of Good Ways to Split a String
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/archives/LeetCode%E8%A7%A3%E9%A2%98%E6%8A%A5%E5%91%8A%EF%BC%88431%EF%BC%89--%20143.%20Reorder%20List.html" rel="next" title="LeetCode解题报告（431）-- 143. Reorder List">
+      LeetCode解题报告（431）-- 143. Reorder List <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Introduction"><span class="nav-number">1.</span> <span class="nav-text">Introduction</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#8-Common-Design-Pattern"><span class="nav-number">2.</span> <span class="nav-text">8 Common Design Pattern</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Layered-Pattern-%EF%BC%88%E5%B1%82%E7%BA%A7%E6%A8%A1%E5%BC%8F%EF%BC%89"><span class="nav-number">2.1.</span> <span class="nav-text">Layered Pattern （层级模式）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Client-Server-Pattern-%EF%BC%88CS%E6%A8%A1%E5%BC%8F%EF%BC%89"><span class="nav-number">2.2.</span> <span class="nav-text">Client-Server Pattern （CS模式）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Master-Slave%EF%BC%88%E4%B8%BB%E4%BB%8E%E6%A8%A1%E5%BC%8F%EF%BC%89"><span class="nav-number">2.3.</span> <span class="nav-text">Master-Slave（主从模式）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Pipe-Filter%EF%BC%88%E7%AE%A1%E9%81%93%E8%BF%87%E6%BB%A4%E5%99%A8%E6%A8%A1%E5%BC%8F%EF%BC%89"><span class="nav-number">2.4.</span> <span class="nav-text">Pipe-Filter（管道过滤器模式）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Broker-Pattern%EF%BC%88%E4%BB%A3%E7%90%86%E6%A8%A1%E5%BC%8F%EF%BC%89"><span class="nav-number">2.5.</span> <span class="nav-text">Broker Pattern（代理模式）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#P2P-Pattern%EF%BC%88%E5%AF%B9%E7%AD%89%E6%A8%A1%E5%BC%8F%EF%BC%89"><span class="nav-number">2.6.</span> <span class="nav-text">P2P Pattern（对等模式）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#EventBus-Pattern%EF%BC%88%E4%BA%8B%E4%BB%B6%E6%80%BB%E7%BA%BF%E6%A8%A1%E5%BC%8F%EF%BC%89"><span class="nav-number">2.7.</span> <span class="nav-text">EventBus Pattern（事件总线模式）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Model-View-Controller-%EF%BC%88MVC%E6%A8%A1%E5%BC%8F%EF%BC%89"><span class="nav-number">2.8.</span> <span class="nav-text">Model-View-Controller （MVC模式）</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Summary"><span class="nav-number">3.</span> <span class="nav-text">Summary</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Reference"><span class="nav-number">4.</span> <span class="nav-text">Reference</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Leungyukshing"
+      src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">Leungyukshing</p>
+  <div class="site-description" itemprop="description">A blog for code, programme sharing.</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">688</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">27</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/leungyukshing" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;leungyukshing" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:jacky14.liang@gmail.com" title="E-Mail → mailto:jacky14.liang@gmail.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="/atom.xml" title="RSS → &#x2F;atom.xml"><i class="fa fa-rss fa-fw"></i>RSS</a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll motion-element">
+    <div class="links-of-blogroll-title"><i class="fa fa-link fa-fw"></i>
+      Friends
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="http://www.liangjh45.com/" title="http:&#x2F;&#x2F;www.liangjh45.com&#x2F;" rel="noopener" target="_blank">Alva's blog</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="https://sysucarey.github.io/" title="https:&#x2F;&#x2F;sysucarey.github.io&#x2F;" rel="noopener" target="_blank">Carey's blog</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="https://blog.csdn.net/dickdick111/" title="https:&#x2F;&#x2F;blog.csdn.net&#x2F;dickdick111&#x2F;" rel="noopener" target="_blank">Dick's blog</a>
+        </li>
+    </ul>
+  </div>
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2017 – 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Leungyukshing</span>
+</div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="Total Visitors">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="Total Views">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+      
+
+<script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      loader: {
+        source: {
+          '[tex]/amsCd': '[tex]/amscd',
+          '[tex]/AMScd': '[tex]/amscd'
+        }
+      },
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              let target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    (function () {
+      var script = document.createElement('script');
+      script.src = '//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+      script.defer = true;
+      document.head.appendChild(script);
+    })();
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : true,
+      appId      : 'AaLog29QcUdQKTboD6cY2dNP-gzGzoHsz',
+      appKey     : 'dUWNHLnTY9qG1jJwPnTtfMm8',
+      placeholder: "Just go go",
+      avatar     : 'mm',
+      meta       : guest,
+      pageSize   : '10' || 10,
+      visitor    : false,
+      lang       : '' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : false,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+
+</body>
+</html>

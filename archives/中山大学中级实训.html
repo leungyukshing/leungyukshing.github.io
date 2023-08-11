@@ -1,0 +1,609 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <meta name="google-site-verification" content="FHjCzDi7nry9Mvf4EFOY5cYoco-ZXq9tKjvXZK0nKr4">
+  <meta name="baidu-site-verification" content="code-gpMFPewYUF" />
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="/lib/pace/pace-theme-minimal.min.css">
+  <script src="/lib/pace/pace.min.js"></script>
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"leungyukshing.github.io","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"right","display":"hide","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"appID":"52USYSYESX","apiKey":"20b904c66f55b874f05edea4aca57780","indexName":"blog","hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="前言&amp;emsp;&amp;emsp;相信经历过初级实训的同学，对于实训都会有一种恐惧感，虽然中级实训也需要大家付出很多精力，但是难度相比起初级实训，还是简单不少。中级实训是基于一个GridWorld框架，让同学们在上面改进代码，是要求大家在理解的前提下，在现有的代码上进行改进与拓展，这个更加考验大家对于代码的理解能力。第三部分的内容也涉及到了一些基本的算法。这篇博客将简单地跟大家介绍实训中的一些关键内容，">
+<meta property="og:type" content="article">
+<meta property="og:title" content="中山大学中级实训">
+<meta property="og:url" content="https://leungyukshing.github.io/archives/%E4%B8%AD%E5%B1%B1%E5%A4%A7%E5%AD%A6%E4%B8%AD%E7%BA%A7%E5%AE%9E%E8%AE%AD.html">
+<meta property="og:site_name" content="Halo">
+<meta property="og:description" content="前言&amp;emsp;&amp;emsp;相信经历过初级实训的同学，对于实训都会有一种恐惧感，虽然中级实训也需要大家付出很多精力，但是难度相比起初级实训，还是简单不少。中级实训是基于一个GridWorld框架，让同学们在上面改进代码，是要求大家在理解的前提下，在现有的代码上进行改进与拓展，这个更加考验大家对于代码的理解能力。第三部分的内容也涉及到了一些基本的算法。这篇博客将简单地跟大家介绍实训中的一些关键内容，">
+<meta property="og:locale">
+<meta property="article:published_time" content="2018-07-25T12:55:08.000Z">
+<meta property="article:modified_time" content="2021-06-22T18:33:08.705Z">
+<meta property="article:author" content="Leungyukshing">
+<meta property="article:tag" content="Java">
+<meta property="article:tag" content="实训">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://leungyukshing.github.io/archives/%E4%B8%AD%E5%B1%B1%E5%A4%A7%E5%AD%A6%E4%B8%AD%E7%BA%A7%E5%AE%9E%E8%AE%AD.html">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-Hans'
+  };
+</script>
+
+  <title>中山大学中级实训 | Halo</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+<!-- hexo injector head_end end --><link rel="alternate" href="/atom.xml" title="Halo" type="application/atom+xml"><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Halo</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">A magic place for coding</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>About</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>Tags</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>Search
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="Searching..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+  <a href="https://github.com/leungyukshing" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="https://leungyukshing.github.io/archives/%E4%B8%AD%E5%B1%B1%E5%A4%A7%E5%AD%A6%E4%B8%AD%E7%BA%A7%E5%AE%9E%E8%AE%AD.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="Leungyukshing">
+      <meta itemprop="description" content="A blog for code, programme sharing.">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Halo">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          中山大学中级实训
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2018-07-25 08:55:08" itemprop="dateCreated datePublished" datetime="2018-07-25T08:55:08-04:00">2018-07-25</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2021-06-22 14:33:08" itemprop="dateModified" datetime="2021-06-22T14:33:08-04:00">2021-06-22</time>
+              </span>
+
+          
+            <span class="post-meta-item" title="Views" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">Views: </span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine: </span>
+    
+    <a title="valine" href="/archives/%E4%B8%AD%E5%B1%B1%E5%A4%A7%E5%AD%A6%E4%B8%AD%E7%BA%A7%E5%AE%9E%E8%AE%AD.html#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/archives/%E4%B8%AD%E5%B1%B1%E5%A4%A7%E5%AD%A6%E4%B8%AD%E7%BA%A7%E5%AE%9E%E8%AE%AD.html" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>&emsp;&emsp;相信经历过初级实训的同学，对于实训都会有一种恐惧感，虽然中级实训也需要大家付出很多精力，但是难度相比起初级实训，还是简单不少。中级实训是基于一个<strong>GridWorld</strong>框架，让同学们在上面改进代码，是要求大家在理解的前提下，在现有的代码上进行改进与拓展，这个更加考验大家对于代码的理解能力。第三部分的内容也涉及到了一些基本的算法。这篇博客将简单地跟大家介绍实训中的一些关键内容，希望能够帮助到大家。实训网站为<a target="_blank" rel="noopener" href="https://se-2018.github.io/">https://se-2018.github.io/</a> ，想看代码的直接看<a target="_blank" rel="noopener" href="https://github.com/leungyukshing/GridWorld">这里</a>。</p>
+<a id="more"></a>
+
+<h2 id="介绍"><a href="#介绍" class="headerlink" title="介绍"></a>介绍</h2><p>&emsp;&emsp;实训时间为三周，分为三个阶段，中间一般会有一周与假期冲突了，因此实际留给大家的时间是四个星期。中级实训在给TA检查和提交代码的时候需要在云平台的Linux环境下进行，但是云平台对外没有限制，大家可以提前看到题目，然后在windows环境下先做好，通过Github将资料传到云平台中即可，所以时间上是比较充裕的。内容主要分析三个阶段，接下来我将按阶段来介绍。</p>
+<h3 id="阶段1"><a href="#阶段1" class="headerlink" title="阶段1"></a>阶段1</h3><p>&emsp;&emsp;阶段1的主要内容是学习一些跟Java开发有关的工具，在后面的阶段会使用到。这一阶段难点主要是配置环境变量和要熟悉多种工具的使用，建议大家可以提前学习，不要挤在一个周末去学。同时也要写一份自学报告，这也是比较花时间的。学习的内容包括：</p>
+<ul>
+<li>Vim的使用</li>
+<li>编译运行HelloWorld</li>
+<li>Ant</li>
+<li>用Java实现一个简单的计算器</li>
+<li>学习测试工具Junit</li>
+<li>学习配置SonarQube，并用于测试自己的代码<br>&emsp;&emsp;这一阶段涉及的新东西很多，也很繁杂，所以我讲解详细一点，后两部分都是以代码为主，就不详细讲解了。</li>
+</ul>
+<h4 id="Vim使用"><a href="#Vim使用" class="headerlink" title="Vim使用"></a>Vim使用</h4><p>&emsp;&emsp;关于Vim的使用这里不详细展开，本人也不是很喜欢使用这个编辑器，学会简单的打开、编辑和退出就可以了。</p>
+<h4 id="编译运行HelloWorld"><a href="#编译运行HelloWorld" class="headerlink" title="编译运行HelloWorld"></a>编译运行HelloWorld</h4><p>&emsp;&emsp;编译运行HelloWorld这个难度不大，详情可以参考<a href="https://leungyukshing.github.io/archives/Java-HelloWorld.html">第一个Java程序</a>这篇博客。</p>
+<h4 id="Ant使用"><a href="#Ant使用" class="headerlink" title="Ant使用"></a>Ant使用</h4><p>&emsp;&emsp;Ant是一个类似于Make命令的操作，我们可以提前将程序编译运行的命令写在一个xml文件中，然后在命令行中输入<code>ant</code>，就可以编译运行程序的。Ant的配置使用可以参考<a target="_blank" rel="noopener" href="https://www.cnblogs.com/hoojo/archive/2013/06/14/java_ant_project_target_task_run.html">Ant教程</a>。接下来我举一个简单的例子</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">project</span> <span class="attr">name</span>=<span class="string">&quot;TestHelloWorld&quot;</span> <span class="attr">default</span>=<span class="string">&quot;run&quot;</span> <span class="attr">basedir</span>=<span class="string">&quot;.&quot;</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">target</span> <span class="attr">name</span>=<span class="string">&quot;clean&quot;</span>&gt;</span></span><br><span class="line">		<span class="tag">&lt;<span class="name">delete</span> <span class="attr">dir</span>=<span class="string">&quot;dest&quot;</span>/&gt;</span></span><br><span class="line">	<span class="tag">&lt;/<span class="name">target</span>&gt;</span></span><br><span class="line"></span><br><span class="line">	<span class="tag">&lt;<span class="name">target</span> <span class="attr">name</span>=<span class="string">&quot;compile&quot;</span> <span class="attr">depends</span>=<span class="string">&quot;clean&quot;</span>&gt;</span></span><br><span class="line">		<span class="tag">&lt;<span class="name">mkdir</span> <span class="attr">dir</span>=<span class="string">&quot;dest&quot;</span>/&gt;</span></span><br><span class="line">		<span class="tag">&lt;<span class="name">javac</span> <span class="attr">srcdir</span>=<span class="string">&quot;src&quot;</span> <span class="attr">destdir</span>=<span class="string">&quot;dest&quot;</span>/&gt;</span></span><br><span class="line">	<span class="tag">&lt;/<span class="name">target</span>&gt;</span></span><br><span class="line"></span><br><span class="line">	<span class="tag">&lt;<span class="name">target</span> <span class="attr">name</span>=<span class="string">&quot;run&quot;</span> <span class="attr">depends</span>=<span class="string">&quot;compile&quot;</span>&gt;</span></span><br><span class="line">		<span class="tag">&lt;<span class="name">java</span> <span class="attr">classname</span>=<span class="string">&quot;HelloWorld&quot;</span> <span class="attr">classpath</span>=<span class="string">&quot;dest&quot;</span> /&gt;</span></span><br><span class="line">	<span class="tag">&lt;/<span class="name">target</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;/<span class="name">project</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p><strong>分析</strong>：项目名叫TestHelloWorld，这个是可以自己命名的，<code>default</code>属性表明的是默认运行的target。由于Ant工作的核心是依赖关系，因此，这个一般写最后一个运行的target的名字。接下来看<code>target</code>标签，含有<code>name</code>和<code>depends</code>属性，<code>depends</code>属性指明了当前target运行必须后于其所指向的target的运行。上述例子中，<strong>compile</strong>的运行必须后于<strong>clean</strong>的运行，而<strong>run</strong>的运行又必须后于<strong>compile</strong>的运行。<br>&emsp;&emsp;<code>target</code>是这个文件的主体部分，我们需要在里面指明我们需要做什么，这里我们可以使用<code>delete</code>、<code>mkdir</code>等命令进行文件的操作，也可以使用<code>java</code>、<code>javac</code>等命令进行文件编译运行，还可以配合Junit测试使用，具体的语法可以上网查。这里提醒一点，运行GUI界面java程序需要设置<code>java</code>标签中的fork属性为<code>yes</code>。</p>
+<h4 id="实现简单计算器"><a href="#实现简单计算器" class="headerlink" title="实现简单计算器"></a>实现简单计算器</h4><p>&emsp;&emsp;这里需要用Java写一个图形化界面的计算器，主要用到的时候GUI设计的知识和事件监听器。TA检查一般不会很严格，重点检查的是输入非数字符号、除0操作等的结果，这里自己稍加判断就可以了，相应的代码在Github上也有。</p>
+<h4 id="Junit学习"><a href="#Junit学习" class="headerlink" title="Junit学习"></a>Junit学习</h4><p>&emsp;&emsp;Junit是一个开源的Java测试框架，简单来说就是提供给开发者一个工具，我们可以预先写好我们需要测试的内容，然后运行junit测试，通过比对我们可以在一定程度上判断程序是否正确。<br>&emsp;&emsp;Junit的使用很简单，实训环境已经提供了相关的包，添加到编译目录后，自己编写一个测试类，下面举个例子。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> <span class="keyword">static</span> org.junit.Assert.*;</span><br><span class="line"><span class="keyword">import</span> org.junit.Test;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">HelloWorldTest</span> </span>&#123;</span><br><span class="line">	<span class="keyword">public</span> HelloWorld hellowolrd = <span class="keyword">new</span> HelloWorld();</span><br><span class="line"></span><br><span class="line">	<span class="meta">@Test</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">testHello</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		hellowolrd.hello();</span><br><span class="line">		assertEquals(<span class="string">&quot;Hello World!&quot;</span>, hellowolrd.getStr());</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><strong>分析</strong>：<code>@Test</code>称为元标记，表明这个函数是一个测试，里面填写要测试的东西，然后使用<code>assertEquals()</code>来比对程序运行结果和我们预期的结果。元标记<br>还包括<code>@ignore</code>（运行后将会忽略这一个测试）、<code>@BeforeClass</code>（一般是预先实例化一个对象）、<code>@AfterClass</code>（释放资源）。写完之后我们编译和运行<strong>测试类</strong>就可以了。实训环境也提供了Eclipse开发平台，可以直接在里面添加Junit测试，非常方便。</p>
+<h4 id="SonarQube使用"><a href="#SonarQube使用" class="headerlink" title="SonarQube使用"></a>SonarQube使用</h4><p>&emsp;&emsp;SonarQube是一个用于代码质量管理的开源平台，它可以帮助程序员改善代码风格和质量，优化代码结构，是一个很好的工具。具体的做法可以参考我的<a target="_blank" rel="noopener" href="https://github.com/leungyukshing/GridWorld/blob/master/Part1/Report/Part1%E8%87%AA%E5%AD%A6%E6%8A%A5%E5%91%8A.md">自学报告</a>。</p>
+<h3 id="阶段2"><a href="#阶段2" class="headerlink" title="阶段2"></a>阶段2</h3><p>&emsp;&emsp;阶段二主要是在现有的代码上进行创新，难度不大，这里就不赘述了，有问题的直接看代码。TA检查会比较松，一般看样子对了就过了，建议大家把问答题做好。</p>
+<h3 id="阶段3"><a href="#阶段3" class="headerlink" title="阶段3"></a>阶段3</h3><p>&emsp;&emsp;阶段三涉及到了图像处理、遍历算法等。这一部分需要大家仔细阅读老师提供的资料，以及自己多上网查一下算法的思路（如宽度优先、深度优先、启发式搜索等），想明白后写的代码其实很少，关键是要弄懂原理。TA检查的时候会对寻路的步数有一定要求。</p>
+<h2 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h2><p>&emsp;&emsp;经历过大一的实训，可能比较多同学都对实训有一点恐惧。但是大二的中级实训也没有想象中的难，熬熬夜是肯定要的，但是时间也相对起来比较宽裕。建议大家可以提前把一些工作做好，因为实训期间有可能撞上其他课程的大作业。最后还是祝愿大家能够顺利完成实训！</p>
+
+    </div>
+
+    
+    
+    
+        <div class="reward-container">
+  <div></div>
+  <button onclick="var qr = document.getElementById('qr'); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    Donate
+  </button>
+  <div id="qr" style="display: none;">
+      
+      <div style="display: inline-block;">
+        <img src="/images/wechat_reward.png" alt="Leungyukshing WeChat Pay">
+        <p>WeChat Pay</p>
+      </div>
+      
+      <div style="display: inline-block;">
+        <img src="/images/alipay_reward.png" alt="Leungyukshing Alipay">
+        <p>Alipay</p>
+      </div>
+
+  </div>
+</div>
+
+        
+
+  <div class="followme">
+    <p>Welcome to my other publishing channels</p>
+
+    <div class="social-list">
+
+        <div class="social-item">
+          <a target="_blank" class="social-link" href="/atom.xml">
+            <span class="icon">
+              <i class="fa fa-rss"></i>
+            </span>
+
+            <span class="label">RSS</span>
+          </a>
+        </div>
+    </div>
+  </div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Java/" rel="tag"># Java</a>
+              <a href="/tags/%E5%AE%9E%E8%AE%AD/" rel="tag"># 实训</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/archives/%E4%B8%AD%E5%B1%B1%E5%A4%A7%E5%AD%A6%E5%88%9D%E7%BA%A7%E5%AE%9E%E8%AE%AD.html" rel="prev" title="中山大学初级实训">
+      <i class="fa fa-chevron-left"></i> 中山大学初级实训
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/archives/%E5%9B%BE%E4%B9%A6%E7%AE%A1%E7%90%86%E7%B3%BB%E7%BB%9F%E5%BC%80%E5%8F%91.html" rel="next" title="图书销售管理系统开发">
+      图书销售管理系统开发 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%89%8D%E8%A8%80"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BB%8B%E7%BB%8D"><span class="nav-number">2.</span> <span class="nav-text">介绍</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%98%B6%E6%AE%B51"><span class="nav-number">2.1.</span> <span class="nav-text">阶段1</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Vim%E4%BD%BF%E7%94%A8"><span class="nav-number">2.1.1.</span> <span class="nav-text">Vim使用</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%BC%96%E8%AF%91%E8%BF%90%E8%A1%8CHelloWorld"><span class="nav-number">2.1.2.</span> <span class="nav-text">编译运行HelloWorld</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Ant%E4%BD%BF%E7%94%A8"><span class="nav-number">2.1.3.</span> <span class="nav-text">Ant使用</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%AE%9E%E7%8E%B0%E7%AE%80%E5%8D%95%E8%AE%A1%E7%AE%97%E5%99%A8"><span class="nav-number">2.1.4.</span> <span class="nav-text">实现简单计算器</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Junit%E5%AD%A6%E4%B9%A0"><span class="nav-number">2.1.5.</span> <span class="nav-text">Junit学习</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#SonarQube%E4%BD%BF%E7%94%A8"><span class="nav-number">2.1.6.</span> <span class="nav-text">SonarQube使用</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%98%B6%E6%AE%B52"><span class="nav-number">2.2.</span> <span class="nav-text">阶段2</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%98%B6%E6%AE%B53"><span class="nav-number">2.3.</span> <span class="nav-text">阶段3</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B0%8F%E7%BB%93"><span class="nav-number">3.</span> <span class="nav-text">小结</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Leungyukshing"
+      src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">Leungyukshing</p>
+  <div class="site-description" itemprop="description">A blog for code, programme sharing.</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">688</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">27</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/leungyukshing" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;leungyukshing" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:jacky14.liang@gmail.com" title="E-Mail → mailto:jacky14.liang@gmail.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="/atom.xml" title="RSS → &#x2F;atom.xml"><i class="fa fa-rss fa-fw"></i>RSS</a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll motion-element">
+    <div class="links-of-blogroll-title"><i class="fa fa-link fa-fw"></i>
+      Friends
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="http://www.liangjh45.com/" title="http:&#x2F;&#x2F;www.liangjh45.com&#x2F;" rel="noopener" target="_blank">Alva's blog</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="https://sysucarey.github.io/" title="https:&#x2F;&#x2F;sysucarey.github.io&#x2F;" rel="noopener" target="_blank">Carey's blog</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="https://blog.csdn.net/dickdick111/" title="https:&#x2F;&#x2F;blog.csdn.net&#x2F;dickdick111&#x2F;" rel="noopener" target="_blank">Dick's blog</a>
+        </li>
+    </ul>
+  </div>
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2017 – 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Leungyukshing</span>
+</div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="Total Visitors">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="Total Views">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : true,
+      appId      : 'AaLog29QcUdQKTboD6cY2dNP-gzGzoHsz',
+      appKey     : 'dUWNHLnTY9qG1jJwPnTtfMm8',
+      placeholder: "Just go go",
+      avatar     : 'mm',
+      meta       : guest,
+      pageSize   : '10' || 10,
+      visitor    : false,
+      lang       : '' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : false,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+
+</body>
+</html>

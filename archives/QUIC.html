@@ -1,0 +1,621 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <meta name="google-site-verification" content="FHjCzDi7nry9Mvf4EFOY5cYoco-ZXq9tKjvXZK0nKr4">
+  <meta name="baidu-site-verification" content="code-gpMFPewYUF" />
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="/lib/pace/pace-theme-minimal.min.css">
+  <script src="/lib/pace/pace.min.js"></script>
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"leungyukshing.github.io","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"right","display":"hide","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"appID":"52USYSYESX","apiKey":"20b904c66f55b874f05edea4aca57780","indexName":"blog","hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="QUIC协议介绍&amp;emsp;&amp;emsp;QUIC(Quick Udp Internet Connection) 是由Google提出的使用UDP进行多路并发传输的协议，直接对标TCP。这里结合我个人的理解，对其中一些技术要点进行分享。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="QUIC协议介绍">
+<meta property="og:url" content="https://leungyukshing.github.io/archives/QUIC.html">
+<meta property="og:site_name" content="Halo">
+<meta property="og:description" content="QUIC协议介绍&amp;emsp;&amp;emsp;QUIC(Quick Udp Internet Connection) 是由Google提出的使用UDP进行多路并发传输的协议，直接对标TCP。这里结合我个人的理解，对其中一些技术要点进行分享。">
+<meta property="og:locale">
+<meta property="og:image" content="https://leungyukshing.github.io/images/tcp_tls_handshake.png">
+<meta property="article:published_time" content="2020-05-31T03:43:12.000Z">
+<meta property="article:modified_time" content="2021-06-22T18:37:11.501Z">
+<meta property="article:author" content="Leungyukshing">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://leungyukshing.github.io/images/tcp_tls_handshake.png">
+
+<link rel="canonical" href="https://leungyukshing.github.io/archives/QUIC.html">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-Hans'
+  };
+</script>
+
+  <title>QUIC协议介绍 | Halo</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+<!-- hexo injector head_end end --><link rel="alternate" href="/atom.xml" title="Halo" type="application/atom+xml"><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Halo</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">A magic place for coding</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>About</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>Tags</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>Search
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="Searching..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+  <a href="https://github.com/leungyukshing" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="https://leungyukshing.github.io/archives/QUIC.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="Leungyukshing">
+      <meta itemprop="description" content="A blog for code, programme sharing.">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Halo">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          QUIC协议介绍
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2020-05-30 23:43:12" itemprop="dateCreated datePublished" datetime="2020-05-30T23:43:12-04:00">2020-05-30</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2021-06-22 14:37:11" itemprop="dateModified" datetime="2021-06-22T14:37:11-04:00">2021-06-22</time>
+              </span>
+
+          
+            <span class="post-meta-item" title="Views" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">Views: </span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine: </span>
+    
+    <a title="valine" href="/archives/QUIC.html#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/archives/QUIC.html" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="QUIC协议介绍"><a href="#QUIC协议介绍" class="headerlink" title="QUIC协议介绍"></a>QUIC协议介绍</h1><p>&emsp;&emsp;QUIC(<strong>Q</strong>uick <strong>U</strong>dp <strong>I</strong>nternet <strong>C</strong>onnection) 是由Google提出的使用UDP进行多路并发传输的协议，直接对标TCP。这里结合我个人的理解，对其中一些技术要点进行分享。</p>
+<a id="more"></a>
+
+<h2 id="What-is-QUIC-general"><a href="#What-is-QUIC-general" class="headerlink" title="What is QUIC (general)"></a>What is QUIC (general)</h2><p>&emsp;&emsp;我们先从总体上来看一下QUIC是什么。先看下面这段引用自Chromium Projects的介绍。</p>
+<blockquote>
+<p>   QUIC is a  new transport which reduces latency compared to that of TCP. On the surface, QUIC is very similiart to TCP+TLS+HTTP/2 implemented on UDP. Because TCP is implemented in operating system kernels, and middlebox firmware, making significant changes to TCP is next to impossilbe. However, since QUIC is build on UDP, it suffers from no such limitations.</p>
+</blockquote>
+<p>&emsp;&emsp;这部分很直接地说出了QUIC出现的必要性——为了解决TCP延时过高的问题。同时因为存在TCP在多年的发展中中间设备僵化、依赖操作系统的实现导致协议僵化这两个问题，使得在TCP协议上进行改造变得非常困难。而且现阶段普遍使用TCP+TLS+HTTP/2的方案存在着诸多问题，如TCP本身带来的队头阻塞问题、握手时间过长问题等，所以Google就提出了QUIC协议，目的就是减少网络延时，在业务逻辑不需要做任何优化的情况下，或者在弱网络环境的情况下，提升网络响应速度，给网页应用更佳的体验。</p>
+<hr>
+<h2 id="Details"><a href="#Details" class="headerlink" title="Details"></a>Details</h2><p>&emsp;&emsp;前面说到了当前方案（TCP+TLS+HTTP/2）的不足，主要是TCP和TLS带来延时的问题，我们先来看看是什么导致了延时。</p>
+<ol>
+<li>TCP三次握手和TLS四次握手一共3个RTT。</li>
+<li>TCP队头阻塞。</li>
+</ol>
+<h3 id="RTT-Round-Trip-Time"><a href="#RTT-Round-Trip-Time" class="headerlink" title="RTT(Round Trip Time)"></a>RTT(Round Trip Time)</h3><p>&emsp;&emsp;RTT指的是<strong>客户端从发送一个请求，到接收到相应之间间隔的时间。</strong>RTT一般包含信号的物理传输时间和数据包在路由过程中解析的时间。RTT会很影响网络应用的体验，所以优化RTT是提升网络应用体验的一大方向。</p>
+<p>&emsp;&emsp;TCP的三次握手包含了1个RTT：客户端请求，服务器应答。TLS的连接需要四次握手共2个RTT，第一个RTT用于客户端获取服务器提供的public证书，第二个RTT用于客户端把自己随机生成的key通过公钥加密后传输给服务器，用于后续内容的加密。</p>
+<p>&emsp;&emsp;QUIC也是从这三个RTT入手进行优化的，先来看TCP的三次握手带来的1个RTT是否可以优化掉。其实这一次握手最主要的作用就是服务器端对客户端的身份进行确认，这一个RTT没有传输任何有意义的数据，那么一个很直观的优化思路就是：能不能在这一个握手的时候，就带上需要传输的数据呢？实际上TCP是支持这种方式的，客户端发起请求的SYN握手请求的时候就可以带上数据包，但是TCP协议的实现方<strong>不允许</strong>把这个数据包上传到应用层，这主要是为了防止TCP的泛洪攻击。这就是说，如果我们希望在SYN握手请求的时候带上数据包，那么我们将会面对TCP泛洪攻击的风险。TFO（TCP Fast Open）就是为了这种场景而设计的一种方案，它支持在发送SYN请求的时候，同时带上数据包，并确保安全性。</p>
+<p>&emsp;&emsp;TFO的设计实质上就是借鉴了Sesstion Ticket的思路，它使用cookie标识客户端的信息，在第一次握手的时候由server生成，保存上次会话的配置信息。所以在<strong>除了第一次TCP连接之外</strong>（第一次TCP连接仍然需要三次握手验证身份），在客户端发起的后续的TCP连接时，都会直接是SYN+Cookie+数据，然后不需要等待服务端ACK就继续发送后续的数据包。当然，如果服务端对Cookie的验证不通过，那么就会回退到三次握手的步骤，上一次传输的数据无效。尽管有cookie的保护，但是如果先拿了cookie，然后在发起攻击，还是有可能在短时间内使得服务瘫痪，所以服务端的端口都会记录一个<code>PendingFastOpenRequests</code>的参数，用于记录多少个请求时通过TFO的，如果超过了上限就直接忽略到，避免服务器受到攻击。这样，借助TFO，我们就可以在优化掉这个TCP三次握手的RTT。</p>
+<p>&emsp;&emsp;然后我们来看一下如何去优化TLS的两次RTT。TLS的第一个RTT是用于验证身份的，第二个RTT是用于传递加密的key的。第一个RTT的作用和TCP的RTT基本相似，所以可以采用Sesstion Ticket的思路，把校验信息缓存下来，这样就能够优化掉第一个RTT。</p>
+<p>&emsp;&emsp;所以这里我们就成功地把3个RTT减少到1个RTT，在极简情况下，QUIC甚至能够优化到0RTT。（参考：<a target="_blank" rel="noopener" href="https://blog.csdn.net/hzw05103020/article/details/54974563">Facebook App对TLS的魔改造: 实现0-RTT</a>）</p>
+<p><img src="/images/tcp_tls_handshake.png" alt="TCP+SSL的三个RTT"></p>
+<h3 id="HOL-Head-of-Blocking"><a href="#HOL-Head-of-Blocking" class="headerlink" title="HOL(Head of Blocking)"></a>HOL(Head of Blocking)</h3><p>&emsp;&emsp;队头阻塞，是所有的管道模型都一定会遇到的问题。它指的是，当有多个<strong>串行请求</strong>执行的时候，如果前面的一个请求不执行完毕，后面的请求将会一直等待。这种情况会造成后面的请求等待时间很长，同时也不能很好地利用网络带宽。</p>
+<p>&emsp;&emsp;在HTTP协议中，为了<strong>缓解</strong>这个问题，引入了并行的模式，允许客户端发起多个并行请求。在并行的情况下，即使某一条管道的某一个数据包block了，也只会影响这条管道上后面的数据包，而不会影响其它管道上的，所以这种方案能够有效提升网络带宽的利用率。但需要注意的是，上面我用的时候<strong>缓解</strong>，也就是说并行请求的方案只能是减少HOL带来的不利影响，而不能真正解决这个问题。</p>
+<p>&emsp;&emsp;解决block这个问题最关键的地方就是解决数据包传输的顺序问题。如果在传输的过程中，我们对数据包的顺序没有严格的要求，那么这个问题就能够解决了。SPDY提供了一种新的思路——<strong>多路复用</strong>，即所有数据包不分先后地进行传输。也就是所就算前面一个包失败了，后面的也可以进行传输，这样做的代价就是需要在每一个数据包都带上标记，这个标记是给客户端最后进行拼接的。说到这里是不是有一些熟悉？这个和TCP滑动窗口机制的本质是一样的。TCP的滑动窗口机制是为了平衡传输效率和保证数据的可达性，在ACK丢失或出错的情况下，确实能够避免HOL，但是如果是数据包发生了丢失，HOL还是会出现。所以，我们需要有一套机制，<strong>在没有顺序的情况下，保证数据的可达性</strong>。</p>
+<p>&emsp;&emsp;操作系统中有一个文件存储的方式叫RAID5，其中它用于校验文件正确性的技术叫前向纠错（Forward Error Correcting）。这里保证数据的可达性也是借用了这种思路，它最直接的作用就在多个数据传输的过程中，如果只有<strong>一个数据包发生丢包或者错包</strong>，能够自动纠正过来。其原理如下：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 异或运算</span></span><br><span class="line">a ^ a = <span class="number">0</span></span><br><span class="line">a ^ <span class="number">0</span> = a</span><br><span class="line"></span><br><span class="line"><span class="comment">// 假设</span></span><br><span class="line">A1 ^ A2 ^ A3 ^ .. ^ An = T</span><br><span class="line">    </span><br><span class="line"><span class="comment">// 通过运算使得等式左边只有一个元素</span></span><br><span class="line">(A1 ^ A1) ^ A2 ^ A3 ^ ... ^ An = T ^ A1</span><br><span class="line">A2 ^ A3 ^ ... ^ An = T ^ A1</span><br><span class="line">A3 ^ ... ^ An = T ^ A1 ^ A2</span><br><span class="line">Ai = T ^ A1 ^ A2 ^ ... Ai<span class="number">-1</span> ^ Ai+<span class="number">1</span> ^ ... ^ An</span><br></pre></td></tr></table></figure>
+
+<p>&emsp;&emsp;上面的每一个$A_i$都可以看作是一个数据包，$T$看成是所有数据包异或的结果，也被称作为冗余数据，所以最后推导的结果就说明，<strong>任意一个数据包，都可以由其余的数据包加上冗余数据推导出来</strong>。因此在这种设计之中，一个丢包或错包是允许的。</p>
+<p>&emsp;&emsp;因此QUIC利用冗余数据，能够在数据包乱序传输的情况下保证数据的可达性（一个丢包可恢复，多个丢包就需要重传）。</p>
+<hr>
+<h2 id="Summary"><a href="#Summary" class="headerlink" title="Summary"></a>Summary</h2><p>&emsp;&emsp;总的来说这篇博客讨论的是QUIC如何从latency的方向去优化现有的方案，其中借用了Session Ticket和FEC两个技术，这个是我觉得比较有趣的地方。讲解的内容是从我的角度出发理解，如果有任何补充和意见，欢迎直接联系我，感谢支持！</p>
+<hr>
+<h2 id="Reference"><a href="#Reference" class="headerlink" title="Reference"></a>Reference</h2><ol>
+<li><a target="_blank" rel="noopener" href="https://tools.ietf.org/html/draft-ietf-quic-transport-27#page-6">IETF QUIC Specification</a></li>
+<li><a target="_blank" rel="noopener" href="http://chromium.org/quic">Chromium: QUIC, a multiplexed stream transport over UDP</a></li>
+<li><a href="">QUIC: Design Document and Specification Rationale</a></li>
+<li><a target="_blank" rel="noopener" href="https://xiaozhuanlan.com/topic/2083674195">试图取代TCP的QUIC协议到底是什么</a></li>
+<li><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/32553477">QUIC协议原理分析</a></li>
+<li><a target="_blank" rel="noopener" href="https://tools.ietf.org/html/rfc7413">IETF TCP Fast Open</a></li>
+<li><a target="_blank" rel="noopener" href="https://blog.cloudflare.com/introducing-0-rtt/">Introducing Zero Round  Trip Time Resumption (0-RTT)</a></li>
+<li><a target="_blank" rel="noopener" href="https://webcitation.org/65iNkn800?url=http://www.aero.org/publications/crosslink/winter2002/04.html">Forward Error Correction</a></li>
+</ol>
+
+    </div>
+
+    
+    
+    
+        <div class="reward-container">
+  <div></div>
+  <button onclick="var qr = document.getElementById('qr'); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    Donate
+  </button>
+  <div id="qr" style="display: none;">
+      
+      <div style="display: inline-block;">
+        <img src="/images/wechat_reward.png" alt="Leungyukshing WeChat Pay">
+        <p>WeChat Pay</p>
+      </div>
+      
+      <div style="display: inline-block;">
+        <img src="/images/alipay_reward.png" alt="Leungyukshing Alipay">
+        <p>Alipay</p>
+      </div>
+
+  </div>
+</div>
+
+        
+
+  <div class="followme">
+    <p>Welcome to my other publishing channels</p>
+
+    <div class="social-list">
+
+        <div class="social-item">
+          <a target="_blank" class="social-link" href="/atom.xml">
+            <span class="icon">
+              <i class="fa fa-rss"></i>
+            </span>
+
+            <span class="label">RSS</span>
+          </a>
+        </div>
+    </div>
+  </div>
+
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/archives/LeetCode%E8%A7%A3%E9%A2%98%E6%8A%A5%E5%91%8A%EF%BC%8882%EF%BC%89--%2093.%20Restore%20IP%20Addresses.html" rel="prev" title="LeetCode解题报告（82）-- 93. Restore IP Addresses">
+      <i class="fa fa-chevron-left"></i> LeetCode解题报告（82）-- 93. Restore IP Addresses
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/archives/Rocketmq_Consume.html" rel="next" title="RocketMQ消费模式详解">
+      RocketMQ消费模式详解 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#QUIC%E5%8D%8F%E8%AE%AE%E4%BB%8B%E7%BB%8D"><span class="nav-number">1.</span> <span class="nav-text">QUIC协议介绍</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#What-is-QUIC-general"><span class="nav-number">1.1.</span> <span class="nav-text">What is QUIC (general)</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Details"><span class="nav-number">1.2.</span> <span class="nav-text">Details</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#RTT-Round-Trip-Time"><span class="nav-number">1.2.1.</span> <span class="nav-text">RTT(Round Trip Time)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#HOL-Head-of-Blocking"><span class="nav-number">1.2.2.</span> <span class="nav-text">HOL(Head of Blocking)</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Summary"><span class="nav-number">1.3.</span> <span class="nav-text">Summary</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Reference"><span class="nav-number">1.4.</span> <span class="nav-text">Reference</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Leungyukshing"
+      src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">Leungyukshing</p>
+  <div class="site-description" itemprop="description">A blog for code, programme sharing.</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">688</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">27</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/leungyukshing" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;leungyukshing" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:jacky14.liang@gmail.com" title="E-Mail → mailto:jacky14.liang@gmail.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="/atom.xml" title="RSS → &#x2F;atom.xml"><i class="fa fa-rss fa-fw"></i>RSS</a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll motion-element">
+    <div class="links-of-blogroll-title"><i class="fa fa-link fa-fw"></i>
+      Friends
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="http://www.liangjh45.com/" title="http:&#x2F;&#x2F;www.liangjh45.com&#x2F;" rel="noopener" target="_blank">Alva's blog</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="https://sysucarey.github.io/" title="https:&#x2F;&#x2F;sysucarey.github.io&#x2F;" rel="noopener" target="_blank">Carey's blog</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="https://blog.csdn.net/dickdick111/" title="https:&#x2F;&#x2F;blog.csdn.net&#x2F;dickdick111&#x2F;" rel="noopener" target="_blank">Dick's blog</a>
+        </li>
+    </ul>
+  </div>
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2017 – 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Leungyukshing</span>
+</div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="Total Visitors">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="Total Views">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : true,
+      appId      : 'AaLog29QcUdQKTboD6cY2dNP-gzGzoHsz',
+      appKey     : 'dUWNHLnTY9qG1jJwPnTtfMm8',
+      placeholder: "Just go go",
+      avatar     : 'mm',
+      meta       : guest,
+      pageSize   : '10' || 10,
+      visitor    : false,
+      lang       : '' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : false,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+
+</body>
+</html>

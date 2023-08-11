@@ -1,0 +1,674 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <meta name="google-site-verification" content="FHjCzDi7nry9Mvf4EFOY5cYoco-ZXq9tKjvXZK0nKr4">
+  <meta name="baidu-site-verification" content="code-gpMFPewYUF" />
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="/lib/pace/pace-theme-minimal.min.css">
+  <script src="/lib/pace/pace.min.js"></script>
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"leungyukshing.github.io","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"right","display":"hide","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"appID":"52USYSYESX","apiKey":"20b904c66f55b874f05edea4aca57780","indexName":"blog","hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="Introduction&amp;emsp;&amp;emsp;今天我们来谈谈一种非常经典的网络攻击——DDos（Distributed Denial-of-service）。这种攻击是一种很常见的攻击，它可以发生在网络模型的每一层，在这篇博客我将和大家分享一下DDos攻击的基本原理，以及我们目前有什么手段能够防御。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="浅淡DDos攻击">
+<meta property="og:url" content="https://leungyukshing.github.io/archives/Introduction-DDos.html">
+<meta property="og:site_name" content="Halo">
+<meta property="og:description" content="Introduction&amp;emsp;&amp;emsp;今天我们来谈谈一种非常经典的网络攻击——DDos（Distributed Denial-of-service）。这种攻击是一种很常见的攻击，它可以发生在网络模型的每一层，在这篇博客我将和大家分享一下DDos攻击的基本原理，以及我们目前有什么手段能够防御。">
+<meta property="og:locale">
+<meta property="article:published_time" content="2021-09-01T03:47:02.000Z">
+<meta property="article:modified_time" content="2021-09-01T03:48:15.463Z">
+<meta property="article:author" content="Leungyukshing">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://leungyukshing.github.io/archives/Introduction-DDos.html">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-Hans'
+  };
+</script>
+
+  <title>浅淡DDos攻击 | Halo</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+<!-- hexo injector head_end end --><link rel="alternate" href="/atom.xml" title="Halo" type="application/atom+xml"><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Halo</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">A magic place for coding</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>About</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>Tags</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>Search
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="Searching..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+  <a href="https://github.com/leungyukshing" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="https://leungyukshing.github.io/archives/Introduction-DDos.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="Leungyukshing">
+      <meta itemprop="description" content="A blog for code, programme sharing.">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Halo">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          浅淡DDos攻击
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+              
+
+              <time title="Created: 2021-08-31 23:47:02 / Modified: 23:48:15" itemprop="dateCreated datePublished" datetime="2021-08-31T23:47:02-04:00">2021-08-31</time>
+            </span>
+
+          
+            <span class="post-meta-item" title="Views" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">Views: </span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine: </span>
+    
+    <a title="valine" href="/archives/Introduction-DDos.html#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/archives/Introduction-DDos.html" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="Introduction"><a href="#Introduction" class="headerlink" title="Introduction"></a>Introduction</h1><p>&emsp;&emsp;今天我们来谈谈一种非常经典的网络攻击——DDos（Distributed Denial-of-service）。这种攻击是一种很常见的攻击，它可以发生在网络模型的每一层，在这篇博客我将和大家分享一下DDos攻击的基本原理，以及我们目前有什么手段能够防御。</p>
+<a id="more"></a>
+
+<h1 id="What-is-DDos"><a href="#What-is-DDos" class="headerlink" title="What is DDos?"></a>What is DDos?</h1><p>&emsp;&emsp;DDos Attack，分布式拒绝服攻击，意思是攻击者通过一定的手段或技术，对指定的服务器发起攻击，使得在某段时间内该服务无法响应正常的请求。一般通过这种攻击，攻击者可以向被攻击方索取赎金等获得利益。</p>
+<p>&emsp;&emsp;Dos攻击（注意这里是Dos，而不是DDos）的原理有两种：</p>
+<ol>
+<li>Dos Bug： 通过处罚系统的逻辑漏洞，使得服务器崩溃。例如某个网页的某个操作实现逻辑有问题，每次都会造成数据库崩溃，那么攻击者只需要触发这个操作1次，就能达到Dos的效果。；</li>
+<li>Dos Flood：通过控制一个botnet生成大量的请求。</li>
+</ol>
+<p>&emsp;&emsp;这篇博客我将focus在第二种，因为第一种更多的是程序逻辑的问题，而第二种才是和网络息息相关的攻击。</p>
+<p>&emsp;&emsp;DDos最大的特点是通过发送小size的网络包，造成服务器崩溃，这就是<strong>放大效果（Amplification）</strong>。举个例子，DNS放大攻击是一个非常典型的DDos，攻击者向DNS服务器发起请求（约60bytes），但是伪造了<code>source ip</code>。DNS服务器收到请求后，返回了EDNS（约3000bytes）给<code>source ip</code>，因此<code>source ip</code>上的机器实际上就被攻击了。从网络包的大小看，攻击者仅仅使用了60bytes就换取了3000bytes，这是一个很明显的放大。</p>
+<h1 id="Different-Types-of-DDos"><a href="#Different-Types-of-DDos" class="headerlink" title="Different Types of DDos"></a>Different Types of DDos</h1><h2 id="TCP-SYN-Flood-I"><a href="#TCP-SYN-Flood-I" class="headerlink" title="TCP SYN Flood I"></a>TCP SYN Flood I</h2><h3 id="Problem"><a href="#Problem" class="headerlink" title="Problem"></a>Problem</h3><p>&emsp;&emsp;我们知道在TCP三次握手的第一次握手，客户端向服务端发起SYN请求，服务端收到后就需要ACK，最关键的是服务器在这里会存下来客户端网络包的Sequence Number（SNc）和自己返回包的Sequence Number（SNs）。这里的存储就是问题所在，因为任意一个客户端都可以发起这个SYN请求（攻击者不需要再ACK一次，即不需要完成TCP握手过程），而对于任意一个请求，服务器都要消耗一定的存储资源，如果对方来势汹汹，是用一个botnet进行攻击，那么服务器就会在短时间内耗光存储，无法继续服务后面的请求。</p>
+<h3 id="Solution"><a href="#Solution" class="headerlink" title="Solution"></a>Solution</h3><p>&emsp;&emsp;对于这类攻击，关键在于服务器不能不加限制地使用存储资源，服务器应该只给合法用户的连接分配资源，因此有人提出了<a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/SYN_cookie">sync cookie</a>。它的作用在于，在第一次握手时，服务器并不需要马上分配内存资源，而是把需要存储的内容放到cookie中（在网络包中携带），等到用户真的完成了TCP三次握手，才真正分配资源去存储。</p>
+<p>&emsp;&emsp;大致细节为：</p>
+<ol>
+<li>服务器在返回SYN-ACK时，Sequence Number（SNs） = （T + mss + L），其中T是5位随机数（通过时间计数器生成），L = MAC(SAddr, SPort, DAddr, DPort, SNc, T)。</li>
+<li>客户端如果确认连接，会发送ACK给服务端，此时AN = SNs + 1，SN = SNc + 1；</li>
+<li>服务端拿到AN和SN后，首先用AN - 1得到SNs（sync cookie），然后根据当前时间对比T来判断是否过期，然后重新计算L来确认cookie是否有效</li>
+</ol>
+<p>&emsp;&emsp;因此这种方式能够保证服务器只分配资源给真正有需要完成TCP连接的用户，一定程度上防止了上述的攻击。</p>
+<h2 id="TCP-Connection-Flood"><a href="#TCP-Connection-Flood" class="headerlink" title="TCP Connection Flood"></a>TCP Connection Flood</h2><h3 id="Problem-1"><a href="#Problem-1" class="headerlink" title="Problem"></a>Problem</h3><p>&emsp;&emsp;上面提到的sync cookie确实能够防止只发起SYN请求的攻击，但是如果攻击者把TCP三次握手都完成了呢？好像就没有办法区分了。</p>
+<p>&emsp;&emsp;的确，这个就是现状。很多时候我们无法分清大量的TCP连接，到底是来自于恶意攻击，还是用户的真实行为。试想一下，当双十一开抢的时候，TCP的连接数绝对爆炸增长，但这并不是一种恶意攻击，所以不能够滥杀。因此我们到底有没有一种方案能够在安全和便利中取得平衡呢？</p>
+<h3 id="Solution-1"><a href="#Solution-1" class="headerlink" title="Solution"></a>Solution</h3><p>&emsp;&emsp;从特点看，如果攻击者建立了大量的TCP连接，那么它必须使用固定的IP地址，因为在协议中已经拿到，我们可以根据这些IP去反查到位置。如果我们部署了proxy或者网关，就可以针对这些IP进行block或者rate limit。</p>
+<h2 id="Route-Hijacking"><a href="#Route-Hijacking" class="headerlink" title="Route Hijacking"></a>Route Hijacking</h2><p>&emsp;&emsp;Route Hijacking是一种非常有意思的Dos，它并不是通过产生大量的请求去实现的，而是通过修改某个AS的路由，所有有关的请求从一个AS路由到另一个AS，这样位于原来AS的服务就无法收到正常的请求，对于用户来说就是无法服务了。</p>
+<p>&emsp;&emsp;这种劫持一般都是网络运营商配置错误导致的，所以，还是要守规矩。</p>
+<h1 id="SSL-TLS-handsahke"><a href="#SSL-TLS-handsahke" class="headerlink" title="SSL/TLS handsahke"></a>SSL/TLS handsahke</h1><p>&emsp;&emsp;回顾第一种攻击，是通过消耗服务器的存储资源达到Dos的效果，那么我们能否通过消耗服务器的计算资源达到相同的效果呢？答案是可以的，在SSL/TLS中，当客户端发起请求后，服务端会通过证书的形式把公钥发送给客户端，然后客户端用公钥把自己随机生成的key加密发送给服务端，此时服务端就需要解密去获得这个key。</p>
+<p>&emsp;&emsp;问题的关键就在于key的加密是非对称加密，如果使用RSA算法，客户端用公钥加密非常快，但是服务端用私钥解密非常慢，此时攻击者就可以利用这个特点，大量发起HTTPS请求，导致服务端的计算资源都耗费在RSA的解密上，无法响应正常的请求。</p>
+<h1 id="How-to-deal-with-DDos"><a href="#How-to-deal-with-DDos" class="headerlink" title="How to deal with DDos"></a>How to deal with DDos</h1><p>&emsp;&emsp;上面看了几个Dos的例子，虽然对于每一个例子都有一些特定的解决方法，但是有没有一些针对Dos更加普遍的应对措施呢？</p>
+<h2 id="Client-Puzzles"><a href="#Client-Puzzles" class="headerlink" title="Client Puzzles"></a>Client Puzzles</h2><p>&emsp;&emsp;防范Dos的核心在于防范放大效应，即不允许客户端以较低的代价去耗费服务端大量的资源。意思是如果客户端想要与服务端建立连接，那么它也需要付出一定的代价。</p>
+<p>&emsp;&emsp;这就是Client Puzzles的思想，当客户端想要建立连接时，服务端返回一个puzzle给客户端，需要客户端把这个puzzle解出来才能继续往后走。这个puzzle是：$LSB_n(SHA-1(C || X)) == 0^n$，客户端需要找到这个$X$。这个puzzle的特点是不容易计算但是很容易验证，而且难度随着n的增大而增加。所以服务端可以根据当前的请求量灵活调整n，当当前的请求量正常时，就不需要puzzle，当当前的请求量异常（可能是Dos攻击）时，则发放puzzle，需要客户端耗费一定的计算时间才能继续往下走。</p>
+<p>&emsp;&emsp;虽然这个方法很巧妙地解决了双方资源消耗不对等的问题，但是它并不是一个好的解决方案，因为它需要客户端和服务器都具备client puzzle的功能，同时，这种方法会伤害到一些合法的用户。例如在请求量异常时，合法用户请求也会需要client puzzle，对于性能较差的移动设备，可能实际效果和Dos没什么区别。</p>
+<h2 id="CAPTCHA"><a href="#CAPTCHA" class="headerlink" title="CAPTCHA"></a>CAPTCHA</h2><p>&emsp;&emsp;CAPTCHA(Completely Automated Public Turing test to tell Computers and Humans Apart)，这个名字太长了，简单来说就是验证码。这个手段是目前最常用的手段，它的核心就是区分出人和机器的操作。因为人的操作频率是有限的，一般来说攻击都是机器完成，所以只要区分出人和机器，就能很大程度上区分出攻击。</p>
+<h2 id="Source-Identification"><a href="#Source-Identification" class="headerlink" title="Source Identification"></a>Source Identification</h2><p>&emsp;&emsp;这是一种更加精细化的思路，既然网络中网络包是路由过来的，那么能不能把源头控制住，把问题扼杀在摇篮中。</p>
+<p>&emsp;&emsp;那这个摇篮就是ISP了，如果ISP能够把一些攻击的IP识别出来做成一个列表，然后source ip属于这个列表就把网络包丢掉，这样攻击的packet就不要流入到网络中了。</p>
+<p>&emsp;&emsp;但是理想很丰满，现实很骨感，这个策略需要所有的ISP都实现才有用。根据统计只要10%的ISP没有实现就等于没有防护（甚至有案例是只通过3个ISP就实现了攻击），但是大家都不积极，大家都在等别人先做。</p>
+<h2 id="Traceback"><a href="#Traceback" class="headerlink" title="Traceback"></a>Traceback</h2><p>&emsp;&emsp;靠ISP之间去完成估计是等不及了，只能还是从服务端入手。我们能不能通过在网络包中带上路由的信息，去找到攻击包的完整路径，这样就容易识别出来了。这个思路基于几个assumption：</p>
+<ol>
+<li>大多数的router还是安全的，没有被入侵；</li>
+<li>攻击者会向被攻击者发送大量packet；</li>
+<li>从攻击者到被攻击者的packet的路径是相对稳定的</li>
+</ol>
+<p>&emsp;&emsp;这种方法也非常直观，每个路由都把自己的地址写入到路径中，到服务器的时候就能得到一条完整的path。但是这里也有很大的问题，比如说网络包中还要找一个地方去存放这类信息，如果路径很长的话，还会占很大的空间。</p>
+<h2 id="Edge-Sampling"><a href="#Edge-Sampling" class="headerlink" title="Edge Sampling"></a>Edge Sampling</h2><p>&emsp;&emsp;针对上面Traceback路径过长的问题，有人提出了采样的思路，我们不需要把整条路经精准地记录下来，既然有大量的攻击packet，采样一些得到的数据也会相对准确，所以存储的信息就是<code>start</code>、<code>end</code>、<code>distance</code>。</p>
+<p>&emsp;&emsp;每到一个router时，有两种操作，每种操作各50%机率：</p>
+<ol>
+<li>把自己的地址写入start；把0写入到distance；</li>
+<li>如果distance为0，则把自己的地址写入到end；distance增加1</li>
+</ol>
+<p>&emsp;&emsp;这样服务器就能通过这三个字段去重构网络图，每个包提供的三元组都是一条路径。</p>
+<h1 id="Summary"><a href="#Summary" class="headerlink" title="Summary"></a>Summary</h1><p>&emsp;&emsp;总的来说，DDos是一种很经典但是又很多变的网络攻击，它可以发生在任意一层。网络在设计之初就没有对这类型的攻击有很好的防护，因此就需要后面添加各种手段去防范，而且这个防范也不是100%的。希望通过这篇博客，大家能够简单了解Dos的一些知识，并且在设计、开发系统时，对这类问题有一个简单的防范。</p>
+
+    </div>
+
+    
+    
+    
+        <div class="reward-container">
+  <div></div>
+  <button onclick="var qr = document.getElementById('qr'); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    Donate
+  </button>
+  <div id="qr" style="display: none;">
+      
+      <div style="display: inline-block;">
+        <img src="/images/wechat_reward.png" alt="Leungyukshing WeChat Pay">
+        <p>WeChat Pay</p>
+      </div>
+      
+      <div style="display: inline-block;">
+        <img src="/images/alipay_reward.png" alt="Leungyukshing Alipay">
+        <p>Alipay</p>
+      </div>
+
+  </div>
+</div>
+
+        
+
+  <div class="followme">
+    <p>Welcome to my other publishing channels</p>
+
+    <div class="social-list">
+
+        <div class="social-item">
+          <a target="_blank" class="social-link" href="/atom.xml">
+            <span class="icon">
+              <i class="fa fa-rss"></i>
+            </span>
+
+            <span class="label">RSS</span>
+          </a>
+        </div>
+    </div>
+  </div>
+
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/archives/Introduction-ComputeAndStorageSeparation.html" rel="prev" title="什么是存储与计算分离">
+      <i class="fa fa-chevron-left"></i> 什么是存储与计算分离
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/archives/Atoi.html" rel="next" title="C++实现Atoi">
+      C++实现Atoi <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Introduction"><span class="nav-number">1.</span> <span class="nav-text">Introduction</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#What-is-DDos"><span class="nav-number">2.</span> <span class="nav-text">What is DDos?</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Different-Types-of-DDos"><span class="nav-number">3.</span> <span class="nav-text">Different Types of DDos</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#TCP-SYN-Flood-I"><span class="nav-number">3.1.</span> <span class="nav-text">TCP SYN Flood I</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Problem"><span class="nav-number">3.1.1.</span> <span class="nav-text">Problem</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Solution"><span class="nav-number">3.1.2.</span> <span class="nav-text">Solution</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#TCP-Connection-Flood"><span class="nav-number">3.2.</span> <span class="nav-text">TCP Connection Flood</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Problem-1"><span class="nav-number">3.2.1.</span> <span class="nav-text">Problem</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Solution-1"><span class="nav-number">3.2.2.</span> <span class="nav-text">Solution</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Route-Hijacking"><span class="nav-number">3.3.</span> <span class="nav-text">Route Hijacking</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#SSL-TLS-handsahke"><span class="nav-number">4.</span> <span class="nav-text">SSL&#x2F;TLS handsahke</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#How-to-deal-with-DDos"><span class="nav-number">5.</span> <span class="nav-text">How to deal with DDos</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Client-Puzzles"><span class="nav-number">5.1.</span> <span class="nav-text">Client Puzzles</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#CAPTCHA"><span class="nav-number">5.2.</span> <span class="nav-text">CAPTCHA</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Source-Identification"><span class="nav-number">5.3.</span> <span class="nav-text">Source Identification</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Traceback"><span class="nav-number">5.4.</span> <span class="nav-text">Traceback</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Edge-Sampling"><span class="nav-number">5.5.</span> <span class="nav-text">Edge Sampling</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Summary"><span class="nav-number">6.</span> <span class="nav-text">Summary</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Leungyukshing"
+      src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">Leungyukshing</p>
+  <div class="site-description" itemprop="description">A blog for code, programme sharing.</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">688</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">27</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/leungyukshing" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;leungyukshing" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:jacky14.liang@gmail.com" title="E-Mail → mailto:jacky14.liang@gmail.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="/atom.xml" title="RSS → &#x2F;atom.xml"><i class="fa fa-rss fa-fw"></i>RSS</a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll motion-element">
+    <div class="links-of-blogroll-title"><i class="fa fa-link fa-fw"></i>
+      Friends
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="http://www.liangjh45.com/" title="http:&#x2F;&#x2F;www.liangjh45.com&#x2F;" rel="noopener" target="_blank">Alva's blog</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="https://sysucarey.github.io/" title="https:&#x2F;&#x2F;sysucarey.github.io&#x2F;" rel="noopener" target="_blank">Carey's blog</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="https://blog.csdn.net/dickdick111/" title="https:&#x2F;&#x2F;blog.csdn.net&#x2F;dickdick111&#x2F;" rel="noopener" target="_blank">Dick's blog</a>
+        </li>
+    </ul>
+  </div>
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2017 – 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Leungyukshing</span>
+</div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="Total Visitors">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="Total Views">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+      
+
+<script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      loader: {
+        source: {
+          '[tex]/amsCd': '[tex]/amscd',
+          '[tex]/AMScd': '[tex]/amscd'
+        }
+      },
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              let target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    (function () {
+      var script = document.createElement('script');
+      script.src = '//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+      script.defer = true;
+      document.head.appendChild(script);
+    })();
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : true,
+      appId      : 'AaLog29QcUdQKTboD6cY2dNP-gzGzoHsz',
+      appKey     : 'dUWNHLnTY9qG1jJwPnTtfMm8',
+      placeholder: "Just go go",
+      avatar     : 'mm',
+      meta       : guest,
+      pageSize   : '10' || 10,
+      visitor    : false,
+      lang       : '' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : false,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+
+</body>
+</html>

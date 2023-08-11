@@ -1,0 +1,617 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <meta name="google-site-verification" content="FHjCzDi7nry9Mvf4EFOY5cYoco-ZXq9tKjvXZK0nKr4">
+  <meta name="baidu-site-verification" content="code-gpMFPewYUF" />
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="/lib/pace/pace-theme-minimal.min.css">
+  <script src="/lib/pace/pace.min.js"></script>
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"leungyukshing.github.io","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"right","display":"hide","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"appID":"52USYSYESX","apiKey":"20b904c66f55b874f05edea4aca57780","indexName":"blog","hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="前言&amp;emsp;&amp;emsp;中山大学软件学院的大一想必都会经历这样一个初级实训。这个实训主要是完成一个基于命令行的会议管理系统，使用的语言是C++，含有部分C11特性。主要考察的是大家C++的编程知识，难度不算很大，但是需要大家很细心。因为每天只有一次测评的机会，因此拿满分还是有点难度的。本人不是大佬，当时实训横跨了三个周末，debug找错的也很煎熬，但是最后还是做出来的，在这里也是想分享一些经验">
+<meta property="og:type" content="article">
+<meta property="og:title" content="中山大学初级实训">
+<meta property="og:url" content="https://leungyukshing.github.io/archives/%E4%B8%AD%E5%B1%B1%E5%A4%A7%E5%AD%A6%E5%88%9D%E7%BA%A7%E5%AE%9E%E8%AE%AD.html">
+<meta property="og:site_name" content="Halo">
+<meta property="og:description" content="前言&amp;emsp;&amp;emsp;中山大学软件学院的大一想必都会经历这样一个初级实训。这个实训主要是完成一个基于命令行的会议管理系统，使用的语言是C++，含有部分C11特性。主要考察的是大家C++的编程知识，难度不算很大，但是需要大家很细心。因为每天只有一次测评的机会，因此拿满分还是有点难度的。本人不是大佬，当时实训横跨了三个周末，debug找错的也很煎熬，但是最后还是做出来的，在这里也是想分享一些经验">
+<meta property="og:locale">
+<meta property="article:published_time" content="2018-07-24T12:33:20.000Z">
+<meta property="article:modified_time" content="2021-06-22T18:33:08.708Z">
+<meta property="article:author" content="Leungyukshing">
+<meta property="article:tag" content="C++">
+<meta property="article:tag" content="实训">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://leungyukshing.github.io/archives/%E4%B8%AD%E5%B1%B1%E5%A4%A7%E5%AD%A6%E5%88%9D%E7%BA%A7%E5%AE%9E%E8%AE%AD.html">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-Hans'
+  };
+</script>
+
+  <title>中山大学初级实训 | Halo</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+<!-- hexo injector head_end end --><link rel="alternate" href="/atom.xml" title="Halo" type="application/atom+xml"><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Halo</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">A magic place for coding</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>About</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>Tags</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>Search
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="Searching..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+  <a href="https://github.com/leungyukshing" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="https://leungyukshing.github.io/archives/%E4%B8%AD%E5%B1%B1%E5%A4%A7%E5%AD%A6%E5%88%9D%E7%BA%A7%E5%AE%9E%E8%AE%AD.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="Leungyukshing">
+      <meta itemprop="description" content="A blog for code, programme sharing.">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Halo">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          中山大学初级实训
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2018-07-24 08:33:20" itemprop="dateCreated datePublished" datetime="2018-07-24T08:33:20-04:00">2018-07-24</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2021-06-22 14:33:08" itemprop="dateModified" datetime="2021-06-22T14:33:08-04:00">2021-06-22</time>
+              </span>
+
+          
+            <span class="post-meta-item" title="Views" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">Views: </span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine: </span>
+    
+    <a title="valine" href="/archives/%E4%B8%AD%E5%B1%B1%E5%A4%A7%E5%AD%A6%E5%88%9D%E7%BA%A7%E5%AE%9E%E8%AE%AD.html#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/archives/%E4%B8%AD%E5%B1%B1%E5%A4%A7%E5%AD%A6%E5%88%9D%E7%BA%A7%E5%AE%9E%E8%AE%AD.html" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>&emsp;&emsp;中山大学软件学院的大一想必都会经历这样一个初级实训。这个实训主要是完成一个基于命令行的<strong>会议管理系统</strong>，使用的语言是C++，含有部分C11特性。主要考察的是大家C++的编程知识，难度不算很大，但是需要大家很细心。因为每天只有一次测评的机会，因此拿满分还是有点难度的。本人不是大佬，当时实训横跨了三个周末，debug找错的也很煎熬，但是最后还是做出来的，在这里也是想分享一些经验，希望能帮助到师弟师妹们。想要代码的直接点左上角去github看，或者直接点击<a target="_blank" rel="noopener" href="https://github.com/leungyukshing/Agenda">这个</a>，但是还是希望大家能够自己完成。</p>
+<a id="more"></a>
+
+<h2 id="实训介绍"><a href="#实训介绍" class="headerlink" title="实训介绍"></a>实训介绍</h2><p>&emsp;&emsp;实训的开发环境是云平台的Liunx，这要求大家对Linux要有一定的熟悉程度。从得分的角度，内容主要有以下几点：</p>
+<ul>
+<li>命令行操作（第一周TA检查）</li>
+<li>makefile编写（第二周TA检查）</li>
+<li>User、Date、Meeting三个类的实现（第一周）</li>
+<li>Storage、AgendaService两个类的实现（第二周）</li>
+<li>UI的实现、加分项（第三周）</li>
+</ul>
+<p>&emsp;&emsp;接下来我将分点介绍上面这几个内容，务求让大家多拿分。</p>
+<h3 id="命令行操作"><a href="#命令行操作" class="headerlink" title="命令行操作"></a>命令行操作</h3><p>&emsp;&emsp;实训使用的环境是Linux系统，在里面编译、运行、调试C++<br>程序需要使用命令行。很多人一直使用的都是在Windows环境下的IDE如DevC++，一下子转到Linux下使用命令行会觉得很不习惯也很不方便，但当你熟练运用以后会发现，其实命令行也有它的过人之处。<br>&emsp;&emsp;TA检查的时候主要检查大家的文件系统操作，如打开文件（夹）、创建文件（夹）、删除文件（夹）、复制文件（夹）、重命名。一般都不会刁难大家，临急抱佛脚也是可以的，但是如果对Linux比较熟悉的话，pass这个检查也是完全没问题的。这里简单举几个例子：</p>
+<ul>
+<li>创建文件夹。创建一个名为test1的文件夹<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mkdir test1</span><br></pre></td></tr></table></figure></li>
+<li>打开文件夹。进入刚刚创建好的test1文件夹<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cd</span> test1</span><br></pre></td></tr></table></figure></li>
+<li>在test1文件夹中创建名为test.cpp的文件<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">touch test.cpp</span><br></pre></td></tr></table></figure></li>
+<li>查看当前目录下所有文件，如果要查看隐藏文件，参数加上-a<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ls</span><br><span class="line">ls -a</span><br></pre></td></tr></table></figure></li>
+<li>用Vim或SublimeText打开test.cpp文件<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">vim test.cpp</span><br><span class="line">sub test.cpp</span><br></pre></td></tr></table></figure></li>
+<li>删除test1.cpp文件<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">rm test1.cpp</span><br></pre></td></tr></table></figure></li>
+<li>删除文件夹test1<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">rm -r test1</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<h3 id="makefile编写"><a href="#makefile编写" class="headerlink" title="makefile编写"></a>makefile编写</h3><p>&emsp;&emsp;Makefile是C++工程项目里面的一个很有用的工具。当我们需要编译一个工程时，往往会涉及许多文件，在命令行中逐个文件和参数输入效率是很低的，如果我们提前编写好makefile，每次需要编译运行的时候就输入<code>make</code>命令，编译器就会根据文件中制定好的顺序和路径逐个编译并链接文件，最后运行程序，这样就大大地提高了我们的开发效率。<br>&emsp;&emsp;TA主要检查对makefile语法的理解和使用，然后会让你跑一个提前写好的makefile，难度基本也不大，提前熟悉一下语法就可以了。这里推荐一个<a target="_blank" rel="noopener" href="http://chuzhiyan.com/2017/03/11/%E4%B8%80%E4%B8%AA%E7%AE%80%E5%8D%95%E7%9A%84Makefile%E6%95%99%E7%A8%8B/">博客的教程</a>。</p>
+<h3 id="数据层实现"><a href="#数据层实现" class="headerlink" title="数据层实现"></a>数据层实现</h3><p>&emsp;&emsp;第一阶段是实现数据层的内容，包括了User、Date、Meeting三个类，主要是一些属性的get和set方法，这一部分难度是很小的，写代码的时候注意细节，写完后自己测试一下，基本上可以一次通过测评。<br>&emsp;&emsp;这里有点难度的是Date里面对日期先后的大小比较和日期有效性的判断。日期先后的比较很巧妙地依赖于格式化后字符串的比较。有效性的判断第一是格式的有效性，第二是逻辑有效性。</p>
+<ul>
+<li>逻辑有效性<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"> <span class="function"><span class="keyword">bool</span> <span class="title">Date::isValid</span><span class="params">(<span class="keyword">const</span> Date &amp;t_date)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="keyword">if</span>( t_date.m_year &lt; <span class="number">1000</span> || t_date.m_year &gt; <span class="number">9999</span> )</span><br><span class="line">  &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">else</span></span><br><span class="line">  &#123;</span><br><span class="line">    <span class="keyword">if</span>( t_date.m_month &lt;= <span class="number">0</span> || t_date.m_month &gt; <span class="number">12</span> )</span><br><span class="line">    &#123;</span><br><span class="line">      <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">else</span></span><br><span class="line">    &#123;</span><br><span class="line">      <span class="keyword">if</span>( t_date.m_day &lt;= <span class="number">0</span> || t_date.m_day &gt; daysOfMonthy( t_date.m_year, t_date.m_month ) )</span><br><span class="line">      &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">      &#125;</span><br><span class="line">      <span class="keyword">else</span></span><br><span class="line">      &#123;</span><br><span class="line">        <span class="keyword">if</span>( t_date.m_hour &lt; <span class="number">0</span> || t_date.m_hour &gt; <span class="number">23</span> )</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">else</span></span><br><span class="line">        &#123;</span><br><span class="line">          <span class="keyword">if</span>( t_date.m_minute &lt; <span class="number">0</span> || t_date.m_minute &gt; <span class="number">59</span> )</span><br><span class="line">          &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">          &#125;</span><br><span class="line">        &#125;</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+<li>格式有效性<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span> flag = <span class="number">0</span>;</span><br><span class="line">  <span class="keyword">for</span>( <span class="keyword">int</span> i = <span class="number">0</span>; i &lt; t_dateString.size(); i++ )</span><br><span class="line">  &#123;</span><br><span class="line">    <span class="keyword">if</span>( i == <span class="number">4</span> || i == <span class="number">7</span> || i == <span class="number">10</span> || i == <span class="number">13</span> )</span><br><span class="line">    &#123;</span><br><span class="line">      <span class="keyword">continue</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">else</span></span><br><span class="line">    &#123;</span><br><span class="line">      <span class="keyword">if</span>( t_dateString[ i ] &lt; <span class="string">&#x27;0&#x27;</span> || t_dateString[ i ] &gt; <span class="string">&#x27;9&#x27;</span> )</span><br><span class="line">      &#123;</span><br><span class="line">        flag = <span class="number">1</span>;</span><br><span class="line">        <span class="keyword">break</span>;</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">if</span>(t_dateString[<span class="number">4</span>] != <span class="string">&#x27;-&#x27;</span> || t_dateString[<span class="number">7</span>] != <span class="string">&#x27;-&#x27;</span> || t_dateString[<span class="number">10</span>] !=<span class="string">&#x27;/&#x27;</span> || t_dateString[<span class="number">13</span>] !=<span class="string">&#x27;:&#x27;</span> )</span><br><span class="line">  &#123;</span><br><span class="line">    flag = <span class="number">1</span>;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">if</span>( t_dateString.size() != <span class="number">16</span> )</span><br><span class="line">  &#123;</span><br><span class="line">    flag = <span class="number">1</span>;</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure>
+&emsp;&emsp;完成上述两个关键部分，基本上这个一阶段就没什么难点了。<h3 id="逻辑层实现"><a href="#逻辑层实现" class="headerlink" title="逻辑层实现"></a>逻辑层实现</h3>&emsp;&emsp;第二阶段是逻辑层的实现，这里牵涉到了一些数据的逻辑问题，比如说组合多各类的问题等等。同时，这一块的难度也是最大的，因为牵涉到了大量的遍历，因此数组访问越界的问题常常会导致内存泄漏（本人就是被越界问题坑了两个星期），这里需要用到gbd调试工具来帮助我们找到内存泄漏的地方。<br>&emsp;&emsp;这里着重提及一个很容易越界的地方。在遍历数组时，如果对元素有涉及到删除操作，就很容易导致越界。这里以<code>deleteUser()</code>为例。<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">Storage::deleteUser</span><span class="params">(<span class="built_in">std</span>::function&lt;<span class="keyword">bool</span>(<span class="keyword">const</span> User &amp;)&gt; filter)</span></span></span><br><span class="line"><span class="function">  </span>&#123;</span><br><span class="line">   <span class="keyword">int</span> delete_num = <span class="number">0</span>;</span><br><span class="line">   <span class="keyword">for</span>( <span class="keyword">auto</span> it = <span class="keyword">this</span>-&gt;m_userList.begin(); it != <span class="keyword">this</span>-&gt;m_userList.end(); )</span><br><span class="line">   &#123;</span><br><span class="line">    <span class="keyword">if</span>( filter(*it) )</span><br><span class="line">    &#123;</span><br><span class="line">     it = <span class="keyword">this</span>-&gt;m_userList.erase(it);</span><br><span class="line"></span><br><span class="line">     delete_num++;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">else</span></span><br><span class="line">    &#123;</span><br><span class="line">      it++;</span><br><span class="line">    &#125;</span><br><span class="line">   &#125;</span><br><span class="line">   m_dirty = <span class="literal">true</span>;</span><br><span class="line"></span><br><span class="line">   <span class="keyword">return</span> delete_num;</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure>
+&emsp;&emsp;需要特别注意在调用<code>erase()</code>后，迭代器指针<code>it</code>实质上已经<strong>指向了下一个元素</strong>，如果这时候还是直接<code>it++</code>，就很有可能出现越界，因此需要把以前循环遍历的格式改为以上这种添加了<code>if和else</code>的方法，来避免越界的产生。</li>
+</ul>
+<h3 id="UI实现与创新加分"><a href="#UI实现与创新加分" class="headerlink" title="UI实现与创新加分"></a>UI实现与创新加分</h3><p>&emsp;&emsp;第三阶段的内容是UI实现与创新部分。因为许多同学在第二周的时间内是完不成第二阶段的内容，因此第三周的部分实现也要用来填第二周的坑，UI部分和创新内容的时间会相对较少。<br>&emsp;&emsp;UI方面TA会提供一个标准的样式，大家只需要对着写就可以了，可以说没什么难度，就是一些格式上的东西需要注意，整体做出来没什么大差错就可以了。创新部分需要自己头脑风暴，比较多同学做的是UI的优化（比如删除前添加一个确认的提示）、输入密码加密（命令行界面中显示*）、密码加密等。基本上TA都会给大家满分的，所以只要自己用心做了，基本上都会是满分。</p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>&emsp;&emsp;我这一届的初级实训是在大一下学期中进行的，横跨了三个周末，相比起以往在小学期进行实训，感觉时间更加紧迫，也要同时兼顾其他科目的作业。过程中自己也是处于一个不断摸索的阶段，对于一些C11的新特性也要自己学习。<br>&emsp;&emsp;最困难的部分还是Storage的实现，基本上实现了这个类就完成了实训的85%。这个类是逻辑层的核心部分，连接着UI和数据，本人一直在这里卡死，连续四次测评的结果都是RE(Runtime Error)。最后对每一个遍历都进行了仔细的测试，真的是逐行代码检测，自己也写了上百个测例，终于在最后一次测评的时候得到了满分。<br>&emsp;&emsp;整个阶段最重要的还是心态，初级实训涉及的都是一些很基础的东西，并没有算法方面的内容，因此大家还是要沉住气，仔细一点，就算是测评不过也要继续找bug，我相信大家都一定可以在实训中取得很好的成绩的！</p>
+
+    </div>
+
+    
+    
+    
+        <div class="reward-container">
+  <div></div>
+  <button onclick="var qr = document.getElementById('qr'); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    Donate
+  </button>
+  <div id="qr" style="display: none;">
+      
+      <div style="display: inline-block;">
+        <img src="/images/wechat_reward.png" alt="Leungyukshing WeChat Pay">
+        <p>WeChat Pay</p>
+      </div>
+      
+      <div style="display: inline-block;">
+        <img src="/images/alipay_reward.png" alt="Leungyukshing Alipay">
+        <p>Alipay</p>
+      </div>
+
+  </div>
+</div>
+
+        
+
+  <div class="followme">
+    <p>Welcome to my other publishing channels</p>
+
+    <div class="social-list">
+
+        <div class="social-item">
+          <a target="_blank" class="social-link" href="/atom.xml">
+            <span class="icon">
+              <i class="fa fa-rss"></i>
+            </span>
+
+            <span class="label">RSS</span>
+          </a>
+        </div>
+    </div>
+  </div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/C/" rel="tag"># C++</a>
+              <a href="/tags/%E5%AE%9E%E8%AE%AD/" rel="tag"># 实训</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/archives/%E5%B8%B8%E5%BE%AE%E5%88%86%E6%96%B9%E7%A8%8B%E5%88%9D%E5%80%BC%E9%97%AE%E9%A2%98%E6%B1%82%E8%A7%A3.html" rel="prev" title="常微分方程初值问题求解">
+      <i class="fa fa-chevron-left"></i> 常微分方程初值问题求解
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/archives/%E4%B8%AD%E5%B1%B1%E5%A4%A7%E5%AD%A6%E4%B8%AD%E7%BA%A7%E5%AE%9E%E8%AE%AD.html" rel="next" title="中山大学中级实训">
+      中山大学中级实训 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%89%8D%E8%A8%80"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%9E%E8%AE%AD%E4%BB%8B%E7%BB%8D"><span class="nav-number">2.</span> <span class="nav-text">实训介绍</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%91%BD%E4%BB%A4%E8%A1%8C%E6%93%8D%E4%BD%9C"><span class="nav-number">2.1.</span> <span class="nav-text">命令行操作</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#makefile%E7%BC%96%E5%86%99"><span class="nav-number">2.2.</span> <span class="nav-text">makefile编写</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E5%B1%82%E5%AE%9E%E7%8E%B0"><span class="nav-number">2.3.</span> <span class="nav-text">数据层实现</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%80%BB%E8%BE%91%E5%B1%82%E5%AE%9E%E7%8E%B0"><span class="nav-number">2.4.</span> <span class="nav-text">逻辑层实现</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#UI%E5%AE%9E%E7%8E%B0%E4%B8%8E%E5%88%9B%E6%96%B0%E5%8A%A0%E5%88%86"><span class="nav-number">2.5.</span> <span class="nav-text">UI实现与创新加分</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-number">3.</span> <span class="nav-text">总结</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Leungyukshing"
+      src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">Leungyukshing</p>
+  <div class="site-description" itemprop="description">A blog for code, programme sharing.</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">688</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">27</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/leungyukshing" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;leungyukshing" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:jacky14.liang@gmail.com" title="E-Mail → mailto:jacky14.liang@gmail.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="/atom.xml" title="RSS → &#x2F;atom.xml"><i class="fa fa-rss fa-fw"></i>RSS</a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll motion-element">
+    <div class="links-of-blogroll-title"><i class="fa fa-link fa-fw"></i>
+      Friends
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="http://www.liangjh45.com/" title="http:&#x2F;&#x2F;www.liangjh45.com&#x2F;" rel="noopener" target="_blank">Alva's blog</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="https://sysucarey.github.io/" title="https:&#x2F;&#x2F;sysucarey.github.io&#x2F;" rel="noopener" target="_blank">Carey's blog</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="https://blog.csdn.net/dickdick111/" title="https:&#x2F;&#x2F;blog.csdn.net&#x2F;dickdick111&#x2F;" rel="noopener" target="_blank">Dick's blog</a>
+        </li>
+    </ul>
+  </div>
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2017 – 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Leungyukshing</span>
+</div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="Total Visitors">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="Total Views">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : true,
+      appId      : 'AaLog29QcUdQKTboD6cY2dNP-gzGzoHsz',
+      appKey     : 'dUWNHLnTY9qG1jJwPnTtfMm8',
+      placeholder: "Just go go",
+      avatar     : 'mm',
+      meta       : guest,
+      pageSize   : '10' || 10,
+      visitor    : false,
+      lang       : '' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : false,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+
+</body>
+</html>

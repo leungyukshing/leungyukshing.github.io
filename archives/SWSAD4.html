@@ -1,0 +1,793 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <meta name="google-site-verification" content="FHjCzDi7nry9Mvf4EFOY5cYoco-ZXq9tKjvXZK0nKr4">
+  <meta name="baidu-site-verification" content="code-gpMFPewYUF" />
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="/lib/pace/pace-theme-minimal.min.css">
+  <script src="/lib/pace/pace.min.js"></script>
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"leungyukshing.github.io","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"right","display":"hide","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"appID":"52USYSYESX","apiKey":"20b904c66f55b874f05edea4aca57780","indexName":"blog","hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="用例建模-绘制用例图课程网页https:&#x2F;&#x2F;sysu-swsad.github.io&#x2F;swad-guide&#x2F;06-usecase-modeling">
+<meta property="og:type" content="article">
+<meta property="og:title" content="系统分析与设计作业4">
+<meta property="og:url" content="https://leungyukshing.github.io/archives/SWSAD4.html">
+<meta property="og:site_name" content="Halo">
+<meta property="og:description" content="用例建模-绘制用例图课程网页https:&#x2F;&#x2F;sysu-swsad.github.io&#x2F;swad-guide&#x2F;06-usecase-modeling">
+<meta property="og:locale">
+<meta property="og:image" content="https://leungyukshing.github.io/images/Cateye.png">
+<meta property="og:image" content="https://leungyukshing.github.io/images/Yingdian.png">
+<meta property="og:image" content="https://leungyukshing.github.io/images/Hotel.png">
+<meta property="article:published_time" content="2019-05-08T14:35:35.000Z">
+<meta property="article:modified_time" content="2021-06-22T18:33:08.602Z">
+<meta property="article:author" content="Leungyukshing">
+<meta property="article:tag" content="系统分析与设计">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://leungyukshing.github.io/images/Cateye.png">
+
+<link rel="canonical" href="https://leungyukshing.github.io/archives/SWSAD4.html">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-Hans'
+  };
+</script>
+
+  <title>系统分析与设计作业4 | Halo</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+<!-- hexo injector head_end end --><link rel="alternate" href="/atom.xml" title="Halo" type="application/atom+xml"><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Halo</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">A magic place for coding</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>About</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>Tags</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>Search
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="Searching..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+  <a href="https://github.com/leungyukshing" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="https://leungyukshing.github.io/archives/SWSAD4.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="Leungyukshing">
+      <meta itemprop="description" content="A blog for code, programme sharing.">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Halo">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          系统分析与设计作业4
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2019-05-08 10:35:35" itemprop="dateCreated datePublished" datetime="2019-05-08T10:35:35-04:00">2019-05-08</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2021-06-22 14:33:08" itemprop="dateModified" datetime="2021-06-22T14:33:08-04:00">2021-06-22</time>
+              </span>
+
+          
+            <span class="post-meta-item" title="Views" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">Views: </span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine: </span>
+    
+    <a title="valine" href="/archives/SWSAD4.html#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/archives/SWSAD4.html" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="用例建模-绘制用例图"><a href="#用例建模-绘制用例图" class="headerlink" title="用例建模-绘制用例图"></a>用例建模-绘制用例图</h2><h3 id="课程网页"><a href="#课程网页" class="headerlink" title="课程网页"></a>课程网页</h3><p><a target="_blank" rel="noopener" href="https://sysu-swsad.github.io/swad-guide/06-usecase-modeling">https://sysu-swsad.github.io/swad-guide/06-usecase-modeling</a></p>
+<a id="more"></a>
+
+<h3 id="问题"><a href="#问题" class="headerlink" title="问题"></a>问题</h3><ol>
+<li><a href="#%E7%AE%80%E7%AD%94%E9%A2%98">简答题</a><ul>
+<li>用例的概念</li>
+<li>用例和场景的关系？什么是主场景或happy path？</li>
+<li>用例有哪些形式？</li>
+<li>对于复杂业务，为什么编制完整用例非常难？</li>
+<li>什么是用例图？</li>
+<li>用例图的基本符号与元素？</li>
+<li>用例图的画法与步骤</li>
+<li>用例图给利益相关人与开发者的价值有哪些？</li>
+</ul>
+</li>
+<li><a href="#%E5%BB%BA%E6%A8%A1%E7%BB%83%E4%B9%A0%E9%A2%98">建模练习题</a><ul>
+<li>选择2-3个你熟悉的类似业务的在线服务系统（或移动 APP），如定旅馆（携程、去哪儿等）、定电影票、背单词APP等，分别绘制它们用例图。并满足以下要求：<ul>
+<li>请使用用户的视角，描述用户目标或系统提供的服务</li>
+<li>粒度达到子用例级别，并用 include 和 exclude 关联它们</li>
+<li>请用色彩标注出你认为创新（区别于竞争对手的）用例或子用例</li>
+<li>尽可能识别外部系统和服务</li>
+</ul>
+</li>
+<li>然后，回答下列问题：<ul>
+<li>为什么相似系统的用例图是相似的？</li>
+<li>如果是定旅馆业务，请对比 Asg_RH 用例图，简述如何利用不同时代、不同地区产品的用例图，展现、突出创新业务和技术</li>
+<li>如何利用用例图定位创新思路（业务创新、或技术创新、或商业模式创新）在系统中的作用</li>
+<li>请使用 SCRUM 方法，选择一个用例图，编制某定旅馆开发的需求（backlog）开发计划表</li>
+<li>根据任务4，参考 <a target="_blank" rel="noopener" href="https://www.ibm.com/developerworks/cn/rational/edge/09/mar09/collaris_dekker/index.html">使用用例点估算软件成本</a>，给出项目用例点的估算</li>
+</ul>
+</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h2 id="Answer"><a href="#Answer" class="headerlink" title="Answer"></a>Answer</h2><h3 id="简答题"><a href="#简答题" class="headerlink" title="简答题"></a>简答题</h3><h4 id="用例的概念"><a href="#用例的概念" class="headerlink" title="用例的概念"></a>用例的概念</h4><p>答：</p>
+<ul>
+<li><strong>定义</strong>：用例是一组相关的成功和失败场景集合，用来描述参与者如何使用系统来实现目标。用例就是需求，主要是说明系统如何工作的功能性或行为性需求。</li>
+<li><strong>用例与用例模型</strong>：用例是文本文档，而不是图形；用例建模主要是编写文本的活动，而不是制图。用例不是面向对象的，因此编写用例时不会进行OO分析。用例是经典OOA/D的关键需求输入。</li>
+<li><strong>动机</strong>：用例是一种优秀的方法，使领域专家或需求提供者自己编写（或参与编写）用例成为可能，并使这项工作难度降低。同时它还<strong>强调了用户的目标和观点</strong>。用例的<strong>优越性</strong>在于，能够根据需要对复杂程度和形式化成都进行增减调节。</li>
+</ul>
+<h4 id="用例和场景的关系？什么是主场景或happy-path？"><a href="#用例和场景的关系？什么是主场景或happy-path？" class="headerlink" title="用例和场景的关系？什么是主场景或happy path？"></a>用例和场景的关系？什么是主场景或happy path？</h4><p>答：</p>
+<ul>
+<li><strong>场景</strong>：场景是参与者和系统之间的一系列特定的活动和交互，也成为<strong>用例失利</strong>。场景是使用系统的一个特定情节或用例的一条执行路径。</li>
+<li><strong>用例和场景的关系</strong>：一个用例代表了场景的集合，包含主场景和一些可选场景。</li>
+<li><strong>主场景</strong>：主场景是主要系统交互，通常是<strong>成功</strong>的场景，它能够直接地实现用户目标的流程。可选场景是一些不常使用的交互动作或者是异常。</li>
+</ul>
+<h4 id="用例有哪些形式？"><a href="#用例有哪些形式？" class="headerlink" title="用例有哪些形式？"></a>用例有哪些形式？</h4><p>答：</p>
+<ul>
+<li>**Breif(high level)**：是一段关于主要的成功场景的简练的介绍。</li>
+<li><strong>Casual（简便格式）</strong>：是多个非正式的段落，包含多个场景。</li>
+<li><strong>Fully</strong>：包含所有步骤和变化的详细说明，并有支持的部分，如前提条件和成功的保证。</li>
+</ul>
+<h4 id="对于复杂业务，为什么编制完整用例非常难？"><a href="#对于复杂业务，为什么编制完整用例非常难？" class="headerlink" title="对于复杂业务，为什么编制完整用例非常难？"></a>对于复杂业务，为什么编制完整用例非常难？</h4><p>答：对于复杂的业务，很难把所有的目标、故事、场景遵循一定的顺序罗列出来。如果列举的场景不够全面，那么用例的完整性就难以保证。除此之外，用例建模虽然给出了一种可操作的流程步骤，但是具体的操作以及如何书写用例是依赖于书写者的。所以用例本身并不能保证自身的完整性。</p>
+<h4 id="什么是用例图？"><a href="#什么是用例图？" class="headerlink" title="什么是用例图？"></a>什么是用例图？</h4><p>答：用例图是指由参与者、用例，边界以及它们之间的关系构成的用于描述系统功能的视图。用例图是外部用户（参与者）所能观察到的系统功能的模型图。用例图是系统的蓝图，呈现了一些参与者、用例以及它们之间的关系，主要用于对系统、子系统或类的功能行为进行建模。</p>
+<h4 id="用例图的基本符号与元素？"><a href="#用例图的基本符号与元素？" class="headerlink" title="用例图的基本符号与元素？"></a>用例图的基本符号与元素？</h4><ul>
+<li>椭圆：表示每个用例，是外部可见的系统功能，对系统提供的服务进行描述。</li>
+<li>矩形框：表示整个系统。</li>
+<li>小人：表示参与者（通常在矩形框外，即在系统外部），是与系统进行交互的用户、组织或外部系统。</li>
+<li>连线（无箭头）：连接参与者与用例，表明二者之间有交互关系。</li>
+<li>箭头：用例之间的<strong>关联</strong>、<strong>包含</strong>、<strong>拓展</strong>、<strong>泛化</strong>关系。<ul>
+<li>关联（Association）：表明参与者与用力之间的通信，任何一方都可以发送或接收信息。箭头由消息发送方指向消息接收方。</li>
+<li>包含（Include）：包含关系把一个复杂的用例所包含的功能分解成较小的功能用例。箭头由单个复杂用例指向分解出来的功能用例。</li>
+<li>拓展（Extend）：指用例功能的延伸，相当于为基础用例提供一个附加功能。箭头由附加功能用例指向基础用例。</li>
+<li>泛化（Inheritence）：继承关系，子用例继承父用例的所有结构、行为和关系。子用例可以使用父用例的一段行为，也可以重载它。父用例通常是抽象的。箭头由子用例指向父用例。</li>
+</ul>
+</li>
+</ul>
+<h4 id="用例图的画法与步骤"><a href="#用例图的画法与步骤" class="headerlink" title="用例图的画法与步骤"></a>用例图的画法与步骤</h4><ol>
+<li>确定参与者，包括以下：<ul>
+<li>主要参与者：具有用户目标，并通过使用SuD的服务完成。它是使用系统的主要功能的主体，需要系统的支持以完成工作。</li>
+<li>协助参与者：为SuD提供服务。提供系统的主要功能的主体，维护系统的主体，保证系统正常工作的主体。</li>
+<li>幕后参与者：在用例行为中具有影响或利益，但不是主要或协助参与者。它对系统产生的结果感兴趣。</li>
+</ul>
+</li>
+<li>确定子系统的边界</li>
+<li>绘制用例<ul>
+<li>使用参与者自身能够易于理解的名称对用例进行命名。不要使用与代码有关的名称，以免引起歧义。</li>
+<li>从主要的交互事务入手，再到较小的事务。</li>
+<li>将每个用例放入支持它的系统或主要子系统中。</li>
+<li>可以在系统的边界外绘制用例，这表明系统不支持该用例。</li>
+</ul>
+</li>
+<li>将参与者与用例相连</li>
+<li>使用关联、包含、拓展、泛化等关系结构化用例。</li>
+</ol>
+<h4 id="用例图给利益相关人与开发者的价值有哪些"><a href="#用例图给利益相关人与开发者的价值有哪些" class="headerlink" title="用例图给利益相关人与开发者的价值有哪些"></a>用例图给利益相关人与开发者的价值有哪些</h4><p>答：</p>
+<ul>
+<li>对于客户来说，通过用例图客户可以直观地看到系统的结果和用户的功能体验，能够根据需要对复杂程度和形式化程序进行增删调节（通过修改图形间的关系来实现）</li>
+<li>对于软件开发者来说，用例图是设计者设计过程的结论，是设计者与开发者之间的交流工具。用例图很好地细化了用户的需求，使得开发人员更好地理解需求。同时用例图可以指导开发和测试。</li>
+</ul>
+<h3 id="建模练习题"><a href="#建模练习题" class="headerlink" title="建模练习题"></a>建模练习题</h3><ol>
+<li><p>猫眼电影APP</p>
+<p><img src="/images/Cateye.png" alt="CatEye"></p>
+</li>
+<li><p>影店APP</p>
+<p><img src="/images/Yingdian.png" alt="Yingdian"></p>
+</li>
+</ol>
+<h4 id="为什么相似系统的用例图是相似的"><a href="#为什么相似系统的用例图是相似的" class="headerlink" title="为什么相似系统的用例图是相似的"></a>为什么相似系统的用例图是相似的</h4><p>答：因为相似系统的用户需求是相类似的，比如电影订票，用户主要就是选电影、选地点、选价格、选日期、选场次，用户相似的需求就决定了系统的相似程度。</p>
+<h4 id="如果是定旅馆业务，请对比-Asg-RH-用例图，简述如何利用不同时代、不同地区产品的用例图，展现、突出创新业务和技术"><a href="#如果是定旅馆业务，请对比-Asg-RH-用例图，简述如何利用不同时代、不同地区产品的用例图，展现、突出创新业务和技术" class="headerlink" title="如果是定旅馆业务，请对比 Asg_RH 用例图，简述如何利用不同时代、不同地区产品的用例图，展现、突出创新业务和技术"></a>如果是定旅馆业务，请对比 Asg_RH 用例图，简述如何利用不同时代、不同地区产品的用例图，展现、突出创新业务和技术</h4><p>答：该用例图不是订旅馆业务，无法比较。</p>
+<h4 id="如何利用用例图定位创新思路（业务创新、或技术创新、或商业模式创新）在系统中的作用"><a href="#如何利用用例图定位创新思路（业务创新、或技术创新、或商业模式创新）在系统中的作用" class="headerlink" title="如何利用用例图定位创新思路（业务创新、或技术创新、或商业模式创新）在系统中的作用"></a>如何利用用例图定位创新思路（业务创新、或技术创新、或商业模式创新）在系统中的作用</h4><p>答：用例图表示了用户在使用该系统的时候用到的功能，是一条路径。我们可以在这条路径上根据地区特色，结合时代的技术去进行创新。比如以订电影票为例，可以在用户购票的时候向其推荐附近的餐饮或购物商店，增加收益。</p>
+<h4 id="请使用-SCRUM-方法，选择一个用例图，编制某订旅馆开发的需求（backlog）开发计划表"><a href="#请使用-SCRUM-方法，选择一个用例图，编制某订旅馆开发的需求（backlog）开发计划表" class="headerlink" title="请使用 SCRUM 方法，选择一个用例图，编制某订旅馆开发的需求（backlog）开发计划表"></a>请使用 SCRUM 方法，选择一个用例图，编制某订旅馆开发的需求（backlog）开发计划表</h4><p>订酒店：</p>
+<p><img src="/images/Hotel.png" alt="Hotel"></p>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>Title</th>
+<th>Imp</th>
+<th>Est</th>
+<th>How to demo</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>1</td>
+<td>find hotel</td>
+<td>50</td>
+<td>40</td>
+<td>根据位置、日期价格等信息选择酒店</td>
+<td>需要GPS服务，关键词联想服务。</td>
+</tr>
+<tr>
+<td>2</td>
+<td>make reservation</td>
+<td>70</td>
+<td>50</td>
+<td>在列表中选择酒店后显示详情，需要确认酒店、房间类型等</td>
+<td></td>
+</tr>
+<tr>
+<td>3</td>
+<td>manage basket</td>
+<td>30</td>
+<td>20</td>
+<td>管理购物车，可以添加、删除、收藏等功能</td>
+<td></td>
+</tr>
+<tr>
+<td>4</td>
+<td>pay</td>
+<td>40</td>
+<td>20</td>
+<td>用户确认预定后进行支付，支持多个平台的支付</td>
+<td>需要各支付平台</td>
+</tr>
+<tr>
+<td>5</td>
+<td>login</td>
+<td>20</td>
+<td>20</td>
+<td>可以使用基本的手机账户进行注册登录，也可以使用人脸识别</td>
+<td>需要人脸识别的平台、手机短信发送平台</td>
+</tr>
+</tbody></table>
+<h4 id="根据任务4，给出项目用例点的估算"><a href="#根据任务4，给出项目用例点的估算" class="headerlink" title="根据任务4，给出项目用例点的估算"></a>根据任务4，给出项目用例点的估算</h4><table>
+<thead>
+<tr>
+<th>用例</th>
+<th>#事务</th>
+<th>#计算</th>
+<th>原因</th>
+<th>UC权重</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>1find hotel</td>
+<td>2</td>
+<td>5</td>
+<td>需要根据条件筛选</td>
+<td>10</td>
+</tr>
+<tr>
+<td>2 make reservation</td>
+<td>5</td>
+<td>6</td>
+<td></td>
+<td>10</td>
+</tr>
+<tr>
+<td>3 manage basket</td>
+<td>3</td>
+<td>3</td>
+<td></td>
+<td>5</td>
+</tr>
+<tr>
+<td>4 pay</td>
+<td>3</td>
+<td>3</td>
+<td></td>
+<td>5</td>
+</tr>
+<tr>
+<td>5 login</td>
+<td>3</td>
+<td>2</td>
+<td>用到了人脸识别</td>
+<td>5</td>
+</tr>
+</tbody></table>
+<hr>
+<h2 id="Reference"><a href="#Reference" class="headerlink" title="Reference"></a>Reference</h2><ol>
+<li><a target="_blank" rel="noopener" href="https://www.cnblogs.com/zhoujg/archive/2009/07/19/1526707.html">https://www.cnblogs.com/zhoujg/archive/2009/07/19/1526707.html</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.scrum-institute.org/The_Scrum_Product_Backlog.php">https://www.scrum-institute.org/The_Scrum_Product_Backlog.php</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.ibm.com/developerworks/cn/rational/edge/09/mar09/collaris_dekker/index.html">https://www.ibm.com/developerworks/cn/rational/edge/09/mar09/collaris_dekker/index.html</a></li>
+</ol>
+
+    </div>
+
+    
+    
+    
+        <div class="reward-container">
+  <div></div>
+  <button onclick="var qr = document.getElementById('qr'); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    Donate
+  </button>
+  <div id="qr" style="display: none;">
+      
+      <div style="display: inline-block;">
+        <img src="/images/wechat_reward.png" alt="Leungyukshing WeChat Pay">
+        <p>WeChat Pay</p>
+      </div>
+      
+      <div style="display: inline-block;">
+        <img src="/images/alipay_reward.png" alt="Leungyukshing Alipay">
+        <p>Alipay</p>
+      </div>
+
+  </div>
+</div>
+
+        
+
+  <div class="followme">
+    <p>Welcome to my other publishing channels</p>
+
+    <div class="social-list">
+
+        <div class="social-item">
+          <a target="_blank" class="social-link" href="/atom.xml">
+            <span class="icon">
+              <i class="fa fa-rss"></i>
+            </span>
+
+            <span class="label">RSS</span>
+          </a>
+        </div>
+    </div>
+  </div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E7%B3%BB%E7%BB%9F%E5%88%86%E6%9E%90%E4%B8%8E%E8%AE%BE%E8%AE%A1/" rel="tag"># 系统分析与设计</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/archives/SoftwareTest6.html" rel="prev" title="软件测试作业6">
+      <i class="fa fa-chevron-left"></i> 软件测试作业6
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/archives/SWSAD5.html" rel="next" title="系统分析与设计作业5">
+      系统分析与设计作业5 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%94%A8%E4%BE%8B%E5%BB%BA%E6%A8%A1-%E7%BB%98%E5%88%B6%E7%94%A8%E4%BE%8B%E5%9B%BE"><span class="nav-number">1.</span> <span class="nav-text">用例建模-绘制用例图</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%AF%BE%E7%A8%8B%E7%BD%91%E9%A1%B5"><span class="nav-number">1.1.</span> <span class="nav-text">课程网页</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%97%AE%E9%A2%98"><span class="nav-number">1.2.</span> <span class="nav-text">问题</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Answer"><span class="nav-number">2.</span> <span class="nav-text">Answer</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%AE%80%E7%AD%94%E9%A2%98"><span class="nav-number">2.1.</span> <span class="nav-text">简答题</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%94%A8%E4%BE%8B%E7%9A%84%E6%A6%82%E5%BF%B5"><span class="nav-number">2.1.1.</span> <span class="nav-text">用例的概念</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%94%A8%E4%BE%8B%E5%92%8C%E5%9C%BA%E6%99%AF%E7%9A%84%E5%85%B3%E7%B3%BB%EF%BC%9F%E4%BB%80%E4%B9%88%E6%98%AF%E4%B8%BB%E5%9C%BA%E6%99%AF%E6%88%96happy-path%EF%BC%9F"><span class="nav-number">2.1.2.</span> <span class="nav-text">用例和场景的关系？什么是主场景或happy path？</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%94%A8%E4%BE%8B%E6%9C%89%E5%93%AA%E4%BA%9B%E5%BD%A2%E5%BC%8F%EF%BC%9F"><span class="nav-number">2.1.3.</span> <span class="nav-text">用例有哪些形式？</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%AF%B9%E4%BA%8E%E5%A4%8D%E6%9D%82%E4%B8%9A%E5%8A%A1%EF%BC%8C%E4%B8%BA%E4%BB%80%E4%B9%88%E7%BC%96%E5%88%B6%E5%AE%8C%E6%95%B4%E7%94%A8%E4%BE%8B%E9%9D%9E%E5%B8%B8%E9%9A%BE%EF%BC%9F"><span class="nav-number">2.1.4.</span> <span class="nav-text">对于复杂业务，为什么编制完整用例非常难？</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF%E7%94%A8%E4%BE%8B%E5%9B%BE%EF%BC%9F"><span class="nav-number">2.1.5.</span> <span class="nav-text">什么是用例图？</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%94%A8%E4%BE%8B%E5%9B%BE%E7%9A%84%E5%9F%BA%E6%9C%AC%E7%AC%A6%E5%8F%B7%E4%B8%8E%E5%85%83%E7%B4%A0%EF%BC%9F"><span class="nav-number">2.1.6.</span> <span class="nav-text">用例图的基本符号与元素？</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%94%A8%E4%BE%8B%E5%9B%BE%E7%9A%84%E7%94%BB%E6%B3%95%E4%B8%8E%E6%AD%A5%E9%AA%A4"><span class="nav-number">2.1.7.</span> <span class="nav-text">用例图的画法与步骤</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%94%A8%E4%BE%8B%E5%9B%BE%E7%BB%99%E5%88%A9%E7%9B%8A%E7%9B%B8%E5%85%B3%E4%BA%BA%E4%B8%8E%E5%BC%80%E5%8F%91%E8%80%85%E7%9A%84%E4%BB%B7%E5%80%BC%E6%9C%89%E5%93%AA%E4%BA%9B"><span class="nav-number">2.1.8.</span> <span class="nav-text">用例图给利益相关人与开发者的价值有哪些</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%BB%BA%E6%A8%A1%E7%BB%83%E4%B9%A0%E9%A2%98"><span class="nav-number">2.2.</span> <span class="nav-text">建模练习题</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E7%9B%B8%E4%BC%BC%E7%B3%BB%E7%BB%9F%E7%9A%84%E7%94%A8%E4%BE%8B%E5%9B%BE%E6%98%AF%E7%9B%B8%E4%BC%BC%E7%9A%84"><span class="nav-number">2.2.1.</span> <span class="nav-text">为什么相似系统的用例图是相似的</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%A6%82%E6%9E%9C%E6%98%AF%E5%AE%9A%E6%97%85%E9%A6%86%E4%B8%9A%E5%8A%A1%EF%BC%8C%E8%AF%B7%E5%AF%B9%E6%AF%94-Asg-RH-%E7%94%A8%E4%BE%8B%E5%9B%BE%EF%BC%8C%E7%AE%80%E8%BF%B0%E5%A6%82%E4%BD%95%E5%88%A9%E7%94%A8%E4%B8%8D%E5%90%8C%E6%97%B6%E4%BB%A3%E3%80%81%E4%B8%8D%E5%90%8C%E5%9C%B0%E5%8C%BA%E4%BA%A7%E5%93%81%E7%9A%84%E7%94%A8%E4%BE%8B%E5%9B%BE%EF%BC%8C%E5%B1%95%E7%8E%B0%E3%80%81%E7%AA%81%E5%87%BA%E5%88%9B%E6%96%B0%E4%B8%9A%E5%8A%A1%E5%92%8C%E6%8A%80%E6%9C%AF"><span class="nav-number">2.2.2.</span> <span class="nav-text">如果是定旅馆业务，请对比 Asg_RH 用例图，简述如何利用不同时代、不同地区产品的用例图，展现、突出创新业务和技术</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%A6%82%E4%BD%95%E5%88%A9%E7%94%A8%E7%94%A8%E4%BE%8B%E5%9B%BE%E5%AE%9A%E4%BD%8D%E5%88%9B%E6%96%B0%E6%80%9D%E8%B7%AF%EF%BC%88%E4%B8%9A%E5%8A%A1%E5%88%9B%E6%96%B0%E3%80%81%E6%88%96%E6%8A%80%E6%9C%AF%E5%88%9B%E6%96%B0%E3%80%81%E6%88%96%E5%95%86%E4%B8%9A%E6%A8%A1%E5%BC%8F%E5%88%9B%E6%96%B0%EF%BC%89%E5%9C%A8%E7%B3%BB%E7%BB%9F%E4%B8%AD%E7%9A%84%E4%BD%9C%E7%94%A8"><span class="nav-number">2.2.3.</span> <span class="nav-text">如何利用用例图定位创新思路（业务创新、或技术创新、或商业模式创新）在系统中的作用</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%AF%B7%E4%BD%BF%E7%94%A8-SCRUM-%E6%96%B9%E6%B3%95%EF%BC%8C%E9%80%89%E6%8B%A9%E4%B8%80%E4%B8%AA%E7%94%A8%E4%BE%8B%E5%9B%BE%EF%BC%8C%E7%BC%96%E5%88%B6%E6%9F%90%E8%AE%A2%E6%97%85%E9%A6%86%E5%BC%80%E5%8F%91%E7%9A%84%E9%9C%80%E6%B1%82%EF%BC%88backlog%EF%BC%89%E5%BC%80%E5%8F%91%E8%AE%A1%E5%88%92%E8%A1%A8"><span class="nav-number">2.2.4.</span> <span class="nav-text">请使用 SCRUM 方法，选择一个用例图，编制某订旅馆开发的需求（backlog）开发计划表</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%A0%B9%E6%8D%AE%E4%BB%BB%E5%8A%A14%EF%BC%8C%E7%BB%99%E5%87%BA%E9%A1%B9%E7%9B%AE%E7%94%A8%E4%BE%8B%E7%82%B9%E7%9A%84%E4%BC%B0%E7%AE%97"><span class="nav-number">2.2.5.</span> <span class="nav-text">根据任务4，给出项目用例点的估算</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Reference"><span class="nav-number">3.</span> <span class="nav-text">Reference</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Leungyukshing"
+      src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">Leungyukshing</p>
+  <div class="site-description" itemprop="description">A blog for code, programme sharing.</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">688</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">27</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/leungyukshing" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;leungyukshing" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:jacky14.liang@gmail.com" title="E-Mail → mailto:jacky14.liang@gmail.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="/atom.xml" title="RSS → &#x2F;atom.xml"><i class="fa fa-rss fa-fw"></i>RSS</a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll motion-element">
+    <div class="links-of-blogroll-title"><i class="fa fa-link fa-fw"></i>
+      Friends
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="http://www.liangjh45.com/" title="http:&#x2F;&#x2F;www.liangjh45.com&#x2F;" rel="noopener" target="_blank">Alva's blog</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="https://sysucarey.github.io/" title="https:&#x2F;&#x2F;sysucarey.github.io&#x2F;" rel="noopener" target="_blank">Carey's blog</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="https://blog.csdn.net/dickdick111/" title="https:&#x2F;&#x2F;blog.csdn.net&#x2F;dickdick111&#x2F;" rel="noopener" target="_blank">Dick's blog</a>
+        </li>
+    </ul>
+  </div>
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2017 – 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Leungyukshing</span>
+</div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="Total Visitors">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="Total Views">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : true,
+      appId      : 'AaLog29QcUdQKTboD6cY2dNP-gzGzoHsz',
+      appKey     : 'dUWNHLnTY9qG1jJwPnTtfMm8',
+      placeholder: "Just go go",
+      avatar     : 'mm',
+      meta       : guest,
+      pageSize   : '10' || 10,
+      visitor    : false,
+      lang       : '' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : false,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+
+</body>
+</html>

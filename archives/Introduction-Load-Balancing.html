@@ -1,0 +1,679 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <meta name="google-site-verification" content="FHjCzDi7nry9Mvf4EFOY5cYoco-ZXq9tKjvXZK0nKr4">
+  <meta name="baidu-site-verification" content="code-gpMFPewYUF" />
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="/lib/pace/pace-theme-minimal.min.css">
+  <script src="/lib/pace/pace.min.js"></script>
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"leungyukshing.github.io","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"right","display":"hide","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"appID":"52USYSYESX","apiKey":"20b904c66f55b874f05edea4aca57780","indexName":"blog","hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="Introduction&amp;emsp;&amp;emsp;有关网络层的博客发的比较少，最近抽点时间了解一下这块的细节，然后把学习的一些心得分享到这里。在这篇博客主要介绍的是网络层中的负载均衡，这是一块现代软件工程很重要的组成部分。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="浅谈负载均衡及代理">
+<meta property="og:url" content="https://leungyukshing.github.io/archives/Introduction-Load-Balancing.html">
+<meta property="og:site_name" content="Halo">
+<meta property="og:description" content="Introduction&amp;emsp;&amp;emsp;有关网络层的博客发的比较少，最近抽点时间了解一下这块的细节，然后把学习的一些心得分享到这里。在这篇博客主要介绍的是网络层中的负载均衡，这是一块现代软件工程很重要的组成部分。">
+<meta property="og:locale">
+<meta property="og:image" content="https://miro.medium.com/max/1400/1*cCV-7Q-DDw87xNnTIVIhEg.png">
+<meta property="og:image" content="https://pic1.zhimg.com/80/v2-ce85ff3d023213f0eb5935df491f4c54_1440w.jpg">
+<meta property="og:image" content="https://pic4.zhimg.com/80/v2-478480ac6ec2b1e5c43608dee03e5403_1440w.jpg">
+<meta property="og:image" content="https://pic2.zhimg.com/80/v2-6b46204d914f778aac1efb160b525329_1440w.jpg">
+<meta property="og:image" content="https://miro.medium.com/max/1400/1*4zSWjsKnaC6QQmJ7PTj7Eg.png">
+<meta property="og:image" content="https://miro.medium.com/max/1400/1*nuqZiYoFEkDe2cUgMh0aQw.png">
+<meta property="og:image" content="https://miro.medium.com/max/1400/1*wPoZoz6cKAo0HBi1wmNZtA.png">
+<meta property="article:published_time" content="2021-05-14T16:50:03.000Z">
+<meta property="article:modified_time" content="2021-06-22T18:37:08.704Z">
+<meta property="article:author" content="Leungyukshing">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://miro.medium.com/max/1400/1*cCV-7Q-DDw87xNnTIVIhEg.png">
+
+<link rel="canonical" href="https://leungyukshing.github.io/archives/Introduction-Load-Balancing.html">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-Hans'
+  };
+</script>
+
+  <title>浅谈负载均衡及代理 | Halo</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+<!-- hexo injector head_end end --><link rel="alternate" href="/atom.xml" title="Halo" type="application/atom+xml"><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Halo</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">A magic place for coding</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>About</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>Tags</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>Search
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="Searching..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+  <a href="https://github.com/leungyukshing" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="https://leungyukshing.github.io/archives/Introduction-Load-Balancing.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="Leungyukshing">
+      <meta itemprop="description" content="A blog for code, programme sharing.">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Halo">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          浅谈负载均衡及代理
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2021-05-14 12:50:03" itemprop="dateCreated datePublished" datetime="2021-05-14T12:50:03-04:00">2021-05-14</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2021-06-22 14:37:08" itemprop="dateModified" datetime="2021-06-22T14:37:08-04:00">2021-06-22</time>
+              </span>
+
+          
+            <span class="post-meta-item" title="Views" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">Views: </span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine: </span>
+    
+    <a title="valine" href="/archives/Introduction-Load-Balancing.html#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/archives/Introduction-Load-Balancing.html" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="Introduction"><a href="#Introduction" class="headerlink" title="Introduction"></a>Introduction</h1><p>&emsp;&emsp;有关网络层的博客发的比较少，最近抽点时间了解一下这块的细节，然后把学习的一些心得分享到这里。在这篇博客主要介绍的是网络层中的负载均衡，这是一块现代软件工程很重要的组成部分。</p>
+<a id="more"></a>
+
+<hr>
+<h1 id="What-is-network-load-balancing？"><a href="#What-is-network-load-balancing？" class="headerlink" title="What is network load balancing？"></a>What is network load balancing？</h1><p>&emsp;&emsp;这部分我们来看看什么是网络负载均衡（Network Load Balancing）。</p>
+<h2 id="Network-Load-Balancing"><a href="#Network-Load-Balancing" class="headerlink" title="Network Load Balancing"></a>Network Load Balancing</h2><p>&emsp;&emsp;负载均衡是计算机领域中一个很重要且广泛的概念，并不只是特指网络层。例如，在<strong>OS领域</strong>中，操作系统通过负载均衡策略去调度各种计算任务，合理分配到不同的CPU；在<strong>分布式系统领域</strong>中，容器编排调度系统（如k8s）使用负载均衡策略调度不同的实例到不同的计算集群；在<strong>网络</strong>的领域，网络层通过负载均衡策略调度网络任务到可用的后端服务器。所以负载均衡是一个很广泛的概念，但是在这篇博客，我们把重点放在网络的负载均衡。</p>
+<p><img src="https://miro.medium.com/max/1400/1*cCV-7Q-DDw87xNnTIVIhEg.png" alt="Network load bbalancing overview"></p>
+<p>&emsp;&emsp;上图展示了一个网络中负载均衡最简单的结构。用户发起网络请求，负载均衡器在用户和服务器之间，它有下面几个工作内容：</p>
+<ul>
+<li><strong>服务发现（Service Discovery）</strong>：负载均衡器需要知道哪些后端服务器是可用的，需要通过服务发现来得到它们的ip地址；</li>
+<li><strong>健康检查（Health Checfking）</strong>：负载均衡器需要通过某种手段去验证后端服务器是否健康，以及能否接受网络请求；</li>
+<li><strong>负载均衡（Load Balancing）</strong>：通过某种策略，合理地把用户的请求分配到不同的健康的后端服务器。</li>
+</ul>
+<p>&emsp;&emsp;使用负载均衡有什么好处呢？</p>
+<ul>
+<li><strong>命名抽象（Naming Abstraction）</strong>：对于用户来说，后端服务器的ip地址是抽象的，用户并不需要知道每一个可用的后端服务器地址，它只需要知道负载均衡器的地址即可；</li>
+<li><strong>容错机制（Fault Tolerance）</strong>：负载均衡器的服务发现和健康检查使得用户的请求能有效避开不可用的后端服务器，当后端服务器出现部分故障或负载过高的情况，其余的请求仍然能够被正常处理；</li>
+<li><strong>成本和经济效益（Cost and Performance Benefits）</strong>：大多数的分布式系统会分布在不同的网络分区，或者一个分布式系统会跨多个网络分区。对于网络分区来说，不同分区之间一般是oversubscribed的，对于同一个分区内，通常是undersubscribed的，负载均衡能够把流量尽可能保持在一个网络分区内，可以提升性能吧，减少网络分区之间的开销。</li>
+</ul>
+<h1 id="负载均衡的种类"><a href="#负载均衡的种类" class="headerlink" title="负载均衡的种类"></a>负载均衡的种类</h1><p>&emsp;&emsp;目前工业界使用最多的就是L4和L7两种负载均衡，这个4层和7层是对应OSI模型而言的。这里的层数，指的是负载均衡过程中，利用到了第几层的信息。如L4意思就是利用到了第四层的信息，即网络层。所以能够利用TCP中的ip和port去做负载均衡。L7的意思就是利用到了第七层的信息，比如对于http请求来说，就可以获得用户的语言、区域甚至cookie信息用于负载均衡。当然，除了这两个之外，还有其他的负载均衡，但是用的不多。</p>
+<h2 id="L4-Load-Balancing-四层负载均衡"><a href="#L4-Load-Balancing-四层负载均衡" class="headerlink" title="L4 Load Balancing 四层负载均衡"></a>L4 Load Balancing 四层负载均衡</h2><p><img src="https://pic1.zhimg.com/80/v2-ce85ff3d023213f0eb5935df491f4c54_1440w.jpg" alt="L4 Load Balancing Exmaple"></p>
+<p>&emsp;&emsp;这幅图展示了一个简单的L4负载均衡的工作过程，用户发起一个TCP请求到负载均衡器，负载均衡器替换到网络层的IP地址和port后，重新发起一个新的TCP请求到后端服务器。返回服务器返回信息给负载均衡器，最后负载均衡器再把response返回给用户。这其中用到的最主要的信息就是ip和port，这是第四层中最为关键的信息。</p>
+<h2 id="L7-Load-balancing-七层负载均衡"><a href="#L7-Load-balancing-七层负载均衡" class="headerlink" title="L7 Load balancing 七层负载均衡"></a>L7 Load balancing 七层负载均衡</h2><p><img src="https://pic4.zhimg.com/80/v2-478480ac6ec2b1e5c43608dee03e5403_1440w.jpg" alt="L7 Load Balancing Example"></p>
+<p>&emsp;&emsp;看完L4负载均衡的简单介绍，我觉得这个策略挺合理的，毕竟我们大多数都是用ip+port的形式去定位某一个用户，但是按照用户的维度做负载均衡，这个粒度还是不够细致。原因是当前很多客户端都采用多路复用的模式，即用一条链接发送所有的应用请求（因为创建链接的开销很大，尤其链接需要TLS加密时，开销更大），所以某个用户的请求也应该能够被合理地分配到不同的服务器进行处理。</p>
+<p>&emsp;&emsp;先来看一个场景，有两个HTTP/2 Client发起通信请求，Client 1每分钟发送1个请求，Client 2每秒20个请求，这两个请求的频率是相差很远的。如果使用L4负载均衡，会按照这两个client的ip+port去负载均衡，Client1的请求分配到A服务器，Client2的请求分配到B服务器，从结果看，B服务器的负载就是A的1200倍了，这好像并没有达到负载均衡的要求。原因是什么呢？仅通过ip+port去分发流量并不够细致，因为4层的信息太少了，这也是为什么要引入7层负载均衡的原因。7层包括了应用层协议，比如http、smtp等，这里面能够利用的信息就多很多了，我们可以根据里面的信息再做更加合理的分发。</p>
+<p>&emsp;&emsp;所以上面的例子，放到L7负载均衡是这样的。两个请求的内容可能是不一样的，Client1请求的可能是实时性不高的meta信息，而Client2请求的是实时性很高的用户数据，那么可以根据这两个请求实际需要的资源（这个信息在应用层中），去分配到不同的服务器。</p>
+<h1 id="Types-of-Load-Balancer-Topologies"><a href="#Types-of-Load-Balancer-Topologies" class="headerlink" title="Types of Load Balancer Topologies"></a>Types of Load Balancer Topologies</h1><p>&emsp;&emsp;在这一部分我们来讨论Load Balancer的拓扑类型，所谓拓扑类型指的是负载均衡服务器是怎么部署的。</p>
+<h2 id="Middle-Proxy-中间代理"><a href="#Middle-Proxy-中间代理" class="headerlink" title="Middle Proxy 中间代理"></a>Middle Proxy 中间代理</h2><p><img src="https://pic2.zhimg.com/80/v2-6b46204d914f778aac1efb160b525329_1440w.jpg" alt="midlle proxy"></p>
+<p>&emsp;&emsp;这种类型叫<strong>中间代理</strong>，顾名思义就是负载均衡服务器处于Client和Server的中间。Client通过DNS连接Load Balancer。这种模型是最常用也最通用的模型，部署起来也比较简单，缺点是这里的Load Balancer也是一个故障单点和系统瓶颈。</p>
+<h2 id="Edge-Proxy-边缘代理"><a href="#Edge-Proxy-边缘代理" class="headerlink" title="Edge Proxy 边缘代理"></a>Edge Proxy 边缘代理</h2><p><img src="https://miro.medium.com/max/1400/1*4zSWjsKnaC6QQmJ7PTj7Eg.png" alt="edge proxy"></p>
+<p>&emsp;&emsp;这种类型叫<strong>边缘代理</strong>，这里的边缘指的是网关的边缘。这种模式可以理解为是中间代理的一个变种，中间代理模式下，Client在公网直接访问到Load Balancer；但是在边缘代理模式下，Load Balancer前面还包含了一个gateway，提供了TLS中断、限速、认证、流量路由等功能。其优缺点和中间代理是一样的，这种模式现在在大厂比较常用。对于一个面向公网的一个大型分布式系统，如果Client直接通过DNS连接Load Balancer是不可控的，也是极其危险的，所以通常会部署一个gateway让所有公网的流量进入系统。</p>
+<h2 id="Embedded-Client-Library-嵌入Client库"><a href="#Embedded-Client-Library-嵌入Client库" class="headerlink" title="Embedded Client Library 嵌入Client库"></a>Embedded Client Library 嵌入Client库</h2><p><img src="https://miro.medium.com/max/1400/1*nuqZiYoFEkDe2cUgMh0aQw.png" alt="embedded client library"></p>
+<p>&emsp;&emsp;上述两种模型的缺点都是单点故障风险以及不便于横向扩容，为了克服这个问题，有一种解决方法是以库的形式嵌入到服务中。基于库的解决方案带来的好处就是把负载均衡的逻辑都分发到每一个Client中，因此单点故障和瓶颈的问题也就不复存在了。然而这个方法也是有很大限制的。首先是需要使用多种语言去实现负载均衡的逻辑，以适用于不同的Client设备，同时，当这个开发库需要升级时，也需要花费很多资源。</p>
+<h2 id="Sidecar-Proxy"><a href="#Sidecar-Proxy" class="headerlink" title="Sidecar Proxy"></a>Sidecar Proxy</h2><p><img src="https://miro.medium.com/max/1400/1*wPoZoz6cKAo0HBi1wmNZtA.png" alt="sidecar proxy"></p>
+<p>&emsp;&emsp;Sidecar proxy是Emdedding Client Libray方案的一个变种，是为了解决库多语言的问题。这个方案通过另外一个不同进程来进行网络访问，通过牺牲一点性能来解决多语言的问题。这种模式是比较新的，但是逐渐变得普遍。</p>
+<hr>
+<h1 id="Reference"><a href="#Reference" class="headerlink" title="Reference"></a>Reference</h1><ol>
+<li><a target="_blank" rel="noopener" href="https://blog.envoyproxy.io/introduction-to-modern-network-load-balancing-and-proxying-a57f6ff80236">Introduction to modern network load balancing and proxying</a></li>
+<li><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/39575765">现代负载均衡和代理简介</a></li>
+<li><a target="_blank" rel="noopener" href="https://jaminzhang.github.io/lb/L4-L7-Load-Balancer-Difference/">四层、七层负载均衡的区别</a></li>
+</ol>
+
+    </div>
+
+    
+    
+    
+        <div class="reward-container">
+  <div></div>
+  <button onclick="var qr = document.getElementById('qr'); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    Donate
+  </button>
+  <div id="qr" style="display: none;">
+      
+      <div style="display: inline-block;">
+        <img src="/images/wechat_reward.png" alt="Leungyukshing WeChat Pay">
+        <p>WeChat Pay</p>
+      </div>
+      
+      <div style="display: inline-block;">
+        <img src="/images/alipay_reward.png" alt="Leungyukshing Alipay">
+        <p>Alipay</p>
+      </div>
+
+  </div>
+</div>
+
+        
+
+  <div class="followme">
+    <p>Welcome to my other publishing channels</p>
+
+    <div class="social-list">
+
+        <div class="social-item">
+          <a target="_blank" class="social-link" href="/atom.xml">
+            <span class="icon">
+              <i class="fa fa-rss"></i>
+            </span>
+
+            <span class="label">RSS</span>
+          </a>
+        </div>
+    </div>
+  </div>
+
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/archives/LeetCode%E8%A7%A3%E9%A2%98%E6%8A%A5%E5%91%8A%EF%BC%88373)%20--%20304.%20Range%20Sum%20Query%202D%20-%20Immutable.html" rel="prev" title="LeetCode解题报告（373) -- 304. Range Sum Query 2D - Immutable">
+      <i class="fa fa-chevron-left"></i> LeetCode解题报告（373) -- 304. Range Sum Query 2D - Immutable
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/archives/LeetCode%E8%A7%A3%E9%A2%98%E6%8A%A5%E5%91%8A%EF%BC%88374)%20--%20816.%20Ambiguous%20Coordinates.html" rel="next" title="LeetCode解题报告（374) -- 816. Ambiguous Coordinates">
+      LeetCode解题报告（374) -- 816. Ambiguous Coordinates <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Introduction"><span class="nav-number">1.</span> <span class="nav-text">Introduction</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#What-is-network-load-balancing%EF%BC%9F"><span class="nav-number">2.</span> <span class="nav-text">What is network load balancing？</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Network-Load-Balancing"><span class="nav-number">2.1.</span> <span class="nav-text">Network Load Balancing</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1%E7%9A%84%E7%A7%8D%E7%B1%BB"><span class="nav-number">3.</span> <span class="nav-text">负载均衡的种类</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#L4-Load-Balancing-%E5%9B%9B%E5%B1%82%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1"><span class="nav-number">3.1.</span> <span class="nav-text">L4 Load Balancing 四层负载均衡</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#L7-Load-balancing-%E4%B8%83%E5%B1%82%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1"><span class="nav-number">3.2.</span> <span class="nav-text">L7 Load balancing 七层负载均衡</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Types-of-Load-Balancer-Topologies"><span class="nav-number">4.</span> <span class="nav-text">Types of Load Balancer Topologies</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Middle-Proxy-%E4%B8%AD%E9%97%B4%E4%BB%A3%E7%90%86"><span class="nav-number">4.1.</span> <span class="nav-text">Middle Proxy 中间代理</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Edge-Proxy-%E8%BE%B9%E7%BC%98%E4%BB%A3%E7%90%86"><span class="nav-number">4.2.</span> <span class="nav-text">Edge Proxy 边缘代理</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Embedded-Client-Library-%E5%B5%8C%E5%85%A5Client%E5%BA%93"><span class="nav-number">4.3.</span> <span class="nav-text">Embedded Client Library 嵌入Client库</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Sidecar-Proxy"><span class="nav-number">4.4.</span> <span class="nav-text">Sidecar Proxy</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Reference"><span class="nav-number">5.</span> <span class="nav-text">Reference</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Leungyukshing"
+      src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">Leungyukshing</p>
+  <div class="site-description" itemprop="description">A blog for code, programme sharing.</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">688</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">27</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/leungyukshing" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;leungyukshing" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:jacky14.liang@gmail.com" title="E-Mail → mailto:jacky14.liang@gmail.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="/atom.xml" title="RSS → &#x2F;atom.xml"><i class="fa fa-rss fa-fw"></i>RSS</a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll motion-element">
+    <div class="links-of-blogroll-title"><i class="fa fa-link fa-fw"></i>
+      Friends
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="http://www.liangjh45.com/" title="http:&#x2F;&#x2F;www.liangjh45.com&#x2F;" rel="noopener" target="_blank">Alva's blog</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="https://sysucarey.github.io/" title="https:&#x2F;&#x2F;sysucarey.github.io&#x2F;" rel="noopener" target="_blank">Carey's blog</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="https://blog.csdn.net/dickdick111/" title="https:&#x2F;&#x2F;blog.csdn.net&#x2F;dickdick111&#x2F;" rel="noopener" target="_blank">Dick's blog</a>
+        </li>
+    </ul>
+  </div>
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2017 – 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Leungyukshing</span>
+</div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="Total Visitors">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="Total Views">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+      
+
+<script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      loader: {
+        source: {
+          '[tex]/amsCd': '[tex]/amscd',
+          '[tex]/AMScd': '[tex]/amscd'
+        }
+      },
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              let target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    (function () {
+      var script = document.createElement('script');
+      script.src = '//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+      script.defer = true;
+      document.head.appendChild(script);
+    })();
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : true,
+      appId      : 'AaLog29QcUdQKTboD6cY2dNP-gzGzoHsz',
+      appKey     : 'dUWNHLnTY9qG1jJwPnTtfMm8',
+      placeholder: "Just go go",
+      avatar     : 'mm',
+      meta       : guest,
+      pageSize   : '10' || 10,
+      visitor    : false,
+      lang       : '' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : false,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+
+</body>
+</html>

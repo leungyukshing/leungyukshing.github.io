@@ -1,0 +1,1603 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <meta name="google-site-verification" content="FHjCzDi7nry9Mvf4EFOY5cYoco-ZXq9tKjvXZK0nKr4">
+  <meta name="baidu-site-verification" content="code-gpMFPewYUF" />
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="/lib/pace/pace-theme-minimal.min.css">
+  <script src="/lib/pace/pace.min.js"></script>
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"leungyukshing.github.io","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"right","display":"hide","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"appID":"52USYSYESX","apiKey":"20b904c66f55b874f05edea4aca57780","indexName":"blog","hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="问题描述及要求问题描述&amp;emsp;&amp;emsp;Capacitated Facility Location Problem，限容量设施分配问题，是一类优化问题。目的是求解出代价最小的设施分配情况，包括设施的开关状态和服务顾客的情况。 题目要求 使用至少两种算法去求解问题。 使用71个测例进行测试，输出相应的结果。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="算法设计课程项目报告">
+<meta property="og:url" content="https://leungyukshing.github.io/archives/Facility-Location-Problem.html">
+<meta property="og:site_name" content="Halo">
+<meta property="og:description" content="问题描述及要求问题描述&amp;emsp;&amp;emsp;Capacitated Facility Location Problem，限容量设施分配问题，是一类优化问题。目的是求解出代价最小的设施分配情况，包括设施的开关状态和服务顾客的情况。 题目要求 使用至少两种算法去求解问题。 使用71个测例进行测试，输出相应的结果。">
+<meta property="og:locale">
+<meta property="article:published_time" content="2018-12-20T14:24:02.000Z">
+<meta property="article:modified_time" content="2021-06-22T18:33:07.100Z">
+<meta property="article:author" content="Leungyukshing">
+<meta property="article:tag" content="C++">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://leungyukshing.github.io/archives/Facility-Location-Problem.html">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-Hans'
+  };
+</script>
+
+  <title>算法设计课程项目报告 | Halo</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+<!-- hexo injector head_end end --><link rel="alternate" href="/atom.xml" title="Halo" type="application/atom+xml"><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Halo</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">A magic place for coding</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>About</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>Tags</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>Search
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="Searching..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+  <a href="https://github.com/leungyukshing" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="https://leungyukshing.github.io/archives/Facility-Location-Problem.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="Leungyukshing">
+      <meta itemprop="description" content="A blog for code, programme sharing.">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Halo">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          算法设计课程项目报告
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2018-12-20 09:24:02" itemprop="dateCreated datePublished" datetime="2018-12-20T09:24:02-05:00">2018-12-20</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2021-06-22 14:33:07" itemprop="dateModified" datetime="2021-06-22T14:33:07-04:00">2021-06-22</time>
+              </span>
+
+          
+            <span class="post-meta-item" title="Views" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">Views: </span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine: </span>
+    
+    <a title="valine" href="/archives/Facility-Location-Problem.html#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/archives/Facility-Location-Problem.html" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="问题描述及要求"><a href="#问题描述及要求" class="headerlink" title="问题描述及要求"></a>问题描述及要求</h2><h3 id="问题描述"><a href="#问题描述" class="headerlink" title="问题描述"></a>问题描述</h3><p>&emsp;&emsp;Capacitated Facility Location Problem，限容量设施分配问题，是一类优化问题。目的是求解出代价最小的设施分配情况，包括设施的开关状态和服务顾客的情况。</p>
+<h3 id="题目要求"><a href="#题目要求" class="headerlink" title="题目要求"></a>题目要求</h3><ol>
+<li>使用至少两种算法去求解问题。</li>
+<li>使用71个测例进行测试，输出相应的结果。</li>
+</ol>
+<a id="more"></a>
+
+<hr>
+<h2 id="问题分析"><a href="#问题分析" class="headerlink" title="问题分析"></a>问题分析</h2><p>&emsp;&emsp;输入的数据包括每个设施的开设费用、每个设施的最大容量、每个顾客的需求，以及每个设施对应每个顾客的服务代价。以上三个是最核心的信息，我们需要求解出最优方案，使得在能满足所有顾客的需求下，并且在不超出设施的最大容量条件下，开设设施与服务顾客的总代价最小。</p>
+<p>&emsp;&emsp;根据上面的分析，可以把该优化问题（$n$个设施，$m$个顾客）表达成数学形式：<br>$$<br>min \sum^n_{i=1}\sum^m_{j=1}c_{ij}y_{ij}+\sum^n_{i=1}f_ix_i \<br>s.t. \space\space \sum^n_{i=1}y_{ij} = 1 \space\text{for all } j=1,\dots, m \<br>\sum^m_{j=1}d_iy_{ij} \le u_ix_i \space \text{for all } i =1,\dots,m \<br>y_{ij} \ge 0 \space \text{for all } i = 1,\dots,m \<br>x_i \in \lbrace0,1\rbrace \space \text{for all }i = 1,\dots,n \<br>y_{ij} \in \lbrace0,1\rbrace \space \text{for all }j = 1,\dots,m<br>$$<br>&emsp;&emsp;其中的变量解释如下：</p>
+<ul>
+<li>$x_i$表示第$i$个设施的开关状态，$x_i=0$表示设施关闭，$x_i=1$表示设施开启。</li>
+<li>$f_i$表示第$i$个设施开启的费用。</li>
+<li>$d_{j}$表示第$j$个顾客的需求。</li>
+<li>$c_{ij}$表示第$i$个设施服务第$j$个顾客所需要的费用。</li>
+<li>$y_{ij}$表示$i$个设施服务第$j$个顾客需求的比例（本次实验中，每位顾客只能由一个设施服务，因此$y_{ij}$要么为0，要么为1）。</li>
+</ul>
+<p>&emsp;&emsp;分析：</p>
+<ul>
+<li>我们极小化的部分由两部分组成，第一部分是设施服务顾客的花费，第二部分是设施开设的花费。</li>
+<li>第一个约束条件的意思是，需要满足所有顾客的需求。</li>
+<li>第二个约束条件的意思是，每个设施服务顾客的需求不能超出该设施的容量。</li>
+</ul>
+<p>&emsp;&emsp;然后我们需要给出的输出有：</p>
+<ul>
+<li>$x_i$：每个设施对应的开关状态。</li>
+<li>每个客户选择的设施。</li>
+</ul>
+<hr>
+<h2 id="算法设计"><a href="#算法设计" class="headerlink" title="算法设计"></a>算法设计</h2><h3 id="方法1——贪心算法"><a href="#方法1——贪心算法" class="headerlink" title="方法1——贪心算法"></a>方法1——贪心算法</h3><p>思路：使用贪心算法求解非常简单，对于优化问题，贪心算法普遍适用，其核心思想是：为了达到最小值或最大值，我们在每一步选择的时候都是最贪新的。对于这个具体问题，我们的贪心策略是：<strong>对于每一个顾客，我们选取设施$i$，要求设施$i$服务这个顾客的代价是最小的</strong>。当然，这里的前提是设施$i$有足够容量服务这个顾客。于是每个顾客都按照这种贪心策略选择，最后就能得到一个最小代价了。我们可以根据顾客的选择来确定设施的开关，有顾客选择的设施就开放，没有顾客选择的设施就关闭。</p>
+<p>贪心算法过程如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">for all customers j</span><br><span class="line">	if (presentCapacity[i] + demand[j] &lt;&#x3D; capacity[i]) &#123;</span><br><span class="line">		choose i that min(assignmentCost[i][j])</span><br><span class="line">		update presentCapacity[i] +&#x3D; demand[j]</span><br><span class="line">	&#125;</span><br><span class="line">	</span><br><span class="line">for all facility i</span><br><span class="line">	if (presentCapacity[i] !&#x3D; 0)</span><br><span class="line">		openState[i] &#x3D; 1</span><br></pre></td></tr></table></figure>
+
+<h3 id="方法2——模拟退火法"><a href="#方法2——模拟退火法" class="headerlink" title="方法2——模拟退火法"></a>方法2——模拟退火法</h3><p>思路：模拟退火法是元启发式搜索的其中一种方法。模拟退火法是克服爬山法缺点的有效方法，所谓退火是冶金专家为了达到某些晶体结构重复将金属加入或冷却的过程，该过程的控制参数为温度T。模拟退火法的基本思想是，在系统朝着能量减少的趋势这样一个变化过程中，偶尔允许系统跳到能量较高的状态，以避开局部极小点，最终稳定到全局最小点。</p>
+<p>&emsp;&emsp;算法步骤如下：</p>
+<ol>
+<li>随机挑选出一单元，并给他一个随机的位移$k$，求出系统因此而产生的能量变化$\Delta E_k$。</li>
+<li>若$\Delta E_k \leq0$，该位移可采纳，而变化后的系统状态可作为下次变化的起点；若$\Delta E_k \gt0$，位移后的状态可采纳的概率为</li>
+</ol>
+<p>$$<br>  P_k = \frac{1}{(1+e^{-\Delta E_k/T})}<br>$$</p>
+<p>  式中T为温度，然后从(0,1)区间均匀分布的随机数中挑选一个数R。若$R \lt P_k$，则将变化后的状态作为下次的起点；否则，将变化前的状态作为下次的起点。</p>
+<ol start="3">
+<li>转第（1）步继续执行，直至达到平衡状态为止。</li>
+</ol>
+<p>&emsp;&emsp;模拟退火法的关键在于如何产生新解，这里我采用了几种邻域搜索方式，目的是提高解的多样性。这里的解是设施的开启与关闭状态（虽然也可以使用设施与顾客的分配关系来作为解，但效果不佳）。方法有三个：</p>
+<ul>
+<li><p>将某个位置的状态置反（若该设施开放，则改为关闭；反之亦然）</p>
+</li>
+<li><p>选出两个位置，倒转它们之间的状态。</p>
+</li>
+<li><p>选出两个位置，交换它们。</p>
+<p>&emsp;&emsp;每次产生新解后，就要确定设施与顾客的分配关系，这个也是这次我做优化的地方。先说最开始的做法，就是根据生成的设施开放状态，为每个用户匹配一个设施（不超出容量限制），而这个匹配过程是随机的，即容量不超出限制的设施都可能会被选中。而我优化的地方是，在这个匹配过程加入了贪心算法的思想，按照概率使用两种匹配方式：    </p>
+<ul>
+<li>第一种是，匹配服务代价最小的设施给该顾客。</li>
+<li>第二种是，随机匹配。</li>
+</ul>
+<p>&emsp;&emsp;优化的思路是，如果只是使用随机匹配，那么每个顾客很可能挑选一些服务代价很大的设施，这是没有必要的。但是如果全部使用贪心的思想，也会出现问题，如果每个顾客只选自己代价最小的，那么可能导致一个问题：如果一个顾客C在设施A的代价很低，而在其他设施的代价很高，而其余顾客在各个设施的代价都差不多，那么顾客C有可能会因为设施A首先被占据而不得不选择代价极高的其他设施，但其实最合理的分配方式是顾客C选择设施A而其他顾客选择其他的设施。</p>
+<p>&emsp;&emsp;需要注意的是因为通过邻域搜索的方式产生的解可能不能使得所有顾客都被服务，因此需要在匹配的时候做一个验证，如果无法匹配则重新生成新解。</p>
+</li>
+</ul>
+<hr>
+<h2 id="代码实现"><a href="#代码实现" class="headerlink" title="代码实现"></a>代码实现</h2><h3 id="基本数据结构"><a href="#基本数据结构" class="headerlink" title="基本数据结构"></a>基本数据结构</h3><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">ifndef</span> FLP_H</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> FLP_H</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;cstdlib&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;time.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;vector&gt;</span></span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> <span class="built_in">std</span>;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">FLP</span> &#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">  FLP();</span><br><span class="line">  <span class="function"><span class="keyword">void</span> <span class="title">input</span><span class="params">()</span></span>; <span class="comment">// 读入数据</span></span><br><span class="line">  <span class="function"><span class="keyword">void</span> <span class="title">initialize</span><span class="params">()</span></span>; <span class="comment">// 初始化变量</span></span><br><span class="line">  <span class="function"><span class="keyword">void</span> <span class="title">generateSolution</span><span class="params">()</span></span>; <span class="comment">// 邻域搜索产生新解</span></span><br><span class="line">  <span class="function"><span class="keyword">int</span> <span class="title">getTotalCost</span><span class="params">()</span></span>; <span class="comment">// 计算总代价</span></span><br><span class="line">  <span class="function"><span class="keyword">bool</span> <span class="title">update</span><span class="params">()</span></span>; <span class="comment">// 纯贪心匹配</span></span><br><span class="line">  <span class="function"><span class="keyword">bool</span> <span class="title">update1</span><span class="params">()</span></span>; <span class="comment">// 贪心+随机匹配</span></span><br><span class="line">  <span class="function"><span class="keyword">int</span> <span class="title">findBestFacility</span><span class="params">(<span class="keyword">int</span> customerIndex)</span></span>; <span class="comment">// 贪心策略</span></span><br><span class="line">  <span class="function"><span class="keyword">int</span> <span class="title">findRandomOne</span><span class="params">(<span class="keyword">int</span> customerIndex)</span></span>; <span class="comment">// 随机策略</span></span><br><span class="line">  <span class="function"><span class="keyword">void</span> <span class="title">greedy</span><span class="params">()</span></span>; <span class="comment">// 贪心算法</span></span><br><span class="line">  <span class="function"><span class="keyword">void</span> <span class="title">SA</span><span class="params">()</span></span>; <span class="comment">// 模拟退火法</span></span><br><span class="line">  <span class="function"><span class="keyword">void</span> <span class="title">create_new</span><span class="params">()</span></span>; <span class="comment">// 产生新解</span></span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">  <span class="comment">// 输入内容</span></span><br><span class="line">  <span class="keyword">int</span> facilityNum; <span class="comment">// 工厂数量</span></span><br><span class="line">  <span class="keyword">int</span> customerNum; <span class="comment">// 顾客数量</span></span><br><span class="line">  <span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt; capacity; <span class="comment">// 工厂容量</span></span><br><span class="line">  <span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt; openCost; <span class="comment">// 工厂开设费用</span></span><br><span class="line">  <span class="built_in">vector</span>&lt;<span class="keyword">double</span>&gt; demand; <span class="comment">// 顾客需求</span></span><br><span class="line">  <span class="built_in">vector</span>&lt;<span class="built_in">vector</span>&lt;<span class="keyword">double</span>&gt;&gt; assignmentCost; <span class="comment">// [i,j]第i个工厂对第j个顾客的费用</span></span><br><span class="line"></span><br><span class="line">  <span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt; presentCapacity; <span class="comment">// 当前时刻工厂已分配容量</span></span><br><span class="line"></span><br><span class="line">  <span class="comment">// 输出内容</span></span><br><span class="line">  <span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt; openState; <span class="comment">// 工厂开放状态</span></span><br><span class="line">  <span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt; totalCost; <span class="comment">// 工厂总支出</span></span><br><span class="line">  <span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt; facilityChosen; <span class="comment">// 顾客选择的工厂</span></span><br><span class="line">    </span><br><span class="line">  <span class="comment">// 约束条件</span></span><br><span class="line">  <span class="built_in">vector</span>&lt;<span class="keyword">bool</span>&gt; isSatisfied; <span class="comment">// 顾客是否满足</span></span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">endif</span></span></span><br></pre></td></tr></table></figure>
+
+<h3 id="贪心算法"><a href="#贪心算法" class="headerlink" title="贪心算法"></a>贪心算法</h3><p>对于每一个顾客，在设施列表中找到服务代价最小的工厂（使用一个<code>presentCapacity</code>来记录设施已经被使用的容量）。然后更新该设施的presentCapacity和代价，将匹配记录加入到<code>facilityChose</code>，设置<code>isSatisfied</code>为真。最后根据匹配的结果，判断设施的开放与关闭状态。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">FLP::greedy</span><span class="params">()</span> </span>&#123;</span><br><span class="line">  <span class="comment">// 初始化</span></span><br><span class="line">  <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; facilityNum; i++) &#123;</span><br><span class="line">    openState[i] = <span class="number">0</span>;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">for</span> (<span class="keyword">int</span> j = <span class="number">0</span>; j &lt; customerNum; j++) &#123;</span><br><span class="line">    <span class="keyword">int</span> choose;</span><br><span class="line">    <span class="keyword">int</span> minCost = INT_MAX;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; facilityNum; i++) &#123;</span><br><span class="line">      <span class="comment">// 容量足够</span></span><br><span class="line">      <span class="keyword">if</span> (presentCapacity[i] + demand[j] &lt;= capacity[i]) &#123;</span><br><span class="line">        <span class="comment">// 每个客户找出最小的花费的设施</span></span><br><span class="line">        <span class="keyword">if</span> (assignmentCost[i][j] &lt; minCost) &#123;</span><br><span class="line">          minCost = assignmentCost[i][j];</span><br><span class="line">          choose = i;</span><br><span class="line">        &#125;</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    presentCapacity[choose] += demand[j];</span><br><span class="line">    <span class="comment">//cout &lt;&lt; j &lt;&lt; &quot; choose &quot; &lt;&lt; choose &lt;&lt; endl;</span></span><br><span class="line">    totalCost[choose] += assignmentCost[choose][j];</span><br><span class="line">    isSatisfied[j] = <span class="literal">true</span>;</span><br><span class="line">    facilityChosen[j] = choose;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; facilityNum; i++) &#123;</span><br><span class="line">    <span class="comment">//assert(presentCapacity[i]);</span></span><br><span class="line">    <span class="keyword">if</span> (presentCapacity[i] != <span class="number">0</span>) &#123;</span><br><span class="line">      openState[i] = <span class="number">1</span>;</span><br><span class="line">      totalCost[i] += openCost[i];</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">else</span> &#123;</span><br><span class="line">      openState[i] = <span class="number">0</span>;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="built_in">cout</span> &lt;&lt; getTotalCost() &lt;&lt; <span class="built_in">endl</span>;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; facilityNum; i++) &#123;</span><br><span class="line">    <span class="built_in">cout</span> &lt;&lt; openState[i] &lt;&lt; <span class="string">&quot; &quot;</span>;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="built_in">cout</span> &lt;&lt; <span class="built_in">endl</span>;</span><br><span class="line">  <span class="keyword">for</span> (<span class="keyword">int</span> j = <span class="number">0</span>; j &lt; customerNum; j++) &#123;</span><br><span class="line">    <span class="built_in">cout</span> &lt;&lt; facilityChosen[j] &lt;&lt; <span class="string">&quot; &quot;</span>;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="built_in">cout</span> &lt;&lt; <span class="built_in">endl</span>;</span><br><span class="line"></span><br><span class="line">  <span class="comment">// 检查是否所有顾客都满足</span></span><br><span class="line">  <span class="keyword">for</span> (<span class="keyword">int</span> j = <span class="number">0</span>; j &lt; customerNum; j++) &#123;</span><br><span class="line">    assert(isSatisfied[j]);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="模拟退火法"><a href="#模拟退火法" class="headerlink" title="模拟退火法"></a>模拟退火法</h3><p>多种邻域搜索产生新解，使用多种方法目的是保证解的多样性。避免生成大量的无效解，在模拟退火的时候，解初始化的时候也是使用随机生成的。每次产生按照一定比例来产生，包括了反转、部分倒序、交换，这是我认为比较好的邻域搜索方式。</p>
+<p><code>generateSolution()</code>：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">FLP::generateSolution</span><span class="params">()</span> </span>&#123;</span><br><span class="line">  <span class="built_in">std</span>::fill(presentCapacity.begin(), presentCapacity.end(), <span class="number">0</span>);</span><br><span class="line">  <span class="built_in">std</span>::fill(totalCost.begin(), totalCost.end(), <span class="number">0</span>);</span><br><span class="line">  <span class="keyword">double</span> r1 = ((<span class="keyword">double</span>)rand()) / (RAND_MAX + <span class="number">1.0</span>);</span><br><span class="line">  <span class="keyword">double</span> r2 = ((<span class="keyword">double</span>)rand()) / (RAND_MAX + <span class="number">1.0</span>);</span><br><span class="line">  <span class="keyword">int</span> pos1 = (<span class="keyword">int</span>)(facilityNum * r1); <span class="comment">// 第一个交叉点位置</span></span><br><span class="line">  <span class="keyword">int</span> pos2 = (<span class="keyword">int</span>)(facilityNum * r2); <span class="comment">// 第二个交叉点位置</span></span><br><span class="line">  </span><br><span class="line">  <span class="keyword">double</span> ratio = rand() % <span class="number">100</span> / (<span class="keyword">double</span>)<span class="number">101</span>;</span><br><span class="line">  <span class="keyword">if</span> (ratio &lt;= <span class="number">0.33</span>) &#123;</span><br><span class="line">    <span class="keyword">if</span> (openState[pos1] == <span class="number">1</span>) &#123;</span><br><span class="line">      openState[pos1] = <span class="number">0</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">else</span> &#123;</span><br><span class="line">      openState[pos1] = <span class="number">1</span>;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">else</span> <span class="keyword">if</span> (ratio &lt;= <span class="number">0.66</span>) &#123;</span><br><span class="line">    <span class="keyword">if</span> (pos1 &gt; pos2) &#123;</span><br><span class="line">      <span class="keyword">int</span> t = pos1;</span><br><span class="line">      pos1 = pos2;</span><br><span class="line">      pos2 = t;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt; v = openState;</span><br><span class="line">    <span class="keyword">int</span> j = pos2;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = pos1; i &lt;= pos2; i++) &#123;</span><br><span class="line">      openState[i] = v[j];</span><br><span class="line">      j--;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">else</span> &#123;</span><br><span class="line">    <span class="keyword">int</span> x = openState[pos1];</span><br><span class="line">    openState[pos2] = openState[pos1];</span><br><span class="line">    openState[pos1] = x; </span><br><span class="line">  &#125;</span><br><span class="line">  </span><br><span class="line">  <span class="comment">/*</span></span><br><span class="line"><span class="comment">  cout &lt;&lt; &quot;New Solution: &quot; &lt;&lt; endl;</span></span><br><span class="line"><span class="comment">  for (int i = 0; i &lt; facilityNum; i++) &#123;</span></span><br><span class="line"><span class="comment">    cout &lt;&lt; openState[i] &lt;&lt; &quot; &quot;;</span></span><br><span class="line"><span class="comment">  &#125;</span></span><br><span class="line"><span class="comment">  cout &lt;&lt; endl;</span></span><br><span class="line"><span class="comment">  */</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>匹配的过程结合了随机与贪心，当该解无法匹配出结果时，返回false表示该解不合法，然后重新生成。</p>
+<p>贪心策略：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">FLP::findBestFacility</span><span class="params">(<span class="keyword">int</span> customerIndex)</span> </span>&#123;</span><br><span class="line">  <span class="keyword">int</span> temp = INT_MAX;</span><br><span class="line">  <span class="keyword">int</span> index = <span class="number">-1</span>;</span><br><span class="line">  <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; facilityNum; i++) &#123;</span><br><span class="line">    <span class="comment">// 工厂开放且容量不超出限制</span></span><br><span class="line">    <span class="keyword">if</span> (openState[i] == <span class="number">1</span> &amp;&amp; presentCapacity[i] + demand[customerIndex] &lt;= capacity[i]) &#123;</span><br><span class="line">      <span class="keyword">if</span> (assignmentCost[i][customerIndex] &lt; temp) &#123;</span><br><span class="line">        temp = assignmentCost[i][customerIndex];</span><br><span class="line">        index = i;</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> index;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>随机策略：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">FLP::findRandomOne</span><span class="params">(<span class="keyword">int</span> customerIndex)</span> </span>&#123;</span><br><span class="line">  <span class="keyword">int</span> temp = INT_MAX;</span><br><span class="line">  <span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt; indices;</span><br><span class="line">  <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; facilityNum; i++) &#123;</span><br><span class="line">    <span class="comment">// 工厂开放且容量不超出限制</span></span><br><span class="line">    <span class="keyword">if</span> (openState[i] == <span class="number">1</span> &amp;&amp; presentCapacity[i] + demand[customerIndex] &lt;= capacity[i]) &#123;</span><br><span class="line">      indices.emplace_back(i);</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">if</span> (indices.size() == <span class="number">0</span>) &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">double</span> r1 = ((<span class="keyword">double</span>)rand()) / (RAND_MAX + <span class="number">1.0</span>);</span><br><span class="line">  <span class="keyword">int</span> pos = (<span class="keyword">int</span>)(indices.size() * r1);</span><br><span class="line">  <span class="keyword">return</span> indices[pos];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>匹配：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">bool</span> <span class="title">FLP::update1</span><span class="params">()</span> </span>&#123;</span><br><span class="line">  <span class="comment">// 根据开关状态更新工厂开设费用</span></span><br><span class="line">  <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; facilityNum; i++) &#123;</span><br><span class="line">    <span class="keyword">if</span> (openState[i] == <span class="number">1</span>) &#123;</span><br><span class="line">      totalCost[i] = openCost[i];</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="comment">// 给每个用户分配工厂（贪心）</span></span><br><span class="line">  <span class="keyword">for</span> (<span class="keyword">int</span> j = <span class="number">0</span>; j &lt; customerNum; j++) &#123;</span><br><span class="line">    <span class="keyword">int</span> index;</span><br><span class="line">    <span class="keyword">int</span> r = rand() % <span class="number">100</span> / (<span class="keyword">double</span>)<span class="number">101</span>;</span><br><span class="line">    <span class="keyword">if</span> (r &lt;= <span class="number">0.4</span>) &#123;</span><br><span class="line">      index = findBestFacility(j);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">else</span> &#123;</span><br><span class="line">      index = findRandomOne(j);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">//cout &lt;&lt; &quot;index: &quot; &lt;&lt; index;</span></span><br><span class="line">    <span class="keyword">if</span> (index == <span class="number">-1</span>) &#123;</span><br><span class="line">      <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">//cout &lt;&lt; &quot;i: &quot; &lt;&lt; index &lt;&lt; &quot; choose j: &quot; &lt;&lt; j &lt;&lt; endl;</span></span><br><span class="line">    facilityChosen[j] = index;</span><br><span class="line">    presentCapacity[index] += demand[j];</span><br><span class="line">    isSatisfied[j] = <span class="literal">true</span>;</span><br><span class="line">    <span class="comment">// 加上顾客费用</span></span><br><span class="line">    totalCost[index] += assignmentCost[index][j];</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>模拟退火的过程可以按照上面给出的伪代码直接编写，有固定的模式，我们需要额外使用几个变量来记录整个过程中比较好的解。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">FLP::SA</span><span class="params">()</span> </span>&#123;</span><br><span class="line">  <span class="keyword">double</span> T;</span><br><span class="line">  T = T0;</span><br><span class="line">  <span class="keyword">int</span> count = <span class="number">0</span>;</span><br><span class="line">  <span class="keyword">double</span> f1, f2, df;</span><br><span class="line">  <span class="keyword">double</span> r;</span><br><span class="line">  <span class="keyword">int</span> best = INT_MAX;</span><br><span class="line">  <span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt; bestOpenState;</span><br><span class="line">  <span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt; bestFacilityChosen;</span><br><span class="line"></span><br><span class="line">  <span class="comment">// 初始化工厂开放状态</span></span><br><span class="line">  <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; facilityNum; i++) &#123;</span><br><span class="line">    <span class="keyword">double</span> ratio = rand() % <span class="number">100</span> / (<span class="keyword">double</span>)<span class="number">101</span>;</span><br><span class="line">    <span class="keyword">if</span> (ratio &lt; <span class="number">0.5</span>) &#123;</span><br><span class="line">      openState[i] = <span class="number">0</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">else</span> &#123;</span><br><span class="line">      openState[i] = <span class="number">1</span>;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt; origin = openState;</span><br><span class="line">  update();</span><br><span class="line"></span><br><span class="line">  f1 = getTotalCost();</span><br><span class="line">  <span class="keyword">while</span> (T &gt; T_end) &#123;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; L; i++) &#123;</span><br><span class="line">      origin = openState;</span><br><span class="line">      create_new();</span><br><span class="line"></span><br><span class="line">      f2 = getTotalCost();</span><br><span class="line">      df = f2 - f1;</span><br><span class="line">      <span class="keyword">if</span> (df &gt;= <span class="number">0</span>) &#123;</span><br><span class="line">        r = ((<span class="keyword">double</span>)rand()) / (RAND_MAX);</span><br><span class="line">        <span class="comment">// 保留原来的解</span></span><br><span class="line">        <span class="keyword">if</span> (<span class="built_in">exp</span>(-df / T) &lt;= r) &#123;</span><br><span class="line">          openState = origin;</span><br><span class="line">        &#125;</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    T *= q;</span><br><span class="line">    <span class="keyword">if</span> (best &gt; getTotalCost()) &#123;</span><br><span class="line">      best = getTotalCost();</span><br><span class="line">      bestOpenState = openState;</span><br><span class="line">      bestFacilityChosen = facilityChosen;</span><br><span class="line">    &#125;</span><br><span class="line">    count++;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="built_in">cout</span> &lt;&lt; best &lt;&lt; <span class="built_in">endl</span>;</span><br><span class="line">  <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; facilityNum; i++) &#123;</span><br><span class="line">    <span class="built_in">cout</span> &lt;&lt; bestOpenState[i] &lt;&lt; <span class="string">&quot; &quot;</span>;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="built_in">cout</span> &lt;&lt; <span class="built_in">endl</span>;</span><br><span class="line">  <span class="keyword">for</span> (<span class="keyword">int</span> j = <span class="number">0</span>; j &lt; customerNum; j++) &#123;</span><br><span class="line">    <span class="built_in">cout</span> &lt;&lt; bestFacilityChosen[j] &lt;&lt; <span class="string">&quot; &quot;</span>;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="built_in">cout</span> &lt;&lt; <span class="built_in">endl</span>;</span><br><span class="line"></span><br><span class="line">  <span class="comment">// 检查是否所有顾客都满足</span></span><br><span class="line">  <span class="keyword">for</span> (<span class="keyword">int</span> j = <span class="number">0</span>; j &lt; customerNum; j++) &#123;</span><br><span class="line">    assert(isSatisfied[j]);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="测试结果及分析"><a href="#测试结果及分析" class="headerlink" title="测试结果及分析"></a>测试结果及分析</h2><h3 id="贪心算法-1"><a href="#贪心算法-1" class="headerlink" title="贪心算法"></a>贪心算法</h3><p>Result Table（每个测例对应的详细结果请看github，这里篇幅有限，不详细展示）</p>
+<table>
+<thead>
+<tr>
+<th align="center">TestCase</th>
+<th align="center">Result</th>
+<th align="center">OpenState</th>
+<th align="center">Time(s)</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">1</td>
+<td align="center">9440</td>
+<td align="center">1 1 1 1 1 1 1 1 1 1</td>
+<td align="center">0</td>
+</tr>
+<tr>
+<td align="center">2</td>
+<td align="center">8126</td>
+<td align="center">1 1 1 1 1 1 1 1 1 1</td>
+<td align="center">0</td>
+</tr>
+<tr>
+<td align="center">3</td>
+<td align="center">10126</td>
+<td align="center">1 1 1 1 1 1 1 1 1 1</td>
+<td align="center">0</td>
+</tr>
+<tr>
+<td align="center">4</td>
+<td align="center">12126</td>
+<td align="center">1 1 1 1 1 1 1 1 1 1</td>
+<td align="center">0.001</td>
+</tr>
+<tr>
+<td align="center">5</td>
+<td align="center">9357</td>
+<td align="center">1 1 1 1 1 1 1 1 1 1</td>
+<td align="center">0</td>
+</tr>
+<tr>
+<td align="center">6</td>
+<td align="center">8061</td>
+<td align="center">1 1 1 1 1 1 1 1 1 1</td>
+<td align="center">0</td>
+</tr>
+<tr>
+<td align="center">7</td>
+<td align="center">10061</td>
+<td align="center">1 1 1 1 1 1 1 1 1 1</td>
+<td align="center">0</td>
+</tr>
+<tr>
+<td align="center">8</td>
+<td align="center">12061</td>
+<td align="center">1 1 1 1 1 1 1 1 1 1</td>
+<td align="center">0</td>
+</tr>
+<tr>
+<td align="center">9</td>
+<td align="center">9040</td>
+<td align="center">1 1 1 1 1 1 1 1 1 1</td>
+<td align="center">0</td>
+</tr>
+<tr>
+<td align="center">10</td>
+<td align="center">7726</td>
+<td align="center">1 1 1 1 1 1 1 1 1 1</td>
+<td align="center">0.001</td>
+</tr>
+<tr>
+<td align="center">11</td>
+<td align="center">9726</td>
+<td align="center">1 1 1 1 1 1 1 1 1 1</td>
+<td align="center">0</td>
+</tr>
+<tr>
+<td align="center">12</td>
+<td align="center">11726</td>
+<td align="center">1 1 1 1 1 1 1 1 1 1</td>
+<td align="center">0</td>
+</tr>
+<tr>
+<td align="center">13</td>
+<td align="center">12032</td>
+<td align="center">1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1</td>
+<td align="center">0</td>
+</tr>
+<tr>
+<td align="center">14</td>
+<td align="center">9180</td>
+<td align="center">1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1</td>
+<td align="center">0</td>
+</tr>
+<tr>
+<td align="center">15</td>
+<td align="center">13180</td>
+<td align="center">1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1</td>
+<td align="center">0</td>
+</tr>
+<tr>
+<td align="center">16</td>
+<td align="center">17180</td>
+<td align="center">1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1</td>
+<td align="center">0</td>
+</tr>
+<tr>
+<td align="center">17</td>
+<td align="center">12032</td>
+<td align="center">1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1</td>
+<td align="center">0</td>
+</tr>
+<tr>
+<td align="center">18</td>
+<td align="center">9180</td>
+<td align="center">1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1</td>
+<td align="center">0</td>
+</tr>
+<tr>
+<td align="center">19</td>
+<td align="center">13180</td>
+<td align="center">1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1</td>
+<td align="center">0</td>
+</tr>
+<tr>
+<td align="center">20</td>
+<td align="center">17180</td>
+<td align="center">1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1</td>
+<td align="center">0</td>
+</tr>
+<tr>
+<td align="center">21</td>
+<td align="center">12032</td>
+<td align="center">1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1</td>
+<td align="center">0</td>
+</tr>
+<tr>
+<td align="center">22</td>
+<td align="center">9180</td>
+<td align="center">1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1</td>
+<td align="center">0.001</td>
+</tr>
+<tr>
+<td align="center">23</td>
+<td align="center">13190</td>
+<td align="center">1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1</td>
+<td align="center">0</td>
+</tr>
+<tr>
+<td align="center">24</td>
+<td align="center">17180</td>
+<td align="center">1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1</td>
+<td align="center">0</td>
+</tr>
+<tr>
+<td align="center">25</td>
+<td align="center">19191</td>
+<td align="center">1 1 1 1 1 1 1 1 1 1 0 1 1 1 1 1 1 1 0 1 1 1 1 0 1 1 1 1 1 1</td>
+<td align="center">0</td>
+</tr>
+<tr>
+<td align="center">26</td>
+<td align="center">16131</td>
+<td align="center">1 1 1 1 1 1 1 1 1 1 0 1 1 1 1 1 1 1 0 1 1 1 1 0 1 1 1 1 1 1</td>
+<td align="center">0</td>
+</tr>
+<tr>
+<td align="center">27</td>
+<td align="center">21531</td>
+<td align="center">1 1 1 1 1 1 1 1 1 1 0 1 1 1 1 1 1 1 0 1 1 1 1 0 1 1 1 1 1 1</td>
+<td align="center">0</td>
+</tr>
+<tr>
+<td align="center">28</td>
+<td align="center">26831</td>
+<td align="center">1 1 1 1 1 1 1 1 1 1 0 1 1 1 1 1 1 1 0 1 1 1 1 0 1 1 1 1 1 1</td>
+<td align="center">0</td>
+</tr>
+<tr>
+<td align="center">29</td>
+<td align="center">19305</td>
+<td align="center">1 1 1 1 1 1 1 1 1 1 0 1 1 1 1 1 1 1 0 1 1 1 1 0 1 1 1 1 1 1</td>
+<td align="center">0</td>
+</tr>
+<tr>
+<td align="center">30</td>
+<td align="center">16239</td>
+<td align="center">1 1 1 1 1 1 1 1 1 1 0 1 1 1 1 1 1 1 0 1 1 1 1 0 1 1 1 1 1 1</td>
+<td align="center">0.001</td>
+</tr>
+<tr>
+<td align="center">31</td>
+<td align="center">21639</td>
+<td align="center">1 1 1 1 1 1 1 1 1 1 0 1 1 1 1 1 1 1 0 1 1 1 1 0 1 1 1 1 1 1</td>
+<td align="center">0</td>
+</tr>
+<tr>
+<td align="center">32</td>
+<td align="center">27039</td>
+<td align="center">1 1 1 1 1 1 1 1 1 1 0 1 1 1 1 1 1 1 0 1 1 1 1 0 1 1 1 1 1 1</td>
+<td align="center">0</td>
+</tr>
+<tr>
+<td align="center">33</td>
+<td align="center">19055</td>
+<td align="center">1 1 1 1 1 1 1 1 1 1 0 1 1 1 1 1 1 1 0 1 1 1 1 0 1 1 1 1 1 1</td>
+<td align="center">0</td>
+</tr>
+<tr>
+<td align="center">34</td>
+<td align="center">15989</td>
+<td align="center">1 1 1 1 1 1 1 1 1 1 0 1 1 1 1 1 1 1 0 1 1 1 1 0 1 1 1 1 1 1</td>
+<td align="center">0</td>
+</tr>
+<tr>
+<td align="center">35</td>
+<td align="center">21389</td>
+<td align="center">1 1 1 1 1 1 1 1 1 1 0 1 1 1 1 1 1 1 0 1 1 1 1 0 1 1 1 1 1 1</td>
+<td align="center">0</td>
+</tr>
+<tr>
+<td align="center">36</td>
+<td align="center">26789</td>
+<td align="center">1 1 1 1 1 1 1 1 1 1 0 1 1 1 1 1 1 1 0 1 1 1 1 0 1 1 1 1 1 1</td>
+<td align="center">0</td>
+</tr>
+<tr>
+<td align="center">37</td>
+<td align="center">19055</td>
+<td align="center">1 1 1 1 1 1 1 1 1 1 0 1 1 1 1 1 1 1 0 1 1 1 1 0 1 1 1 1 1 1</td>
+<td align="center">0</td>
+</tr>
+<tr>
+<td align="center">38</td>
+<td align="center">15989</td>
+<td align="center">1 1 1 1 1 1 1 1 1 1 0 1 1 1 1 1 1 1 0 1 1 1 1 0 1 1 1 1 1 1</td>
+<td align="center">0</td>
+</tr>
+<tr>
+<td align="center">39</td>
+<td align="center">21389</td>
+<td align="center">1 1 1 1 1 1 1 1 1 1 0 1 1 1 1 1 1 1 0 1 1 1 1 0 1 1 1 1 1 1</td>
+<td align="center">0.001</td>
+</tr>
+<tr>
+<td align="center">40</td>
+<td align="center">26789</td>
+<td align="center">1 1 1 1 1 1 1 1 1 1 0 1 1 1 1 1 1 1 0 1 1 1 1 0 1 1 1 1 1 1</td>
+<td align="center">0.001</td>
+</tr>
+<tr>
+<td align="center">41</td>
+<td align="center">7226</td>
+<td align="center">1 1 1 1 1 1 1 1 1 1</td>
+<td align="center">0.001</td>
+</tr>
+<tr>
+<td align="center">42</td>
+<td align="center">9957</td>
+<td align="center">1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1</td>
+<td align="center">0.001</td>
+</tr>
+<tr>
+<td align="center">43</td>
+<td align="center">12448</td>
+<td align="center">1 1 1 1 1 1 1 1 1 1 0 1 1 1 0 1 0 1 1 1 1 1 1 1 1 1 1 1 1 1</td>
+<td align="center">0</td>
+</tr>
+<tr>
+<td align="center">44</td>
+<td align="center">7585</td>
+<td align="center">1 1 1 1 1 1 1 1 1 1</td>
+<td align="center">0</td>
+</tr>
+<tr>
+<td align="center">45</td>
+<td align="center">9848</td>
+<td align="center">1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1</td>
+<td align="center">0</td>
+</tr>
+<tr>
+<td align="center">46</td>
+<td align="center">12639</td>
+<td align="center">1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 0 1 1 0 1 1 1 1 1 1</td>
+<td align="center">0.001</td>
+</tr>
+<tr>
+<td align="center">47</td>
+<td align="center">6634</td>
+<td align="center">1 1 1 1 1 1 1 1 1 1</td>
+<td align="center">0</td>
+</tr>
+<tr>
+<td align="center">48</td>
+<td align="center">9044</td>
+<td align="center">1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1</td>
+<td align="center">0</td>
+</tr>
+<tr>
+<td align="center">49</td>
+<td align="center">12420</td>
+<td align="center">1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 0</td>
+<td align="center">0</td>
+</tr>
+<tr>
+<td align="center">50</td>
+<td align="center">10062</td>
+<td align="center">1 1 1 1 1 1 1 1 1 1</td>
+<td align="center">0</td>
+</tr>
+<tr>
+<td align="center">51</td>
+<td align="center">11351</td>
+<td align="center">1 1 1 1 1 1 1 1 1 0 1 0 1 1 1 1 1 1 1 1</td>
+<td align="center">0</td>
+</tr>
+<tr>
+<td align="center">52</td>
+<td align="center">10364</td>
+<td align="center">1 1 1 1 1 1 1 1 1 1</td>
+<td align="center">0</td>
+</tr>
+<tr>
+<td align="center">53</td>
+<td align="center">12470</td>
+<td align="center">1 1 1 1 1 1 1 1 0 1 0 1 1 1 1 1 1 1 1 1</td>
+<td align="center">0.001</td>
+</tr>
+<tr>
+<td align="center">54</td>
+<td align="center">10351</td>
+<td align="center">1 1 1 1 1 1 1 1 1 1</td>
+<td align="center">0</td>
+</tr>
+<tr>
+<td align="center">55</td>
+<td align="center">11970</td>
+<td align="center">1 1 1 1 1 1 1 1 1 1 0 1 1 1 1 1 1 1 1 1</td>
+<td align="center">0.001</td>
+</tr>
+<tr>
+<td align="center">56</td>
+<td align="center">23882</td>
+<td align="center">1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1</td>
+<td align="center">0.001</td>
+</tr>
+<tr>
+<td align="center">57</td>
+<td align="center">32882</td>
+<td align="center">1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1</td>
+<td align="center">0</td>
+</tr>
+<tr>
+<td align="center">58</td>
+<td align="center">53882</td>
+<td align="center">1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1</td>
+<td align="center">0</td>
+</tr>
+<tr>
+<td align="center">59</td>
+<td align="center">39121</td>
+<td align="center">1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1</td>
+<td align="center">0</td>
+</tr>
+<tr>
+<td align="center">60</td>
+<td align="center">23882</td>
+<td align="center">1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1</td>
+<td align="center">0</td>
+</tr>
+<tr>
+<td align="center">61</td>
+<td align="center">32882</td>
+<td align="center">1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1</td>
+<td align="center">0</td>
+</tr>
+<tr>
+<td align="center">62</td>
+<td align="center">53882</td>
+<td align="center">1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1</td>
+<td align="center">0</td>
+</tr>
+<tr>
+<td align="center">63</td>
+<td align="center">39121</td>
+<td align="center">1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1</td>
+<td align="center">0</td>
+</tr>
+<tr>
+<td align="center">64</td>
+<td align="center">23882</td>
+<td align="center">1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1</td>
+<td align="center">0</td>
+</tr>
+<tr>
+<td align="center">65</td>
+<td align="center">32882</td>
+<td align="center">1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1</td>
+<td align="center">0.001</td>
+</tr>
+<tr>
+<td align="center">66</td>
+<td align="center">53882</td>
+<td align="center">1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1</td>
+<td align="center">0</td>
+</tr>
+<tr>
+<td align="center">67</td>
+<td align="center">39671</td>
+<td align="center">1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1</td>
+<td align="center">0</td>
+</tr>
+<tr>
+<td align="center">68</td>
+<td align="center">23882</td>
+<td align="center">1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1</td>
+<td align="center">0.001</td>
+</tr>
+<tr>
+<td align="center">69</td>
+<td align="center">32882</td>
+<td align="center">1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1</td>
+<td align="center">0.001</td>
+</tr>
+<tr>
+<td align="center">70</td>
+<td align="center">53882</td>
+<td align="center">1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1</td>
+<td align="center">0</td>
+</tr>
+<tr>
+<td align="center">71</td>
+<td align="center">39121</td>
+<td align="center">1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1</td>
+<td align="center">0</td>
+</tr>
+</tbody></table>
+<h3 id="模拟退火法-1"><a href="#模拟退火法-1" class="headerlink" title="模拟退火法"></a>模拟退火法</h3><p>Result Table（每个测例对应的详细结果请看github，这里篇幅有限，不详细展示）</p>
+<table>
+<thead>
+<tr>
+<th align="center">TestCase</th>
+<th align="center">Cost</th>
+<th align="center">OpenState</th>
+<th align="center">Time(s)</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">1</td>
+<td align="center">9142</td>
+<td align="center">1 1 1 1 1 1 0 0 1 1</td>
+<td align="center">76.68</td>
+</tr>
+<tr>
+<td align="center">2</td>
+<td align="center">8104</td>
+<td align="center">1 1 1 1 1 1 1 0 1 1</td>
+<td align="center">91.207</td>
+</tr>
+<tr>
+<td align="center">3</td>
+<td align="center">9824</td>
+<td align="center">1 1 1 1 1 1 1 0 1 0</td>
+<td align="center">74.669</td>
+</tr>
+<tr>
+<td align="center">4</td>
+<td align="center">11261</td>
+<td align="center">1 1 1 1 1 0 1 0 1 0</td>
+<td align="center">74.648</td>
+</tr>
+<tr>
+<td align="center">5</td>
+<td align="center">9348</td>
+<td align="center">1 1 1 1 1 1 0 1 1 1</td>
+<td align="center">416.138</td>
+</tr>
+<tr>
+<td align="center">6</td>
+<td align="center">8061</td>
+<td align="center">1 1 1 1 1 1 1 1 1 1</td>
+<td align="center">227.434</td>
+</tr>
+<tr>
+<td align="center">7</td>
+<td align="center">9905</td>
+<td align="center">1 1 1 1 1 1 1 1 1 0</td>
+<td align="center">439.569</td>
+</tr>
+<tr>
+<td align="center">8</td>
+<td align="center">11705</td>
+<td align="center">1 1 1 1 1 1 1 1 1 0</td>
+<td align="center">308.728</td>
+</tr>
+<tr>
+<td align="center">9</td>
+<td align="center">8598</td>
+<td align="center">1 1 1 1 1 0 1 0 1 0</td>
+<td align="center">52.849</td>
+</tr>
+<tr>
+<td align="center">10</td>
+<td align="center">7617</td>
+<td align="center">1 1 1 1 1 0 1 1 1 0</td>
+<td align="center">77.064</td>
+</tr>
+<tr>
+<td align="center">11</td>
+<td align="center">9064</td>
+<td align="center">1 1 1 1 1 0 1 0 1 0</td>
+<td align="center">92.202</td>
+</tr>
+<tr>
+<td align="center">12</td>
+<td align="center">10301</td>
+<td align="center">1 1 1 0 1 0 1 0 1 0</td>
+<td align="center">99.958</td>
+</tr>
+<tr>
+<td align="center">13</td>
+<td align="center">8858</td>
+<td align="center">1 0 0 1 0 0 0 0 0 1 1 0 1 1 0 1 1 1 0 1</td>
+<td align="center">108.256</td>
+</tr>
+<tr>
+<td align="center">14</td>
+<td align="center">7323</td>
+<td align="center">0 1 0 1 0 0 1 0 0 0 1 0 0 1 1 1 1 1 0 1</td>
+<td align="center">76.881</td>
+</tr>
+<tr>
+<td align="center">15</td>
+<td align="center">9568</td>
+<td align="center">0 0 0 1 0 0 1 1 0 0 1 0 0 0 1 0 1 1 1 1</td>
+<td align="center">74.479</td>
+</tr>
+<tr>
+<td align="center">16</td>
+<td align="center">11181</td>
+<td align="center">0 0 0 1 0 0 1 1 0 0 0 0 0 0 1 0 1 1 1 1</td>
+<td align="center">76.161</td>
+</tr>
+<tr>
+<td align="center">17</td>
+<td align="center">8564</td>
+<td align="center">1 0 0 1 0 0 1 0 0 1 1 0 0 1 1 1 0 1 0 1</td>
+<td align="center">72.535</td>
+</tr>
+<tr>
+<td align="center">18</td>
+<td align="center">7210</td>
+<td align="center">0 0 0 1 0 0 1 0 0 1 1 0 0 1 1 1 1 1 0 1</td>
+<td align="center">71040</td>
+</tr>
+<tr>
+<td align="center">19</td>
+<td align="center">9237</td>
+<td align="center">0 1 0 0 0 0 0 0 0 1 1 0 0 1 1 1 1 1 0 1</td>
+<td align="center">68.601</td>
+</tr>
+<tr>
+<td align="center">20</td>
+<td align="center">11122</td>
+<td align="center">0 0 1 1 0 0 1 0 0 0 1 0 1 0 0 1 1 1 0 1</td>
+<td align="center">73.531</td>
+</tr>
+<tr>
+<td align="center">21</td>
+<td align="center">8400</td>
+<td align="center">1 1 0 1 0 0 0 0 0 1 1 0 0 1 0 1 0 1 0 0</td>
+<td align="center">71.645</td>
+</tr>
+<tr>
+<td align="center">22</td>
+<td align="center">7288</td>
+<td align="center">1 1 0 0 0 0 1 0 0 1 1 0 0 1 1 1 0 1 0 1</td>
+<td align="center">74.509</td>
+</tr>
+<tr>
+<td align="center">23</td>
+<td align="center">9029</td>
+<td align="center">0 0 0 1 0 0 1 0 0 0 0 0 0 1 0 1 1 1 0 1</td>
+<td align="center">71.480</td>
+</tr>
+<tr>
+<td align="center">24</td>
+<td align="center">10388</td>
+<td align="center">1 1 0 0 0 0 1 0 0 0 1 0 0 1 0 1 0 1 0 0</td>
+<td align="center">61578</td>
+</tr>
+<tr>
+<td align="center">25</td>
+<td align="center">13740</td>
+<td align="center">1 0 1 0 0 1 0 0 0 0 1 1 0 0 1 0 1 1 1 0 1 1 1 0 1 0 0 0 0 0</td>
+<td align="center">265.393</td>
+</tr>
+<tr>
+<td align="center">26</td>
+<td align="center">12098</td>
+<td align="center">1 0 1 0 0 1 0 0 1 0 0 1 0 0 1 0 1 0 0 0 1 0 0 0 1 0 0 0 0 1</td>
+<td align="center">270.044</td>
+</tr>
+<tr>
+<td align="center">27</td>
+<td align="center">15451</td>
+<td align="center">1 0 1 0 0 1 0 0 0 0 1 1 0 0 1 0 1 1 0 0 1 0 1 1 1 1 0 0 0 1</td>
+<td align="center">284.05</td>
+</tr>
+<tr>
+<td align="center">28</td>
+<td align="center">17008</td>
+<td align="center">1 0 1 0 0 1 0 1 0 1 1 1 0 0 1 0 0 0 0 1 1 0 0 0 1 0 0 0 0 0</td>
+<td align="center">244.474</td>
+</tr>
+<tr>
+<td align="center">29</td>
+<td align="center">15533</td>
+<td align="center">1 0 1 1 0 1 0 1 1 0 0 1 0 1 1 0 0 1 0 0 1 1 1 0 1 0 0 1 0 1</td>
+<td align="center">261.252</td>
+</tr>
+<tr>
+<td align="center">30</td>
+<td align="center">14211</td>
+<td align="center">1 1 1 1 0 1 0 1 1 0 0 1 0 1 1 1 1 1 0 0 1 0 1 0 1 1 1 1 0 1</td>
+<td align="center">260.377</td>
+</tr>
+<tr>
+<td align="center">31</td>
+<td align="center">17724</td>
+<td align="center">1 0 1 0 0 1 0 0 0 1 0 1 1 1 1 1 1 1 0 0 1 0 0 1 1 0 0 1 1 1</td>
+<td align="center">250.266</td>
+</tr>
+<tr>
+<td align="center">32</td>
+<td align="center">21229</td>
+<td align="center">1 1 1 0 0 1 0 1 1 1 1 1 0 1 1 0 0 1 1 0 1 0 1 0 1 0 0 1 0 1</td>
+<td align="center">253。642</td>
+</tr>
+<tr>
+<td align="center">33</td>
+<td align="center">13829</td>
+<td align="center">1 0 1 0 0 1 1 0 1 1 0 1 0 0 0 0 0 1 0 0 1 0 1 0 1 0 0 0 0 0</td>
+<td align="center">237.683</td>
+</tr>
+<tr>
+<td align="center">34</td>
+<td align="center">12672</td>
+<td align="center">1 1 1 1 1 1 1 0 1 0 0 1 0 1 1 0 0 1 0 0 1 0 0 0 1 0 0 0 1 0</td>
+<td align="center">268.002</td>
+</tr>
+<tr>
+<td align="center">35</td>
+<td align="center">14662</td>
+<td align="center">1 0 0 1 1 1 1 0 1 0 0 1 0 0 1 1 0 1 0 0 1 0 0 0 1 0 0 0 1 0</td>
+<td align="center">264.448</td>
+</tr>
+<tr>
+<td align="center">36</td>
+<td align="center">17572</td>
+<td align="center">1 0 1 1 0 1 0 0 0 0 1 1 0 1 1 0 0 1 0 0 1 0 0 0 1 1 0 0 0 1</td>
+<td align="center">259.474</td>
+</tr>
+<tr>
+<td align="center">37</td>
+<td align="center">13253</td>
+<td align="center">1 1 1 0 0 1 1 0 1 0 0 0 0 0 0 0 0 1 0 0 1 0 0 0 1 1 0 0 0 0</td>
+<td align="center">250.279</td>
+</tr>
+<tr>
+<td align="center">38</td>
+<td align="center">10880</td>
+<td align="center">1 0 0 0 0 1 0 0 1 0 0 1 0 0 1 0 0 1 0 0 1 0 0 0 1 0 0 0 1 0</td>
+<td align="center">234.847</td>
+</tr>
+<tr>
+<td align="center">39</td>
+<td align="center">14562</td>
+<td align="center">0 0 1 0 0 1 0 1 0 0 0 0 0 0 1 0 0 1 1 1 1 0 0 0 1 0 1 0 0 0</td>
+<td align="center">234.299</td>
+</tr>
+<tr>
+<td align="center">40</td>
+<td align="center">15364</td>
+<td align="center">1 0 0 0 0 0 1 1 0 0 0 0 0 0 1 0 0 1 0 0 1 0 0 0 1 0 0 0 0 1</td>
+<td align="center">233.660</td>
+</tr>
+<tr>
+<td align="center">41</td>
+<td align="center">6810</td>
+<td align="center">1 0 1 1 0 1 1 0 0 0</td>
+<td align="center">120.979</td>
+</tr>
+<tr>
+<td align="center">42</td>
+<td align="center">5766</td>
+<td align="center">0 0 0 1 0 1 0 0 0 0 0 0 0 0 1 0 1 0 0 1</td>
+<td align="center">88.349</td>
+</tr>
+<tr>
+<td align="center">43</td>
+<td align="center">5748</td>
+<td align="center">0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 1 0 1 0 0 1 0 0 1</td>
+<td align="center">102.054</td>
+</tr>
+<tr>
+<td align="center">44</td>
+<td align="center">7585</td>
+<td align="center">1 1 1 1 1 1 1 1 1 1</td>
+<td align="center">99.524</td>
+</tr>
+<tr>
+<td align="center">45</td>
+<td align="center">6453</td>
+<td align="center">1 0 0 1 1 1 0 0 1 1 0 0 0 1 0 1 0 0 0 0</td>
+<td align="center">107.339</td>
+</tr>
+<tr>
+<td align="center">46</td>
+<td align="center">6563</td>
+<td align="center">0 0 0 1 0 0 1 0 1 0 1 1 0 0 0 0 0 1 0 0 0 0 0 1 0 0 0 0 1 1</td>
+<td align="center">113.745</td>
+</tr>
+<tr>
+<td align="center">47</td>
+<td align="center">6634</td>
+<td align="center">1 1 1 1 1 1 1 1 1 1</td>
+<td align="center">139.258</td>
+</tr>
+<tr>
+<td align="center">48</td>
+<td align="center">6054</td>
+<td align="center">1 0 0 0 0 1 0 1 1 0 1 0 0 1 1 0 1 0 1 0</td>
+<td align="center">93.707</td>
+</tr>
+<tr>
+<td align="center">49</td>
+<td align="center">5776</td>
+<td align="center">0 0 1 0 1 0 0 1 0 0 0 0 0 0 1 0 0 0 0 0 1 0 1 0 1 0 0 0 0 0</td>
+<td align="center">105.128</td>
+</tr>
+<tr>
+<td align="center">50</td>
+<td align="center">9454</td>
+<td align="center">1 0 1 1 0 1 1 1 0 1</td>
+<td align="center">154.679</td>
+</tr>
+<tr>
+<td align="center">51</td>
+<td align="center">8315</td>
+<td align="center">0 1 0 0 0 1 1 0 0 1 1 0 1 1 0 1 1 0 0 1</td>
+<td align="center">125.583</td>
+</tr>
+<tr>
+<td align="center">52</td>
+<td align="center">9588</td>
+<td align="center">0 1 0 1 1 1 1 1 1 1</td>
+<td align="center">118.560</td>
+</tr>
+<tr>
+<td align="center">53</td>
+<td align="center">9176</td>
+<td align="center">0 1 0 1 0 1 1 0 0 1 0 0 1 0 0 1 0 0 1 0</td>
+<td align="center">123.052</td>
+</tr>
+<tr>
+<td align="center">54</td>
+<td align="center">9702</td>
+<td align="center">1 0 1 1 1 1 1 0 1 1</td>
+<td align="center">218.124</td>
+</tr>
+<tr>
+<td align="center">55</td>
+<td align="center">8387</td>
+<td align="center">0 0 1 0 0 1 1 1 0 1 0 0 0 1 1 0 0 0 1 0</td>
+<td align="center">132.905</td>
+</tr>
+<tr>
+<td align="center">56</td>
+<td align="center">22364</td>
+<td align="center">1 0 1 1 0 1 1 1 1 1 1 1 1 0 0 1 1 0 0 1 0 1 1 1 1 0 0 1 1 1</td>
+<td align="center">565.715</td>
+</tr>
+<tr>
+<td align="center">57</td>
+<td align="center">27908</td>
+<td align="center">1 1 1 0 1 0 1 1 1 1 1 0 1 0 0 1 0 0 1 1 1 0 0 1 1 1 0 1 1 0</td>
+<td align="center">592.974</td>
+</tr>
+<tr>
+<td align="center">58</td>
+<td align="center">40216</td>
+<td align="center">0 0 0 1 0 1 0 0 0 1 1 1 1 0 1 1 0 1 1 1 0 1 0 0 1 1 0 1 1 1</td>
+<td align="center">717.276</td>
+</tr>
+<tr>
+<td align="center">59</td>
+<td align="center">30156</td>
+<td align="center">0 0 1 0 0 0 1 0 1 0 1 1 0 1 1 1 1 1 1 1 1 0 0 1 1 1 0 0 1 1</td>
+<td align="center">643.627</td>
+</tr>
+<tr>
+<td align="center">60</td>
+<td align="center">21513</td>
+<td align="center">1 0 1 1 0 0 0 1 1 0 1 0 1 0 1 0 0 1 0 1 0 1 1 1 1 1 1 1 1 1</td>
+<td align="center">358.082</td>
+</tr>
+<tr>
+<td align="center">61</td>
+<td align="center">26200</td>
+<td align="center">1 0 0 0 1 1 0 1 0 0 0 0 1 1 0 0 1 0 0 1 1 1 1 0 0 0 0 1 1 0</td>
+<td align="center">361.7</td>
+</tr>
+<tr>
+<td align="center">62</td>
+<td align="center">34908</td>
+<td align="center">0 0 0 1 1 1 1 1 1 0 1 1 0 0 0 0 0 0 0 0 0 1 1 0 0 0 0 1 1 0</td>
+<td align="center">342.133</td>
+</tr>
+<tr>
+<td align="center">63</td>
+<td align="center">27719</td>
+<td align="center">0 0 1 0 1 0 0 0 1 0 0 1 0 1 0 1 1 0 1 1 1 0 0 1 1 1 0 0 1 0</td>
+<td align="center">347.366</td>
+</tr>
+<tr>
+<td align="center">64</td>
+<td align="center">21422</td>
+<td align="center">1 0 0 1 1 1 0 1 1 1 1 1 1 0 1 1 0 0 1 1 0 1 1 0 1 1 0 1 1 0</td>
+<td align="center">338.509</td>
+</tr>
+<tr>
+<td align="center">65</td>
+<td align="center">26174</td>
+<td align="center">1 0 0 1 1 0 0 1 1 0 0 1 1 0 1 1 0 0 0 1 0 1 1 1 1 0 0 0 1 0</td>
+<td align="center">336.559</td>
+</tr>
+<tr>
+<td align="center">66</td>
+<td align="center">33251</td>
+<td align="center">0 0 0 1 1 1 0 1 1 0 0 1 0 0 0 0 0 0 1 0 0 1 0 0 1 0 0 0 1 0</td>
+<td align="center">340.147</td>
+</tr>
+<tr>
+<td align="center">67</td>
+<td align="center">27503</td>
+<td align="center">1 1 0 0 1 0 1 0 0 0 0 0 0 1 1 0 1 1 1 0 0 0 0 1 1 1 0 0 1 0</td>
+<td align="center">342.237</td>
+</tr>
+<tr>
+<td align="center">68</td>
+<td align="center">21747</td>
+<td align="center">1 1 0 0 1 1 1 1 1 0 1 0 1 1 1 0 1 0 1 1 0 1 1 0 1 0 0 1 1 0</td>
+<td align="center">342.120</td>
+</tr>
+<tr>
+<td align="center">69</td>
+<td align="center">26129</td>
+<td align="center">1 0 1 0 1 0 0 0 1 0 1 0 1 1 1 0 1 0 1 1 0 0 0 0 0 1 0 1 1 0</td>
+<td align="center">338.716</td>
+</tr>
+<tr>
+<td align="center">70</td>
+<td align="center">35195</td>
+<td align="center">1 1 0 0 0 0 0 0 1 0 1 0 1 0 0 0 0 1 1 1 0 1 0 0 0 0 0 1 0 1</td>
+<td align="center">338.060</td>
+</tr>
+<tr>
+<td align="center">71</td>
+<td align="center">28630</td>
+<td align="center">1 1 1 0 1 0 1 0 1 0 1 0 1 0 0 1 0 1 1 1 0 0 0 1 1 1 0 1 1 0</td>
+<td align="center">337.380</td>
+</tr>
+</tbody></table>
+<h3 id="分析"><a href="#分析" class="headerlink" title="分析"></a>分析</h3><p>直接对比两种算法，从结果来说，模拟退火法的结果更接近最优解，而且提高很大。这也说明对于这种动态规划问题，贪心算法几乎不可能求得最优解。而从时间上看，模拟退火法的代价极高，如果需要提高精度，所需要的时间可能会更长，而贪心算法则基本上是瞬间完成的，因为它不涉及到迭代。</p>
+<hr>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>第一次遇到设施选址问题（Facility Location Problem），要求使用两种解法，于是想到了这个学期讲了很多的贪心算法，因为求解最优问题使用贪心算法一般能得到一个不错的结果（不是最优的！）。然后第二种解法选择用模拟退火法。模拟退火法的形式很简单，难点在于如何产生新解，其中有一个很重要的原则就是保证解的多样性，所以要使用多种邻域搜索策略。为了优化算法，我加入了一些贪心策略，得出来的结果也比一般的模拟退火法要好。</p>
+<p>当然，两种做法的结果与优化算法计算出来的最优值还有一定差距，但是我认为模拟退火法计算出来的结果也是比较满意的。通过这次实验，我学会了如何使用贪心算法和模拟退火法，也能够根据具体问题进行分析，对算法做出适当的优化。当然，为了高效测试，还学会了使用批处理，的确提高了编程的效率。</p>
+<p>整个项目的代码以及测试资料都在Github中，请访问：<a target="_blank" rel="noopener" href="https://github.com/leungyukshing/Facility-Location-Problem">https://github.com/leungyukshing/Facility-Location-Problem</a></p>
+<hr>
+<h2 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h2><ol>
+<li>优化算法求解结果参考：<a target="_blank" rel="noopener" href="http://www.di.unipi.it/optimize/Data/MEX.html?tdsourcetag=s_pcqq_aiomsg">http://www.di.unipi.it/optimize/Data/MEX.html?tdsourcetag=s_pcqq_aiomsg</a></li>
+<li>数值优化——Facility Location Problems：<a target="_blank" rel="noopener" href="https://scipbook.readthedocs.io/en/latest/flp.html">https://scipbook.readthedocs.io/en/latest/flp.html</a></li>
+<li>Facility Location Problem解释：<a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Facility_location_problem">https://en.wikipedia.org/wiki/Facility_location_problem</a></li>
+</ol>
+
+    </div>
+
+    
+    
+    
+        <div class="reward-container">
+  <div></div>
+  <button onclick="var qr = document.getElementById('qr'); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    Donate
+  </button>
+  <div id="qr" style="display: none;">
+      
+      <div style="display: inline-block;">
+        <img src="/images/wechat_reward.png" alt="Leungyukshing WeChat Pay">
+        <p>WeChat Pay</p>
+      </div>
+      
+      <div style="display: inline-block;">
+        <img src="/images/alipay_reward.png" alt="Leungyukshing Alipay">
+        <p>Alipay</p>
+      </div>
+
+  </div>
+</div>
+
+        
+
+  <div class="followme">
+    <p>Welcome to my other publishing channels</p>
+
+    <div class="social-list">
+
+        <div class="social-item">
+          <a target="_blank" class="social-link" href="/atom.xml">
+            <span class="icon">
+              <i class="fa fa-rss"></i>
+            </span>
+
+            <span class="label">RSS</span>
+          </a>
+        </div>
+    </div>
+  </div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/C/" rel="tag"># C++</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/archives/LeetCode%E8%A7%A3%E9%A2%98%E6%8A%A5%E5%91%8A%EF%BC%8845%EF%BC%89--%2064.%20Minimum%20Path%20Sum.html" rel="prev" title="LeetCode解题报告（45）-- 64. Minimum Path Sum">
+      <i class="fa fa-chevron-left"></i> LeetCode解题报告（45）-- 64. Minimum Path Sum
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/archives/%E6%89%B9%E5%A4%84%E7%90%86.html" rel="next" title="批处理命令测试">
+      批处理命令测试 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%97%AE%E9%A2%98%E6%8F%8F%E8%BF%B0%E5%8F%8A%E8%A6%81%E6%B1%82"><span class="nav-number">1.</span> <span class="nav-text">问题描述及要求</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%97%AE%E9%A2%98%E6%8F%8F%E8%BF%B0"><span class="nav-number">1.1.</span> <span class="nav-text">问题描述</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%A2%98%E7%9B%AE%E8%A6%81%E6%B1%82"><span class="nav-number">1.2.</span> <span class="nav-text">题目要求</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%97%AE%E9%A2%98%E5%88%86%E6%9E%90"><span class="nav-number">2.</span> <span class="nav-text">问题分析</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%AE%97%E6%B3%95%E8%AE%BE%E8%AE%A1"><span class="nav-number">3.</span> <span class="nav-text">算法设计</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%96%B9%E6%B3%951%E2%80%94%E2%80%94%E8%B4%AA%E5%BF%83%E7%AE%97%E6%B3%95"><span class="nav-number">3.1.</span> <span class="nav-text">方法1——贪心算法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%96%B9%E6%B3%952%E2%80%94%E2%80%94%E6%A8%A1%E6%8B%9F%E9%80%80%E7%81%AB%E6%B3%95"><span class="nav-number">3.2.</span> <span class="nav-text">方法2——模拟退火法</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BB%A3%E7%A0%81%E5%AE%9E%E7%8E%B0"><span class="nav-number">4.</span> <span class="nav-text">代码实现</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9F%BA%E6%9C%AC%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84"><span class="nav-number">4.1.</span> <span class="nav-text">基本数据结构</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%B4%AA%E5%BF%83%E7%AE%97%E6%B3%95"><span class="nav-number">4.2.</span> <span class="nav-text">贪心算法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%A8%A1%E6%8B%9F%E9%80%80%E7%81%AB%E6%B3%95"><span class="nav-number">4.3.</span> <span class="nav-text">模拟退火法</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%B5%8B%E8%AF%95%E7%BB%93%E6%9E%9C%E5%8F%8A%E5%88%86%E6%9E%90"><span class="nav-number">5.</span> <span class="nav-text">测试结果及分析</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%B4%AA%E5%BF%83%E7%AE%97%E6%B3%95-1"><span class="nav-number">5.1.</span> <span class="nav-text">贪心算法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%A8%A1%E6%8B%9F%E9%80%80%E7%81%AB%E6%B3%95-1"><span class="nav-number">5.2.</span> <span class="nav-text">模拟退火法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%86%E6%9E%90"><span class="nav-number">5.3.</span> <span class="nav-text">分析</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-number">6.</span> <span class="nav-text">总结</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%82%E8%80%83%E8%B5%84%E6%96%99"><span class="nav-number">7.</span> <span class="nav-text">参考资料</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Leungyukshing"
+      src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">Leungyukshing</p>
+  <div class="site-description" itemprop="description">A blog for code, programme sharing.</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">688</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">27</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/leungyukshing" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;leungyukshing" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:jacky14.liang@gmail.com" title="E-Mail → mailto:jacky14.liang@gmail.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="/atom.xml" title="RSS → &#x2F;atom.xml"><i class="fa fa-rss fa-fw"></i>RSS</a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll motion-element">
+    <div class="links-of-blogroll-title"><i class="fa fa-link fa-fw"></i>
+      Friends
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="http://www.liangjh45.com/" title="http:&#x2F;&#x2F;www.liangjh45.com&#x2F;" rel="noopener" target="_blank">Alva's blog</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="https://sysucarey.github.io/" title="https:&#x2F;&#x2F;sysucarey.github.io&#x2F;" rel="noopener" target="_blank">Carey's blog</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="https://blog.csdn.net/dickdick111/" title="https:&#x2F;&#x2F;blog.csdn.net&#x2F;dickdick111&#x2F;" rel="noopener" target="_blank">Dick's blog</a>
+        </li>
+    </ul>
+  </div>
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2017 – 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Leungyukshing</span>
+</div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="Total Visitors">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="Total Views">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+      
+
+<script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      loader: {
+        source: {
+          '[tex]/amsCd': '[tex]/amscd',
+          '[tex]/AMScd': '[tex]/amscd'
+        }
+      },
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              let target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    (function () {
+      var script = document.createElement('script');
+      script.src = '//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+      script.defer = true;
+      document.head.appendChild(script);
+    })();
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : true,
+      appId      : 'AaLog29QcUdQKTboD6cY2dNP-gzGzoHsz',
+      appKey     : 'dUWNHLnTY9qG1jJwPnTtfMm8',
+      placeholder: "Just go go",
+      avatar     : 'mm',
+      meta       : guest,
+      pageSize   : '10' || 10,
+      visitor    : false,
+      lang       : '' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : false,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+
+</body>
+</html>

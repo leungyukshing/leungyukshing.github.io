@@ -1,0 +1,707 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <meta name="google-site-verification" content="FHjCzDi7nry9Mvf4EFOY5cYoco-ZXq9tKjvXZK0nKr4">
+  <meta name="baidu-site-verification" content="code-gpMFPewYUF" />
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="/lib/pace/pace-theme-minimal.min.css">
+  <script src="/lib/pace/pace.min.js"></script>
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"leungyukshing.github.io","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"right","display":"hide","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"appID":"52USYSYESX","apiKey":"20b904c66f55b874f05edea4aca57780","indexName":"blog","hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="面试总结之Redis基础&amp;emsp;&amp;emsp;Redis是一个高速缓存数据库，可以在后端配合数据库使用，提高服务的性能，是后端开发面试常考的知识，这里就为大家总结一下常见的考点。总结的部分是结合了教科书、其他面经以及个人的面试经历，相信能够帮助到大家。如果有不足的地方，欢迎大家指出！ &amp;emsp;&amp;emsp;本博客长期更新，欢迎大家收藏、订阅！">
+<meta property="og:type" content="article">
+<meta property="og:title" content="实习面经--Redis基础">
+<meta property="og:url" content="https://leungyukshing.github.io/archives/Interview-Redis-basic.html">
+<meta property="og:site_name" content="Halo">
+<meta property="og:description" content="面试总结之Redis基础&amp;emsp;&amp;emsp;Redis是一个高速缓存数据库，可以在后端配合数据库使用，提高服务的性能，是后端开发面试常考的知识，这里就为大家总结一下常见的考点。总结的部分是结合了教科书、其他面经以及个人的面试经历，相信能够帮助到大家。如果有不足的地方，欢迎大家指出！ &amp;emsp;&amp;emsp;本博客长期更新，欢迎大家收藏、订阅！">
+<meta property="og:locale">
+<meta property="article:published_time" content="2019-07-02T03:24:20.000Z">
+<meta property="article:modified_time" content="2021-06-22T18:33:07.145Z">
+<meta property="article:author" content="Leungyukshing">
+<meta property="article:tag" content="面试总结">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://leungyukshing.github.io/archives/Interview-Redis-basic.html">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-Hans'
+  };
+</script>
+
+  <title>实习面经--Redis基础 | Halo</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+<!-- hexo injector head_end end --><link rel="alternate" href="/atom.xml" title="Halo" type="application/atom+xml"><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Halo</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">A magic place for coding</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>About</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>Tags</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>Search
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="Searching..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+  <a href="https://github.com/leungyukshing" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="https://leungyukshing.github.io/archives/Interview-Redis-basic.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="Leungyukshing">
+      <meta itemprop="description" content="A blog for code, programme sharing.">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Halo">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          实习面经--Redis基础
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2019-07-01 23:24:20" itemprop="dateCreated datePublished" datetime="2019-07-01T23:24:20-04:00">2019-07-01</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2021-06-22 14:33:07" itemprop="dateModified" datetime="2021-06-22T14:33:07-04:00">2021-06-22</time>
+              </span>
+
+          
+            <span class="post-meta-item" title="Views" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">Views: </span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine: </span>
+    
+    <a title="valine" href="/archives/Interview-Redis-basic.html#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/archives/Interview-Redis-basic.html" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="面试总结之Redis基础"><a href="#面试总结之Redis基础" class="headerlink" title="面试总结之Redis基础"></a>面试总结之Redis基础</h1><p>&emsp;&emsp;Redis是一个高速缓存数据库，可以在后端配合数据库使用，提高服务的性能，是后端开发面试常考的知识，这里就为大家总结一下常见的考点。总结的部分是结合了教科书、其他面经以及个人的面试经历，相信能够帮助到大家。如果有不足的地方，欢迎大家指出！</p>
+<p>&emsp;&emsp;本博客长期更新，欢迎大家收藏、订阅！</p>
+<a id="more"></a>
+
+<hr>
+<h2 id="1-redis是什么"><a href="#1-redis是什么" class="headerlink" title="1.redis是什么"></a>1.redis是什么</h2><p>&emsp;&emsp;简单来说，redis是一个<strong>非关系型数据库</strong>，是一个基于<strong>key-value</strong>的数据结构服务器。它主要是在内存中操作数据，因此我们常常说<strong>redis缓存</strong>。（如果你还不了解<strong>关系型数据库</strong>和<strong>非关系型数据库</strong>的区别，请跳转到<a target="_blank" rel="noopener" href="http://leungyukshing.cn/archives/Thoughs-on-Relational-Database-and-Nonrelational-Database.html">浅谈关系型数据库与非关系型数据库</a>）</p>
+<h2 id="2-redis数据类型"><a href="#2-redis数据类型" class="headerlink" title="2.redis数据类型"></a>2.redis数据类型</h2><p>redis支持物种数据类型，分别是：</p>
+<ul>
+<li>字符串（String）：二进制安全，可以包含任何数据，比如jpg图片或者序列化后的对象（bytes数组）</li>
+<li>哈希（Hash）：相对于将某个对象的每个字段都存储成单个string类型，将这个对象直接存成hash类型会占用更少的内存。因为刚开始新建一个hash类型的时候用的是zipmap，zipmap是连续的key-value集合，它的特点是维护map需要的额外信息很少，代价是时间复杂度是$O(N)$，但是对于一般的对象，包含的字段是比较少的，因此查询的时间会很短，所以在查找时间几乎一样的情况下，hash类型占用的内存比string更少。</li>
+<li>列表（List）：双端链表实现</li>
+<li>集合（Set）：set是<strong>无序集合</strong>，基于hash table实现，所以<code>insert</code>、<code>delete</code>、<code>search</code>的时间复杂度都是$O(1)$。但是hash table会随着添加或删除自动调整大小，调整过程中的同步操作（获取写锁）会阻塞其他的读写操作。set支持取<strong>并集（union）、交集（intersecton）、差集（difference）</strong>，这些操作可以很容易地实现SNS中的好友推荐和blog的tag功能。</li>
+<li>有序集合（Sorted Set）：有序集合可以理解是在set的基础上增加了一个顺序属性（权重），这一属性在添加或修改元素的时候可以指定，每次制定后，set会重新排序。</li>
+</ul>
+<hr>
+<h2 id="3-redis分布式锁"><a href="#3-redis分布式锁" class="headerlink" title="3. redis分布式锁"></a>3. redis分布式锁</h2><p>工作原理是：先拿<code>setnx</code>来争抢锁，抢到后再用<code>expire</code>给锁加一个过期时间，防止锁忘记释放。</p>
+<p>如果在拿到锁之后，在<code>expire</code>之前遇到了crash，这个锁就永远得不到释放了，我们可以通过将<code>setnx</code>和<code>expire</code>合并成一条指令使用，<code>set</code>提供了这个操作。</p>
+<hr>
+<h2 id="4-在海量数据中找出已知前缀的key"><a href="#4-在海量数据中找出已知前缀的key" class="headerlink" title="4. 在海量数据中找出已知前缀的key"></a>4. 在海量数据中找出已知前缀的key</h2><p>有两个方法：</p>
+<ul>
+<li><code>keys</code>指令：单线程，会导致县城阻塞一定的时间，线上服务会停顿，直到命令执行完毕；</li>
+<li><code>scan</code>指令：无阻塞地提取出指定模式的key列表，会有一定的重复概率。我们可以在客户端做一次去重，获得key列表，但是这个整体花费的时间比用<code>key</code>指令要长得多。</li>
+</ul>
+<hr>
+<h2 id="5-队列"><a href="#5-队列" class="headerlink" title="5.队列"></a>5.队列</h2><p>使用list结构作为底层，使用<code>rpush()</code>生产消息，使用<code>lpop()</code>消费消息。当调用<code>lpop()</code>时如果队列为空，将会<code>sleep()</code>后再重试。也可以使用<code>blpop()</code>，阻塞直到队列中有消息可以消费。</p>
+<p>满足<strong>生产一次，消费多次</strong>的需求，可使用<strong>pub/sub主题订阅者模式</strong>。缺点是，消费者下线时，生产的消息会丢失。解决这个问题要使用专业的队列，如rabbitmq。</p>
+<p>延时队列的实现使用sortedset，时间作为score，消息作为key，生产者调用<code>zadd</code>生产消息，消费者使用<code>zrangebyscore</code>来获取一定时间内的数据进行处理。</p>
+<hr>
+<h2 id="6-大量key设置同一个时间过期"><a href="#6-大量key设置同一个时间过期" class="headerlink" title="6.大量key设置同一个时间过期"></a>6.大量key设置同一个时间过期</h2><p>如果大量的key都是同一个时间过期的话，redis可能会在该时间点卡顿。解决方法是：在时间上增加一个随机值，使过期时间分散开。</p>
+<hr>
+<h2 id="7-redis持久化"><a href="#7-redis持久化" class="headerlink" title="7.redis持久化"></a>7.redis持久化</h2><h3 id="为什么要持久化"><a href="#为什么要持久化" class="headerlink" title="为什么要持久化"></a>为什么要持久化</h3><p>前面提到，redis通常是跑在内存的数据库，优点是速度非常快，缺点就是不稳定，只要服务升级、机器停电或其他故障，那么内存的数据就会丢失。我们需要数据持久化功能将内存中的数据持久化到磁盘。</p>
+<h3 id="方式1-RDB-Snapshotting（default）"><a href="#方式1-RDB-Snapshotting（default）" class="headerlink" title="方式1: RDB Snapshotting（default）"></a>方式1: RDB Snapshotting（default）</h3><p>简单来说就是将内存中的数据以快照形式一次性写入到二进制文件中。通常使用<strong>save</strong>或<strong>bgsave</strong>命令。</p>
+<ul>
+<li><strong>save</strong>操作是在master线程中保存快照，因为redis也是用master来处理客户端请求的，所以在保存期间会<strong>阻塞所有的客户端请求</strong>。</li>
+<li><strong>bgsave</strong>则是子进程进行，不阻塞master线程。<ul>
+<li><code>fork</code>：redis通过创建子进程进行bgsave操作</li>
+<li><code>cow</code>：Copy On Write。父子进程共享数据段。父进程提供读写服务给客户端，写脏的页面数据会通过复制逐渐和子进程分离开来。</li>
+</ul>
+</li>
+<li>这种方式为镜像全量持久化，缺点是耗时长，因此只能隔一定时间做一次，而且当停机时会丢失丢失最后一次快照后的所有数据。</li>
+</ul>
+<h3 id="方式2-AOF"><a href="#方式2-AOF" class="headerlink" title="方式2: AOF"></a>方式2: AOF</h3><p>AOF增量持久化的方式是redis将每一个收到的写命令都通过write函数追加到文件中。当redis重启时会通过重新执行文件中保存的写命令来在内存中重建整个数据库。值得一提的是，这个方法仍然是有可能丢失部分修改的，因为通过write函数写入文件的操作会被操作系统的内核缓存，如果在这段时间内系统故障，那这个期间的write的修改就会丢失。为了解决这个问题，我们可以通过配置文件告诉redis我们想要通过fsync函数强制OS写入磁盘的时间，有三种写入的方式：</p>
+<ul>
+<li>always：每次收到write命令就强制写入磁盘，速度比较慢，但能保证完全持久化。</li>
+<li>everysec：每一秒强制写入一次，是性能与持久化的折中。（<strong>推荐</strong>）</li>
+<li>no：完全依赖操作系统，速度最快，但持久化没有保证。</li>
+</ul>
+<h3 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h3><p>所以，redis整个的重启策略可以是两种方法的结合：redis实例重启后，使用bgsave持久化文件重建构建内存，再使用aof重放近期的操作指令来恢复重启之间的状态。</p>
+<hr>
+<h2 id="8-pipeline操作"><a href="#8-pipeline操作" class="headerlink" title="8.pipeline操作"></a>8.pipeline操作</h2><p>如果指令之间没有因果关系，可以实现pipeline。将多次IO往返时间缩短为1次。</p>
+<hr>
+<h2 id="9-redis虚拟内存"><a href="#9-redis虚拟内存" class="headerlink" title="9. redis虚拟内存"></a>9. redis虚拟内存</h2><p>redis虚拟内存和操作系统的虚拟内存是两个概念，但是其目的与思路是相似的——把访问频率少的数据从内存中交换到磁盘。redis作为一个运行在内存中的数据库，空间是非常有限的。为了解决这个问题，除了部署多个redis服务器外，我们还能够使用虚拟内存的技术提高数据库的使用效率。这对于SNS类型的业务而言更是如此，因为SNS数据具有很强的集中性，比如网页中总是只有一部分人活跃。</p>
+<p>值得注意的是，redis没有使用操作系统提供的虚拟内存机制，而是自己在用户态实现了虚拟内存。主要出于以下三个原因：</p>
+<ol>
+<li>页的大小不在一个数量级。对于操作系统来说，一个交换页的单位是4K，而redis大多数对象都远小于4K，所以一个操作系统页上就会有多个redis对象。因此如果只有10%的key是被经常访问的，而这10%的key又均匀分布在每个操作系统页上，那么系统会认为所有的页都是活跃的，此时只有当内存真正耗尽的时候OS才会进行换页，这就起不到虚拟内存的效果了。</li>
+<li>redis的对象可以进行压缩，去除指针和元数据信息，一般压缩后的对象会比内存中的对象小10倍，这样redis的虚拟内存就比OS中的虚拟内存少做很多IO操作了。</li>
+</ol>
+<hr>
+<h2 id="10-redis数据淘汰策略"><a href="#10-redis数据淘汰策略" class="headerlink" title="10.redis数据淘汰策略"></a>10.redis数据淘汰策略</h2><ol>
+<li><strong>volatile-LRU</strong>：在<strong>已设置过期时间的数据集</strong>中选<strong>最近最少使用的数据</strong>进行淘汰。</li>
+<li><strong>volatile-TTL</strong>：在<strong>已设置过期时间的数据集</strong>中选<strong>将要过期的数据</strong>进行淘汰。</li>
+<li><strong>volatile-random</strong>：在<strong>已设置过期时间的数据集</strong>中<strong>随机选取数据</strong>进行淘汰。</li>
+<li><strong>allkeys-LRU</strong>：在<strong>全数据集</strong>中选<strong>最近最少使用的数据</strong>进行淘汰。</li>
+<li><strong>allkeys-random</strong>：在<strong>全数据集</strong>中<strong>随机选取数据数据</strong>进行淘汰。</li>
+<li><strong>no-enviction</strong>：禁止淘汰数据。</li>
+</ol>
+<hr>
+<h2 id="Reference"><a href="#Reference" class="headerlink" title="Reference"></a>Reference</h2><ol>
+<li><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/32540678">Redis面试题刁难大全</a></li>
+<li><a target="_blank" rel="noopener" href="https://juejin.im/post/5ad6e4066fb9a028d82c4b66">Redis面经总结</a></li>
+<li><a target="_blank" rel="noopener" href="https://juejin.im/post/57fa935b0e3dd90057c50fbc">Redis跳跃表</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.jianshu.com/p/b2bb7ad3bcb2">Redis zipmap</a></li>
+</ol>
+
+    </div>
+
+    
+    
+    
+        <div class="reward-container">
+  <div></div>
+  <button onclick="var qr = document.getElementById('qr'); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    Donate
+  </button>
+  <div id="qr" style="display: none;">
+      
+      <div style="display: inline-block;">
+        <img src="/images/wechat_reward.png" alt="Leungyukshing WeChat Pay">
+        <p>WeChat Pay</p>
+      </div>
+      
+      <div style="display: inline-block;">
+        <img src="/images/alipay_reward.png" alt="Leungyukshing Alipay">
+        <p>Alipay</p>
+      </div>
+
+  </div>
+</div>
+
+        
+
+  <div class="followme">
+    <p>Welcome to my other publishing channels</p>
+
+    <div class="social-list">
+
+        <div class="social-item">
+          <a target="_blank" class="social-link" href="/atom.xml">
+            <span class="icon">
+              <i class="fa fa-rss"></i>
+            </span>
+
+            <span class="label">RSS</span>
+          </a>
+        </div>
+    </div>
+  </div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E9%9D%A2%E8%AF%95%E6%80%BB%E7%BB%93/" rel="tag"># 面试总结</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/archives/Interview-Database-basic.html" rel="prev" title="实习面经-数据库基础">
+      <i class="fa fa-chevron-left"></i> 实习面经-数据库基础
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/archives/Interview-Nginx-basis.html" rel="next" title="实习面经--Nginx基础">
+      实习面经--Nginx基础 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E9%9D%A2%E8%AF%95%E6%80%BB%E7%BB%93%E4%B9%8BRedis%E5%9F%BA%E7%A1%80"><span class="nav-number">1.</span> <span class="nav-text">面试总结之Redis基础</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-redis%E6%98%AF%E4%BB%80%E4%B9%88"><span class="nav-number">1.1.</span> <span class="nav-text">1.redis是什么</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-redis%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B"><span class="nav-number">1.2.</span> <span class="nav-text">2.redis数据类型</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-redis%E5%88%86%E5%B8%83%E5%BC%8F%E9%94%81"><span class="nav-number">1.3.</span> <span class="nav-text">3. redis分布式锁</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-%E5%9C%A8%E6%B5%B7%E9%87%8F%E6%95%B0%E6%8D%AE%E4%B8%AD%E6%89%BE%E5%87%BA%E5%B7%B2%E7%9F%A5%E5%89%8D%E7%BC%80%E7%9A%84key"><span class="nav-number">1.4.</span> <span class="nav-text">4. 在海量数据中找出已知前缀的key</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#5-%E9%98%9F%E5%88%97"><span class="nav-number">1.5.</span> <span class="nav-text">5.队列</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#6-%E5%A4%A7%E9%87%8Fkey%E8%AE%BE%E7%BD%AE%E5%90%8C%E4%B8%80%E4%B8%AA%E6%97%B6%E9%97%B4%E8%BF%87%E6%9C%9F"><span class="nav-number">1.6.</span> <span class="nav-text">6.大量key设置同一个时间过期</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#7-redis%E6%8C%81%E4%B9%85%E5%8C%96"><span class="nav-number">1.7.</span> <span class="nav-text">7.redis持久化</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E8%A6%81%E6%8C%81%E4%B9%85%E5%8C%96"><span class="nav-number">1.7.1.</span> <span class="nav-text">为什么要持久化</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%96%B9%E5%BC%8F1-RDB-Snapshotting%EF%BC%88default%EF%BC%89"><span class="nav-number">1.7.2.</span> <span class="nav-text">方式1: RDB Snapshotting（default）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%96%B9%E5%BC%8F2-AOF"><span class="nav-number">1.7.3.</span> <span class="nav-text">方式2: AOF</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B0%8F%E7%BB%93"><span class="nav-number">1.7.4.</span> <span class="nav-text">小结</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#8-pipeline%E6%93%8D%E4%BD%9C"><span class="nav-number">1.8.</span> <span class="nav-text">8.pipeline操作</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#9-redis%E8%99%9A%E6%8B%9F%E5%86%85%E5%AD%98"><span class="nav-number">1.9.</span> <span class="nav-text">9. redis虚拟内存</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#10-redis%E6%95%B0%E6%8D%AE%E6%B7%98%E6%B1%B0%E7%AD%96%E7%95%A5"><span class="nav-number">1.10.</span> <span class="nav-text">10.redis数据淘汰策略</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Reference"><span class="nav-number">1.11.</span> <span class="nav-text">Reference</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Leungyukshing"
+      src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">Leungyukshing</p>
+  <div class="site-description" itemprop="description">A blog for code, programme sharing.</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">688</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">27</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/leungyukshing" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;leungyukshing" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:jacky14.liang@gmail.com" title="E-Mail → mailto:jacky14.liang@gmail.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="/atom.xml" title="RSS → &#x2F;atom.xml"><i class="fa fa-rss fa-fw"></i>RSS</a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll motion-element">
+    <div class="links-of-blogroll-title"><i class="fa fa-link fa-fw"></i>
+      Friends
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="http://www.liangjh45.com/" title="http:&#x2F;&#x2F;www.liangjh45.com&#x2F;" rel="noopener" target="_blank">Alva's blog</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="https://sysucarey.github.io/" title="https:&#x2F;&#x2F;sysucarey.github.io&#x2F;" rel="noopener" target="_blank">Carey's blog</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="https://blog.csdn.net/dickdick111/" title="https:&#x2F;&#x2F;blog.csdn.net&#x2F;dickdick111&#x2F;" rel="noopener" target="_blank">Dick's blog</a>
+        </li>
+    </ul>
+  </div>
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2017 – 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Leungyukshing</span>
+</div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="Total Visitors">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="Total Views">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+      
+
+<script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      loader: {
+        source: {
+          '[tex]/amsCd': '[tex]/amscd',
+          '[tex]/AMScd': '[tex]/amscd'
+        }
+      },
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              let target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    (function () {
+      var script = document.createElement('script');
+      script.src = '//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+      script.defer = true;
+      document.head.appendChild(script);
+    })();
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : true,
+      appId      : 'AaLog29QcUdQKTboD6cY2dNP-gzGzoHsz',
+      appKey     : 'dUWNHLnTY9qG1jJwPnTtfMm8',
+      placeholder: "Just go go",
+      avatar     : 'mm',
+      meta       : guest,
+      pageSize   : '10' || 10,
+      visitor    : false,
+      lang       : '' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : false,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+
+</body>
+</html>

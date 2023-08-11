@@ -1,0 +1,720 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <meta name="google-site-verification" content="FHjCzDi7nry9Mvf4EFOY5cYoco-ZXq9tKjvXZK0nKr4">
+  <meta name="baidu-site-verification" content="code-gpMFPewYUF" />
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="/lib/pace/pace-theme-minimal.min.css">
+  <script src="/lib/pace/pace.min.js"></script>
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"leungyukshing.github.io","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"right","display":"hide","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"appID":"52USYSYESX","apiKey":"20b904c66f55b874f05edea4aca57780","indexName":"blog","hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="Intro&amp;emsp;&amp;emsp;贝叶斯分类器是机器学习算法中非常重要的一个算法，它是基于朴素贝叶斯理论的。这篇博客中我将详细介绍贝叶斯分类器的由来，以及应用贝叶斯分类器做一个垃圾邮件过滤和新闻分类。 &amp;emsp;&amp;emsp;Github项目地址：https:&#x2F;&#x2F;github.com&#x2F;leungyukshing&#x2F;Machine-Learning&#x2F;tree&#x2F;master&#x2F;Bayes">
+<meta property="og:type" content="article">
+<meta property="og:title" content="贝叶斯分类器">
+<meta property="og:url" content="https://leungyukshing.github.io/archives/Bayes.html">
+<meta property="og:site_name" content="Halo">
+<meta property="og:description" content="Intro&amp;emsp;&amp;emsp;贝叶斯分类器是机器学习算法中非常重要的一个算法，它是基于朴素贝叶斯理论的。这篇博客中我将详细介绍贝叶斯分类器的由来，以及应用贝叶斯分类器做一个垃圾邮件过滤和新闻分类。 &amp;emsp;&amp;emsp;Github项目地址：https:&#x2F;&#x2F;github.com&#x2F;leungyukshing&#x2F;Machine-Learning&#x2F;tree&#x2F;master&#x2F;Bayes">
+<meta property="og:locale">
+<meta property="og:image" content="https://leungyukshing.github.io/images/bayes_mailfiter_result.png">
+<meta property="og:image" content="https://leungyukshing.github.io/images/bayes_newsclassification_result1.png">
+<meta property="og:image" content="https://leungyukshing.github.io/images/bayes_newsclassification_deleteN.png">
+<meta property="article:published_time" content="2019-04-06T15:26:55.000Z">
+<meta property="article:modified_time" content="2021-06-22T18:33:07.016Z">
+<meta property="article:author" content="Leungyukshing">
+<meta property="article:tag" content="Machine Learning">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://leungyukshing.github.io/images/bayes_mailfiter_result.png">
+
+<link rel="canonical" href="https://leungyukshing.github.io/archives/Bayes.html">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-Hans'
+  };
+</script>
+
+  <title>贝叶斯分类器 | Halo</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+<!-- hexo injector head_end end --><link rel="alternate" href="/atom.xml" title="Halo" type="application/atom+xml"><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Halo</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">A magic place for coding</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>About</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>Tags</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>Search
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="Searching..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+  <a href="https://github.com/leungyukshing" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="https://leungyukshing.github.io/archives/Bayes.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="Leungyukshing">
+      <meta itemprop="description" content="A blog for code, programme sharing.">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Halo">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          贝叶斯分类器
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2019-04-06 11:26:55" itemprop="dateCreated datePublished" datetime="2019-04-06T11:26:55-04:00">2019-04-06</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2021-06-22 14:33:07" itemprop="dateModified" datetime="2021-06-22T14:33:07-04:00">2021-06-22</time>
+              </span>
+
+          
+            <span class="post-meta-item" title="Views" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">Views: </span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine: </span>
+    
+    <a title="valine" href="/archives/Bayes.html#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/archives/Bayes.html" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="Intro"><a href="#Intro" class="headerlink" title="Intro"></a>Intro</h2><p>&emsp;&emsp;贝叶斯分类器是机器学习算法中非常重要的一个算法，它是基于朴素贝叶斯理论的。这篇博客中我将详细介绍贝叶斯分类器的由来，以及应用贝叶斯分类器做一个<a href="#%E5%9E%83%E5%9C%BE%E9%82%AE%E4%BB%B6%E8%BF%87%E6%BB%A4">垃圾邮件过滤</a>和<a href="#%E6%96%B0%E9%97%BB%E5%88%86%E7%B1%BB">新闻分类</a>。</p>
+<p>&emsp;&emsp;Github项目地址：<a target="_blank" rel="noopener" href="https://github.com/leungyukshing/Machine-Learning/tree/master/Bayes">https://github.com/leungyukshing/Machine-Learning/tree/master/Bayes</a></p>
+<a id="more"></a>
+
+<h2 id="原理"><a href="#原理" class="headerlink" title="原理"></a>原理</h2><h3 id="基本思想"><a href="#基本思想" class="headerlink" title="基本思想"></a>基本思想</h3><p>&emsp;&emsp;贝叶斯分类器对于分类问题一个最基本的思想是：<strong>谁的概率大就选谁</strong>。用数学语言描述，对于数据$(x,y)$，类别$P_1,P_2$：<br>$$<br>\begin{cases}<br>P_1(x, y) \gt P_2(x,y),该数据为类别1 \<br>P_1(x,y) \lt P_2(x, y),该数据为类别2<br>\end{cases}<br>$$<br>&emsp;&emsp;在了解贝叶斯分类器之前，我们先来了解几个关于概率的基本概念。</p>
+<h3 id="条件概率"><a href="#条件概率" class="headerlink" title="条件概率"></a>条件概率</h3><p>&emsp;&emsp;大家对于条件概率应该非常熟悉，这里就直接给出例子说明。<br>$$<br>P(A|B) = \frac{P(A\cap B)}{P(B)}<br>$$<br>表示的是<strong>在事件B发生的情况下，事件A发生的概率</strong>。</p>
+<p>&emsp;&emsp;我们根据上式进行推导：<br>$$<br>\because P(B|A) = \frac{P(A\cap B)}{P(A)} \<br>\therefore P(A\cap B) = P(A|B)P(B)=P(B|A)P(A)<br>\therefore P(A|B) = \frac{P(B|A)P(A)}{P(B)}<br>$$<br>&emsp;&emsp;这样我们借助了$P(A\cap B)$来建立了$P(A|B)$和$P(B|A)$之间的关系。</p>
+<h3 id="全概率公式"><a href="#全概率公式" class="headerlink" title="全概率公式"></a>全概率公式</h3><p>&emsp;&emsp;首先给出一条容易理解的等式：<br>$$<br>P(B) = P(B\cap A) + P(B \cap A^{‘})<br>$$<br>这条式子表示的是，B发生的概率由两部分组成：一个是A发生时B发生的条件概率，另一个是A不发生时B发生的条件概率。</p>
+<p>&emsp;&emsp;然后我们用$P(B\cap A) = P(B|A)P(A)$替换，得到：<br>$$<br>P(B) = P(B|A)P(A) + P(B|A^{‘})P(A^{‘})<br>$$<br>这条就是<strong>全概率公式</strong>。它的含义为：若$A$和$A^{‘}$构成样本空间的一个划分，那么事件$B$的概率等于$A$和$A^{‘}$的概率分别乘以$B$对这两个事件的条件概率之和。</p>
+<p>&emsp;&emsp;如果我们用全概率公式替换掉条件概率公式的分母，可以得到：<br>$$<br>P(A|B) = \frac{P(B|A)P(A)}{P(B|A)P(A) + P(B|A^{‘})P(A^{‘})}<br>$$</p>
+<h3 id="贝叶斯推断"><a href="#贝叶斯推断" class="headerlink" title="贝叶斯推断"></a>贝叶斯推断</h3><p>&emsp;&emsp;我们重新来看条件概率的公式，稍微调整一下分子的顺序：<br>$$<br>P(A|B) = P(A)\cdot\frac{P(B|A)}{P(B)}<br>$$<br>&emsp;&emsp;这样看的话，公式就可以分成三部分：</p>
+<ul>
+<li>$P(A)$：<strong>先验概率（prior probability）</strong>，在事件$B$发生前，我们对事件$A$概率的一个判断。</li>
+<li>$P(A|B)$：<strong>后验概率（posterior probability）</strong>，在事件$B$发生后，我们对事件$A$概率的重新评估。</li>
+<li>$\frac{P(B|A)}{P(B)}$：<strong>可能性函数（likelihood）</strong>，一个调整因子，使得预估概率更接近真实的概率。我们来看看这个可能性函数的作用：<ul>
+<li>$\frac{P(B|A)}{P(B)} \lt 1$：先验概率被削弱，事件$A$可能性变小；</li>
+<li>$\frac{P(B|A)}{P(B)} = 1$：事件$B$无助于判断事件$A$的可能性；</li>
+<li>$\frac{P(B|A)}{P(B)} \gt 1$：先验概率被增强，事件$A$可能性变大。</li>
+</ul>
+</li>
+</ul>
+<p>&emsp;&emsp;我们用一个例子来说明这些概念的作用。假设现在有两个一模一样的箱子，第一个箱子中有30个黑球，10个白球；第二个箱子中有20个黑球，20个黑球。请问，从两个箱子中摸出了一个球，确定是黑球，那么这个黑球来自第一个箱子的概率有多大？</p>
+<p>&emsp;&emsp;我们定义$P(H_1),P(H_2)$分别为从第一个箱子和第二个箱子取出球的概率。可以知道，$P(H_1)=P(H_2)=0.5$。这个就是<strong>先验概率</strong>。然后我们定义$P(E)$为取出黑色球的概率。这样就能够根据上面写的公式来表示我们要求的概率了：<br>$$<br>P(H_1|E)=P(H_1)\frac{P(E|H_1)}{P(E)} = \frac{P(H_1)\cdot P(E|H_1)}{P(E|H_1)P(H_1) + P(E|H_2)P(H_2)} = \frac{0.5 \times 0.75}{0.75 \times 0.5 + 0.5 \times 0.5} = 0.6<br>$$<br>&emsp;&emsp;也就是说，取出黑球这个事件增强了从第一个箱子取出黑球的可能性，即先验概率被增强了。</p>
+<h3 id="朴素贝叶斯"><a href="#朴素贝叶斯" class="headerlink" title="朴素贝叶斯"></a>朴素贝叶斯</h3><p>&emsp;&emsp;朴素贝叶斯和上面的概念是完全不一样的，它的主要内容是：对条件各概率分布做了条件独立性的假设，即条件之间是相互独立的。假设有$n$个特征，那么有：<br>$$<br>\begin{aligned}<br>P(a|X) &amp;= P(X|a)P(a)=P(x_1, x_2,x_3,\cdots,x_n|a)P(a) \<br>&amp;= {p(x_1|a) \times p(x_2|a) \times p(x_3|a) \times \cdots \times p(x_n|a)}p(a)<br>\end{aligned}<br>$$<br>&emsp;&emsp;把各个条件独立分开对于计算是非常有好处的，这也是贝叶斯分类器可以实现的统计学基础。</p>
+<h3 id="贝叶斯分类器"><a href="#贝叶斯分类器" class="headerlink" title="贝叶斯分类器"></a>贝叶斯分类器</h3><p>&emsp;&emsp;基于朴素贝叶斯的思想，贝叶斯分类器的基本方法是：在统计资料的基础上，依据某些特征，计算各个类别的概率，从而实现分类。</p>
+<hr>
+<h2 id="实战"><a href="#实战" class="headerlink" title="实战"></a>实战</h2><h3 id="垃圾邮件过滤"><a href="#垃圾邮件过滤" class="headerlink" title="垃圾邮件过滤"></a>垃圾邮件过滤</h3><p>&emsp;&emsp;垃圾邮件过滤是机器学习的经典应用场景。这里利用贝叶斯分类器对邮件进行过滤。数据源：<a target="_blank" rel="noopener" href="https://github.com/leungyukshing/Machine-Learning/tree/master/Bayes/email">https://github.com/leungyukshing/Machine-Learning/tree/master/Bayes/email</a></p>
+<h4 id="邮件文本预处理"><a href="#邮件文本预处理" class="headerlink" title="邮件文本预处理"></a>邮件文本预处理</h4><p>&emsp;&emsp;我们需要对邮件文本进行预处理，将文本切分成单词，然后使用所有的单词去构建起一个<strong>词典</strong>。我们的目的是根据单词去判断一个邮件是否垃圾邮件。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> re</span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">textParse</span>(<span class="params">bigStr</span>):</span></span><br><span class="line">    listOfTokens = re.split(<span class="string">r&#x27;\W*&#x27;</span>, bigStr)</span><br><span class="line">    <span class="keyword">return</span> [tok.lower() <span class="keyword">for</span> tok <span class="keyword">in</span> listOfTokens <span class="keyword">if</span> <span class="built_in">len</span>(tok) &gt; <span class="number">2</span>]</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">createVocabList</span>(<span class="params">dataSet</span>):</span></span><br><span class="line">    vocabSet = <span class="built_in">set</span>([])</span><br><span class="line">    <span class="keyword">for</span> document <span class="keyword">in</span> dataSet:</span><br><span class="line">        vocabSet = vocabSet | <span class="built_in">set</span>(document)</span><br><span class="line">    <span class="keyword">return</span> <span class="built_in">list</span>(vocabSet)</span><br></pre></td></tr></table></figure>
+
+<h4 id="文本向量化"><a href="#文本向量化" class="headerlink" title="文本向量化"></a>文本向量化</h4><p>&emsp;&emsp;我们拥有了词典，但是在计算概率的过程中使用字符串还是比较复杂，因此我们需要将文本向量化——即用一个向量来表示一个文本，向量每个元素对应字典里面的每个单词，如果这个单词在该文本中出现了，那么在向量的对应位置上就为1，否则为0。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="keyword">import</span> random</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">setOfWords2Vec</span>(<span class="params">vocabList, inputSet</span>):</span></span><br><span class="line">    returnVec = [<span class="number">0</span>] * <span class="built_in">len</span>(vocabList)</span><br><span class="line">    <span class="keyword">for</span> word <span class="keyword">in</span> inputSet:</span><br><span class="line">        <span class="keyword">if</span> word <span class="keyword">in</span> vocabList:</span><br><span class="line">            returnVec[vocabList.index(word)] = <span class="number">1</span></span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            print(<span class="string">&#x27;the word: %s is not in my Vocabulary!&#x27;</span> % word)</span><br><span class="line">    <span class="keyword">return</span> returnVec</span><br></pre></td></tr></table></figure>
+
+<h4 id="计算概率"><a href="#计算概率" class="headerlink" title="计算概率"></a>计算概率</h4><p>&emsp;&emsp;现在我们来看看整个分类问题的核心是什么：<br>$$<br>P(类别|{单词1，单词2 \cdots ，单词n}) = {P(单词1|类别) \times P(单词2|类别) \times P(单词3|类别) \times \cdots \times P(单词n|类别)}P(类别)<br>$$<br>这个类别对应了就是邮件的类别（0为正常邮件，1为垃圾邮件）。对于每一个训练集来说，邮件的类别是已知的，我们可以根据计算文本向量每个位置的概率，从而得到后面一系列的条件概率，最终算出来要求的这个概率。</p>
+<p>&emsp;&emsp;先看代码，然后再逐步分析：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">trainNB0</span>(<span class="params">trainMatrix, trainCategory</span>):</span></span><br><span class="line">    numberOfTrainDocs = <span class="built_in">len</span>(trainMatrix) <span class="comment"># 训练样本数</span></span><br><span class="line">    numberOfWords = <span class="built_in">len</span>(trainMatrix[<span class="number">0</span>]) <span class="comment"># 文本向量长度</span></span><br><span class="line">    pAbusive = <span class="built_in">sum</span>(trainCategory) / <span class="built_in">float</span>(numberOfTrainDocs) <span class="comment"># P(垃圾邮件)</span></span><br><span class="line">    <span class="comment"># 拉普拉斯平滑</span></span><br><span class="line">    p0Num = np.ones(numberOfWords)</span><br><span class="line">    p1Num = np.ones(numberOfWords)</span><br><span class="line">    p0Denom = <span class="number">2.0</span></span><br><span class="line">    p1Denom = <span class="number">2.0</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(numberOfTrainDocs):</span><br><span class="line">        <span class="comment"># 分类别计算</span></span><br><span class="line">        <span class="keyword">if</span> trainCategory[i] == <span class="number">1</span>:</span><br><span class="line">            <span class="comment"># 垃圾邮件</span></span><br><span class="line">            p1Num += trainMatrix[i]</span><br><span class="line">            p1Denom += <span class="built_in">sum</span>(trainMatrix[i])</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            <span class="comment"># 正常邮件</span></span><br><span class="line">            p0Num += trainMatrix[i]</span><br><span class="line">            p0Denom += <span class="built_in">sum</span>(trainMatrix[i])</span><br><span class="line"></span><br><span class="line">    p0Vect = np.log(p0Num / p0Denom) <span class="comment"># P(每个单词|正常邮件)</span></span><br><span class="line">    p1Vect = np.log(p1Num / p1Denom) <span class="comment"># P(每个单词|垃圾邮件)</span></span><br><span class="line">    <span class="keyword">return</span> p0Vect, p1Vect, pAbusive</span><br></pre></td></tr></table></figure>
+
+<p>&emsp;&emsp;这里就是计算上述公式中右边部分的代码。<code>p1Num</code>统计的是在已知垃圾邮件的情况下，各单词的出现次数，是一个向量。<code>p1Denom</code>统计的是所有垃圾邮件单词的总数量，两个的比值是一个向量，里面存放着就是垃圾邮件的条件概率，即$P(每个单词|垃圾邮件)$。</p>
+<p>&emsp;&emsp;为什么计算条件概率的时候初始化不是初始化为0呢？我们还是看回公式：<br>$$<br>P(类别|{单词1，单词2，\cdots ，单词n}) = {P(单词1|类别) \times P(单词2|类别) \times P(单词3|类别) \times \cdots \times P(单词n|类别)}P(类别)<br>$$<br>&emsp;&emsp;如果某一个单词的条件概率为0，即$P(单词x|类别) = 0$，那么就会导致整条式子为0。也就是说，在实际应用中，如果有些单词的条件概率为0或者很小，我们这个方法就行不通了。</p>
+<p>&emsp;&emsp;于是我们进行微处理——<strong>拉普拉斯平滑（Laplace Smoothing）</strong>。它是比较常见的平滑方法，做法就是将分子初始化为1，分母初始化为2。</p>
+<p>&emsp;&emsp;上面提到实际应用中，精度问题也是必须考虑的问题之一，如果这些条件概率很小，那么相乘之后就会有精度问题。这里的处理是用一个对数的方法，避免精度产生的问题。</p>
+<h4 id="测试"><a href="#测试" class="headerlink" title="测试"></a>测试</h4><p>&emsp;&emsp;我们将所有的数据（共50份）分为两部分，40个训练集，10个测试集。然后使用训练集构建贝叶斯分类器，对10个测试样例进行测试，最后得到结果。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">spamTest</span>():</span></span><br><span class="line">    docList = []; <span class="comment"># 文本数组</span></span><br><span class="line">    classList = []; <span class="comment"># 类型数组（0，1）</span></span><br><span class="line">    fullText = []</span><br><span class="line">    <span class="comment"># 读取数据</span></span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">1</span>, <span class="number">26</span>):</span><br><span class="line">        wordList = textParse(<span class="built_in">open</span>(<span class="string">&#x27;email/spam/%d.txt&#x27;</span> % i, <span class="string">&#x27;r&#x27;</span>).read())</span><br><span class="line">        docList.append(wordList)</span><br><span class="line">        fullText.append(wordList)</span><br><span class="line">        classList.append(<span class="number">1</span>)</span><br><span class="line">        wordList = textParse(<span class="built_in">open</span>(<span class="string">&#x27;email/ham/%d.txt&#x27;</span> % i, <span class="string">&#x27;r&#x27;</span>).read())</span><br><span class="line">        docList.append(wordList)</span><br><span class="line">        fullText.append(wordList)</span><br><span class="line">        classList.append(<span class="number">0</span>)</span><br><span class="line">    vocabList = createVocabList(docList) <span class="comment">#创建词汇表</span></span><br><span class="line"></span><br><span class="line">    trainingSet = <span class="built_in">list</span>(<span class="built_in">range</span>(<span class="number">50</span>)) <span class="comment"># 训练集下标</span></span><br><span class="line">    testSet = [] <span class="comment"># 测试集下标</span></span><br><span class="line">    <span class="comment"># 随机挑选10个样例作为测试集</span></span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">10</span>):</span><br><span class="line">        randIndex = <span class="built_in">int</span>(random.uniform(<span class="number">0</span>, <span class="built_in">len</span>(trainingSet)))</span><br><span class="line">        testSet.append(trainingSet[randIndex])</span><br><span class="line">        <span class="keyword">del</span>(trainingSet[randIndex]) <span class="comment"># 在训练集中删除</span></span><br><span class="line"></span><br><span class="line">    trainMat = [] <span class="comment"># 训练集矩阵</span></span><br><span class="line">    trainClasses = [] <span class="comment"># 训练集标签向量</span></span><br><span class="line">    <span class="comment"># 构建训练集</span></span><br><span class="line">    <span class="keyword">for</span> docIndex <span class="keyword">in</span> trainingSet:</span><br><span class="line">        trainMat.append(setOfWords2Vec(vocabList, docList[docIndex])) <span class="comment"># 文本向量化</span></span><br><span class="line">        trainClasses.append(classList[docIndex])</span><br><span class="line"></span><br><span class="line">    p0V, p1V, pSpam = trainNB0(np.array(trainMat), np.array(trainClasses)) <span class="comment"># 训练朴素贝叶斯模型</span></span><br><span class="line"></span><br><span class="line">    <span class="comment"># 测试部分</span></span><br><span class="line">    errorCount = <span class="number">0</span></span><br><span class="line">    <span class="keyword">for</span> docIndex <span class="keyword">in</span> testSet:</span><br><span class="line">        wordVector = setOfWords2Vec(vocabList, docList[docIndex]) <span class="comment"># 文本向量化</span></span><br><span class="line">        <span class="keyword">if</span> classifyNB(np.array(wordVector), p0V, p1V, pSpam) != classList[docIndex]:</span><br><span class="line">            errorCount += <span class="number">1</span></span><br><span class="line">            print(<span class="string">&quot;Bad Cases：&quot;</span>,docList[docIndex])</span><br><span class="line">    print(<span class="string">&#x27;Error Rate：%.2f%%&#x27;</span> % (<span class="built_in">float</span>(errorCount) / <span class="built_in">len</span>(testSet) * <span class="number">100</span>))</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&#x27;__main__&#x27;</span>:</span><br><span class="line">    spamTest()</span><br></pre></td></tr></table></figure>
+
+<h4 id="结果"><a href="#结果" class="headerlink" title="结果"></a>结果</h4><p>&emsp;&emsp;最终的测试结果是比较好的，基本都在10%以内，大多数情况下都能完全分类正确。</p>
+<p><img src="/images/bayes_mailfiter_result.png" alt="邮件过滤结果"></p>
+<h3 id="新闻分类"><a href="#新闻分类" class="headerlink" title="新闻分类"></a>新闻分类</h3><p>&emsp;&emsp;除了上面应用在垃圾邮件分类上，贝叶斯分类器还能用在新闻分类中。原理是很相似的，也是根据词语的不同来计算条件概率。这里我们尝试对中文文本进行分类，而且类别也相应地增加。</p>
+<p>数据集：<a target="_blank" rel="noopener" href="https://github.com/leungyukshing/Machine-Learning/tree/master/Bayes/SogouC">https://github.com/leungyukshing/Machine-Learning/tree/master/Bayes/SogouC</a></p>
+<h4 id="新闻文本预处理"><a href="#新闻文本预处理" class="headerlink" title="新闻文本预处理"></a>新闻文本预处理</h4><p>&emsp;&emsp;我们处理的是中文文本，所以需要先对文本进行读取和切分，这里用到了一个中文分词的库——<a target="_blank" rel="noopener" href="https://github.com/fxsjy/jieba">jieba</a>。类似地，我们也是通过构建词典来将文本向量化。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">TextProcessing</span>(<span class="params">folder_path, test_size = <span class="number">0.2</span></span>):</span></span><br><span class="line">    folder_list = os.listdir(folder_path)</span><br><span class="line">    data_list = [] <span class="comment"># 文本数组</span></span><br><span class="line">    class_list = [] <span class="comment"># 类别数组</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> folder <span class="keyword">in</span> folder_list:</span><br><span class="line">        new_folder_path = os.path.join(folder_path, folder)</span><br><span class="line">        files = os.listdir(new_folder_path)</span><br><span class="line"></span><br><span class="line">        j = <span class="number">1</span></span><br><span class="line">        <span class="keyword">for</span> file <span class="keyword">in</span> files:</span><br><span class="line">            <span class="keyword">if</span> j &gt; <span class="number">100</span>:</span><br><span class="line">                <span class="keyword">break</span></span><br><span class="line">            <span class="keyword">with</span> <span class="built_in">open</span>(os.path.join(new_folder_path, file), <span class="string">&#x27;r&#x27;</span>, encoding=<span class="string">&#x27;utf-8&#x27;</span>) <span class="keyword">as</span> f:</span><br><span class="line">                raw = f.read()</span><br><span class="line">            <span class="comment"># 分词</span></span><br><span class="line">            word_cut = jieba.cut(raw, cut_all=<span class="literal">False</span>)</span><br><span class="line">            word_list = <span class="built_in">list</span>(word_cut)</span><br><span class="line"></span><br><span class="line">            data_list.append(word_list)</span><br><span class="line">            class_list.append(folder)</span><br><span class="line">            j += <span class="number">1</span></span><br><span class="line">        <span class="comment">#print(data_list)</span></span><br><span class="line">        <span class="comment">#print(class_list)</span></span><br><span class="line">    <span class="comment"># 将文本和类别压缩处理</span></span><br><span class="line">    data_class_list = <span class="built_in">list</span>(<span class="built_in">zip</span>(data_list, class_list))</span><br><span class="line">    random.shuffle(data_class_list) <span class="comment"># 随机打乱</span></span><br><span class="line"></span><br><span class="line">    <span class="comment"># 根据测试集比例test_size划分训练集和测试集</span></span><br><span class="line">    index = <span class="built_in">int</span>(<span class="built_in">len</span>(data_class_list) * test_size) + <span class="number">1</span></span><br><span class="line">    train_list = data_class_list[index:]</span><br><span class="line">    test_list = data_class_list[:index]</span><br><span class="line">    <span class="comment"># 分别解压</span></span><br><span class="line">    train_data_list, train_class_list = <span class="built_in">zip</span>(*train_list)</span><br><span class="line">    test_data_list, test_class_list = <span class="built_in">zip</span>(*test_list)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 用训练集构建词典</span></span><br><span class="line">    all_words_dict = &#123;&#125;</span><br><span class="line">    <span class="keyword">for</span> word_list <span class="keyword">in</span> train_data_list:</span><br><span class="line">        <span class="keyword">for</span> word <span class="keyword">in</span> word_list:</span><br><span class="line">            <span class="keyword">if</span> word <span class="keyword">in</span> all_words_dict.keys():</span><br><span class="line">                all_words_dict[word] += <span class="number">1</span></span><br><span class="line">            <span class="keyword">else</span>:</span><br><span class="line">                all_words_dict[word] = <span class="number">1</span></span><br><span class="line"></span><br><span class="line">    <span class="comment"># 根据词语的词频排序，从高到低</span></span><br><span class="line">    all_words_tuple_list = <span class="built_in">sorted</span>(all_words_dict.items(), key=<span class="keyword">lambda</span> f: f[<span class="number">1</span>], reverse=<span class="literal">True</span>)</span><br><span class="line">    <span class="comment"># 解压出词典</span></span><br><span class="line">    all_words_list, all_words_nums = <span class="built_in">zip</span>(*all_words_tuple_list)</span><br><span class="line">    all_words_list = <span class="built_in">list</span>(all_words_list)</span><br><span class="line">    <span class="keyword">return</span> all_words_list, train_data_list, test_data_list, train_class_list, test_class_list</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&#x27;__main__&#x27;</span>:</span><br><span class="line">    folder_path = <span class="string">&#x27;./SogouC/Sample&#x27;</span></span><br><span class="line">    all_words_list, train_data_list, test_data_list, train_class_list, test_class_list = TextProcessing(folder_path, test_size = <span class="number">0.2</span>)</span><br><span class="line">    print(all_words_list)</span><br></pre></td></tr></table></figure>
+
+<p>&emsp;&emsp;这里数据集已经给出了常见的结束词语，我们需要在字典中去除掉这些词语，首先构建出结束词语的词典。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 构建结束词语集合</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">makeWordsSet</span>(<span class="params">words_file</span>):</span></span><br><span class="line">    words_set = <span class="built_in">set</span>()</span><br><span class="line">    <span class="keyword">with</span> <span class="built_in">open</span>(words_file, <span class="string">&#x27;r&#x27;</span>, encoding=<span class="string">&#x27;utf-8&#x27;</span>) <span class="keyword">as</span> f:</span><br><span class="line">        <span class="keyword">for</span> line <span class="keyword">in</span> f.readlines():</span><br><span class="line">            word = line.strip()</span><br><span class="line">            <span class="keyword">if</span> <span class="built_in">len</span>(word) &gt; <span class="number">0</span>:</span><br><span class="line">                words_set.add(word)</span><br><span class="line">    <span class="keyword">return</span> words_set</span><br></pre></td></tr></table></figure>
+
+<h4 id="精简词典"><a href="#精简词典" class="headerlink" title="精简词典"></a>精简词典</h4><p>&emsp;&emsp;上面的步骤就和垃圾邮件过滤一样，提取出来了所有的词语，构成了一个词典。但是这个词典的好坏对于结果的影响是非常重大的。我们可以print一下，发现这个词典中大量的高频词都是一些无实际意义的词语，如“在”、“了”、”很“。这些助词、介词对于文本的分类并没有实质的作用，因此我们需要把这些无意义的高频词去除掉，否则将严重影响分类结果。</p>
+<p>&emsp;&emsp;处理的原则有三个：</p>
+<ul>
+<li>去除数字</li>
+<li>去除在结束词语列表中的词语</li>
+<li>去除长度过短或过长的词语</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"><span class="string">    构建词典，去除部分高频词、结束词语集合</span></span><br><span class="line"><span class="string">    deleteN: 去除高频词的个数</span></span><br><span class="line"><span class="string">    stopwords_set: 结束词语集合</span></span><br><span class="line"><span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">words_dict</span>(<span class="params">all_words_list, deleteN, stopwords_set = <span class="built_in">set</span>(<span class="params"></span>)</span>):</span></span><br><span class="line">    feature_words = []</span><br><span class="line">    n = <span class="number">1</span></span><br><span class="line">    <span class="keyword">for</span> t <span class="keyword">in</span> <span class="built_in">range</span>(deleteN, <span class="built_in">len</span>(all_words_list), <span class="number">1</span>):</span><br><span class="line">        <span class="keyword">if</span> n &gt; <span class="number">1000</span>:</span><br><span class="line">            <span class="keyword">break</span></span><br><span class="line">        <span class="comment"># 除去数字、结束词语、长度适中</span></span><br><span class="line">        <span class="keyword">if</span> <span class="keyword">not</span> all_words_list[t].isdigit() <span class="keyword">and</span> all_words_list[t] <span class="keyword">not</span> <span class="keyword">in</span> stopwords_set <span class="keyword">and</span> <span class="number">1</span> &lt; <span class="built_in">len</span>(all_words_list[t]) &lt; <span class="number">5</span>:</span><br><span class="line">            feature_words.append(all_words_list[t])</span><br><span class="line">        n += <span class="number">1</span></span><br><span class="line">    <span class="keyword">return</span> feature_words</span><br></pre></td></tr></table></figure>
+
+<h4 id="文本向量化-1"><a href="#文本向量化-1" class="headerlink" title="文本向量化"></a>文本向量化</h4><p>&emsp;&emsp;这里的文本向量化思想与垃圾邮件分类是一样的。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">TextFeatures</span>(<span class="params">train_data_list, test_data_list, feature_words</span>):</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">text_features</span>(<span class="params">text, feature_words</span>):</span></span><br><span class="line">        text_words = <span class="built_in">set</span>(text)</span><br><span class="line">        features = [<span class="number">1</span> <span class="keyword">if</span> word <span class="keyword">in</span> text_words <span class="keyword">else</span> <span class="number">0</span> <span class="keyword">for</span> word <span class="keyword">in</span> feature_words]</span><br><span class="line">        <span class="keyword">return</span> features</span><br><span class="line">    train_feature_list = [text_features(text, feature_words) <span class="keyword">for</span> text <span class="keyword">in</span> train_data_list]</span><br><span class="line">    test_feature_list = [text_features(text, feature_words) <span class="keyword">for</span> text <span class="keyword">in</span> test_data_list]</span><br><span class="line">    <span class="keyword">return</span> train_feature_list, test_feature_list</span><br></pre></td></tr></table></figure>
+
+<h4 id="构建贝叶斯分类器"><a href="#构建贝叶斯分类器" class="headerlink" title="构建贝叶斯分类器"></a>构建贝叶斯分类器</h4><p>&emsp;&emsp;上面我们自己实现了贝叶斯分类器，这里我们试一下使用sklearn提供的贝叶斯分类器。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> sklearn.naive_bayes <span class="keyword">import</span> MultinomialNB</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">TextClassifier</span>(<span class="params">train_feature_list, test_feature_list, train_class_list, test_class_list</span>):</span></span><br><span class="line">    classifier = MultinomialNB().fit(train_feature_list, train_class_list)</span><br><span class="line">    test_accuracy = classifier.score(test_feature_list, test_class_list)</span><br><span class="line">    <span class="keyword">return</span> test_accuracy</span><br></pre></td></tr></table></figure>
+
+<h4 id="测试及优化"><a href="#测试及优化" class="headerlink" title="测试及优化"></a>测试及优化</h4><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&#x27;__main__&#x27;</span>:</span><br><span class="line">    folder_path = <span class="string">&#x27;./SogouC/Sample&#x27;</span></span><br><span class="line">    all_words_list, train_data_list, test_data_list, train_class_list, test_class_list = TextProcessing(folder_path, test_size = <span class="number">0.2</span>)</span><br><span class="line"></span><br><span class="line">    stopwords_file = <span class="string">&#x27;./stopwords_cn.txt&#x27;</span></span><br><span class="line">    stopwords_set = makeWordsSet(stopwords_file)</span><br><span class="line"></span><br><span class="line">    test_accuracy_list= []</span><br><span class="line">    feature_words = words_dict(all_words_list, <span class="number">400</span>, stopwords_set)</span><br><span class="line">    train_feature_list, test_feature_list = TextFeatures(train_data_list, test_data_list, feature_words)</span><br><span class="line">    test_accuracy = TextClassifier(train_feature_list, test_feature_list, train_class_list, test_class_list)</span><br><span class="line">    test_accuracy_list.append(test_accuracy)</span><br><span class="line">    ave = <span class="keyword">lambda</span> c: <span class="built_in">sum</span>(c) / <span class="built_in">len</span>(c)</span><br><span class="line"></span><br><span class="line">    print(ave(test_accuracy_list))</span><br></pre></td></tr></table></figure>
+
+
+
+<p>&emsp;&emsp;我们可以运行测试，看到结果：</p>
+<p><img src="/images/bayes_newsclassification_result1.png" alt="新闻分类结果1"></p>
+<p>&emsp;&emsp;注意我之前提到过，词典的质量影响着分类的准确度，这里删掉前400个高频词（是随便调的一个参数），那么比较好的是<code>deleteN</code>是多少呢？我们可以自己写一个循环去找到这个最优参数。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&#x27;__main__&#x27;</span>:</span><br><span class="line">    folder_path = <span class="string">&#x27;./SogouC/Sample&#x27;</span></span><br><span class="line">    all_words_list, train_data_list, test_data_list, train_class_list, test_class_list = TextProcessing(folder_path, test_size = <span class="number">0.2</span>)</span><br><span class="line"></span><br><span class="line">    stopwords_file = <span class="string">&#x27;./stopwords_cn.txt&#x27;</span></span><br><span class="line">    stopwords_set = makeWordsSet(stopwords_file)</span><br><span class="line"></span><br><span class="line">    test_accuracy_list= []</span><br><span class="line">    deleteNs = <span class="built_in">range</span>(<span class="number">0</span>, <span class="number">1000</span>, <span class="number">20</span>)</span><br><span class="line">    <span class="keyword">for</span> deleteN <span class="keyword">in</span> deleteNs:</span><br><span class="line">        feature_words = words_dict(all_words_list, deleteN, stopwords_set)</span><br><span class="line">        train_feature_list, test_feature_list = TextFeatures(train_data_list, test_data_list, feature_words)</span><br><span class="line">        test_accuracy = TextClassifier(train_feature_list, test_feature_list, train_class_list, test_class_list)</span><br><span class="line">        test_accuracy_list.append(test_accuracy)</span><br><span class="line"></span><br><span class="line">    plt.figure()</span><br><span class="line">    plt.plot(deleteNs, test_accuracy_list)</span><br><span class="line">    plt.title(<span class="string">&#x27;deleteN and test_accuracy&#x27;</span>)</span><br><span class="line">    plt.xlabel(<span class="string">&#x27;deleteN&#x27;</span>)</span><br><span class="line">    plt.ylabel(<span class="string">&#x27;Accuracy&#x27;</span>)</span><br><span class="line">    plt.show()</span><br></pre></td></tr></table></figure>
+
+<p>&emsp;我从0一直到1000，以步长为20去搜索这个最优的<code>deleteN</code>，输出<code>deleteN-Accuracy</code>曲线：</p>
+<p><img src="/images/bayes_newsclassification_deleteN.png" alt="deleteN参数"></p>
+<p>&emsp;&emsp;从图中可以大致看出，最优的<code>deleteN</code>应该是在600-700之间。所以调整参数为680，再次测试：</p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>&emsp;&emsp;至此，我就把贝叶斯分类器的一些基础知识分享给大家了，借用了两个实例来应用了一下贝叶斯分类器（既有自己实现的，也有调用sklearn的）。相信通过这篇博客，大家贝叶斯分类器有了一定了解。欢迎提出宝贵的意见，谢谢您的支持！</p>
+
+    </div>
+
+    
+    
+    
+        <div class="reward-container">
+  <div></div>
+  <button onclick="var qr = document.getElementById('qr'); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    Donate
+  </button>
+  <div id="qr" style="display: none;">
+      
+      <div style="display: inline-block;">
+        <img src="/images/wechat_reward.png" alt="Leungyukshing WeChat Pay">
+        <p>WeChat Pay</p>
+      </div>
+      
+      <div style="display: inline-block;">
+        <img src="/images/alipay_reward.png" alt="Leungyukshing Alipay">
+        <p>Alipay</p>
+      </div>
+
+  </div>
+</div>
+
+        
+
+  <div class="followme">
+    <p>Welcome to my other publishing channels</p>
+
+    <div class="social-list">
+
+        <div class="social-item">
+          <a target="_blank" class="social-link" href="/atom.xml">
+            <span class="icon">
+              <i class="fa fa-rss"></i>
+            </span>
+
+            <span class="label">RSS</span>
+          </a>
+        </div>
+    </div>
+  </div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Machine-Learning/" rel="tag"># Machine Learning</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/archives/LeetCode%E8%A7%A3%E9%A2%98%E6%8A%A5%E5%91%8A%EF%BC%8846%EF%BC%89--%20283.%20Move%20Zeroes.html" rel="prev" title="LeetCode解题报告（46）-- 283. Move Zeroes">
+      <i class="fa fa-chevron-left"></i> LeetCode解题报告（46）-- 283. Move Zeroes
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/archives/DecisionTree.html" rel="next" title="决策树">
+      决策树 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Intro"><span class="nav-number">1.</span> <span class="nav-text">Intro</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8E%9F%E7%90%86"><span class="nav-number">2.</span> <span class="nav-text">原理</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9F%BA%E6%9C%AC%E6%80%9D%E6%83%B3"><span class="nav-number">2.1.</span> <span class="nav-text">基本思想</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9D%A1%E4%BB%B6%E6%A6%82%E7%8E%87"><span class="nav-number">2.2.</span> <span class="nav-text">条件概率</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%A8%E6%A6%82%E7%8E%87%E5%85%AC%E5%BC%8F"><span class="nav-number">2.3.</span> <span class="nav-text">全概率公式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%B4%9D%E5%8F%B6%E6%96%AF%E6%8E%A8%E6%96%AD"><span class="nav-number">2.4.</span> <span class="nav-text">贝叶斯推断</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9C%B4%E7%B4%A0%E8%B4%9D%E5%8F%B6%E6%96%AF"><span class="nav-number">2.5.</span> <span class="nav-text">朴素贝叶斯</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%B4%9D%E5%8F%B6%E6%96%AF%E5%88%86%E7%B1%BB%E5%99%A8"><span class="nav-number">2.6.</span> <span class="nav-text">贝叶斯分类器</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%9E%E6%88%98"><span class="nav-number">3.</span> <span class="nav-text">实战</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9E%83%E5%9C%BE%E9%82%AE%E4%BB%B6%E8%BF%87%E6%BB%A4"><span class="nav-number">3.1.</span> <span class="nav-text">垃圾邮件过滤</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%82%AE%E4%BB%B6%E6%96%87%E6%9C%AC%E9%A2%84%E5%A4%84%E7%90%86"><span class="nav-number">3.1.1.</span> <span class="nav-text">邮件文本预处理</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%96%87%E6%9C%AC%E5%90%91%E9%87%8F%E5%8C%96"><span class="nav-number">3.1.2.</span> <span class="nav-text">文本向量化</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%AE%A1%E7%AE%97%E6%A6%82%E7%8E%87"><span class="nav-number">3.1.3.</span> <span class="nav-text">计算概率</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%B5%8B%E8%AF%95"><span class="nav-number">3.1.4.</span> <span class="nav-text">测试</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%BB%93%E6%9E%9C"><span class="nav-number">3.1.5.</span> <span class="nav-text">结果</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%96%B0%E9%97%BB%E5%88%86%E7%B1%BB"><span class="nav-number">3.2.</span> <span class="nav-text">新闻分类</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%96%B0%E9%97%BB%E6%96%87%E6%9C%AC%E9%A2%84%E5%A4%84%E7%90%86"><span class="nav-number">3.2.1.</span> <span class="nav-text">新闻文本预处理</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%B2%BE%E7%AE%80%E8%AF%8D%E5%85%B8"><span class="nav-number">3.2.2.</span> <span class="nav-text">精简词典</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%96%87%E6%9C%AC%E5%90%91%E9%87%8F%E5%8C%96-1"><span class="nav-number">3.2.3.</span> <span class="nav-text">文本向量化</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%9E%84%E5%BB%BA%E8%B4%9D%E5%8F%B6%E6%96%AF%E5%88%86%E7%B1%BB%E5%99%A8"><span class="nav-number">3.2.4.</span> <span class="nav-text">构建贝叶斯分类器</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%B5%8B%E8%AF%95%E5%8F%8A%E4%BC%98%E5%8C%96"><span class="nav-number">3.2.5.</span> <span class="nav-text">测试及优化</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-number">4.</span> <span class="nav-text">总结</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Leungyukshing"
+      src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">Leungyukshing</p>
+  <div class="site-description" itemprop="description">A blog for code, programme sharing.</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">688</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">27</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/leungyukshing" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;leungyukshing" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:jacky14.liang@gmail.com" title="E-Mail → mailto:jacky14.liang@gmail.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="/atom.xml" title="RSS → &#x2F;atom.xml"><i class="fa fa-rss fa-fw"></i>RSS</a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll motion-element">
+    <div class="links-of-blogroll-title"><i class="fa fa-link fa-fw"></i>
+      Friends
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="http://www.liangjh45.com/" title="http:&#x2F;&#x2F;www.liangjh45.com&#x2F;" rel="noopener" target="_blank">Alva's blog</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="https://sysucarey.github.io/" title="https:&#x2F;&#x2F;sysucarey.github.io&#x2F;" rel="noopener" target="_blank">Carey's blog</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="https://blog.csdn.net/dickdick111/" title="https:&#x2F;&#x2F;blog.csdn.net&#x2F;dickdick111&#x2F;" rel="noopener" target="_blank">Dick's blog</a>
+        </li>
+    </ul>
+  </div>
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2017 – 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Leungyukshing</span>
+</div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="Total Visitors">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="Total Views">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+      
+
+<script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      loader: {
+        source: {
+          '[tex]/amsCd': '[tex]/amscd',
+          '[tex]/AMScd': '[tex]/amscd'
+        }
+      },
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              let target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    (function () {
+      var script = document.createElement('script');
+      script.src = '//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+      script.defer = true;
+      document.head.appendChild(script);
+    })();
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : true,
+      appId      : 'AaLog29QcUdQKTboD6cY2dNP-gzGzoHsz',
+      appKey     : 'dUWNHLnTY9qG1jJwPnTtfMm8',
+      placeholder: "Just go go",
+      avatar     : 'mm',
+      meta       : guest,
+      pageSize   : '10' || 10,
+      visitor    : false,
+      lang       : '' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : false,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+
+</body>
+</html>

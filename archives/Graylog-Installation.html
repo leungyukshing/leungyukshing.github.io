@@ -1,0 +1,680 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <meta name="google-site-verification" content="FHjCzDi7nry9Mvf4EFOY5cYoco-ZXq9tKjvXZK0nKr4">
+  <meta name="baidu-site-verification" content="code-gpMFPewYUF" />
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="/lib/pace/pace-theme-minimal.min.css">
+  <script src="/lib/pace/pace.min.js"></script>
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"leungyukshing.github.io","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"right","display":"hide","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"appID":"52USYSYESX","apiKey":"20b904c66f55b874f05edea4aca57780","indexName":"blog","hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="Graylog简介&amp;emsp;&amp;emsp;Graylog是一个开源的日志聚合、分析、审计、展现和预警的工具。相比起ELK要更加简洁和高效，因为其部署使用简单的缘故，越来越多地被工业界使用，成为日志管理的首选工具。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Graylog环境搭建">
+<meta property="og:url" content="https://leungyukshing.github.io/archives/Graylog-Installation.html">
+<meta property="og:site_name" content="Halo">
+<meta property="og:description" content="Graylog简介&amp;emsp;&amp;emsp;Graylog是一个开源的日志聚合、分析、审计、展现和预警的工具。相比起ELK要更加简洁和高效，因为其部署使用简单的缘故，越来越多地被工业界使用，成为日志管理的首选工具。">
+<meta property="og:locale">
+<meta property="og:image" content="http://docs.graylog.org/en/3.1/_images/architec_small_setup.png">
+<meta property="og:image" content="https://leungyukshing.github.io/images/graylog0.png">
+<meta property="og:image" content="https://leungyukshing.github.io/images/graylog1.png">
+<meta property="og:image" content="https://leungyukshing.github.io/images/graylog2.png">
+<meta property="og:image" content="https://leungyukshing.github.io/images/graylog3.png">
+<meta property="og:image" content="https://leungyukshing.github.io/images/graylog4.png">
+<meta property="og:image" content="https://leungyukshing.github.io/images/graylog5.png">
+<meta property="og:image" content="https://leungyukshing.github.io/images/graylog6.png">
+<meta property="article:published_time" content="2020-02-04T03:41:53.000Z">
+<meta property="article:modified_time" content="2021-06-22T18:37:08.669Z">
+<meta property="article:author" content="Leungyukshing">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://docs.graylog.org/en/3.1/_images/architec_small_setup.png">
+
+<link rel="canonical" href="https://leungyukshing.github.io/archives/Graylog-Installation.html">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-Hans'
+  };
+</script>
+
+  <title>Graylog环境搭建 | Halo</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+<!-- hexo injector head_end end --><link rel="alternate" href="/atom.xml" title="Halo" type="application/atom+xml"><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Halo</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">A magic place for coding</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>About</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>Tags</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>Search
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="Searching..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+  <a href="https://github.com/leungyukshing" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="https://leungyukshing.github.io/archives/Graylog-Installation.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="Leungyukshing">
+      <meta itemprop="description" content="A blog for code, programme sharing.">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Halo">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Graylog环境搭建
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2020-02-03 22:41:53" itemprop="dateCreated datePublished" datetime="2020-02-03T22:41:53-05:00">2020-02-03</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2021-06-22 14:37:08" itemprop="dateModified" datetime="2021-06-22T14:37:08-04:00">2021-06-22</time>
+              </span>
+
+          
+            <span class="post-meta-item" title="Views" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">Views: </span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine: </span>
+    
+    <a title="valine" href="/archives/Graylog-Installation.html#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/archives/Graylog-Installation.html" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="Graylog简介"><a href="#Graylog简介" class="headerlink" title="Graylog简介"></a>Graylog简介</h2><p>&emsp;&emsp;Graylog是一个开源的日志<strong>聚合</strong>、<strong>分析</strong>、<strong>审计</strong>、<strong>展现</strong>和<strong>预警</strong>的工具。相比起ELK要更加简洁和高效，因为其部署使用简单的缘故，越来越多地被工业界使用，成为日志管理的首选工具。</p>
+<a id="more"></a>
+
+<p>&emsp;&emsp;Graylog的架构非常简单，大致上由三部分组成：</p>
+<ul>
+<li><p>MongoDB：用于存储Graylog的配置</p>
+</li>
+<li><p>ElasticSearch：日志文件的持久化与检索功能</p>
+</li>
+<li><p>Graylog：提供对外接口，Web界面</p>
+<p><img src="http://docs.graylog.org/en/3.1/_images/architec_small_setup.png" alt="Graylog Architecture"></p>
+</li>
+</ul>
+<h2 id="Graylog环境搭建–Windows"><a href="#Graylog环境搭建–Windows" class="headerlink" title="Graylog环境搭建–Windows"></a>Graylog环境搭建–Windows</h2><p><strong>Platform:</strong> Windows10</p>
+<p><strong>Environment:</strong> Docker for Windows</p>
+<p>&emsp;&emsp;在这一部分，我将分享如何在windows上搭建起graylog环境来收集日志。首先要有windows上的docker环境（如果没有配置，请参考<a target="_blank" rel="noopener" href="https://www.jianshu.com/p/3a339072ca7d">传送门</a>），因为我们使用docker来运行graylog。</p>
+<h3 id="步骤"><a href="#步骤" class="headerlink" title="步骤"></a>步骤</h3><ol>
+<li><p>新建docker compose文件，命名为<code>docker-compose.yml</code>，内容如下：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">version:</span> <span class="string">&#x27;2&#x27;</span></span><br><span class="line"><span class="attr">services:</span></span><br><span class="line">  <span class="attr">graylog-mongo:</span></span><br><span class="line">    <span class="attr">restart:</span> <span class="string">always</span></span><br><span class="line">    <span class="attr">image:</span> <span class="string">mongo:3.6.4</span></span><br><span class="line">    <span class="attr">container_name:</span> <span class="string">graylog-mongo</span></span><br><span class="line">  <span class="attr">graylog-elasticsearch:</span></span><br><span class="line">    <span class="attr">restart:</span> <span class="string">always</span></span><br><span class="line">    <span class="attr">image:</span> <span class="string">elasticsearch:5.6.9</span></span><br><span class="line">    <span class="attr">container_name:</span> <span class="string">graylog-elasticsearch</span></span><br><span class="line">    <span class="attr">environment:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">http.host=0.0.0.0</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">transport.host=localhost</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">network.host=0.0.0.0</span></span><br><span class="line">      <span class="comment"># Disable X-Pack security: https://www.elastic.co/guide/en/elasticsearch/reference/5.6/security-settings.html#general-security-settings</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">xpack.security.enabled=false</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;ES_JAVA_OPTS=-Xms512m -Xmx512m&quot;</span></span><br><span class="line">    <span class="attr">ulimits:</span></span><br><span class="line">      <span class="attr">memlock:</span></span><br><span class="line">        <span class="attr">soft:</span> <span class="number">-1</span></span><br><span class="line">        <span class="attr">hard:</span> <span class="number">-1</span></span><br><span class="line">    <span class="attr">mem_limit:</span> <span class="string">1g</span></span><br><span class="line">  <span class="comment"># Graylog: https://hub.docker.com/r/graylog/graylog/</span></span><br><span class="line">  <span class="attr">graylog:</span></span><br><span class="line">    <span class="attr">restart:</span> <span class="string">always</span></span><br><span class="line">    <span class="attr">image:</span> <span class="string">graylog/graylog:2.4.5-2</span></span><br><span class="line">    <span class="attr">container_name:</span> <span class="string">graylog</span></span><br><span class="line">    <span class="attr">environment:</span></span><br><span class="line">      <span class="comment"># password pepper</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">GRAYLOG_PASSWORD_SECRET=gr8r3hbnvfs73b8wefhweufpokdnc</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">GRAYLOG_ROOT_USERNAME=admin</span></span><br><span class="line">      <span class="comment"># Password: admin</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">GRAYLOG_ROOT_PASSWORD_SHA2=8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918</span></span><br><span class="line">      <span class="comment"># elasticsearch host</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">GRAYLOG_ELASTICSEARCH_HOSTS=http://graylog-elasticsearch:9200</span></span><br><span class="line">      <span class="comment"># mongo host</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">GRAYLOG_MONGODB_URI=mongodb://graylog-mongo/graylog</span></span><br><span class="line">      <span class="comment"># time zone</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">GRAYLOG_ROOT_TIMEZONE=Asia/Shanghai</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">GRAYLOG_WEB_ENDPOINT_URI=http://127.0.0.1:9000/api</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">GRAYLOG_WEB_LISTEN_URI=http://0.0.0.0:9000/</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">GRAYLOG_REST_LISTEN_URI=http://0.0.0.0:9000/api</span></span><br><span class="line">    <span class="attr">depends_on:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">graylog-mongo</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">graylog-elasticsearch</span></span><br><span class="line">    <span class="attr">ports:</span></span><br><span class="line">      <span class="comment"># Graylog web interface and REST API</span></span><br><span class="line">      <span class="bullet">-</span> <span class="number">9000</span><span class="string">:9000</span></span><br><span class="line">      <span class="comment"># Syslog TCP</span></span><br><span class="line">      <span class="bullet">-</span> <span class="number">514</span><span class="string">:514</span></span><br><span class="line">      <span class="comment"># Syslog UDP</span></span><br><span class="line">      <span class="bullet">-</span> <span class="number">514</span><span class="string">:514/udp</span></span><br><span class="line">      <span class="comment"># GELF TCP</span></span><br><span class="line">      <span class="bullet">-</span> <span class="number">12201</span><span class="string">:12201</span></span><br><span class="line">      <span class="comment"># GELF UDP</span></span><br><span class="line">      <span class="bullet">-</span> <span class="number">12201</span><span class="string">:12201/udp</span></span><br></pre></td></tr></table></figure>
+
+<p>可以看到上面的文件主要有三个服务：<code>graylog-mongo</code>、<code>graylog-elasticsearch</code>和<code>graylog</code>，对应了graylog架构中的三个部分，每一个部分我们都启动一个docker来运行。这里大部分的配置信息都是参考<a target="_blank" rel="noopener" href="https://github.com/kwkwc/dockerSH/blob/master/services/graylog/config/graylog.conf%EF%BC%8C%E5%B9%B6%E4%B8%8D%E9%9C%80%E8%A6%81%E5%81%9A%E8%BF%87%E5%A4%9A%E7%9A%84%E6%94%B9%E5%8A%A8%E3%80%82%E6%B3%A8%E6%84%8F%60graylog%60%E8%BF%99%E4%B8%AA%E6%9C%8D%E5%8A%A1%E4%B8%8B%E6%9C%89%E4%B8%80%E4%B8%AA%60depends_on%60%E7%9A%84%E9%85%8D%E7%BD%AE%E9%A1%B9%EF%BC%8C%E6%84%8F%E6%80%9D%E6%98%AF%60graylog%60%E7%9A%84%E5%90%AF%E5%8A%A8%E9%9C%80%E8%A6%81%E4%BE%9D%E8%B5%96%E4%BA%8E%E5%89%8D%E9%9D%A2%E4%B8%A4%E4%B8%AA%E6%9C%8D%E5%8A%A1%E7%9A%84%E5%90%AF%E5%8A%A8%E3%80%82%60GRAYLOG_ROOT_PASSWORD_SHA2%60%E8%BF%99%E4%B8%AA%E6%98%AF%E5%AF%86%E7%A0%81%EF%BC%8C%E6%98%AF%60admin%60%E8%BF%99%E4%B8%AA%E5%AD%97%E7%AC%A6%E4%B8%B2%E7%BB%8F%E8%BF%87SHA256%E5%8A%A0%E5%AF%86%E5%90%8E%E7%9A%84%E7%BB%93%E6%9E%9C%E3%80%82">https://github.com/kwkwc/dockerSH/blob/master/services/graylog/config/graylog.conf，并不需要做过多的改动。注意`graylog`这个服务下有一个`depends_on`的配置项，意思是`graylog`的启动需要依赖于前面两个服务的启动。`GRAYLOG_ROOT_PASSWORD_SHA2`这个是密码，是`admin`这个字符串经过SHA256加密后的结果。</a></p>
+</li>
+<li><p>打开命令行，进入到配置文件所在的文件夹，运行：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker-compose up -d</span><br></pre></td></tr></table></figure>
+
+<p>初次运行需要拉去镜像，会比较慢。运行结果如图：</p>
+<p><img src="/images/graylog0.png" alt="graylog start"></p>
+<p>通过<code>docker ps</code>命令我们可以看到确实有三个docker容器在运行，说明graylog服务已经成功启动了。</p>
+</li>
+<li><p>打开浏览器，输入<code>http://127.0.0.1:9000</code>，就可以看到graylog的界面，登录用户名和密码都是<code>admin</code>。然后就能看到主页面了。</p>
+<p><img src="/images/graylog1.png" alt="Gralog MainPage"></p>
+</li>
+<li><p>接着配置输入点，点击<code>System/Inputs -&gt; Inputs</code>。</p>
+<p><img src="/images/graylog2.png" alt="Graylog Set Inputs"></p>
+</li>
+<li><p>点击<code>Select Input</code>后选择<code>GELF UDP</code>，这是日志的格式，然后点击<code>Launch new input</code>。接着设置日志来源的Node和Title，其余的使用默认的就可以了。</p>
+<p><img src="/images/graylog3.png" alt="Graylog Lauch new input"></p>
+</li>
+<li><p>然后我们在主页面就能够看到有一个Local Inputs在运行了。</p>
+<p><img src="/images/graylog4.png" alt="Graylog Local Inputs Running"></p>
+</li>
+<li><p>至此，在windows上我们就使用docker搭建好了Graylog的服务了。</p>
+</li>
+</ol>
+<hr>
+<h2 id="日志收集"><a href="#日志收集" class="headerlink" title="日志收集"></a>日志收集</h2><h3 id="收集docker容器内的日志"><a href="#收集docker容器内的日志" class="headerlink" title="收集docker容器内的日志"></a>收集docker容器内的日志</h3><p>&emsp;&emsp;搭建好Graylog服务后，我们运行一个demo来测试一下graylog是否能够真正地收集到服务运行的日志。这里我用redis服务作为例子，展示如何使用Graylog收集docker容器的日志。</p>
+<ol>
+<li><p>编写redis容器的启动文件<code>docker-compose.yml</code>（与上面的分开地方放）：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">version:</span> <span class="string">&#x27;2&#x27;</span></span><br><span class="line"><span class="attr">services:</span></span><br><span class="line">  <span class="attr">redis:</span></span><br><span class="line">    <span class="attr">restart:</span> <span class="string">always</span></span><br><span class="line">    <span class="attr">image:</span> <span class="string">redis:4.0.10</span></span><br><span class="line">    <span class="attr">container_name:</span> <span class="string">redis</span></span><br><span class="line">    <span class="attr">logging:</span></span><br><span class="line">      <span class="attr">driver:</span> <span class="string">gelf</span></span><br><span class="line">      <span class="attr">options:</span></span><br><span class="line">        <span class="comment"># 将 x.x.x.x 替换成你的 IP</span></span><br><span class="line">        <span class="attr">gelf-address:</span> <span class="string">udp://x.x.x.x:12201</span></span><br><span class="line">        <span class="attr">tag:</span> <span class="string">&quot;redis&quot;</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>特别注意：IP地址必须使用Node里面的IP地址，点击进入Node里面查看即可。这里不能用localhost或者127.0.0.1，这个docker容器的网络通讯策略有关。</strong></p>
+</li>
+<li><p>运行<code>docker-compose up -d</code>，启动Redis容器</p>
+</li>
+<li><p>然后再回到Graylog中，点击Search就能看到系统运行的日志了，当然这里只有启动的日志。</p>
+<p><img src="/images/graylog5.png" alt="Graylog Collect Log from Redis"></p>
+</li>
+</ol>
+<h3 id="收集非docker容器的日志"><a href="#收集非docker容器的日志" class="headerlink" title="收集非docker容器的日志"></a>收集非docker容器的日志</h3><p>&emsp;&emsp;上面看到收集docker容器的日志是非常简单的，在运行docker的时候配置就可以了。如果要收集非docker容器的日志，那么通常需要使用第三方的插件。这里我以一个flask应用为例（Python），展示如何手机非docker容器的日志。</p>
+<ol>
+<li><p>在一个已有的<code>flask</code>项目中安装<a target="_blank" rel="noopener" href="https://pypi.org/project/graypy/">graypy</a>插件:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pip install graypy</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>然后在代码中使用，这里我把log的初始化封装成一个函数，返回一个logger，方便全局使用：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> logging</span><br><span class="line"><span class="keyword">import</span> graypy</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">init_logger</span>():</span></span><br><span class="line">    <span class="comment"># init logger for Graylog</span></span><br><span class="line">    logger = logging.getLogger()</span><br><span class="line">    logger.setLevel(logging.INFO)</span><br><span class="line">    handler = graypy.GELFUDPHandler(<span class="string">&#x27;localhost&#x27;</span>, <span class="number">12201</span>)</span><br><span class="line">    logger.addHandler(handler)</span><br><span class="line">    <span class="keyword">return</span> logger</span><br></pre></td></tr></table></figure>
+
+<p>其实原理就是在logging的基础上，添加了一个handler，这里使用到了<code>graypy.GELFUDPHandler</code>，指定了以UDP的方式向Graylog发送GELF类型的日志，后面的参数是host主机和端口号，与Graylog服务中设置的要保持一致。</p>
+</li>
+<li><p>简单的使用例子：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">logger = init_logger()</span><br><span class="line">logger.info(<span class="string">&#x27;this is a log&#x27;</span>)</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>然后运行这个flask服务，打开Graylog就能看到日志的输出了。</p>
+<p><img src="/images/graylog6.png" alt="Graylog Flask"></p>
+</li>
+</ol>
+<hr>
+<h2 id="Graylog环境搭建–CentOS"><a href="#Graylog环境搭建–CentOS" class="headerlink" title="Graylog环境搭建–CentOS"></a>Graylog环境搭建–CentOS</h2><p><strong>Platform:</strong> CentOS 7.5</p>
+<p><strong>Environment:</strong> Docker 19.03.5</p>
+<p>&emsp;&emsp;CentOS下的搭建原理与步骤与windows下基本一致，我们只需要对个别地方稍作修改。</p>
+<ol>
+<li><p>修改<code>docker-compose.yml</code>中graylog的<code>GRAYLOG_WEB_ENDPOINT_URI</code>：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">graylog:</span></span><br><span class="line">    <span class="attr">restart:</span> <span class="string">always</span></span><br><span class="line">    <span class="attr">image:</span> <span class="string">graylog/graylog:2.4.5-2</span></span><br><span class="line">    <span class="attr">container_name:</span> <span class="string">graylog</span></span><br><span class="line">    <span class="attr">environment:</span></span><br><span class="line">      <span class="comment"># password pepper</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">GRAYLOG_PASSWORD_SECRET=gr8r3hbnvfs73b8wefhweufpokdnc</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">GRAYLOG_ROOT_USERNAME=admin</span></span><br><span class="line">      <span class="comment"># Password: admin</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">GRAYLOG_ROOT_PASSWORD_SHA2=8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918</span></span><br><span class="line">      <span class="comment"># elasticsearch host</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">GRAYLOG_ELASTICSEARCH_HOSTS=http://graylog-elasticsearch:9200</span></span><br><span class="line">      <span class="comment"># mongo host</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">GRAYLOG_MONGODB_URI=mongodb://graylog-mongo/graylog</span></span><br><span class="line">      <span class="comment"># time zone</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">GRAYLOG_ROOT_TIMEZONE=Asia/Shanghai</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">GRAYLOG_WEB_ENDPOINT_URI=http://x.x.x.x:9000/api</span> <span class="comment"># x.x.x.x为服务器IP地址</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">GRAYLOG_WEB_LISTEN_URI=http://0.0.0.0:9000/</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">GRAYLOG_REST_LISTEN_URI=http://0.0.0.0:9000/api</span></span><br><span class="line">    <span class="attr">depends_on:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">graylog-mongo</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">graylog-elasticsearch</span></span><br><span class="line">    <span class="attr">ports:</span></span><br><span class="line">      <span class="comment"># Graylog web interface and REST API</span></span><br><span class="line">      <span class="bullet">-</span> <span class="number">9000</span><span class="string">:9000</span></span><br><span class="line">      <span class="comment"># Syslog TCP</span></span><br><span class="line">      <span class="bullet">-</span> <span class="number">514</span><span class="string">:514</span></span><br><span class="line">      <span class="comment"># Syslog UDP</span></span><br><span class="line">      <span class="bullet">-</span> <span class="number">514</span><span class="string">:514/udp</span></span><br><span class="line">      <span class="comment"># GELF TCP</span></span><br><span class="line">      <span class="bullet">-</span> <span class="number">12201</span><span class="string">:12201</span></span><br><span class="line">      <span class="comment"># GELF UDP</span></span><br><span class="line">      <span class="bullet">-</span> <span class="number">12201</span><span class="string">:12201/udp</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>运行后我们在浏览器访问的地址为：<code>x.x.x.x:9000</code>（同样地，<code>x.x.x.x</code>为服务器IP地址）。</p>
+</li>
+<li><p>其他的操作与上面一致，我们就能在Search中看到log输出了。</p>
+</li>
+</ol>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>&emsp;&emsp;以上就是有关graylog的搭建以及简单的使用，我们还可以在graylog中进行审计、展现和预警，这些之后有时间我会一一分享。本篇博文长期更新，欢迎订阅，谢谢您的支持！</p>
+<hr>
+<h2 id="Reference"><a href="#Reference" class="headerlink" title="Reference"></a>Reference</h2><ol>
+<li><a target="_blank" rel="noopener" href="http://docs.graylog.org/en/3.1/index.html">Graylog Documentation</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.graylog.org/">Graylog Website</a></li>
+</ol>
+
+    </div>
+
+    
+    
+    
+        <div class="reward-container">
+  <div></div>
+  <button onclick="var qr = document.getElementById('qr'); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    Donate
+  </button>
+  <div id="qr" style="display: none;">
+      
+      <div style="display: inline-block;">
+        <img src="/images/wechat_reward.png" alt="Leungyukshing WeChat Pay">
+        <p>WeChat Pay</p>
+      </div>
+      
+      <div style="display: inline-block;">
+        <img src="/images/alipay_reward.png" alt="Leungyukshing Alipay">
+        <p>Alipay</p>
+      </div>
+
+  </div>
+</div>
+
+        
+
+  <div class="followme">
+    <p>Welcome to my other publishing channels</p>
+
+    <div class="social-list">
+
+        <div class="social-item">
+          <a target="_blank" class="social-link" href="/atom.xml">
+            <span class="icon">
+              <i class="fa fa-rss"></i>
+            </span>
+
+            <span class="label">RSS</span>
+          </a>
+        </div>
+    </div>
+  </div>
+
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/archives/Compress-Algorithm.html" rel="prev" title="压缩算法详解">
+      <i class="fa fa-chevron-left"></i> 压缩算法详解
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/archives/Docker-Installation-on-CentOS.html" rel="next" title="CentOS下安装Docker">
+      CentOS下安装Docker <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Graylog%E7%AE%80%E4%BB%8B"><span class="nav-number">1.</span> <span class="nav-text">Graylog简介</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Graylog%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA%E2%80%93Windows"><span class="nav-number">2.</span> <span class="nav-text">Graylog环境搭建–Windows</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%AD%A5%E9%AA%A4"><span class="nav-number">2.1.</span> <span class="nav-text">步骤</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%97%A5%E5%BF%97%E6%94%B6%E9%9B%86"><span class="nav-number">3.</span> <span class="nav-text">日志收集</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%94%B6%E9%9B%86docker%E5%AE%B9%E5%99%A8%E5%86%85%E7%9A%84%E6%97%A5%E5%BF%97"><span class="nav-number">3.1.</span> <span class="nav-text">收集docker容器内的日志</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%94%B6%E9%9B%86%E9%9D%9Edocker%E5%AE%B9%E5%99%A8%E7%9A%84%E6%97%A5%E5%BF%97"><span class="nav-number">3.2.</span> <span class="nav-text">收集非docker容器的日志</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Graylog%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA%E2%80%93CentOS"><span class="nav-number">4.</span> <span class="nav-text">Graylog环境搭建–CentOS</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-number">5.</span> <span class="nav-text">总结</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Reference"><span class="nav-number">6.</span> <span class="nav-text">Reference</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Leungyukshing"
+      src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">Leungyukshing</p>
+  <div class="site-description" itemprop="description">A blog for code, programme sharing.</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">688</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">27</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/leungyukshing" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;leungyukshing" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:jacky14.liang@gmail.com" title="E-Mail → mailto:jacky14.liang@gmail.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="/atom.xml" title="RSS → &#x2F;atom.xml"><i class="fa fa-rss fa-fw"></i>RSS</a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll motion-element">
+    <div class="links-of-blogroll-title"><i class="fa fa-link fa-fw"></i>
+      Friends
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="http://www.liangjh45.com/" title="http:&#x2F;&#x2F;www.liangjh45.com&#x2F;" rel="noopener" target="_blank">Alva's blog</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="https://sysucarey.github.io/" title="https:&#x2F;&#x2F;sysucarey.github.io&#x2F;" rel="noopener" target="_blank">Carey's blog</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="https://blog.csdn.net/dickdick111/" title="https:&#x2F;&#x2F;blog.csdn.net&#x2F;dickdick111&#x2F;" rel="noopener" target="_blank">Dick's blog</a>
+        </li>
+    </ul>
+  </div>
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2017 – 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Leungyukshing</span>
+</div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="Total Visitors">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="Total Views">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : true,
+      appId      : 'AaLog29QcUdQKTboD6cY2dNP-gzGzoHsz',
+      appKey     : 'dUWNHLnTY9qG1jJwPnTtfMm8',
+      placeholder: "Just go go",
+      avatar     : 'mm',
+      meta       : guest,
+      pageSize   : '10' || 10,
+      visitor    : false,
+      lang       : '' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : false,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+
+</body>
+</html>

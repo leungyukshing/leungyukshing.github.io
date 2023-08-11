@@ -1,0 +1,631 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <meta name="google-site-verification" content="FHjCzDi7nry9Mvf4EFOY5cYoco-ZXq9tKjvXZK0nKr4">
+  <meta name="baidu-site-verification" content="code-gpMFPewYUF" />
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="/lib/pace/pace-theme-minimal.min.css">
+  <script src="/lib/pace/pace.min.js"></script>
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"leungyukshing.github.io","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"right","display":"hide","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"appID":"52USYSYESX","apiKey":"20b904c66f55b874f05edea4aca57780","indexName":"blog","hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="概述&amp;emsp;&amp;emsp;计组课程的其中一个大实验–实现一个单周期CPU。所谓单周期，是指一条指令在一个时钟周期内执行完，这是单周期CPU的核心思想。接下来我将详细介绍整个实验的内容与实现，代码可以直接看https:&#x2F;&#x2F;github.com&#x2F;leungyukshing&#x2F;-CPU-。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="单周期CPU设计与实现（最新版）--基础部分">
+<meta property="og:url" content="https://leungyukshing.github.io/archives/%E5%8D%95%E5%91%A8%E6%9C%9FCPU%E8%AE%BE%E8%AE%A1%E4%B8%8E%E5%AE%9E%E7%8E%B0%EF%BC%88%E6%9C%80%E6%96%B0%E7%89%88%EF%BC%89--%E5%9F%BA%E7%A1%80%E9%83%A8%E5%88%86.html">
+<meta property="og:site_name" content="Halo">
+<meta property="og:description" content="概述&amp;emsp;&amp;emsp;计组课程的其中一个大实验–实现一个单周期CPU。所谓单周期，是指一条指令在一个时钟周期内执行完，这是单周期CPU的核心思想。接下来我将详细介绍整个实验的内容与实现，代码可以直接看https:&#x2F;&#x2F;github.com&#x2F;leungyukshing&#x2F;-CPU-。">
+<meta property="og:locale">
+<meta property="og:image" content="https://leungyukshing.github.io/images/cpu_data_path.png">
+<meta property="og:image" content="https://leungyukshing.github.io/images/cpu_signal_truth_table.png">
+<meta property="og:image" content="https://leungyukshing.github.io/images/cpu_test_program_section.png">
+<meta property="og:image" content="https://leungyukshing.github.io/images/ins5.png">
+<meta property="article:published_time" content="2018-08-07T15:41:59.000Z">
+<meta property="article:modified_time" content="2021-06-22T18:33:08.715Z">
+<meta property="article:author" content="Leungyukshing">
+<meta property="article:tag" content="Verilog">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://leungyukshing.github.io/images/cpu_data_path.png">
+
+<link rel="canonical" href="https://leungyukshing.github.io/archives/%E5%8D%95%E5%91%A8%E6%9C%9FCPU%E8%AE%BE%E8%AE%A1%E4%B8%8E%E5%AE%9E%E7%8E%B0%EF%BC%88%E6%9C%80%E6%96%B0%E7%89%88%EF%BC%89--%E5%9F%BA%E7%A1%80%E9%83%A8%E5%88%86.html">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-Hans'
+  };
+</script>
+
+  <title>单周期CPU设计与实现（最新版）--基础部分 | Halo</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+<!-- hexo injector head_end end --><link rel="alternate" href="/atom.xml" title="Halo" type="application/atom+xml"><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Halo</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">A magic place for coding</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>About</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>Tags</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>Search
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="Searching..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+  <a href="https://github.com/leungyukshing" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="https://leungyukshing.github.io/archives/%E5%8D%95%E5%91%A8%E6%9C%9FCPU%E8%AE%BE%E8%AE%A1%E4%B8%8E%E5%AE%9E%E7%8E%B0%EF%BC%88%E6%9C%80%E6%96%B0%E7%89%88%EF%BC%89--%E5%9F%BA%E7%A1%80%E9%83%A8%E5%88%86.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="Leungyukshing">
+      <meta itemprop="description" content="A blog for code, programme sharing.">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Halo">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          单周期CPU设计与实现（最新版）--基础部分
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2018-08-07 11:41:59" itemprop="dateCreated datePublished" datetime="2018-08-07T11:41:59-04:00">2018-08-07</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2021-06-22 14:33:08" itemprop="dateModified" datetime="2021-06-22T14:33:08-04:00">2021-06-22</time>
+              </span>
+
+          
+            <span class="post-meta-item" title="Views" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">Views: </span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine: </span>
+    
+    <a title="valine" href="/archives/%E5%8D%95%E5%91%A8%E6%9C%9FCPU%E8%AE%BE%E8%AE%A1%E4%B8%8E%E5%AE%9E%E7%8E%B0%EF%BC%88%E6%9C%80%E6%96%B0%E7%89%88%EF%BC%89--%E5%9F%BA%E7%A1%80%E9%83%A8%E5%88%86.html#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/archives/%E5%8D%95%E5%91%A8%E6%9C%9FCPU%E8%AE%BE%E8%AE%A1%E4%B8%8E%E5%AE%9E%E7%8E%B0%EF%BC%88%E6%9C%80%E6%96%B0%E7%89%88%EF%BC%89--%E5%9F%BA%E7%A1%80%E9%83%A8%E5%88%86.html" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h2><p>&emsp;&emsp;计组课程的其中一个大实验–实现一个单周期CPU。所谓单周期，是指<strong>一条指令在一个时钟周期内执行完</strong>，这是单周期CPU的核心思想。接下来我将详细介绍整个实验的内容与实现，代码可以直接看<a target="_blank" rel="noopener" href="https://github.com/leungyukshing/-CPU-%E3%80%82">https://github.com/leungyukshing/-CPU-。</a></p>
+<a id="more"></a>
+
+<h2 id="CPU的工作阶段"><a href="#CPU的工作阶段" class="headerlink" title="CPU的工作阶段"></a>CPU的工作阶段</h2><p>&emsp;&emsp;CPU在处理每一条指令的时候，一般会经过以下几个步骤（有的指令不是所有的都需要执行，这也是单周期与多周期的区别）：</p>
+<ul>
+<li><strong>取指（IF）</strong>：根据程序计数器PC中的指令地址，从指令存储器中取出一条指令，同时，PC根据指令字长度自动递增产生下一条指令所需要的指令地址（一般是+4），但遇到“地址转移”指令时，则控制器把“转移地址”送入PC，当然得到的“地址”需要做些变换才送入PC。</li>
+<li><strong>译码（ID）</strong>：对取指令操作中得到的指令进行分析并译码，确定这条指令需要完成的操作，从而产生相应的操作码，用于驱动执行状态中的各种操作。</li>
+<li><strong>执行（EXE）</strong>：根据指令译码得到的操作控制信号，使用ALU具体地执行指令动作，然后转移到结果写回状态。</li>
+<li><strong>访存（MEM）</strong>：所有需要访问存储器的操作都将在这个步骤中执行，该步骤给出存储器的数据地址，把数据写入到存储器中数据地址所指定的存储单元或者从存储器中得到数据地址单元中的数据。</li>
+<li><strong>写回（WB）</strong>：指令执行的结果或者访问存储器中得到的数据写回相应的目的寄存器中。</li>
+</ul>
+<h2 id="数据通路"><a href="#数据通路" class="headerlink" title="数据通路"></a>数据通路</h2><p>&emsp;&emsp;一条指令的执行需要不同部件的配合，如何使用这些部件就需要控制单元发出控制信号。指令以及数据在CPU各部件中的移动是使用数据通路图来描述的，老师提供的数据通路图如下：<br><img src="/images/cpu_data_path.png" alt="数据通路图"><br>&emsp;&emsp;接下来我们在实现的过程中，需要紧密地联系以上这幅数据通路图，因此最好先熟悉这幅图，包括每个模块的接口，每个数据的位数等。<br>&emsp;&emsp;每条指令由不同模块功能相互组合而成，模块主要有程序计数器（PC），指令寄存器（rom），寄存器组（register），控制单元（control unit），ALU运算器（ALU），数据存储器（ram），符号或者零拓展模块（extend）以及加法器，移位器和几个二选一数据选择器。</p>
+<h2 id="代码实现"><a href="#代码实现" class="headerlink" title="代码实现"></a>代码实现</h2><p>&emsp;&emsp;在vivado中使用verilog语言逐个<code>.v</code>文件实现，以下是主要模块的代码。</p>
+<h3 id="1-控制单元（ControlUnit-v）"><a href="#1-控制单元（ControlUnit-v）" class="headerlink" title="1.控制单元（ControlUnit.v）"></a>1.控制单元（ControlUnit.v）</h3><p>&emsp;&emsp;这里需要根据每条指令所用到的模块，通过建立对应的真值表，对每个控制信号进行赋值，以确定使用哪些模块。<br>&emsp;&emsp;确定控制信号真值表，也是整个CPU逻辑最重要的部分。<br><img src="/images/cpu_signal_truth_table.png" alt="控制信号真值表"></p>
+<figure class="highlight verilog"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">module</span> ControlUnit(</span><br><span class="line">    <span class="keyword">input</span>[<span class="number">5</span>:<span class="number">0</span>] Opcode,</span><br><span class="line">    <span class="keyword">input</span> zero,</span><br><span class="line">    <span class="keyword">input</span> sign,</span><br><span class="line">    <span class="keyword">output</span> RegDst,</span><br><span class="line">    <span class="keyword">output</span> InsMemRW,</span><br><span class="line">    <span class="keyword">output</span> PCWre,</span><br><span class="line">    <span class="keyword">output</span> ExtSel,</span><br><span class="line">    <span class="keyword">output</span> DBDataSrc,</span><br><span class="line">    <span class="keyword">output</span> mWR,</span><br><span class="line">    <span class="keyword">output</span> mRD,</span><br><span class="line">    <span class="keyword">output</span> ALUSrcA,</span><br><span class="line">    <span class="keyword">output</span> ALUSrcB,</span><br><span class="line">    <span class="keyword">output</span> [<span class="number">1</span>:<span class="number">0</span>] PCSrc,</span><br><span class="line">    <span class="keyword">output</span> [<span class="number">2</span>:<span class="number">0</span>] ALUOp,</span><br><span class="line">    <span class="keyword">output</span> RegWre</span><br><span class="line">    );</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Control Signals</span></span><br><span class="line">    <span class="keyword">assign</span> RegDst = (Opcode == <span class="number">6&#x27;b000000</span> || Opcode == <span class="number">6&#x27;b000010</span> || Opcode == <span class="number">6&#x27;b010001</span> || Opcode == <span class="number">6&#x27;b010010</span> || Opcode == <span class="number">6&#x27;b011000</span>) ? <span class="number">1</span> : <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">assign</span> PCWre = (Opcode == <span class="number">6&#x27;b111111</span>) ? <span class="number">0</span> : <span class="number">1</span>;</span><br><span class="line">    <span class="keyword">assign</span> ExtSel = (Opcode == <span class="number">6&#x27;b010000</span>) ? <span class="number">0</span> : <span class="number">1</span>;</span><br><span class="line">    <span class="keyword">assign</span> DBDataSrc = (Opcode == <span class="number">6&#x27;b100111</span>) ? <span class="number">1</span> : <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">assign</span> mWR = (Opcode == <span class="number">6&#x27;b100110</span>) ? <span class="number">1</span> : <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">assign</span> mRD = (Opcode == <span class="number">6&#x27;b100111</span>) ? <span class="number">1</span> : <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">assign</span> ALUSrcA = (Opcode == <span class="number">6&#x27;b011000</span>) ? <span class="number">1</span> : <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">assign</span> ALUSrcB = (Opcode == <span class="number">6&#x27;b000001</span> || Opcode == <span class="number">6&#x27;b010000</span> || Opcode == <span class="number">6&#x27;b011011</span> || Opcode == <span class="number">6&#x27;b100110</span> || Opcode == <span class="number">6&#x27;b100111</span>) ? <span class="number">1</span> : <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">assign</span> RegWre = (Opcode == <span class="number">6&#x27;b100110</span> || Opcode == <span class="number">6&#x27;b110000</span> || Opcode == <span class="number">6&#x27;b110001</span> || Opcode == <span class="number">6&#x27;b111000</span> || Opcode == <span class="number">6&#x27;b111111</span>) ? <span class="number">0</span> : <span class="number">1</span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// PCSrc - choose next address</span></span><br><span class="line">    <span class="keyword">assign</span> PCSrc[<span class="number">0</span>] = ((Opcode == <span class="number">6&#x27;b110000</span> &amp;&amp; zero == <span class="number">1</span>) || (Opcode == <span class="number">6&#x27;b110001</span> &amp;&amp; zero == <span class="number">0</span>)) ? <span class="number">1</span> : <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">assign</span> PCSrc[<span class="number">1</span>] = (Opcode == <span class="number">6&#x27;b111000</span>) ? <span class="number">1</span> : <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// ALUOp - choose ALU functions</span></span><br><span class="line">    <span class="keyword">assign</span> ALUOp[<span class="number">0</span>] = (Opcode == <span class="number">6&#x27;b000010</span> || Opcode == <span class="number">6&#x27;b010010</span> || Opcode == <span class="number">6&#x27;b010000</span> || Opcode == <span class="number">6&#x27;b110000</span> || Opcode == <span class="number">6&#x27;b110001</span>) ? <span class="number">1</span> : <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">assign</span> ALUOp[<span class="number">1</span>] = (Opcode == <span class="number">6&#x27;b010010</span> || Opcode == <span class="number">6&#x27;b010000</span> || Opcode == <span class="number">6&#x27;b011000</span> || Opcode == <span class="number">6&#x27;b011011</span>) ? <span class="number">1</span> : <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">assign</span> ALUOp[<span class="number">2</span>] = (Opcode == <span class="number">6&#x27;b010001</span> || Opcode == <span class="number">6&#x27;b011011</span>) ? <span class="number">1</span> : <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">endmodule</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="2-程序计数器（PC-v）"><a href="#2-程序计数器（PC-v）" class="headerlink" title="2.程序计数器（PC.v）"></a>2.程序计数器（PC.v）</h3><p>&emsp;&emsp;为了分离出PC和PC+4，这里特意分成两个模块。PC模块是设置PC为PCnext。在<strong>时钟上升沿</strong>到来或<strong>清零信号</strong>到来的时候，设置新的PC。</p>
+<figure class="highlight verilog"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">module</span> PC(</span><br><span class="line">    <span class="keyword">input</span> PCWre,</span><br><span class="line">    <span class="keyword">input</span> clk,</span><br><span class="line">    <span class="keyword">input</span> Reset,</span><br><span class="line">    <span class="keyword">input</span>[<span class="number">31</span>:<span class="number">0</span>] pcin,</span><br><span class="line">    <span class="keyword">output</span>[<span class="number">31</span>:<span class="number">0</span>] ExtOut,</span><br><span class="line">    <span class="keyword">output</span>[<span class="number">31</span>:<span class="number">0</span>] pc</span><br><span class="line">    );</span><br><span class="line">    <span class="keyword">reg</span>[<span class="number">31</span>:<span class="number">0</span>] pc;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">always</span>@(<span class="keyword">posedge</span> clk <span class="keyword">or</span> <span class="keyword">negedge</span> Reset)</span><br><span class="line">        <span class="keyword">begin</span></span><br><span class="line">            <span class="keyword">if</span> (!Reset)</span><br><span class="line">                pc = <span class="number">0</span>;</span><br><span class="line">            <span class="keyword">else</span></span><br><span class="line">                <span class="keyword">begin</span></span><br><span class="line">                    <span class="keyword">if</span> (PCWre)</span><br><span class="line">                        <span class="keyword">begin</span></span><br><span class="line">                            pc = pcin;</span><br><span class="line">                        <span class="keyword">end</span></span><br><span class="line">                <span class="keyword">end</span></span><br><span class="line">        <span class="keyword">end</span></span><br><span class="line"><span class="keyword">endmodule</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="3-PC选择器（Mux-v）"><a href="#3-PC选择器（Mux-v）" class="headerlink" title="3.PC选择器（Mux.v）"></a>3.PC选择器（Mux.v）</h3><p>&emsp;&emsp;根据指令形式，确定下一个PC是PC+4还是跳转。这里牵涉到了数据选择的功能，因此我选择把他分离出来。</p>
+<figure class="highlight verilog"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">module</span> Mux(</span><br><span class="line">    <span class="keyword">input</span> clk,</span><br><span class="line">    <span class="keyword">input</span>[<span class="number">31</span>:<span class="number">0</span>] pc,</span><br><span class="line">    <span class="keyword">input</span>[<span class="number">31</span>:<span class="number">0</span>] ExtOut,</span><br><span class="line">    <span class="keyword">input</span>[<span class="number">25</span>:<span class="number">0</span>] JumpAddr,</span><br><span class="line">    <span class="keyword">input</span>[<span class="number">1</span>:<span class="number">0</span>] PCSrc,</span><br><span class="line">    <span class="keyword">input</span> PCWre,</span><br><span class="line">    <span class="keyword">output</span> <span class="keyword">reg</span>[<span class="number">31</span>:<span class="number">0</span>] nextpc</span><br><span class="line">    );</span><br><span class="line"></span><br><span class="line">    <span class="keyword">always</span>@(*)</span><br><span class="line">            <span class="keyword">begin</span></span><br><span class="line">                <span class="keyword">if</span>(!PCWre) <span class="keyword">begin</span></span><br><span class="line">                    nextpc = pc;</span><br><span class="line">                    <span class="keyword">end</span></span><br><span class="line">                <span class="keyword">else</span> <span class="keyword">begin</span></span><br><span class="line">                <span class="keyword">case</span>(PCSrc)</span><br><span class="line">                    <span class="number">2&#x27;b00</span>:</span><br><span class="line">                        <span class="keyword">begin</span></span><br><span class="line">                            nextpc = pc + <span class="number">4</span>;</span><br><span class="line">                        <span class="keyword">end</span></span><br><span class="line">                                    <span class="number">2&#x27;b01</span>:</span><br><span class="line">                                        <span class="keyword">begin</span></span><br><span class="line">                                            nextpc = pc + <span class="number">4</span> + ExtOut * <span class="number">4</span>;</span><br><span class="line">                                        <span class="keyword">end</span></span><br><span class="line">                                    <span class="number">2&#x27;b10</span>:</span><br><span class="line">                                        <span class="keyword">begin</span></span><br><span class="line">                                            nextpc = pc + <span class="number">4</span>;</span><br><span class="line"></span><br><span class="line">                                            nextpc[<span class="number">27</span>:<span class="number">2</span>] = JumpAddr[<span class="number">25</span>:<span class="number">0</span>];</span><br><span class="line">                                            nextpc[<span class="number">1</span>] = <span class="number">0</span>;</span><br><span class="line">                                            nextpc[<span class="number">0</span>] = <span class="number">0</span>;</span><br><span class="line">                                        <span class="keyword">end</span></span><br><span class="line">                                    <span class="number">2&#x27;b11</span>:</span><br><span class="line">                                        <span class="keyword">begin</span></span><br><span class="line">                                        <span class="keyword">end</span></span><br><span class="line">                                <span class="keyword">endcase</span></span><br><span class="line">                                <span class="keyword">end</span></span><br><span class="line">            <span class="keyword">end</span></span><br><span class="line"><span class="keyword">endmodule</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="4-指令寄存器（InsMEM-v）"><a href="#4-指令寄存器（InsMEM-v）" class="headerlink" title="4.指令寄存器（InsMEM.v）"></a>4.指令寄存器（InsMEM.v）</h3><p>&emsp;&emsp;指令寄存器是由寄存器组成的，存储所有我们将要执行的指令。这里采用的是8位大端的存储模式。<br>&emsp;&emsp;这里先给出我们需要测试的指令序列。<br><img src="/images/cpu_test_program_section.png" alt="测试程序段"></p>
+<figure class="highlight verilog"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">module</span> InsMEM(</span><br><span class="line">    <span class="keyword">input</span>[<span class="number">31</span>:<span class="number">0</span>] IAddr,</span><br><span class="line">    <span class="keyword">input</span> InsMemRW,</span><br><span class="line">    <span class="keyword">output</span>[<span class="number">5</span>:<span class="number">0</span>] op,</span><br><span class="line">    <span class="keyword">output</span>[<span class="number">4</span>:<span class="number">0</span>] rs,</span><br><span class="line">    <span class="keyword">output</span>[<span class="number">4</span>:<span class="number">0</span>] rt,</span><br><span class="line">    <span class="keyword">output</span>[<span class="number">4</span>:<span class="number">0</span>] rd,</span><br><span class="line">    <span class="keyword">output</span>[<span class="number">4</span>:<span class="number">0</span>] sa,</span><br><span class="line">    <span class="keyword">output</span>[<span class="number">15</span>:<span class="number">0</span>] imd,</span><br><span class="line">    <span class="keyword">output</span>[<span class="number">25</span>:<span class="number">0</span>] JumpAddr</span><br><span class="line">    );</span><br><span class="line">    <span class="keyword">wire</span>[<span class="number">7</span>:<span class="number">0</span>] ins[<span class="number">0</span>:<span class="number">100</span>];</span><br><span class="line"></span><br><span class="line">    <span class="comment">// store all instructions</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">// addi $1, $0, 8  04010008</span></span><br><span class="line">    <span class="keyword">assign</span> ins[<span class="number">0</span>] = <span class="number">8&#x27;h04</span>;</span><br><span class="line">    <span class="keyword">assign</span> ins[<span class="number">1</span>] = <span class="number">8&#x27;h01</span>;</span><br><span class="line">    <span class="keyword">assign</span> ins[<span class="number">2</span>] = <span class="number">8&#x27;h00</span>;</span><br><span class="line">    <span class="keyword">assign</span> ins[<span class="number">3</span>] = <span class="number">8&#x27;h08</span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// ori $2. $0, 2  40020002</span></span><br><span class="line">    <span class="keyword">assign</span> ins[<span class="number">4</span>] = <span class="number">8&#x27;h40</span>;</span><br><span class="line">    <span class="keyword">assign</span> ins[<span class="number">5</span>] = <span class="number">8&#x27;h02</span>;</span><br><span class="line">    <span class="keyword">assign</span> ins[<span class="number">6</span>] = <span class="number">8&#x27;h00</span>;</span><br><span class="line">    <span class="keyword">assign</span> ins[<span class="number">7</span>] = <span class="number">8&#x27;h02</span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// add $3, $2, $1  00411800</span></span><br><span class="line">    <span class="keyword">assign</span> ins[<span class="number">8</span>] = <span class="number">8&#x27;h00</span>;</span><br><span class="line">    <span class="keyword">assign</span> ins[<span class="number">9</span>] = <span class="number">8&#x27;h41</span>;</span><br><span class="line">    <span class="keyword">assign</span> ins[<span class="number">10</span>] = <span class="number">8&#x27;h18</span>;</span><br><span class="line">    <span class="keyword">assign</span> ins[<span class="number">11</span>] = <span class="number">8&#x27;h00</span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// sub $5, $3, $2  08622800</span></span><br><span class="line">    <span class="keyword">assign</span> ins[<span class="number">12</span>] = <span class="number">8&#x27;h08</span>;</span><br><span class="line">    <span class="keyword">assign</span> ins[<span class="number">13</span>] = <span class="number">8&#x27;h62</span>;</span><br><span class="line">    <span class="keyword">assign</span> ins[<span class="number">14</span>] = <span class="number">8&#x27;h28</span>;</span><br><span class="line">    <span class="keyword">assign</span> ins[<span class="number">15</span>] = <span class="number">8&#x27;h00</span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// and $4, $5, $2  44a22000</span></span><br><span class="line">    <span class="keyword">assign</span> ins[<span class="number">16</span>] = <span class="number">8&#x27;h44</span>;</span><br><span class="line">    <span class="keyword">assign</span> ins[<span class="number">17</span>] = <span class="number">8&#x27;ha2</span>;</span><br><span class="line">    <span class="keyword">assign</span> ins[<span class="number">18</span>] = <span class="number">8&#x27;h20</span>;</span><br><span class="line">    <span class="keyword">assign</span> ins[<span class="number">19</span>] = <span class="number">8&#x27;h00</span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// or $8, $4, $2  48824000</span></span><br><span class="line">    <span class="keyword">assign</span> ins[<span class="number">20</span>] = <span class="number">8&#x27;h48</span>;</span><br><span class="line">    <span class="keyword">assign</span> ins[<span class="number">21</span>] = <span class="number">8&#x27;h82</span>;</span><br><span class="line">    <span class="keyword">assign</span> ins[<span class="number">22</span>] = <span class="number">8&#x27;h40</span>;</span><br><span class="line">    <span class="keyword">assign</span> ins[<span class="number">23</span>] = <span class="number">8&#x27;h00</span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// sll $8, $8, 1  60084040</span></span><br><span class="line">    <span class="keyword">assign</span> ins[<span class="number">24</span>] = <span class="number">8&#x27;h60</span>;</span><br><span class="line">    <span class="keyword">assign</span> ins[<span class="number">25</span>] = <span class="number">8&#x27;h08</span>;</span><br><span class="line">    <span class="keyword">assign</span> ins[<span class="number">26</span>] = <span class="number">8&#x27;h40</span>;</span><br><span class="line">    <span class="keyword">assign</span> ins[<span class="number">27</span>] = <span class="number">8&#x27;h40</span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// bne $8, $1, -2  c501fffe</span></span><br><span class="line">    <span class="keyword">assign</span> ins[<span class="number">28</span>] = <span class="number">8&#x27;hc5</span>;</span><br><span class="line">    <span class="keyword">assign</span> ins[<span class="number">29</span>] = <span class="number">8&#x27;h01</span>;</span><br><span class="line">    <span class="keyword">assign</span> ins[<span class="number">30</span>] = <span class="number">8&#x27;hff</span>;</span><br><span class="line">    <span class="keyword">assign</span> ins[<span class="number">31</span>] = <span class="number">8&#x27;hfe</span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// slti $6, $2, 8  6c460008</span></span><br><span class="line">    <span class="keyword">assign</span> ins[<span class="number">32</span>] = <span class="number">8&#x27;h6c</span>;</span><br><span class="line">    <span class="keyword">assign</span> ins[<span class="number">33</span>] = <span class="number">8&#x27;h46</span>;</span><br><span class="line">    <span class="keyword">assign</span> ins[<span class="number">34</span>] = <span class="number">8&#x27;h00</span>;</span><br><span class="line">    <span class="keyword">assign</span> ins[<span class="number">35</span>] = <span class="number">8&#x27;h08</span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// slti $7, $6, 0  6cc70000</span></span><br><span class="line">    <span class="keyword">assign</span> ins[<span class="number">36</span>] = <span class="number">8&#x27;h6c</span>;</span><br><span class="line">    <span class="keyword">assign</span> ins[<span class="number">37</span>] = <span class="number">8&#x27;hc7</span>;</span><br><span class="line">    <span class="keyword">assign</span> ins[<span class="number">38</span>] = <span class="number">8&#x27;h00</span>;</span><br><span class="line">    <span class="keyword">assign</span> ins[<span class="number">39</span>] = <span class="number">8&#x27;h00</span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// addi $7, $7, 8  04e70008</span></span><br><span class="line">    <span class="keyword">assign</span> ins[<span class="number">40</span>] = <span class="number">8&#x27;h04</span>;</span><br><span class="line">    <span class="keyword">assign</span> ins[<span class="number">41</span>] = <span class="number">8&#x27;he7</span>;</span><br><span class="line">    <span class="keyword">assign</span> ins[<span class="number">42</span>] = <span class="number">8&#x27;h00</span>;</span><br><span class="line">    <span class="keyword">assign</span> ins[<span class="number">43</span>] = <span class="number">8&#x27;h08</span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// beq $7, $1, -2  c0e1fffe</span></span><br><span class="line">    <span class="keyword">assign</span> ins[<span class="number">44</span>] = <span class="number">8&#x27;hc0</span>;</span><br><span class="line">    <span class="keyword">assign</span> ins[<span class="number">45</span>] = <span class="number">8&#x27;he1</span>;</span><br><span class="line">    <span class="keyword">assign</span> ins[<span class="number">46</span>] = <span class="number">8&#x27;hff</span>;</span><br><span class="line">    <span class="keyword">assign</span> ins[<span class="number">47</span>] = <span class="number">8&#x27;hfe</span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// sw $2, 4($1)  98220004</span></span><br><span class="line">    <span class="keyword">assign</span> ins[<span class="number">48</span>] = <span class="number">8&#x27;h98</span>;</span><br><span class="line">    <span class="keyword">assign</span> ins[<span class="number">49</span>] = <span class="number">8&#x27;h22</span>;</span><br><span class="line">    <span class="keyword">assign</span> ins[<span class="number">50</span>] = <span class="number">8&#x27;h00</span>;</span><br><span class="line">    <span class="keyword">assign</span> ins[<span class="number">51</span>] = <span class="number">8&#x27;h04</span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// lw $9, 4($1)  9c290004</span></span><br><span class="line">    <span class="keyword">assign</span> ins[<span class="number">52</span>] = <span class="number">8&#x27;h9c</span>;</span><br><span class="line">    <span class="keyword">assign</span> ins[<span class="number">53</span>] = <span class="number">8&#x27;h29</span>;</span><br><span class="line">    <span class="keyword">assign</span> ins[<span class="number">54</span>] = <span class="number">8&#x27;h00</span>;</span><br><span class="line">    <span class="keyword">assign</span> ins[<span class="number">55</span>] = <span class="number">8&#x27;h04</span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// j 0x00000040  e00000010</span></span><br><span class="line">    <span class="keyword">assign</span> ins[<span class="number">56</span>] = <span class="number">8&#x27;he0</span>;</span><br><span class="line">    <span class="keyword">assign</span> ins[<span class="number">57</span>] = <span class="number">8&#x27;h00</span>;</span><br><span class="line">    <span class="keyword">assign</span> ins[<span class="number">58</span>] = <span class="number">8&#x27;h00</span>;</span><br><span class="line">    <span class="keyword">assign</span> ins[<span class="number">59</span>] = <span class="number">8&#x27;h10</span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// addi $10, $0, 10  040a000a</span></span><br><span class="line">    <span class="keyword">assign</span> ins[<span class="number">60</span>] = <span class="number">8&#x27;h04</span>;</span><br><span class="line">    <span class="keyword">assign</span> ins[<span class="number">61</span>] = <span class="number">8&#x27;h0a</span>;</span><br><span class="line">    <span class="keyword">assign</span> ins[<span class="number">62</span>] = <span class="number">8&#x27;h00</span>;</span><br><span class="line">    <span class="keyword">assign</span> ins[<span class="number">63</span>] = <span class="number">8&#x27;h0a</span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// halt  fc000000</span></span><br><span class="line">    <span class="keyword">assign</span> ins[<span class="number">64</span>] = <span class="number">8&#x27;hfc</span>;</span><br><span class="line">    <span class="keyword">assign</span> ins[<span class="number">65</span>] = <span class="number">8&#x27;h00</span>;</span><br><span class="line">    <span class="keyword">assign</span> ins[<span class="number">66</span>] = <span class="number">8&#x27;h00</span>;</span><br><span class="line">    <span class="keyword">assign</span> ins[<span class="number">67</span>] = <span class="number">8&#x27;h00</span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// read instruction</span></span><br><span class="line">    <span class="keyword">wire</span>[<span class="number">31</span>:<span class="number">0</span>] temp;</span><br><span class="line">    <span class="keyword">assign</span> temp[<span class="number">31</span>:<span class="number">24</span>] = ins[IAddr[<span class="number">6</span>:<span class="number">2</span>]*<span class="number">4</span>];</span><br><span class="line">    <span class="keyword">assign</span> temp[<span class="number">23</span>:<span class="number">16</span>] = ins[IAddr[<span class="number">6</span>:<span class="number">2</span>]*<span class="number">4</span>+<span class="number">1</span>];</span><br><span class="line">    <span class="keyword">assign</span> temp[<span class="number">15</span>:<span class="number">8</span>] = ins[IAddr[<span class="number">6</span>:<span class="number">2</span>]*<span class="number">4</span>+<span class="number">2</span>];</span><br><span class="line">    <span class="keyword">assign</span> temp[<span class="number">7</span>:<span class="number">0</span>] = ins[IAddr[<span class="number">6</span>:<span class="number">2</span>]*<span class="number">4</span>+<span class="number">3</span>];</span><br><span class="line"></span><br><span class="line">    <span class="keyword">assign</span> op = temp[<span class="number">31</span>:<span class="number">26</span>];</span><br><span class="line">    <span class="keyword">assign</span> rs = temp[<span class="number">25</span>:<span class="number">21</span>];</span><br><span class="line">    <span class="keyword">assign</span> rt = temp[<span class="number">20</span>:<span class="number">16</span>];</span><br><span class="line">    <span class="keyword">assign</span> rd = temp[<span class="number">15</span>:<span class="number">11</span>];</span><br><span class="line">    <span class="keyword">assign</span> sa = temp[<span class="number">10</span>:<span class="number">6</span>];</span><br><span class="line">    <span class="keyword">assign</span> imd = temp[<span class="number">15</span>:<span class="number">0</span>];</span><br><span class="line">    <span class="keyword">assign</span> JumpAddr = temp[<span class="number">25</span>:<span class="number">0</span>];</span><br><span class="line"></span><br><span class="line"><span class="keyword">endmodule</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="5-寄存器组（RegisterFile-v）"><a href="#5-寄存器组（RegisterFile-v）" class="headerlink" title="5.寄存器组（RegisterFile.v）"></a>5.寄存器组（RegisterFile.v）</h3><p>&emsp;&emsp;寄存器组是用<strong>32个32位的寄存器</strong>组成的存储模块，用于存储运算中的一些变量，模拟的是CPU中的寄存器。现实中，当CPU断电后，这一部分的内容将会被清空。</p>
+<figure class="highlight verilog"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">module</span> RegisterFile(</span><br><span class="line">    <span class="keyword">input</span> clk,</span><br><span class="line">    <span class="keyword">input</span>[<span class="number">4</span>:<span class="number">0</span>] rs,</span><br><span class="line">    <span class="keyword">input</span>[<span class="number">4</span>:<span class="number">0</span>] rt,</span><br><span class="line">    <span class="keyword">input</span>[<span class="number">4</span>:<span class="number">0</span>] rd,</span><br><span class="line">    <span class="keyword">input</span> RegDst,</span><br><span class="line">    <span class="keyword">input</span>[<span class="number">31</span>:<span class="number">0</span>] result,</span><br><span class="line">    <span class="keyword">input</span>[<span class="number">31</span>:<span class="number">0</span>] DataOut,</span><br><span class="line">    <span class="keyword">input</span> DBDataSrc,</span><br><span class="line">    <span class="keyword">input</span> RegWre,</span><br><span class="line">    <span class="keyword">output</span>[<span class="number">31</span>:<span class="number">0</span>] ReadData1,</span><br><span class="line">    <span class="keyword">output</span>[<span class="number">31</span>:<span class="number">0</span>] ReadData2</span><br><span class="line">    );</span><br><span class="line"></span><br><span class="line">    <span class="keyword">reg</span>[<span class="number">31</span>:<span class="number">0</span>] registers[<span class="number">31</span>:<span class="number">0</span>];</span><br><span class="line">    <span class="keyword">integer</span> i;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Initialize the registers</span></span><br><span class="line">    <span class="keyword">initial</span></span><br><span class="line">        <span class="keyword">begin</span></span><br><span class="line">            <span class="keyword">for</span>(i = <span class="number">0</span>; i &lt; <span class="number">32</span>; i=i+<span class="number">1</span>)</span><br><span class="line">                registers[i] &lt;= <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">end</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">wire</span>[<span class="number">4</span>:<span class="number">0</span>] regToWrite;</span><br><span class="line">    <span class="keyword">wire</span>[<span class="number">31</span>:<span class="number">0</span>] WriteData;</span><br><span class="line">    <span class="comment">// choose reg</span></span><br><span class="line">    <span class="keyword">assign</span> regToWrite = (RegDst ? rd : rt);</span><br><span class="line">    <span class="comment">// choose data</span></span><br><span class="line">    <span class="keyword">assign</span> WriteData = (DBDataSrc ? DataOut : result);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Read</span></span><br><span class="line">    <span class="keyword">assign</span> ReadData1 = registers[rs];</span><br><span class="line">    <span class="keyword">assign</span> ReadData2 = registers[rt];</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Write</span></span><br><span class="line">    <span class="keyword">always</span> @(<span class="keyword">negedge</span> clk)</span><br><span class="line">        <span class="keyword">begin</span></span><br><span class="line">            <span class="keyword">if</span> (RegWre &amp;&amp; regToWrite)</span><br><span class="line">                registers[regToWrite] &lt;= WriteData;</span><br><span class="line">        <span class="keyword">end</span></span><br><span class="line"><span class="keyword">endmodule</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="6-算术逻辑运算单元（ALU-v）"><a href="#6-算术逻辑运算单元（ALU-v）" class="headerlink" title="6.算术逻辑运算单元（ALU.v）"></a>6.算术逻辑运算单元（ALU.v）</h3><p>&emsp;&emsp;ALU是CPU中的核心部分，用于指令执行中的算术和逻辑运算，返回运算的结果可能是控制跳转的信号，也可能是计算结果，需要写回寄存器或者写入到存储器。</p>
+<figure class="highlight verilog"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">module</span> ALU(</span><br><span class="line">    <span class="keyword">input</span>[<span class="number">31</span>:<span class="number">0</span>] ReadData1,</span><br><span class="line">    <span class="keyword">input</span>[<span class="number">31</span>:<span class="number">0</span>] ReadData2,</span><br><span class="line">    <span class="keyword">input</span>[<span class="number">31</span>:<span class="number">0</span>] ExtOut,</span><br><span class="line">    <span class="keyword">input</span>[<span class="number">4</span>:<span class="number">0</span>] sa,</span><br><span class="line">    <span class="keyword">input</span> ALUSrcA,</span><br><span class="line">    <span class="keyword">input</span> ALUSrcB,</span><br><span class="line">    <span class="keyword">input</span>[<span class="number">2</span>:<span class="number">0</span>] ALUOp,</span><br><span class="line">    <span class="keyword">output</span> zero,</span><br><span class="line">    <span class="keyword">output</span> [<span class="number">31</span>:<span class="number">0</span>] result,</span><br><span class="line">    <span class="keyword">output</span> sign</span><br><span class="line">    );</span><br><span class="line"></span><br><span class="line">    <span class="keyword">reg</span> zero;</span><br><span class="line">    <span class="keyword">reg</span>[<span class="number">31</span>:<span class="number">0</span>] result;</span><br><span class="line">    <span class="keyword">wire</span> [<span class="number">31</span>:<span class="number">0</span>] A;</span><br><span class="line">    <span class="keyword">wire</span> [<span class="number">31</span>:<span class="number">0</span>] B;</span><br><span class="line">    <span class="comment">// Operand 1</span></span><br><span class="line">    <span class="keyword">assign</span> A = (ALUSrcA ? sa : ReadData1);</span><br><span class="line">    <span class="comment">// Operand 2</span></span><br><span class="line">    <span class="keyword">assign</span> B = (ALUSrcB ? ExtOut : ReadData2);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">always</span>@(*)</span><br><span class="line">        <span class="keyword">begin</span></span><br><span class="line">            <span class="keyword">case</span>(ALUOp)</span><br><span class="line">                <span class="number">3&#x27;b000</span>:</span><br><span class="line">                    <span class="keyword">begin</span></span><br><span class="line">                        result &lt;= A + B;</span><br><span class="line">                    <span class="keyword">end</span></span><br><span class="line">                <span class="number">3&#x27;b001</span>:</span><br><span class="line">                    <span class="keyword">begin</span></span><br><span class="line">                        result &lt;= A - B;</span><br><span class="line">                    <span class="keyword">end</span></span><br><span class="line">                <span class="number">3&#x27;b010</span>:</span><br><span class="line">                    <span class="keyword">begin</span></span><br><span class="line">                        result &lt;= B &lt;&lt; A;</span><br><span class="line">                    <span class="keyword">end</span></span><br><span class="line">                <span class="number">3&#x27;b011</span>:</span><br><span class="line">                    <span class="keyword">begin</span></span><br><span class="line">                        result &lt;= A | B;</span><br><span class="line">                    <span class="keyword">end</span></span><br><span class="line">                <span class="number">3&#x27;b100</span>:</span><br><span class="line">                    <span class="keyword">begin</span></span><br><span class="line">                        result &lt;= A &amp; B;</span><br><span class="line">                    <span class="keyword">end</span></span><br><span class="line">                <span class="number">3&#x27;b101</span>:</span><br><span class="line">                    <span class="keyword">begin</span></span><br><span class="line">                        result &lt;= (A &lt; B) ? <span class="number">1</span> : <span class="number">0</span>;</span><br><span class="line">                    <span class="keyword">end</span></span><br><span class="line">                <span class="number">3&#x27;b110</span>:</span><br><span class="line">                    <span class="keyword">begin</span></span><br><span class="line">                        result &lt;= (((A &lt; B) &amp;&amp; (A[<span class="number">31</span>] == B[<span class="number">31</span>])) || ((A[<span class="number">31</span>] == <span class="number">1</span> &amp;&amp; B[<span class="number">31</span>] == <span class="number">0</span>))) ? <span class="number">1</span> : <span class="number">0</span>;</span><br><span class="line">                    <span class="keyword">end</span></span><br><span class="line">                <span class="number">3&#x27;b111</span>:</span><br><span class="line">                    <span class="keyword">begin</span></span><br><span class="line">                        result &lt;= A ^ B;</span><br><span class="line">                    <span class="keyword">end</span></span><br><span class="line">                <span class="keyword">default</span>:</span><br><span class="line">                    result &lt;= <span class="number">0</span>;</span><br><span class="line">            <span class="keyword">endcase</span></span><br><span class="line"></span><br><span class="line">            <span class="keyword">if</span>(!result)</span><br><span class="line">                zero = <span class="number">1</span>;</span><br><span class="line">            <span class="keyword">else</span></span><br><span class="line">                zero = <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">end</span></span><br><span class="line"><span class="keyword">endmodule</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="7-数据存储器（DataMEM-v）"><a href="#7-数据存储器（DataMEM-v）" class="headerlink" title="7.数据存储器（DataMEM.v）"></a>7.数据存储器（DataMEM.v）</h3><p>&emsp;&emsp;数据存储器使用8位字长的存储器，同样采用<strong>大端模式</strong>。现实中，这一部分模拟的是现实中的二级存储器–外存。当CPU断电时，这一部分的信息是不会丢失的。</p>
+<figure class="highlight verilog"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">module</span> DataMEM(</span><br><span class="line">    <span class="keyword">input</span>[<span class="number">31</span>:<span class="number">0</span>] DAddr,</span><br><span class="line">    <span class="keyword">input</span>[<span class="number">31</span>:<span class="number">0</span>] DataIn,</span><br><span class="line">    <span class="keyword">input</span> mRD,</span><br><span class="line">    <span class="keyword">input</span> mWR,</span><br><span class="line">    <span class="keyword">input</span> clk,</span><br><span class="line">    <span class="keyword">output</span> <span class="keyword">reg</span>[<span class="number">31</span>:<span class="number">0</span>] DataOut</span><br><span class="line">    );</span><br><span class="line">    <span class="keyword">initial</span> <span class="keyword">begin</span></span><br><span class="line">        DataOut &lt;= <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">end</span></span><br><span class="line">    <span class="keyword">reg</span> [<span class="number">8</span>:<span class="number">0</span>] memory[<span class="number">31</span>:<span class="number">0</span>];</span><br><span class="line">    <span class="keyword">integer</span> i;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">initial</span></span><br><span class="line">        <span class="keyword">begin</span></span><br><span class="line">            <span class="keyword">for</span>(i = <span class="number">0</span>; i &lt; <span class="number">32</span>; i=i+<span class="number">1</span>)</span><br><span class="line">                memory[i] &lt;= <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">end</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">always</span> @(*)</span><br><span class="line">        <span class="keyword">begin</span></span><br><span class="line">        <span class="comment">// read data</span></span><br><span class="line">            <span class="keyword">if</span> (mRD)</span><br><span class="line">                <span class="keyword">begin</span></span><br><span class="line">                    DataOut[<span class="number">31</span>:<span class="number">24</span>] = memory[DAddr];</span><br><span class="line">                    DataOut[<span class="number">23</span>:<span class="number">16</span>] = memory[DAddr+<span class="number">1</span>];</span><br><span class="line">                    DataOut[<span class="number">15</span>:<span class="number">8</span>] = memory[DAddr+<span class="number">2</span>];</span><br><span class="line">                    DataOut[<span class="number">7</span>:<span class="number">0</span>] = memory[DAddr+<span class="number">3</span>];</span><br><span class="line">                <span class="keyword">end</span></span><br><span class="line">        <span class="comment">// write data</span></span><br><span class="line">            <span class="keyword">else</span> <span class="keyword">if</span> (mWR &amp;&amp; !clk)</span><br><span class="line">                <span class="keyword">begin</span></span><br><span class="line">                    memory[DAddr] &lt;= DataIn[<span class="number">31</span>:<span class="number">24</span>];</span><br><span class="line">                    memory[DAddr+<span class="number">1</span>] &lt;= DataIn[<span class="number">23</span>:<span class="number">16</span>];</span><br><span class="line">                    memory[DAddr+<span class="number">2</span>] &lt;= DataIn[<span class="number">15</span>:<span class="number">8</span>];</span><br><span class="line">                    memory[DAddr+<span class="number">3</span>] &lt;= DataIn[<span class="number">7</span>:<span class="number">0</span>];</span><br><span class="line">                    DataOut &lt;= <span class="number">0</span>;</span><br><span class="line">                <span class="keyword">end</span></span><br><span class="line">        <span class="keyword">end</span></span><br><span class="line"><span class="keyword">endmodule</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="8-符号位拓展单元（Extend-v）"><a href="#8-符号位拓展单元（Extend-v）" class="headerlink" title="8.符号位拓展单元（Extend.v）"></a>8.符号位拓展单元（Extend.v）</h3><p>&emsp;&emsp;CPU在处理数据的过程中，会遇到一些位数不一样的数据，比如在指令中提取的立即数，需要拓展成32位数据才可以给ALU运算。</p>
+<figure class="highlight verilog"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">module</span> Extend(</span><br><span class="line">    <span class="keyword">input</span>[<span class="number">15</span>:<span class="number">0</span>] imd,</span><br><span class="line">    <span class="keyword">input</span> ExtSel,</span><br><span class="line">    <span class="keyword">output</span> [<span class="number">31</span>:<span class="number">0</span>] ExtOut</span><br><span class="line">    );</span><br><span class="line"></span><br><span class="line">    <span class="keyword">assign</span> ExtOut[<span class="number">15</span>:<span class="number">0</span>] = imd;</span><br><span class="line">    <span class="keyword">assign</span> ExtOut[<span class="number">31</span>:<span class="number">16</span>] = (ExtSel ? (imd[<span class="number">15</span>] ? <span class="number">16&#x27;hffff</span>: <span class="number">16&#x27;h0000</span>) : <span class="number">16&#x27;h0000</span>);</span><br><span class="line"><span class="keyword">endmodule</span></span><br></pre></td></tr></table></figure>
+
+
+<h3 id="9-顶层模块（s-cpu-v）"><a href="#9-顶层模块（s-cpu-v）" class="headerlink" title="9.顶层模块（s_cpu.v）"></a>9.顶层模块（s_cpu.v）</h3><p>&emsp;&emsp;上面实现了CPU中的8大模块，接下来就需要有一个<strong>顶层模块</strong>来连接各模块，运行整个CPU。<br>&emsp;&emsp;根据数据通路图，连接各模块的接口，<strong>wire变量就相当于连线</strong>，这个是比较好理解的。</p>
+<figure class="highlight verilog"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">module</span> s_cpu(</span><br><span class="line">    <span class="keyword">input</span> clk,</span><br><span class="line">    <span class="keyword">input</span> reset,</span><br><span class="line">    <span class="keyword">output</span>[<span class="number">5</span>:<span class="number">0</span>] Opcode,</span><br><span class="line">    <span class="keyword">output</span>[<span class="number">31</span>:<span class="number">0</span>] Data1,</span><br><span class="line">    <span class="keyword">output</span>[<span class="number">31</span>:<span class="number">0</span>] Data2,</span><br><span class="line">    <span class="keyword">output</span>[<span class="number">31</span>:<span class="number">0</span>] pc,</span><br><span class="line">    <span class="keyword">output</span>[<span class="number">31</span>:<span class="number">0</span>] pcnext,</span><br><span class="line">    <span class="keyword">output</span>[<span class="number">31</span>:<span class="number">0</span>] result,</span><br><span class="line">    <span class="keyword">output</span>[<span class="number">4</span>:<span class="number">0</span>] rs,</span><br><span class="line">    <span class="keyword">output</span>[<span class="number">4</span>:<span class="number">0</span>] rt,</span><br><span class="line">    <span class="keyword">output</span>[<span class="number">31</span>:<span class="number">0</span>] DataOut</span><br><span class="line">    );</span><br><span class="line">    <span class="keyword">wire</span>[<span class="number">2</span>:<span class="number">0</span>] ALUOp;</span><br><span class="line">    <span class="keyword">wire</span>[<span class="number">31</span>:<span class="number">0</span>] ExtOut;</span><br><span class="line">    <span class="keyword">wire</span>[<span class="number">25</span>:<span class="number">0</span>] JumpAddr;</span><br><span class="line">    <span class="keyword">wire</span>[<span class="number">15</span>:<span class="number">0</span>] immediate;</span><br><span class="line">    <span class="keyword">wire</span>[<span class="number">4</span>:<span class="number">0</span>]  rd, sa;</span><br><span class="line">    <span class="keyword">wire</span>[<span class="number">1</span>:<span class="number">0</span>] PCSrc;</span><br><span class="line">    <span class="keyword">wire</span> RegDst, zero, sign, PCWre, ALUSrcA, ALUSrcB, ExtSel, DBDataSrc, mWR, mRD, InsMemRW;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// ALU(ReadData1, ReadData2, ExtOut, sa, ALUSrcA, ALUSrcB, ALUOp, zero, result, sign)</span></span><br><span class="line">    ALU alu(Data1, Data2, ExtOut, sa, ALUSrcA, ALUSrcB, ALUOp, zero, result, sign);</span><br><span class="line">    <span class="comment">// PC(PCWre, clk, Reset, pcin, ExtOut, pc)</span></span><br><span class="line">    PC Pc(PCWre, clk, reset, pcnext, ExtOut, pc);</span><br><span class="line">    <span class="comment">// ControlUnit(Opcode, zero, sign, RegDst, InsMemRW, PCWre, ExtSel, DBDataSrc, mWR, mRD, ALUSrcA, ALUSrcB, PCSrc, ALUOp, RegWre)</span></span><br><span class="line">    ControlUnit controlunit(Opcode, zero, sign, RegDst, InsMemRW, PCWre, ExtSel, DBDataSrc, mWR, mRD, ALUSrcA, ALUSrcB, PCSrc, ALUOp, RegWre);</span><br><span class="line">    <span class="comment">//  DataMEM(DAddr, DataIn, mRD, mWR, clk, DataOut)</span></span><br><span class="line">    DataMEM dataMem(result, Data2, mRD, mWR, clk, DataOut);</span><br><span class="line">    <span class="comment">// InsMEM(IAddr, InsMemRW, op, rs, rt, rd, sa, imd, JumpAddr)</span></span><br><span class="line">    InsMEM insMem(pc, InsMemRW, Opcode, rs, rt, rd, sa, immediate, JumpAddr);</span><br><span class="line">    <span class="comment">// RegisterFile(clk, rs, rt, rd, RegDst, result, DataOut, DBDataSrc, RegWre, ReadData1, ReadData2)</span></span><br><span class="line">    RegisterFile registerfile(clk, rs, rt, rd, RegDst, result, DataOut, DBDataSrc, RegWre, Data1, Data2);</span><br><span class="line">    <span class="comment">// Extend(immediate, ExtSel, ExtOut)</span></span><br><span class="line">    Extend extend(immediate, ExtSel, ExtOut);</span><br><span class="line">    <span class="comment">// Mux(pc, ExtOut, JumpAddress, PCSrc, nextpc)</span></span><br><span class="line">    Mux mux(clk, pc, ExtOut, JumpAddr, PCSrc, PCWre, pcnext);</span><br><span class="line"><span class="keyword">endmodule</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="仿真测试"><a href="#仿真测试" class="headerlink" title="仿真测试"></a>仿真测试</h2><p>&emsp;&emsp;以上我们实现了CPU的主要功能，接下来可以编写仿真测试文件对上面实现的内容进行仿真测试，以验证CPU的正确性。<br>仿真测试文件是sim文件，这里我命名为<code>test.v</code>。</p>
+<figure class="highlight verilog"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">module</span> test;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Inputs</span></span><br><span class="line">    <span class="keyword">reg</span> clk;</span><br><span class="line">    <span class="keyword">reg</span> reset;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Outputs</span></span><br><span class="line">    <span class="keyword">wire</span>[<span class="number">5</span>:<span class="number">0</span>] Opcode;</span><br><span class="line">    <span class="keyword">wire</span>[<span class="number">31</span>:<span class="number">0</span>] Data1;</span><br><span class="line">    <span class="keyword">wire</span>[<span class="number">31</span>:<span class="number">0</span>] Data2;</span><br><span class="line">    <span class="keyword">wire</span>[<span class="number">31</span>:<span class="number">0</span>] pc;</span><br><span class="line">    <span class="keyword">wire</span>[<span class="number">31</span>:<span class="number">0</span>] pcnext;</span><br><span class="line">    <span class="keyword">wire</span>[<span class="number">31</span>:<span class="number">0</span>] result;</span><br><span class="line">    <span class="keyword">wire</span>[<span class="number">4</span>:<span class="number">0</span>] rs;</span><br><span class="line">    <span class="keyword">wire</span>[<span class="number">4</span>:<span class="number">0</span>] rt;</span><br><span class="line">    <span class="keyword">wire</span>[<span class="number">31</span>:<span class="number">0</span>] DataOut;</span><br><span class="line">    <span class="comment">// uut</span></span><br><span class="line">    s_cpu uut (</span><br><span class="line">        <span class="variable">.clk</span>(clk),</span><br><span class="line">        <span class="variable">.reset</span>(reset),</span><br><span class="line">        <span class="variable">.Opcode</span>(Opcode),</span><br><span class="line">        <span class="variable">.Data1</span>(Data1),</span><br><span class="line">        <span class="variable">.Data2</span>(Data2),</span><br><span class="line">        <span class="variable">.pc</span>(pc),</span><br><span class="line">        <span class="variable">.pcnext</span>(pcnext),</span><br><span class="line">        <span class="variable">.result</span>(result),</span><br><span class="line">        <span class="variable">.rs</span>(rs),</span><br><span class="line">        <span class="variable">.rt</span>(rt),</span><br><span class="line">        <span class="variable">.DataOut</span>(DataOut)</span><br><span class="line">    );</span><br><span class="line"></span><br><span class="line">    <span class="keyword">initial</span></span><br><span class="line">        <span class="keyword">begin</span></span><br><span class="line">            <span class="comment">// Initialize Inputs</span></span><br><span class="line">            clk = <span class="number">0</span>;</span><br><span class="line">            reset = <span class="number">0</span>;</span><br><span class="line">            <span class="comment">// Wait 100 ns for global reset finish</span></span><br><span class="line">            #<span class="number">50</span></span><br><span class="line">            reset = <span class="number">1</span>;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">end</span></span><br><span class="line"></span><br><span class="line">        <span class="keyword">always</span></span><br><span class="line">            <span class="keyword">begin</span></span><br><span class="line">            #<span class="number">20</span>;</span><br><span class="line">            clk = ~clk;</span><br><span class="line">            <span class="keyword">end</span></span><br><span class="line"><span class="keyword">endmodule</span></span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;这里只给出简单的而一些结果，具体的测试结果在这里就不详细叙述了，大家可以自己跑一下来看。<br><img src="/images/ins5.png" alt="测试结果"></p>
+<h2 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h2><p>&emsp;&emsp;以上就是单周期CPU的实现过程以及一些简单的分析。烧板的部分将在下一篇博客介绍，希望大家多多支持，谢谢！</p>
+
+    </div>
+
+    
+    
+    
+        <div class="reward-container">
+  <div></div>
+  <button onclick="var qr = document.getElementById('qr'); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    Donate
+  </button>
+  <div id="qr" style="display: none;">
+      
+      <div style="display: inline-block;">
+        <img src="/images/wechat_reward.png" alt="Leungyukshing WeChat Pay">
+        <p>WeChat Pay</p>
+      </div>
+      
+      <div style="display: inline-block;">
+        <img src="/images/alipay_reward.png" alt="Leungyukshing Alipay">
+        <p>Alipay</p>
+      </div>
+
+  </div>
+</div>
+
+        
+
+  <div class="followme">
+    <p>Welcome to my other publishing channels</p>
+
+    <div class="social-list">
+
+        <div class="social-item">
+          <a target="_blank" class="social-link" href="/atom.xml">
+            <span class="icon">
+              <i class="fa fa-rss"></i>
+            </span>
+
+            <span class="label">RSS</span>
+          </a>
+        </div>
+    </div>
+  </div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Verilog/" rel="tag"># Verilog</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/archives/QT%E6%89%93%E5%8C%85%E7%89%88%E6%9C%AC%E9%97%AE%E9%A2%98.html" rel="prev" title="QT打包版本问题">
+      <i class="fa fa-chevron-left"></i> QT打包版本问题
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/archives/%E5%8D%95%E5%91%A8%E6%9C%9FCPU%E8%AE%BE%E8%AE%A1%E4%B8%8E%E5%AE%9E%E7%8E%B0%EF%BC%88%E6%9C%80%E6%96%B0%E7%89%88%EF%BC%89--%E7%83%A7%E6%9D%BF%E9%83%A8%E5%88%86.html" rel="next" title="单周期CPU设计与实现（最新版）--烧板部分">
+      单周期CPU设计与实现（最新版）--烧板部分 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%A6%82%E8%BF%B0"><span class="nav-number">1.</span> <span class="nav-text">概述</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#CPU%E7%9A%84%E5%B7%A5%E4%BD%9C%E9%98%B6%E6%AE%B5"><span class="nav-number">2.</span> <span class="nav-text">CPU的工作阶段</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E9%80%9A%E8%B7%AF"><span class="nav-number">3.</span> <span class="nav-text">数据通路</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BB%A3%E7%A0%81%E5%AE%9E%E7%8E%B0"><span class="nav-number">4.</span> <span class="nav-text">代码实现</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-%E6%8E%A7%E5%88%B6%E5%8D%95%E5%85%83%EF%BC%88ControlUnit-v%EF%BC%89"><span class="nav-number">4.1.</span> <span class="nav-text">1.控制单元（ControlUnit.v）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-%E7%A8%8B%E5%BA%8F%E8%AE%A1%E6%95%B0%E5%99%A8%EF%BC%88PC-v%EF%BC%89"><span class="nav-number">4.2.</span> <span class="nav-text">2.程序计数器（PC.v）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-PC%E9%80%89%E6%8B%A9%E5%99%A8%EF%BC%88Mux-v%EF%BC%89"><span class="nav-number">4.3.</span> <span class="nav-text">3.PC选择器（Mux.v）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-%E6%8C%87%E4%BB%A4%E5%AF%84%E5%AD%98%E5%99%A8%EF%BC%88InsMEM-v%EF%BC%89"><span class="nav-number">4.4.</span> <span class="nav-text">4.指令寄存器（InsMEM.v）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-%E5%AF%84%E5%AD%98%E5%99%A8%E7%BB%84%EF%BC%88RegisterFile-v%EF%BC%89"><span class="nav-number">4.5.</span> <span class="nav-text">5.寄存器组（RegisterFile.v）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-%E7%AE%97%E6%9C%AF%E9%80%BB%E8%BE%91%E8%BF%90%E7%AE%97%E5%8D%95%E5%85%83%EF%BC%88ALU-v%EF%BC%89"><span class="nav-number">4.6.</span> <span class="nav-text">6.算术逻辑运算单元（ALU.v）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#7-%E6%95%B0%E6%8D%AE%E5%AD%98%E5%82%A8%E5%99%A8%EF%BC%88DataMEM-v%EF%BC%89"><span class="nav-number">4.7.</span> <span class="nav-text">7.数据存储器（DataMEM.v）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#8-%E7%AC%A6%E5%8F%B7%E4%BD%8D%E6%8B%93%E5%B1%95%E5%8D%95%E5%85%83%EF%BC%88Extend-v%EF%BC%89"><span class="nav-number">4.8.</span> <span class="nav-text">8.符号位拓展单元（Extend.v）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#9-%E9%A1%B6%E5%B1%82%E6%A8%A1%E5%9D%97%EF%BC%88s-cpu-v%EF%BC%89"><span class="nav-number">4.9.</span> <span class="nav-text">9.顶层模块（s_cpu.v）</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BB%BF%E7%9C%9F%E6%B5%8B%E8%AF%95"><span class="nav-number">5.</span> <span class="nav-text">仿真测试</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B0%8F%E7%BB%93"><span class="nav-number">6.</span> <span class="nav-text">小结</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Leungyukshing"
+      src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">Leungyukshing</p>
+  <div class="site-description" itemprop="description">A blog for code, programme sharing.</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">688</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">27</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/leungyukshing" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;leungyukshing" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:jacky14.liang@gmail.com" title="E-Mail → mailto:jacky14.liang@gmail.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="/atom.xml" title="RSS → &#x2F;atom.xml"><i class="fa fa-rss fa-fw"></i>RSS</a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll motion-element">
+    <div class="links-of-blogroll-title"><i class="fa fa-link fa-fw"></i>
+      Friends
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="http://www.liangjh45.com/" title="http:&#x2F;&#x2F;www.liangjh45.com&#x2F;" rel="noopener" target="_blank">Alva's blog</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="https://sysucarey.github.io/" title="https:&#x2F;&#x2F;sysucarey.github.io&#x2F;" rel="noopener" target="_blank">Carey's blog</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="https://blog.csdn.net/dickdick111/" title="https:&#x2F;&#x2F;blog.csdn.net&#x2F;dickdick111&#x2F;" rel="noopener" target="_blank">Dick's blog</a>
+        </li>
+    </ul>
+  </div>
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2017 – 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Leungyukshing</span>
+</div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="Total Visitors">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="Total Views">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : true,
+      appId      : 'AaLog29QcUdQKTboD6cY2dNP-gzGzoHsz',
+      appKey     : 'dUWNHLnTY9qG1jJwPnTtfMm8',
+      placeholder: "Just go go",
+      avatar     : 'mm',
+      meta       : guest,
+      pageSize   : '10' || 10,
+      visitor    : false,
+      lang       : '' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : false,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+
+</body>
+</html>

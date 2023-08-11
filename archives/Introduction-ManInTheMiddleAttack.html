@@ -1,0 +1,635 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <meta name="google-site-verification" content="FHjCzDi7nry9Mvf4EFOY5cYoco-ZXq9tKjvXZK0nKr4">
+  <meta name="baidu-site-verification" content="code-gpMFPewYUF" />
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="/lib/pace/pace-theme-minimal.min.css">
+  <script src="/lib/pace/pace.min.js"></script>
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"leungyukshing.github.io","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"right","display":"hide","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"appID":"52USYSYESX","apiKey":"20b904c66f55b874f05edea4aca57780","indexName":"blog","hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="Introduction&amp;emsp;&amp;emsp;之前在讨论过网络安全相关的CSRF问题，今天这篇博客我们来看另一个常见的网络攻击——中间人攻击。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="中间人攻击">
+<meta property="og:url" content="https://leungyukshing.github.io/archives/Introduction-ManInTheMiddleAttack.html">
+<meta property="og:site_name" content="Halo">
+<meta property="og:description" content="Introduction&amp;emsp;&amp;emsp;之前在讨论过网络安全相关的CSRF问题，今天这篇博客我们来看另一个常见的网络攻击——中间人攻击。">
+<meta property="og:locale">
+<meta property="article:published_time" content="2021-08-26T01:57:03.000Z">
+<meta property="article:modified_time" content="2021-08-26T23:34:34.079Z">
+<meta property="article:author" content="Leungyukshing">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://leungyukshing.github.io/archives/Introduction-ManInTheMiddleAttack.html">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-Hans'
+  };
+</script>
+
+  <title>中间人攻击 | Halo</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+<!-- hexo injector head_end end --><link rel="alternate" href="/atom.xml" title="Halo" type="application/atom+xml"><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Halo</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">A magic place for coding</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>About</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>Tags</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>Search
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="Searching..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+  <a href="https://github.com/leungyukshing" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="https://leungyukshing.github.io/archives/Introduction-ManInTheMiddleAttack.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="Leungyukshing">
+      <meta itemprop="description" content="A blog for code, programme sharing.">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Halo">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          中间人攻击
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2021-08-25 21:57:03" itemprop="dateCreated datePublished" datetime="2021-08-25T21:57:03-04:00">2021-08-25</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2021-08-26 19:34:34" itemprop="dateModified" datetime="2021-08-26T19:34:34-04:00">2021-08-26</time>
+              </span>
+
+          
+            <span class="post-meta-item" title="Views" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">Views: </span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine: </span>
+    
+    <a title="valine" href="/archives/Introduction-ManInTheMiddleAttack.html#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/archives/Introduction-ManInTheMiddleAttack.html" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="Introduction"><a href="#Introduction" class="headerlink" title="Introduction"></a>Introduction</h1><p>&emsp;&emsp;之前在讨论过网络安全相关的CSRF问题，今天这篇博客我们来看另一个常见的网络攻击——中间人攻击。</p>
+<a id="more"></a>
+
+<h1 id="A-Glance-of-HTTPS"><a href="#A-Glance-of-HTTPS" class="headerlink" title="A Glance of HTTPS"></a>A Glance of HTTPS</h1><p>&emsp;&emsp;在讨论中间人攻击之前，我们要先回顾一下HTTPS是怎么实现的。</p>
+<p>&emsp;&emsp;大家都知道HTTPS很安全，反正就算不了解原理，每次浏览器访问的时候都会有一个绿色的勾，看上去就很让人放心，觉得自己的数据十分安全。但真的是这样的吗？HTTPS使用了什么加密算法去保证数据的安全？</p>
+<p>&emsp;&emsp;HTTPS分为两部分，第一部分是<strong>证书验证</strong>，第二部分是<strong>数据传输</strong>。</p>
+<h2 id="证书验证"><a href="#证书验证" class="headerlink" title="证书验证"></a>证书验证</h2><p>&emsp;&emsp;证书验证是HTTPS的关键所在，有如下步骤：</p>
+<ol>
+<li>浏览器-&gt;服务器：服务器接收到浏览器请求后，返回自己的证书，<strong>证书里面包含公钥</strong>；</li>
+<li>浏览器：浏览器收到服务器返回的证书后，对证书的合法性进行验证，包括对域名、有效期等基本信息进行验证，同时还会验证证书来源是否合法、通过CA判断证书是否被篡改等，如果验证合法则进入下一步，否则提示用户使用HTTP（风险提示）；</li>
+<li>到这一步就完成了证书验证；</li>
+</ol>
+<h2 id="数据传输"><a href="#数据传输" class="headerlink" title="数据传输"></a>数据传输</h2><p>&emsp;&emsp;在完成了证书验证后，就开始数据的传输，这里就包含了两种不同的加密算法。</p>
+<ol>
+<li>浏览器-&gt;服务器：浏览器生成一个随机数，然后里面上面证书中的公钥，对这个随机数进行加密，并把加密结果传输给服务器；</li>
+<li>服务器：服务器收到这个加密的随机数后，这里采用的是<strong>非对称加密</strong>，所以服务器用自己的私钥能够解出来这个随机数；</li>
+<li>服务器-&gt;浏览器：在服务器返回用户数据给浏览器的时候，使用随机数对内容进行<strong>对称加密</strong>；</li>
+<li>浏览器：浏览器拿到内容后，因为随机数是之前本地生成的，是本地存储的，所以可以解密传输内容。</li>
+</ol>
+<h2 id="对称加密与非对称加密"><a href="#对称加密与非对称加密" class="headerlink" title="对称加密与非对称加密"></a>对称加密与非对称加密</h2><p>&emsp;&emsp;很多人认为HTTPS的安全性就在于它使用了非对称加密。通过上面的介绍，我们知道其实在真正传输数据的时候，浏览器和服务器双方其实使用的是对称加密，只有在第一次验证完证书后，才利用非对称加密技术传递了一个随机数（这个随机数就是在后面用于对称加密的）。</p>
+<p>&emsp;&emsp;那么就会有人问，既然非对称加密安全，为什么传输数据的时候还是使用对称加密呢？有两个原因，其一，非对称加密和解密的效率远低于对称加密，所以在https大量交互及传输数据的场景下，非对称加密不太适用；其二，非对称加密是单向的，就是说只能用公钥加密，然后私钥解密，但在实际的http请求中，应该是要保证双向的数据都是受保护的。</p>
+<h1 id="中间人攻击"><a href="#中间人攻击" class="headerlink" title="中间人攻击"></a>中间人攻击</h1><p>&emsp;&emsp;从上面的分析可知，HTTPS数据在实际传输中是对称加密，因此它的安全性并不是在数据传输中使用了非对称加密，那么关键点在哪？我们先来看看中间人攻击利用了什么漏洞，然后再回过来指出HTTPS是如何防范中间人攻击的。</p>
+<p>&emsp;&emsp;中间人攻击的过程如下：</p>
+<ol>
+<li>浏览器-&gt;中间人服务器A：浏览器向目标服务器发起请求，这里的请求是根据域名的，所以会先有一个DNS解析。现在发生了DNS劫持，比如把所有请求<code>www.google.com</code>的解析都指向了中间人的服务器A，所以请求实际上只打到了A，而没有到达真正的目标服务器；</li>
+<li>中间人服务器返回自己购买的一个证书<code>X1</code>；</li>
+<li>浏览器：浏览器本地生成一个随机数，通过拿到的证书<code>X1</code>中的公钥对随机数进行加密，发送给服务端，同时这个随机数也是后面用于数据传递时对称加解密；</li>
+<li>浏览器-&gt;中间人服务器A：浏览器的请求因为DNS劫持的缘故被打到了中间人服务器A上，服务器A上有私钥，可以解密出随机数，得到这个随机数后，服务器A可以对来自A的所有内容进行对称加解密；</li>
+<li>浏览器-&gt;中间人服务器A：在请求数据时，浏览器利用随机数加密，服务器A拿到数据后用随机数解密，拿到用户请求的明文；</li>
+<li>中间人服务器A-&gt;目标服务器：为了欺骗用户，让用户觉得真正在访问目标服务器，服务器A还是会去请求目标服务器，此时它与目标服务器建立了安全通道，拿到数据后，它再次利用随机数加密，返回给浏览器；</li>
+<li>浏览器：浏览器拿到数据后用随机数解密，得到的就是来自目标服务器的数据。</li>
+</ol>
+<p>&emsp;&emsp;上面就是中间人攻击的主要步骤，对于浏览器来说，他并不知道中间人的存在，它会觉得一直在和目标服务器打交道，拿到的数据也是准确的。而对于中间人服务器A来说，它一直在中间搞怪，双方传输的数据都能看得一清二楚，如果用户是操作银行登录的话，用户密码就能看的一清二楚。</p>
+<h2 id="what-is-the-pitfall"><a href="#what-is-the-pitfall" class="headerlink" title="what is the pitfall?"></a>what is the pitfall?</h2><p>&emsp;&emsp;上面7个步骤中最坑的步骤就是第2步和第3步，因为当浏览器把自己的随机数用非对称加密算法交给服务器后，就说明它完全信任服务器了，所以在这之前必须验证请求的是可以信任的服务器。</p>
+<p>&emsp;&emsp;上面HTTPS过程中提到了一个证书的概念，这个才是整个HTTPS的重中之重。浏览器必须通过某种手段去验证这个证书确实来自目标服务器，才能认为请求的服务器是可靠的。那么问题就变成了如何认证证书的合法性？</p>
+<h2 id="How-to-validate-the-certificate"><a href="#How-to-validate-the-certificate" class="headerlink" title="How to validate the certificate?"></a>How to validate the certificate?</h2><p>&emsp;&emsp;首先这里我们说的证书，指的是一种公钥证书，它是一种将加密密钥与网站、个人或组织等身份安全地关联起来的数字文档。分别来看它的几个要点：</p>
+<ol>
+<li>加密密钥：这里的加密密钥指的是非对称加密体系中的公钥，服务器以证书的方式，把公钥传递出去，而自己保留私钥；</li>
+<li>网站、个人或组织身份：这点非常关键，我们知否信任一个证书，很大程度上并不是取决于返回证书的网站可不可信，而是取决于返回证书的网站是不是就是我们请求的网站。所以在返回的证书中需要带上能够验证网站身份的信息，并且是权威的；</li>
+<li>安全地关联：这是一种防篡改的手段。</li>
+</ol>
+<p>&emsp;&emsp;然后我们来看浏览器是怎么去验证证书的合法性的：</p>
+<ol>
+<li>证书上包含域名和有效期等基本信息，浏览器可以很快速地去验证这些信息是否有效；</li>
+<li>判断证书来源是否合法。每份签发证书都可以根据验证链查找到对应的根证书，操作系统、浏览器会在本地存储权威机构的根证书，利用本地根证书可以对对应机构签发证书完成来源验证；</li>
+<li>通过CA服务器判断证书是否被篡改。在CA签发证书的时候，会把公钥、用途、颁发者、有效时间等信息打成一个包<code>data</code>，然后对这个包进行hash，得到一个hash值<code>H1</code>（H1=hash(data)），然后CA会使用自己的私钥对这个H1加密，得到签名<code>Signature</code>，这个签名就带在证书上面。浏览器验证的时候，首先从证书中获取到数字签名的加密算法，然后使用公钥对<code>Signature</code>解密，得到<code>H1</code>。另一方面，浏览器对证书中的公钥、用途、颁发者等信息也打成一个包<code>data</code>，然后也对这个包hash，得到一个hash值<code>H2</code>，最后通过对比H1和H2是否一样就能验证证书是否被篡改了。</li>
+</ol>
+<h2 id="How-to-prevent"><a href="#How-to-prevent" class="headerlink" title="How to prevent"></a>How to prevent</h2><p>&emsp;&emsp;上面引入了证书校验这一步正正是解决了中间人攻击的问题。因为证书都需要CA签发，所以必须是认证过的网站所有者才拥有证书，因此非法的证书或者不属于这个网站的证书都无法通过浏览器的校验，此时浏览器就会有安全风险提示，避免了中间人攻击。</p>
+<h1 id="More-Vernurabilities"><a href="#More-Vernurabilities" class="headerlink" title="More Vernurabilities"></a>More Vernurabilities</h1><p>&emsp;&emsp;除了中间人攻击外，HTTPS的可靠性还依赖于本地生成并存储的随机数，因为后续数据传输的过程都是使用这个随机数做堆成加密的，因此一旦这个随机数泄露，数据也就有暴露的风险，但这个属于计算机本地的安全问题。</p>
+<p>&emsp;&emsp;同时，使用HTTPS时，数据包也是能够被抓取的，只不过数据内容是加密保护。</p>
+<h1 id="Summary"><a href="#Summary" class="headerlink" title="Summary"></a>Summary</h1><p>&emsp;&emsp;在这篇博客我们简单地了解了HTTPS的工作原理，知道了HTTPS是通过加密手段提供安全的数据传输，同时也了解了中间人攻击，以及HTTPS通过证书对这类攻击进行防范。</p>
+<h1 id="Reference"><a href="#Reference" class="headerlink" title="Reference"></a>Reference</h1><ol>
+<li><a target="_blank" rel="noopener" href="https://juejin.cn/post/6844904065227292685">你连HTTPS原理都不懂，还讲“中间人攻击”？</a></li>
+<li><a target="_blank" rel="noopener" href="https://dun.163.com/news/p/18043a7b41f047ab8dc06ea3bdff6e9b">DNS劫持原理？如何处理DNS劫持？</a></li>
+<li><a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Man-in-the-middle_attack">Man-in-the-middle attack</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.ssl.com/faqs/what-is-an-x-509-certificate/">What Is an X.509 Certificate</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.zhihu.com/question/37370216">浏览器如何验证HTTPS证书的合法性</a></li>
+</ol>
+
+    </div>
+
+    
+    
+    
+        <div class="reward-container">
+  <div></div>
+  <button onclick="var qr = document.getElementById('qr'); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    Donate
+  </button>
+  <div id="qr" style="display: none;">
+      
+      <div style="display: inline-block;">
+        <img src="/images/wechat_reward.png" alt="Leungyukshing WeChat Pay">
+        <p>WeChat Pay</p>
+      </div>
+      
+      <div style="display: inline-block;">
+        <img src="/images/alipay_reward.png" alt="Leungyukshing Alipay">
+        <p>Alipay</p>
+      </div>
+
+  </div>
+</div>
+
+        
+
+  <div class="followme">
+    <p>Welcome to my other publishing channels</p>
+
+    <div class="social-list">
+
+        <div class="social-item">
+          <a target="_blank" class="social-link" href="/atom.xml">
+            <span class="icon">
+              <i class="fa fa-rss"></i>
+            </span>
+
+            <span class="label">RSS</span>
+          </a>
+        </div>
+    </div>
+  </div>
+
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/archives/Introduction-AccessControl.html" rel="prev" title="浅谈Access Contrl">
+      <i class="fa fa-chevron-left"></i> 浅谈Access Contrl
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/archives/Introduction-DNSHijack.html" rel="next" title="浅谈DNS劫持">
+      浅谈DNS劫持 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Introduction"><span class="nav-number">1.</span> <span class="nav-text">Introduction</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#A-Glance-of-HTTPS"><span class="nav-number">2.</span> <span class="nav-text">A Glance of HTTPS</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%AF%81%E4%B9%A6%E9%AA%8C%E8%AF%81"><span class="nav-number">2.1.</span> <span class="nav-text">证书验证</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E4%BC%A0%E8%BE%93"><span class="nav-number">2.2.</span> <span class="nav-text">数据传输</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AF%B9%E7%A7%B0%E5%8A%A0%E5%AF%86%E4%B8%8E%E9%9D%9E%E5%AF%B9%E7%A7%B0%E5%8A%A0%E5%AF%86"><span class="nav-number">2.3.</span> <span class="nav-text">对称加密与非对称加密</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%B8%AD%E9%97%B4%E4%BA%BA%E6%94%BB%E5%87%BB"><span class="nav-number">3.</span> <span class="nav-text">中间人攻击</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#what-is-the-pitfall"><span class="nav-number">3.1.</span> <span class="nav-text">what is the pitfall?</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#How-to-validate-the-certificate"><span class="nav-number">3.2.</span> <span class="nav-text">How to validate the certificate?</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#How-to-prevent"><span class="nav-number">3.3.</span> <span class="nav-text">How to prevent</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#More-Vernurabilities"><span class="nav-number">4.</span> <span class="nav-text">More Vernurabilities</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Summary"><span class="nav-number">5.</span> <span class="nav-text">Summary</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Reference"><span class="nav-number">6.</span> <span class="nav-text">Reference</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Leungyukshing"
+      src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">Leungyukshing</p>
+  <div class="site-description" itemprop="description">A blog for code, programme sharing.</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">688</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">27</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/leungyukshing" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;leungyukshing" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:jacky14.liang@gmail.com" title="E-Mail → mailto:jacky14.liang@gmail.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="/atom.xml" title="RSS → &#x2F;atom.xml"><i class="fa fa-rss fa-fw"></i>RSS</a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll motion-element">
+    <div class="links-of-blogroll-title"><i class="fa fa-link fa-fw"></i>
+      Friends
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="http://www.liangjh45.com/" title="http:&#x2F;&#x2F;www.liangjh45.com&#x2F;" rel="noopener" target="_blank">Alva's blog</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="https://sysucarey.github.io/" title="https:&#x2F;&#x2F;sysucarey.github.io&#x2F;" rel="noopener" target="_blank">Carey's blog</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="https://blog.csdn.net/dickdick111/" title="https:&#x2F;&#x2F;blog.csdn.net&#x2F;dickdick111&#x2F;" rel="noopener" target="_blank">Dick's blog</a>
+        </li>
+    </ul>
+  </div>
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2017 – 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Leungyukshing</span>
+</div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="Total Visitors">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="Total Views">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : true,
+      appId      : 'AaLog29QcUdQKTboD6cY2dNP-gzGzoHsz',
+      appKey     : 'dUWNHLnTY9qG1jJwPnTtfMm8',
+      placeholder: "Just go go",
+      avatar     : 'mm',
+      meta       : guest,
+      pageSize   : '10' || 10,
+      visitor    : false,
+      lang       : '' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : false,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+
+</body>
+</html>

@@ -1,0 +1,723 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <meta name="google-site-verification" content="FHjCzDi7nry9Mvf4EFOY5cYoco-ZXq9tKjvXZK0nKr4">
+  <meta name="baidu-site-verification" content="code-gpMFPewYUF" />
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="/lib/pace/pace-theme-minimal.min.css">
+  <script src="/lib/pace/pace.min.js"></script>
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"leungyukshing.github.io","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"right","display":"hide","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"appID":"52USYSYESX","apiKey":"20b904c66f55b874f05edea4aca57780","indexName":"blog","hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="Introduction&amp;emsp;Linked Lists have great advantages of flexibility over the contiguous representation of data structure, but they have one weakness: They are sequential lists; that is, they are ar">
+<meta property="og:type" content="article">
+<meta property="og:title" content="BinaryTree">
+<meta property="og:url" content="https://leungyukshing.github.io/archives/BinaryTree.html">
+<meta property="og:site_name" content="Halo">
+<meta property="og:description" content="Introduction&amp;emsp;Linked Lists have great advantages of flexibility over the contiguous representation of data structure, but they have one weakness: They are sequential lists; that is, they are ar">
+<meta property="og:locale">
+<meta property="article:published_time" content="2018-02-07T14:32:00.000Z">
+<meta property="article:modified_time" content="2021-06-22T18:33:07.062Z">
+<meta property="article:author" content="Leungyukshing">
+<meta property="article:tag" content="BinaryTree">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://leungyukshing.github.io/archives/BinaryTree.html">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-Hans'
+  };
+</script>
+
+  <title>BinaryTree | Halo</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+<!-- hexo injector head_end end --><link rel="alternate" href="/atom.xml" title="Halo" type="application/atom+xml"><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Halo</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">A magic place for coding</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>About</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>Tags</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>Search
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="Searching..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+  <a href="https://github.com/leungyukshing" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="https://leungyukshing.github.io/archives/BinaryTree.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="Leungyukshing">
+      <meta itemprop="description" content="A blog for code, programme sharing.">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Halo">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          BinaryTree
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2018-02-07 09:32:00" itemprop="dateCreated datePublished" datetime="2018-02-07T09:32:00-05:00">2018-02-07</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2021-06-22 14:33:07" itemprop="dateModified" datetime="2021-06-22T14:33:07-04:00">2021-06-22</time>
+              </span>
+
+          
+            <span class="post-meta-item" title="Views" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">Views: </span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine: </span>
+    
+    <a title="valine" href="/archives/BinaryTree.html#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/archives/BinaryTree.html" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <script type="text/javascript" async src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-MML-AM_CHTML">
+</script>
+
+<h2 id="Introduction"><a href="#Introduction" class="headerlink" title="Introduction"></a>Introduction</h2><p>&emsp;<em>Linked Lists</em> have great advantages of flexibility over the contiguous representation of data structure, but they have one weakness: They are sequential lists; that is, they are arranged so that it is necessary to move through them only one position at a time. In this post, we can overcome this problem by using <strong>trees</strong> as data structure, with methods of pointers.</p>
+<a id="more"></a>
+
+<h3 id="Definition"><a href="#Definition" class="headerlink" title="Definition"></a>Definition</h3><p>&emsp;A <strong>binary tree</strong> is either empty, or it consists of a node called the <strong>root</strong> together with two binary trees called the <strong>left subtree</strong> and the <strong>right subtree</strong> of the root.<br>Noted that <strong>binary trees</strong> are not the same class as the <strong>2-trees</strong>. Each node in a <strong>2-tree</strong> has either 0 or 2 children, never 1, as can happen with a <strong>binary tree</strong>.</p>
+<p>For  <strong>n</strong> nodes, here I give a formular to calculate the number of different binary trees:<br>$$ \cfrac {C_{2n}^{n}}{n+1} $$</p>
+<h3 id="Tree-Traversal"><a href="#Tree-Traversal" class="headerlink" title="Tree Traversal"></a>Tree Traversal</h3><h4 id="What-is-the-order"><a href="#What-is-the-order" class="headerlink" title="What is the order?"></a>What is the order?</h4><p>&emsp;<strong>Traversal</strong>, moving through all the nodes of the binary tree, visiting each node in turn, is one of the most important operations on a binary tree.<br>For lists or other data structures we’ve mentioned previously, the <strong>traversal</strong> operation follows the same order. However, for trees, there are several orders in which we could traverse all the nodes.<br>At a given node, then, there are three tasks we shall wish to do in some order: We shall visit the node <strong>itself</strong>, we shall traverse its *<em>left subtree**</em>; and we shall traverse its <strong>right subtree</strong>. The key distinction in traversal orders is to decide which node we should visit first, among <strong>the node itself</strong>, <strong>its left subtree</strong>, and <strong>its right subtree</strong>.</p>
+<h4 id="Standard-Traversal-Orders"><a href="#Standard-Traversal-Orders" class="headerlink" title="Standard Traversal Orders"></a>Standard Traversal Orders</h4><p>For a traversal task, we denote that a node <strong>V</strong>, its left subtree <strong>L</strong>, and its right subtree <strong>R</strong>. So there are <strong>3</strong> orders we may have:</p>
+<table>
+<thead>
+<tr>
+<th align="center">preorder</th>
+<th align="center">inorder</th>
+<th align="center">postorder</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center"><strong>VLR</strong></td>
+<td align="center"><strong>LVR</strong></td>
+<td align="center"><strong>LRV</strong></td>
+</tr>
+</tbody></table>
+<h4 id="Expression-Trees"><a href="#Expression-Trees" class="headerlink" title="Expression Trees"></a>Expression Trees</h4><p>&emsp;An <strong>expression tree</strong> is built up from the simple operands and operators of an(arithmetical or logical) expression by placing the simple operands as the leaves of a binary tree and the operators as the interior nodes.<br>&emsp;For each <strong>binary operator</strong>, the left subtree contains all the simple operands and operators in the left operand of the given operator, and the right subtree contains everything in the right operand.<br>&emsp;For a <strong>unary operator</strong>, one of the two subtrees will be empty.</p>
+<h4 id="Polish-Form"><a href="#Polish-Form" class="headerlink" title="Polish Form"></a>Polish Form</h4><p>&emsp;The names of the traversal methods are related to the <strong>Polish forms</strong> of the expression. Traversal of an expression tree in <strong>preorder</strong> yields the <strong>prefix form</strong>, in which every operator is written before its operands; <strong>inorder</strong> traversal gives the <strong>infix form</strong>(the customary way that we use in daily life); and <strong>postorder</strong> traversal gives the <strong>postfix form</strong>, in which all operators appear after their operands. Although we may consider the <strong>infix form</strong> convenient to use, the computer prefer a <strong>postfix form</strong> expression, <strong>Reverse Polish</strong> expression to calculate. I will show you how to convert a <strong>infix form</strong> to a <strong>postfix form</strong> and calculate it in another post, but not here.</p>
+<table>
+<thead>
+<tr>
+<th align="center">Expression</th>
+<th align="center">a+b</th>
+<th align="center">log x</th>
+<th align="center">n !</th>
+<th align="center">a-(b×c)</th>
+<th align="center">(a&lt;b) or (c&lt;d)</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">preorder</td>
+<td align="center">+ a b</td>
+<td align="center">log x</td>
+<td align="center">! n</td>
+<td align="center">- a × b c</td>
+<td align="center">or &lt; a b &lt; c d</td>
+</tr>
+<tr>
+<td align="center">inorder</td>
+<td align="center">a + b</td>
+<td align="center">log x</td>
+<td align="center">n !</td>
+<td align="center">a - b × c</td>
+<td align="center">a &lt; b or c &lt; d</td>
+</tr>
+<tr>
+<td align="center">postorder</td>
+<td align="center">a b +</td>
+<td align="center">x log</td>
+<td align="center">n !</td>
+<td align="center">a b c × -</td>
+<td align="center">a b &lt; c d &lt; or</td>
+</tr>
+</tbody></table>
+<h3 id="Implementation"><a href="#Implementation" class="headerlink" title="Implementation"></a>Implementation</h3><p>First we consider the representation of the nodes that make up a tree. We define a structure <strong>Binary_node</strong>, which has both a left and a right subtree.</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span> &lt;<span class="class"><span class="keyword">class</span> <span class="title">Entry</span>&gt;</span></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">Binary_node</span> &#123;</span></span><br><span class="line">  <span class="comment">// data members</span></span><br><span class="line">  Entry data;</span><br><span class="line">  Binary_node&lt;Entry&gt; *left;</span><br><span class="line">  Binary_node&lt;Entry&gt; *right;</span><br><span class="line"></span><br><span class="line">  <span class="comment">//constructors</span></span><br><span class="line">  Binary_node();</span><br><span class="line">  Binary_node(<span class="keyword">const</span> Entry &amp;x);</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<p>And its implementations:</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span> &lt;<span class="class"><span class="keyword">class</span> <span class="title">Entry</span>&gt;</span></span><br><span class="line">Binary_node&lt;Entry&gt;::Binary_node() &#123;</span><br><span class="line">  left = right = <span class="literal">NULL</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">template</span> &lt;<span class="class"><span class="keyword">class</span> <span class="title">Entry</span>&gt;</span></span><br><span class="line">Binary_node&lt;Entry&gt;::Binary_node(<span class="keyword">const</span> Entry &amp;x) &#123;</span><br><span class="line">  data = x;</span><br><span class="line">  left = right = <span class="literal">NULL</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>&emsp;Now we can start to construct a tree. For convenience, here we give most methods that a tree need, but not necessary to implement them right now. This provides us a bluprint to construct any binary tree.</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span> &lt;<span class="class"><span class="keyword">class</span> <span class="title">Entry</span>&gt;</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">BinaryTree</span> &#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">  BinaryTree();</span><br><span class="line">  <span class="function"><span class="keyword">bool</span> <span class="title">empty</span><span class="params">()</span> <span class="keyword">const</span></span>;</span><br><span class="line">  <span class="function"><span class="keyword">void</span> <span class="title">preorder</span><span class="params">(<span class="keyword">void</span> (*visit)(Entry &amp;))</span></span>;</span><br><span class="line">  <span class="function"><span class="keyword">void</span> <span class="title">inorder</span><span class="params">(<span class="keyword">void</span> (*visit)(Entry &amp;))</span></span>;</span><br><span class="line">  <span class="function"><span class="keyword">void</span> <span class="title">postorder</span><span class="params">(<span class="keyword">void</span> (*visit)(Entry &amp;))</span></span>;</span><br><span class="line">  <span class="function"><span class="keyword">void</span> <span class="title">double_traverse</span><span class="params">(<span class="keyword">void</span> (*visit)(Entry &amp;))</span></span>;</span><br><span class="line">  <span class="function"><span class="keyword">void</span> <span class="title">level_traverse</span><span class="params">(<span class="keyword">void</span> (*visit)(Entry &amp;))</span></span>;</span><br><span class="line">  <span class="function"><span class="keyword">int</span> <span class="title">size</span><span class="params">()</span> <span class="keyword">const</span></span>;</span><br><span class="line">  <span class="function"><span class="keyword">void</span> <span class="title">clear</span><span class="params">()</span></span>;</span><br><span class="line">  <span class="function"><span class="keyword">int</span> <span class="title">height</span><span class="params">()</span> <span class="keyword">const</span></span>;</span><br><span class="line">  <span class="function"><span class="keyword">int</span> <span class="title">width</span><span class="params">()</span> <span class="keyword">const</span></span>;</span><br><span class="line">  <span class="function"><span class="keyword">int</span> <span class="title">leaf_count</span><span class="params">()</span> <span class="keyword">const</span></span>;</span><br><span class="line">  <span class="function"><span class="keyword">void</span> <span class="title">insert</span><span class="params">(<span class="keyword">const</span> Entry &amp;)</span></span>;</span><br><span class="line"></span><br><span class="line">  BinaryTree(<span class="keyword">const</span> BinaryTree&lt;Entry&gt; &amp;original);</span><br><span class="line">  BinaryTree &amp; <span class="keyword">operator</span>=(<span class="keyword">const</span> BinaryTree&lt;Entry&gt; &amp;original);</span><br><span class="line">  ~BinaryTree();</span><br><span class="line"><span class="keyword">protected</span>:</span><br><span class="line">  Binary_node&lt;Entry&gt; *root;</span><br><span class="line">  <span class="comment">// aux functions</span></span><br><span class="line">  <span class="function"><span class="keyword">void</span> <span class="title">recursive_preorder</span><span class="params">(Binary_node&lt;Entry&gt; *sub_root, <span class="keyword">void</span> (*visit)(Entry &amp;))</span></span>;</span><br><span class="line">  <span class="function"><span class="keyword">void</span> <span class="title">recursive_inorder</span><span class="params">(Binary_node&lt;Entry&gt; *sub_root, <span class="keyword">void</span> (*visit)(Entry &amp;))</span></span>;</span><br><span class="line">  <span class="function"><span class="keyword">void</span> <span class="title">recursive_postorder</span><span class="params">(Binary_node&lt;Entry&gt; *sub_root, <span class="keyword">void</span> (*visit)(Entry &amp;))</span></span>;</span><br><span class="line">  <span class="function"><span class="keyword">int</span> <span class="title">recursive_size</span><span class="params">(Binary_node&lt;Entry&gt; *sub_root)</span> <span class="keyword">const</span></span>;</span><br><span class="line">  <span class="function"><span class="keyword">int</span> <span class="title">recursive_leaf_count</span><span class="params">(Binary_node&lt;Entry&gt; *sub_root)</span> <span class="keyword">const</span></span>;</span><br><span class="line">  <span class="function"><span class="keyword">int</span> <span class="title">recursive_height</span><span class="params">(Binary_node&lt;Entry&gt; *sub_root)</span> <span class="keyword">const</span></span>;</span><br><span class="line">  <span class="function"><span class="keyword">void</span> <span class="title">recursive_insert</span><span class="params">(Binary_node&lt;Entry&gt; *&amp;sub_root, <span class="keyword">const</span> Entry &amp;x)</span></span>;</span><br><span class="line">  <span class="function"><span class="keyword">void</span> <span class="title">recursive_clear</span><span class="params">(Binary_node&lt;Entry&gt; *&amp;sub_root)</span></span>;</span><br><span class="line">  <span class="function">Binary_node&lt;Entry&gt;* <span class="title">recursive_copy</span><span class="params">(Binary_node&lt;Entry&gt; *sub_root)</span></span>;</span><br><span class="line">  <span class="function"><span class="keyword">void</span> <span class="title">recursive_double_traverse</span><span class="params">(Binary_node&lt;Entry&gt; *sub_root, <span class="keyword">void</span> (*visit)(Entry &amp;))</span></span>;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<p>&emsp;It seems a bit more complex but just relax. I’ll explain it in details. At first, functions like <strong>height</strong>, <strong>size</strong>, and <strong>clear</strong> are basic functions that tell us some features of a tree. They all can be implemented easily by using recursions. So they have their corresponding auxiliary functions in the <strong>protected field</strong>.<br>&emsp;Now we move to see the traversal functions. As I’ve introducted that there are 3 standard traversal orders, there are certainly <strong>three traversal functions</strong>. And of course, they have their corresponding auxiliary functions as well.<br>&emsp;Noted that the <strong>insert</strong> function here is used to test our basic tree class, it will be overrided when BST or other trees are implemented.</p>
+<h4 id="BinaryTree"><a href="#BinaryTree" class="headerlink" title="BinaryTree()"></a>BinaryTree()</h4><p><em>precondition</em>: None.<br><em>postcondition</em>: The <em>BinaryTree</em> has been created and is initialized to be empty.</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span> &lt;<span class="class"><span class="keyword">class</span> <span class="title">Entry</span>&gt;</span></span><br><span class="line">BinaryTree&lt;Entry&gt;::BinaryTree() &#123;</span><br><span class="line">  root = <span class="literal">NULL</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="BinaryTree-const-BinaryTree-lt-Entry-gt-amp-original"><a href="#BinaryTree-const-BinaryTree-lt-Entry-gt-amp-original" class="headerlink" title="BinaryTree(const BinaryTree&lt; Entry &gt; &amp;original)"></a>BinaryTree(<strong>const</strong> BinaryTree&lt; Entry &gt; &amp;original)</h4><p><em>precondition</em>: None.<br><em>postcondition</em>: The <em>BinaryTree</em> has been created and is initialized with <em>BinaryTree</em> original.</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span> &lt;<span class="class"><span class="keyword">class</span> <span class="title">Entry</span>&gt;</span></span><br><span class="line">BinaryTree&lt;Entry&gt;::BinaryTree(<span class="keyword">const</span> BinaryTree&lt;Entry&gt; &amp;original) &#123;</span><br><span class="line">  root = recursive_copy(original.root);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="recursive-copy-Binary-node-lt-Entry-gt-sub-root"><a href="#recursive-copy-Binary-node-lt-Entry-gt-sub-root" class="headerlink" title="recursive_copy(Binary_node&lt; Entry &gt; *sub_root)"></a>recursive_copy(Binary_node&lt; Entry &gt; *sub_root)</h4><p><em>precondition</em>: None.<br><em>postcondition</em>: Return a node that is initialized with sub_root.</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span> &lt;<span class="class"><span class="keyword">class</span> <span class="title">Entry</span>&gt;</span></span><br><span class="line">Binary_node&lt;Entry&gt;* BinaryTree&lt;Entry&gt;::recursive_copy(Binary_node&lt;Entry&gt; *sub_root) &#123;</span><br><span class="line">  <span class="keyword">if</span> (sub_root == <span class="literal">NULL</span>)</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">NULL</span>;</span><br><span class="line">  Binary_node&lt;Entry&gt; *temp = <span class="keyword">new</span> Binary_node&lt;Entry&gt;(sub_root-&gt;data);</span><br><span class="line">  temp-&gt;left = recursive_copy(sub_root-&gt;left);</span><br><span class="line">  temp-&gt;right = recursive_copy(sub_root-&gt;right);</span><br><span class="line">  <span class="keyword">return</span> temp;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="BinaryTree-amp-operator-const-BinaryTree-lt-Entry-gt-amp-original"><a href="#BinaryTree-amp-operator-const-BinaryTree-lt-Entry-gt-amp-original" class="headerlink" title="BinaryTree&amp; operator=(const BinaryTree&lt; Entry &gt; &amp;original)"></a>BinaryTree&amp; operator=(<strong>const</strong> BinaryTree&lt; Entry &gt; &amp;original)</h4><p><em>precondition</em>: None.<br><em>postcondition</em>: The <em>BinaryTree</em> is reset to copy original.</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span> &lt;<span class="class"><span class="keyword">class</span> <span class="title">Entry</span>&gt;</span></span><br><span class="line">BinaryTree&lt;Entry&gt;&amp; BinaryTree&lt;Entry&gt;::<span class="keyword">operator</span>=(<span class="keyword">const</span> BinaryTree&lt;Entry&gt; &amp;original) &#123;</span><br><span class="line">  BinaryTree&lt;Entry&gt; new_copy(original);</span><br><span class="line">  clear();</span><br><span class="line">  root = new_copy.root;</span><br><span class="line">  new_copy.root = <span class="literal">NULL</span>;</span><br><span class="line">  <span class="keyword">return</span> *<span class="keyword">this</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="BinaryTree-1"><a href="#BinaryTree-1" class="headerlink" title="~BinaryTree()"></a>~BinaryTree()</h4><p><em>precondition</em>: None.<br><em>postcondition</em>: The <em>BinaryTree</em> itself is released.</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span> &lt;<span class="class"><span class="keyword">class</span> <span class="title">Entry</span>&gt;</span></span><br><span class="line">BinaryTree&lt;Entry&gt;::~BinaryTree() &#123;</span><br><span class="line">  clear();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="empty"><a href="#empty" class="headerlink" title="empty()"></a>empty()</h4><p><em>precondition</em>: None.<br><em>postcondition</em>: The function returns <strong>true</strong> or <strong>false</strong> according to whether the <em>BinaryTree</em> is empty or not.</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span> &lt;<span class="class"><span class="keyword">class</span> <span class="title">Entry</span>&gt;</span></span><br><span class="line"><span class="keyword">bool</span> BinaryTree&lt;Entry&gt;::empty() <span class="keyword">const</span> &#123; <span class="keyword">return</span> root == <span class="literal">NULL</span>; &#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="size"><a href="#size" class="headerlink" title="size()"></a>size()</h4><p><em>precondition</em>: None.<br><em>postcondition</em>: Return the number of entries in the <em>BinaryTree</em>.</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 计算节点个数</span></span><br><span class="line"><span class="keyword">template</span> &lt;<span class="class"><span class="keyword">class</span> <span class="title">Entry</span>&gt;</span></span><br><span class="line"><span class="keyword">int</span> BinaryTree&lt;Entry&gt;::size() <span class="keyword">const</span> &#123;</span><br><span class="line">  <span class="keyword">return</span> recursive_size(root);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="recursive-size-Binary-node-lt-Entry-gt-sub-root"><a href="#recursive-size-Binary-node-lt-Entry-gt-sub-root" class="headerlink" title="recursive_size(Binary_node&lt; Entry &gt; *sub_root)"></a>recursive_size(Binary_node&lt; Entry &gt; *sub_root)</h4><p><em>precondition</em>: sub_root is either NULL or points to a subtree of the <em>BinaryTree</em>.<br><em>postcondition</em>: Return the number of entries in the subtree rooted at sub_root.</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span> &lt;<span class="class"><span class="keyword">class</span> <span class="title">Entry</span>&gt;</span></span><br><span class="line"><span class="keyword">int</span> BinaryTree&lt;Entry&gt;::recursive_size(Binary_node&lt;Entry&gt; *sub_root) <span class="keyword">const</span> &#123;</span><br><span class="line">  <span class="comment">// 若本身为空，不计数</span></span><br><span class="line">  <span class="keyword">if</span> (sub_root == <span class="literal">NULL</span>)</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">  <span class="keyword">else</span></span><br><span class="line">    <span class="keyword">return</span> <span class="number">1</span> + recursive_size(sub_root-&gt;left) + recursive_size(sub_root-&gt;right);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="height"><a href="#height" class="headerlink" title="height()"></a>height()</h4><p><em>precondition</em>: None.<br><em>postcondition</em>: Return the height of the <em>BinaryTree</em>.</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 计算树高</span></span><br><span class="line"><span class="keyword">template</span> &lt;<span class="class"><span class="keyword">class</span> <span class="title">Entry</span>&gt;</span></span><br><span class="line"><span class="keyword">int</span> BinaryTree&lt;Entry&gt;::height() <span class="keyword">const</span> &#123;</span><br><span class="line">  <span class="keyword">return</span> recursive_height(root);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="recursive-height-Binary-node-lt-Entry-gt-sub-root"><a href="#recursive-height-Binary-node-lt-Entry-gt-sub-root" class="headerlink" title="recursive_height(Binary_node&lt; Entry &gt; *sub_root)"></a>recursive_height(Binary_node&lt; Entry &gt; *sub_root)</h4><p><em>precondition</em>: sub_root is either NULL or points to a subtree of the <em>BinaryTree</em>.<br><em>postcondition</em>: Return the height of the subtree.</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span> &lt;<span class="class"><span class="keyword">class</span> <span class="title">Entry</span>&gt;</span></span><br><span class="line"><span class="keyword">int</span> BinaryTree&lt;Entry&gt;::recursive_height(Binary_node&lt;Entry&gt; *sub_root) <span class="keyword">const</span> &#123;</span><br><span class="line">  <span class="keyword">if</span> (sub_root == <span class="literal">NULL</span>)</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">  <span class="keyword">int</span> left_height = recursive_height(sub_root-&gt;left);</span><br><span class="line">  <span class="keyword">int</span> right_height = recursive_height(sub_root-&gt;right);</span><br><span class="line">  <span class="keyword">if</span> (left_height &gt; right_height) &#123;</span><br><span class="line">    <span class="keyword">return</span> left_height + <span class="number">1</span>;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">else</span></span><br><span class="line">    <span class="keyword">return</span> right_height + <span class="number">1</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="width"><a href="#width" class="headerlink" title="width()"></a>width()</h4><p><em>precondition</em>: None.<br><em>postcondition</em>: Return the width of the <em>BinaryTree</em>.</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span> &lt;<span class="class"><span class="keyword">class</span> <span class="title">Entry</span>&gt;</span></span><br><span class="line"><span class="keyword">int</span> BinaryTree&lt;Entry&gt;::width() <span class="keyword">const</span> &#123;</span><br><span class="line">  <span class="keyword">if</span> (root == <span class="literal">NULL</span>)</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">  LinkedQueue&lt;Binary_node&lt;Entry&gt;*&gt; current_level;</span><br><span class="line">  current_level.append(root);</span><br><span class="line">  <span class="keyword">int</span> max_level = <span class="number">0</span>;</span><br><span class="line">  <span class="keyword">while</span> (current_level.size() != <span class="number">0</span>) &#123;</span><br><span class="line">    <span class="keyword">if</span> (current_level.size() &gt; max_level)</span><br><span class="line">      max_level = current_level.size();</span><br><span class="line">    LinkedQueue &lt;Binary_node&lt;Entry&gt; *&gt; next_level;</span><br><span class="line">    <span class="keyword">do</span> &#123;</span><br><span class="line">      Binary_node&lt;Entry&gt; *sub_root;</span><br><span class="line">      current_level.retrieve(sub_root);</span><br><span class="line">      <span class="keyword">if</span> (sub_root-&gt;left)</span><br><span class="line">        next_level.append(sub_root-&gt;left);</span><br><span class="line">      <span class="keyword">if</span> (sub_root-&gt;right)</span><br><span class="line">        next_level.append(sub_root-&gt;right);</span><br><span class="line">      current_level.serve();</span><br><span class="line">    &#125; <span class="keyword">while</span> (!current_level.empty());</span><br><span class="line">    current_level = next_level;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> max_level;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="leaf-count"><a href="#leaf-count" class="headerlink" title="leaf_count()"></a>leaf_count()</h4><p><em>precondition</em>: None.<br><em>postcondition</em>: Return the number of leaves in the <em>BinaryTree</em>.</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 计算叶子节点个数</span></span><br><span class="line"><span class="keyword">template</span> &lt;<span class="class"><span class="keyword">class</span> <span class="title">Entry</span>&gt;</span></span><br><span class="line"><span class="keyword">int</span> BinaryTree&lt;Entry&gt;::leaf_count() <span class="keyword">const</span> &#123;</span><br><span class="line">  <span class="keyword">return</span> recursive_leaf_count(root);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="recursive-leaf-count-Binary-node-lt-Entry-gt-sub-root"><a href="#recursive-leaf-count-Binary-node-lt-Entry-gt-sub-root" class="headerlink" title="recursive_leaf_count(Binary_node&lt; Entry &gt; *sub_root)"></a>recursive_leaf_count(Binary_node&lt; Entry &gt; *sub_root)</h4><p><em>precondition</em>: sub_root is either NULL or points to a subtree of the <em>BinaryTree</em>.<br><em>postcondition</em>: Return the number of leaves in the subtree rooted at sub_root.</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span> &lt;<span class="class"><span class="keyword">class</span> <span class="title">Entry</span>&gt;</span></span><br><span class="line"><span class="keyword">int</span> BinaryTree&lt;Entry&gt;::recursive_leaf_count(Binary_node&lt;Entry&gt; *sub_root) <span class="keyword">const</span> &#123;</span><br><span class="line">  <span class="comment">// 若本身是空，不计数</span></span><br><span class="line">  <span class="keyword">if</span> (sub_root == <span class="literal">NULL</span>)</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">  <span class="comment">// 若本身不为空，且无左右子树，即自己为叶子节点，计数</span></span><br><span class="line">  <span class="keyword">if</span> (sub_root-&gt;left == <span class="literal">NULL</span> &amp;&amp; sub_root-&gt;right == <span class="literal">NULL</span>)</span><br><span class="line">    <span class="keyword">return</span> <span class="number">1</span>;</span><br><span class="line">  <span class="keyword">else</span></span><br><span class="line">    <span class="keyword">return</span> recursive_leaf_count(sub_root-&gt;left) + recursive_leaf_count(sub_root-&gt;right);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="clear"><a href="#clear" class="headerlink" title="clear()"></a>clear()</h4><p><em>precondition</em>: None.<br><em>postcondition</em>: Clean the <em>BinaryTree</em> itself.</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span> &lt;<span class="class"><span class="keyword">class</span> <span class="title">Entry</span>&gt;</span></span><br><span class="line"><span class="keyword">void</span> BinaryTree&lt;Entry&gt;::clear() &#123;</span><br><span class="line">  recursive_clear(root);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="recursive-clear-Binary-node-lt-Entry-gt-amp-sub-root"><a href="#recursive-clear-Binary-node-lt-Entry-gt-amp-sub-root" class="headerlink" title="recursive_clear(Binary_node&lt; Entry &gt; *&amp;sub_root)"></a>recursive_clear(Binary_node&lt; Entry &gt; *&amp;sub_root)</h4><p><em>precondition</em>: sub_root is either NULL or points to a subtree of the <em>BinaryTree</em>.<br><em>postcondition</em>: The subtree has been cleaned.</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span> &lt;<span class="class"><span class="keyword">class</span> <span class="title">Entry</span>&gt;</span></span><br><span class="line"><span class="keyword">void</span> BinaryTree&lt;Entry&gt;::recursive_clear(Binary_node&lt;Entry&gt; *&amp;sub_root) &#123;</span><br><span class="line">  Binary_node&lt;Entry&gt; *temp = sub_root;</span><br><span class="line">  <span class="keyword">if</span> (sub_root == <span class="literal">NULL</span>)</span><br><span class="line">    <span class="keyword">return</span>;</span><br><span class="line">  recursive_clear(sub_root-&gt;left);</span><br><span class="line">  recursive_clear(sub_root-&gt;right);</span><br><span class="line">  sub_root = <span class="literal">NULL</span>;</span><br><span class="line">  <span class="keyword">delete</span> temp;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="preorder-void-visit-Entry-amp"><a href="#preorder-void-visit-Entry-amp" class="headerlink" title="preorder(void (*visit)(Entry &amp;))"></a>preorder(void (*visit)(Entry &amp;))</h4><p><em>precondition</em>: None.<br><em>postcondition</em>: Traverse the <em>BinaryTree</em> in preorder.</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span> &lt;<span class="class"><span class="keyword">class</span> <span class="title">Entry</span>&gt;</span></span><br><span class="line"><span class="keyword">void</span> BinaryTree&lt;Entry&gt;::preorder(<span class="keyword">void</span> (*visit)(Entry &amp;)) &#123;</span><br><span class="line">  recursive_preorder(root, visit);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="recursive-preorder-Binary-node-lt-Entry-gt-sub-root-void-visit-Entry-amp"><a href="#recursive-preorder-Binary-node-lt-Entry-gt-sub-root-void-visit-Entry-amp" class="headerlink" title="recursive_preorder(Binary_node&lt; Entry &gt; *sub_root, void (*visit)(Entry &amp;))"></a>recursive_preorder(Binary_node&lt; Entry &gt; *sub_root, void (*visit)(Entry &amp;))</h4><p><em>precondition</em>: sub_root is either NULL or points to a subtree of the <em>BinaryTree</em>.<br><em>postcondition</em>: The subtree has been been traversed in preorder sequence.</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span> &lt;<span class="class"><span class="keyword">class</span> <span class="title">Entry</span>&gt;</span></span><br><span class="line"><span class="keyword">void</span> BinaryTree&lt;Entry&gt;::recursive_preorder(Binary_node&lt;Entry&gt; *sub_root, <span class="keyword">void</span> (*visit)(Entry &amp;)) &#123;</span><br><span class="line">  <span class="comment">// 当前节点不为空</span></span><br><span class="line">  <span class="keyword">if</span> (sub_root != <span class="literal">NULL</span>) &#123;</span><br><span class="line">    (*visit)(sub_root-&gt;data);</span><br><span class="line">    recursive_preorder(sub_root-&gt;left, visit);</span><br><span class="line">    recursive_preorder(sub_root-&gt;right, visit);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="inorder-void-visit-Entry-amp"><a href="#inorder-void-visit-Entry-amp" class="headerlink" title="inorder(void (*visit)(Entry &amp;))"></a>inorder(void (*visit)(Entry &amp;))</h4><p><em>precondition</em>: None.<br><em>postcondition</em>: Traverse the <em>BinaryTree</em> in inorder.</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span> &lt;<span class="class"><span class="keyword">class</span> <span class="title">Entry</span>&gt;</span></span><br><span class="line"><span class="keyword">void</span> BinaryTree&lt;Entry&gt;::inorder(<span class="keyword">void</span> (*visit)(Entry &amp;)) &#123;</span><br><span class="line">  recursive_inorder(root, visit);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="recursive-inorder-Binary-node-lt-Entry-gt-sub-root-void-visit-Entry-amp"><a href="#recursive-inorder-Binary-node-lt-Entry-gt-sub-root-void-visit-Entry-amp" class="headerlink" title="recursive_inorder(Binary_node&lt; Entry &gt; *sub_root, void (*visit)(Entry &amp;))"></a>recursive_inorder(Binary_node&lt; Entry &gt; *sub_root, void (*visit)(Entry &amp;))</h4><p><em>precondition</em>: sub_root is either NULL or points to a subtree of the <em>BinaryTree</em>.<br><em>postcondition</em>: The subtree has been been traversed in inorder sequence.</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span> &lt;<span class="class"><span class="keyword">class</span> <span class="title">Entry</span>&gt;</span></span><br><span class="line"><span class="keyword">void</span> BinaryTree&lt;Entry&gt;::recursive_inorder(Binary_node&lt;Entry&gt; *sub_root, <span class="keyword">void</span> (*visit)(Entry &amp;)) &#123;</span><br><span class="line">  <span class="comment">// 当前节点不为空</span></span><br><span class="line">  <span class="keyword">if</span> (sub_root != <span class="literal">NULL</span>) &#123;</span><br><span class="line">    recursive_inorder(sub_root-&gt;left, visit);</span><br><span class="line">    (*visit)(sub_root-&gt;data);</span><br><span class="line">    recursive_inorder(sub_root-&gt;right, visit);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="postorder-void-visit-Entry-amp"><a href="#postorder-void-visit-Entry-amp" class="headerlink" title="postorder(void (*visit)(Entry &amp;))"></a>postorder(void (*visit)(Entry &amp;))</h4><p><em>precondition</em>: None.<br><em>postcondition</em>: Traverse the <em>BinaryTree</em> in postorder.</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span> &lt;<span class="class"><span class="keyword">class</span> <span class="title">Entry</span>&gt;</span></span><br><span class="line"><span class="keyword">void</span> BinaryTree&lt;Entry&gt;::postorder(<span class="keyword">void</span> (*visit)(Entry &amp;)) &#123;</span><br><span class="line">  recursive_postorder(root, visit);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="recursive-postorder-Binary-node-lt-Entry-gt-sub-root-void-visit-Entry-amp"><a href="#recursive-postorder-Binary-node-lt-Entry-gt-sub-root-void-visit-Entry-amp" class="headerlink" title="recursive_postorder(Binary_node&lt; Entry &gt; *sub_root, void (*visit)(Entry &amp;))"></a>recursive_postorder(Binary_node&lt; Entry &gt; *sub_root, void (*visit)(Entry &amp;))</h4><p><em>precondition</em>: sub_root is either NULL or points to a subtree of the <em>BinaryTree</em>.<br><em>postcondition</em>: The subtree has been been traversed in postorder sequence.</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span> &lt;<span class="class"><span class="keyword">class</span> <span class="title">Entry</span>&gt;</span></span><br><span class="line"><span class="keyword">void</span> BinaryTree&lt;Entry&gt;::recursive_postorder(Binary_node&lt;Entry&gt; *sub_root, <span class="keyword">void</span> (*visit)(Entry &amp;)) &#123;</span><br><span class="line">  <span class="comment">// 当前节点不为空</span></span><br><span class="line">  <span class="keyword">if</span> (sub_root != <span class="literal">NULL</span>) &#123;</span><br><span class="line">    recursive_postorder(sub_root-&gt;left, visit);</span><br><span class="line">    recursive_postorder(sub_root-&gt;right, visit);</span><br><span class="line">    (*visit)(sub_root-&gt;data);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="insert-const-Entry-amp"><a href="#insert-const-Entry-amp" class="headerlink" title="insert(const Entry &amp;)"></a>insert(<strong>const</strong> Entry &amp;)</h4><p><em>precondition</em>: None.<br><em>postcondition</em>: If the <em>root</em> is empty, the new entry should be inserted into the <em>root</em>, otherwise it should be inserted into the shorter of the two subtrees of the <em>root</em>(or into the left subtree if both subtrees have the same height).</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 插入</span></span><br><span class="line"><span class="keyword">template</span> &lt;<span class="class"><span class="keyword">class</span> <span class="title">Entry</span>&gt;</span></span><br><span class="line"><span class="keyword">void</span> BinaryTree&lt;Entry&gt;::insert(<span class="keyword">const</span> Entry &amp;x) &#123;</span><br><span class="line">  recursive_insert(root, x);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="recursive-insert-Binary-node-lt-Entry-gt-amp-sub-root-const-Entry-amp-x"><a href="#recursive-insert-Binary-node-lt-Entry-gt-amp-sub-root-const-Entry-amp-x" class="headerlink" title="recursive_insert(Binary_node&lt; Entry &gt; *&amp;sub_root, const Entry &amp;x)"></a>recursive_insert(Binary_node&lt; Entry &gt; *&amp;sub_root, <strong>const</strong> Entry &amp;x)</h4><p><em>precondition</em>: sub_root is either NULL or points to a subtree of the <em>BinaryTree</em>.<br><em>postcondition</em>: If subroot is n NULL, x is inserted to this subtree; else, move to left or right subtree.</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span> &lt;<span class="class"><span class="keyword">class</span> <span class="title">Entry</span>&gt;</span></span><br><span class="line"><span class="keyword">void</span> BinaryTree&lt;Entry&gt;::recursive_insert(Binary_node&lt;Entry&gt; *&amp;sub_root, <span class="keyword">const</span> Entry &amp;x) &#123;</span><br><span class="line">  <span class="comment">// 若当前节点为空，则插入到当前节点</span></span><br><span class="line">  <span class="keyword">if</span> (sub_root == <span class="literal">NULL</span>)&#123;</span><br><span class="line">    sub_root = <span class="keyword">new</span> Binary_node&lt;Entry&gt;(x);</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="comment">// 若左子树较高，则插入到右边</span></span><br><span class="line">  <span class="keyword">else</span> <span class="keyword">if</span> (recursive_height(sub_root-&gt;right) &lt; recursive_height(sub_root-&gt;left))</span><br><span class="line">    recursive_insert(sub_root-&gt;right, x);</span><br><span class="line">  <span class="comment">// 若右子树较高或等高，则插入到左边</span></span><br><span class="line">  <span class="keyword">else</span></span><br><span class="line">    recursive_insert(sub_root-&gt;left, x);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="double-traverse-void-visit-Entry-amp"><a href="#double-traverse-void-visit-Entry-amp" class="headerlink" title="double_traverse(void (*visit)(Entry &amp;))"></a>double_traverse(void (*visit)(Entry &amp;))</h4><p><em>precondition</em>: None.<br><em>postcondition</em>: At each node of the <em>BinaryTree</em>, <strong>double-order traversal</strong> function first visits the node, then traverses its left subtree(in double order), then visits the node again, then traverses its right subtree(in double order).</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 双重遍历</span></span><br><span class="line"><span class="keyword">template</span> &lt;<span class="class"><span class="keyword">class</span> <span class="title">Entry</span>&gt;</span></span><br><span class="line"><span class="keyword">void</span> BinaryTree&lt;Entry&gt;::double_traverse(<span class="keyword">void</span> (*visit)(Entry &amp;)) &#123;</span><br><span class="line">  recursive_double_traverse(root, visit);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="recursive-double-traverse-Binary-node-sub-root-void-visit-Entry-amp"><a href="#recursive-double-traverse-Binary-node-sub-root-void-visit-Entry-amp" class="headerlink" title="recursive_double_traverse(Binary_node *sub_root, void (*visit)(Entry &amp;))"></a>recursive_double_traverse(Binary_node<Entry> *sub_root, void (*visit)(Entry &amp;))</h4><p><em>precondition</em>: None.<br><em>postcondition</em>: The subtree rooted at sub_root is doubly traversed.</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span> &lt;<span class="class"><span class="keyword">class</span> <span class="title">Entry</span>&gt;</span></span><br><span class="line"><span class="keyword">void</span> BinaryTree&lt;Entry&gt;::recursive_double_traverse(Binary_node&lt;Entry&gt; *sub_root, <span class="keyword">void</span> (*visit)(Entry &amp;x)) &#123;</span><br><span class="line">  <span class="keyword">if</span> (sub_root != <span class="literal">NULL</span>) &#123;</span><br><span class="line">    (*visit)(sub_root-&gt;data);</span><br><span class="line">    recursive_double_traverse(sub_root-&gt;left, visit);</span><br><span class="line">    (*visit)(sub_root-&gt;data);</span><br><span class="line">    recursive_double_traverse(sub_root-&gt;right, visit);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="level-traverse-void-visit-Entry-amp"><a href="#level-traverse-void-visit-Entry-amp" class="headerlink" title="level_traverse(void (*visit)(Entry &amp;))"></a>level_traverse(void (*visit)(Entry &amp;))</h4><p><em>precondition</em>: None.<br><em>postcondition</em>: The <em>BinaryTree</em> is traversed level by level, starting from the top. The operation *visit is applied to all entries.</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span> &lt;<span class="class"><span class="keyword">class</span> <span class="title">Entry</span>&gt;</span></span><br><span class="line"><span class="keyword">void</span> BinaryTree&lt;Entry&gt;::level_traverse(<span class="keyword">void</span> (*visit)(Entry &amp;)) &#123;</span><br><span class="line">  Binary_node&lt;Entry&gt; *sub_root;</span><br><span class="line">  <span class="keyword">if</span> (root != <span class="literal">NULL</span>) &#123;</span><br><span class="line">    LinkedQueue&lt;Binary_node&lt;Entry&gt; *&gt; waiting_nodes;</span><br><span class="line">    waiting_nodes.append(root); <span class="comment">// 将根节点放入队列</span></span><br><span class="line">    <span class="keyword">do</span> &#123;</span><br><span class="line">      waiting_nodes.retrieve(sub_root); <span class="comment">// 获取头节点进行处理</span></span><br><span class="line">      (*visit)(sub_root-&gt;data);</span><br><span class="line">      <span class="keyword">if</span> (sub_root-&gt;left)</span><br><span class="line">        waiting_nodes.append(sub_root-&gt;left);</span><br><span class="line">      <span class="keyword">if</span> (sub_root-&gt;right)</span><br><span class="line">        waiting_nodes.append(sub_root-&gt;right);</span><br><span class="line">      waiting_nodes.serve(); <span class="comment">// 拿走已经处理的头</span></span><br><span class="line">    &#125; <span class="keyword">while</span> (!waiting_nodes.empty());</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>That’s the general introduction of <strong>BinaryTree</strong>. In next post, I’ll introduce another useful tree structure to you. Thank you!</p>
+
+    </div>
+
+    
+    
+    
+        <div class="reward-container">
+  <div></div>
+  <button onclick="var qr = document.getElementById('qr'); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    Donate
+  </button>
+  <div id="qr" style="display: none;">
+      
+      <div style="display: inline-block;">
+        <img src="/images/wechat_reward.png" alt="Leungyukshing WeChat Pay">
+        <p>WeChat Pay</p>
+      </div>
+      
+      <div style="display: inline-block;">
+        <img src="/images/alipay_reward.png" alt="Leungyukshing Alipay">
+        <p>Alipay</p>
+      </div>
+
+  </div>
+</div>
+
+        
+
+  <div class="followme">
+    <p>Welcome to my other publishing channels</p>
+
+    <div class="social-list">
+
+        <div class="social-item">
+          <a target="_blank" class="social-link" href="/atom.xml">
+            <span class="icon">
+              <i class="fa fa-rss"></i>
+            </span>
+
+            <span class="label">RSS</span>
+          </a>
+        </div>
+    </div>
+  </div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/BinaryTree/" rel="tag"># BinaryTree</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/archives/String.html" rel="prev" title="String">
+      <i class="fa fa-chevron-left"></i> String
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/archives/StaticList.html" rel="next" title="StaticList">
+      StaticList <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Introduction"><span class="nav-number">1.</span> <span class="nav-text">Introduction</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Definition"><span class="nav-number">1.1.</span> <span class="nav-text">Definition</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Tree-Traversal"><span class="nav-number">1.2.</span> <span class="nav-text">Tree Traversal</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#What-is-the-order"><span class="nav-number">1.2.1.</span> <span class="nav-text">What is the order?</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Standard-Traversal-Orders"><span class="nav-number">1.2.2.</span> <span class="nav-text">Standard Traversal Orders</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Expression-Trees"><span class="nav-number">1.2.3.</span> <span class="nav-text">Expression Trees</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Polish-Form"><span class="nav-number">1.2.4.</span> <span class="nav-text">Polish Form</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Implementation"><span class="nav-number">1.3.</span> <span class="nav-text">Implementation</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#BinaryTree"><span class="nav-number">1.3.1.</span> <span class="nav-text">BinaryTree()</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#BinaryTree-const-BinaryTree-lt-Entry-gt-amp-original"><span class="nav-number">1.3.2.</span> <span class="nav-text">BinaryTree(const BinaryTree&lt; Entry &gt; &amp;original)</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#recursive-copy-Binary-node-lt-Entry-gt-sub-root"><span class="nav-number">1.3.3.</span> <span class="nav-text">recursive_copy(Binary_node&lt; Entry &gt; *sub_root)</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#BinaryTree-amp-operator-const-BinaryTree-lt-Entry-gt-amp-original"><span class="nav-number">1.3.4.</span> <span class="nav-text">BinaryTree&amp; operator&#x3D;(const BinaryTree&lt; Entry &gt; &amp;original)</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#BinaryTree-1"><span class="nav-number">1.3.5.</span> <span class="nav-text">~BinaryTree()</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#empty"><span class="nav-number">1.3.6.</span> <span class="nav-text">empty()</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#size"><span class="nav-number">1.3.7.</span> <span class="nav-text">size()</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#recursive-size-Binary-node-lt-Entry-gt-sub-root"><span class="nav-number">1.3.8.</span> <span class="nav-text">recursive_size(Binary_node&lt; Entry &gt; *sub_root)</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#height"><span class="nav-number">1.3.9.</span> <span class="nav-text">height()</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#recursive-height-Binary-node-lt-Entry-gt-sub-root"><span class="nav-number">1.3.10.</span> <span class="nav-text">recursive_height(Binary_node&lt; Entry &gt; *sub_root)</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#width"><span class="nav-number">1.3.11.</span> <span class="nav-text">width()</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#leaf-count"><span class="nav-number">1.3.12.</span> <span class="nav-text">leaf_count()</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#recursive-leaf-count-Binary-node-lt-Entry-gt-sub-root"><span class="nav-number">1.3.13.</span> <span class="nav-text">recursive_leaf_count(Binary_node&lt; Entry &gt; *sub_root)</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#clear"><span class="nav-number">1.3.14.</span> <span class="nav-text">clear()</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#recursive-clear-Binary-node-lt-Entry-gt-amp-sub-root"><span class="nav-number">1.3.15.</span> <span class="nav-text">recursive_clear(Binary_node&lt; Entry &gt; *&amp;sub_root)</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#preorder-void-visit-Entry-amp"><span class="nav-number">1.3.16.</span> <span class="nav-text">preorder(void (*visit)(Entry &amp;))</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#recursive-preorder-Binary-node-lt-Entry-gt-sub-root-void-visit-Entry-amp"><span class="nav-number">1.3.17.</span> <span class="nav-text">recursive_preorder(Binary_node&lt; Entry &gt; *sub_root, void (*visit)(Entry &amp;))</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#inorder-void-visit-Entry-amp"><span class="nav-number">1.3.18.</span> <span class="nav-text">inorder(void (*visit)(Entry &amp;))</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#recursive-inorder-Binary-node-lt-Entry-gt-sub-root-void-visit-Entry-amp"><span class="nav-number">1.3.19.</span> <span class="nav-text">recursive_inorder(Binary_node&lt; Entry &gt; *sub_root, void (*visit)(Entry &amp;))</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#postorder-void-visit-Entry-amp"><span class="nav-number">1.3.20.</span> <span class="nav-text">postorder(void (*visit)(Entry &amp;))</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#recursive-postorder-Binary-node-lt-Entry-gt-sub-root-void-visit-Entry-amp"><span class="nav-number">1.3.21.</span> <span class="nav-text">recursive_postorder(Binary_node&lt; Entry &gt; *sub_root, void (*visit)(Entry &amp;))</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#insert-const-Entry-amp"><span class="nav-number">1.3.22.</span> <span class="nav-text">insert(const Entry &amp;)</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#recursive-insert-Binary-node-lt-Entry-gt-amp-sub-root-const-Entry-amp-x"><span class="nav-number">1.3.23.</span> <span class="nav-text">recursive_insert(Binary_node&lt; Entry &gt; *&amp;sub_root, const Entry &amp;x)</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#double-traverse-void-visit-Entry-amp"><span class="nav-number">1.3.24.</span> <span class="nav-text">double_traverse(void (*visit)(Entry &amp;))</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#recursive-double-traverse-Binary-node-sub-root-void-visit-Entry-amp"><span class="nav-number">1.3.25.</span> <span class="nav-text">recursive_double_traverse(Binary_node *sub_root, void (*visit)(Entry &amp;))</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#level-traverse-void-visit-Entry-amp"><span class="nav-number">1.3.26.</span> <span class="nav-text">level_traverse(void (*visit)(Entry &amp;))</span></a></li></ol></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Leungyukshing"
+      src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">Leungyukshing</p>
+  <div class="site-description" itemprop="description">A blog for code, programme sharing.</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">688</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">27</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/leungyukshing" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;leungyukshing" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:jacky14.liang@gmail.com" title="E-Mail → mailto:jacky14.liang@gmail.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="/atom.xml" title="RSS → &#x2F;atom.xml"><i class="fa fa-rss fa-fw"></i>RSS</a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll motion-element">
+    <div class="links-of-blogroll-title"><i class="fa fa-link fa-fw"></i>
+      Friends
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="http://www.liangjh45.com/" title="http:&#x2F;&#x2F;www.liangjh45.com&#x2F;" rel="noopener" target="_blank">Alva's blog</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="https://sysucarey.github.io/" title="https:&#x2F;&#x2F;sysucarey.github.io&#x2F;" rel="noopener" target="_blank">Carey's blog</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="https://blog.csdn.net/dickdick111/" title="https:&#x2F;&#x2F;blog.csdn.net&#x2F;dickdick111&#x2F;" rel="noopener" target="_blank">Dick's blog</a>
+        </li>
+    </ul>
+  </div>
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2017 – 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Leungyukshing</span>
+</div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="Total Visitors">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="Total Views">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : true,
+      appId      : 'AaLog29QcUdQKTboD6cY2dNP-gzGzoHsz',
+      appKey     : 'dUWNHLnTY9qG1jJwPnTtfMm8',
+      placeholder: "Just go go",
+      avatar     : 'mm',
+      meta       : guest,
+      pageSize   : '10' || 10,
+      visitor    : false,
+      lang       : '' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : false,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+
+</body>
+</html>

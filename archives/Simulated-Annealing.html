@@ -1,0 +1,651 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <meta name="google-site-verification" content="FHjCzDi7nry9Mvf4EFOY5cYoco-ZXq9tKjvXZK0nKr4">
+  <meta name="baidu-site-verification" content="code-gpMFPewYUF" />
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="/lib/pace/pace-theme-minimal.min.css">
+  <script src="/lib/pace/pace.min.js"></script>
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"leungyukshing.github.io","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"right","display":"hide","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"appID":"52USYSYESX","apiKey":"20b904c66f55b874f05edea4aca57780","indexName":"blog","hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="算法背景介绍&amp;emsp;&amp;emsp;模拟退火算法（Simulated Annealing Algorithm）是元启发式搜索算法的其中一种。相比起效率低下的随即搜索算法，元启发式搜索算法借助了演化思想和集群智能思想，对解的分布有规律的复杂问题有良好的效果。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="模拟退火算法">
+<meta property="og:url" content="https://leungyukshing.github.io/archives/Simulated-Annealing.html">
+<meta property="og:site_name" content="Halo">
+<meta property="og:description" content="算法背景介绍&amp;emsp;&amp;emsp;模拟退火算法（Simulated Annealing Algorithm）是元启发式搜索算法的其中一种。相比起效率低下的随即搜索算法，元启发式搜索算法借助了演化思想和集群智能思想，对解的分布有规律的复杂问题有良好的效果。">
+<meta property="og:locale">
+<meta property="og:image" content="https://leungyukshing.github.io/images/SA.png">
+<meta property="article:published_time" content="2018-10-08T11:59:35.000Z">
+<meta property="article:modified_time" content="2021-06-22T18:33:08.612Z">
+<meta property="article:author" content="Leungyukshing">
+<meta property="article:tag" content="AI Algorithm">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://leungyukshing.github.io/images/SA.png">
+
+<link rel="canonical" href="https://leungyukshing.github.io/archives/Simulated-Annealing.html">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-Hans'
+  };
+</script>
+
+  <title>模拟退火算法 | Halo</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+<!-- hexo injector head_end end --><link rel="alternate" href="/atom.xml" title="Halo" type="application/atom+xml"><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Halo</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">A magic place for coding</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>About</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>Tags</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>Search
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="Searching..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+  <a href="https://github.com/leungyukshing" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="https://leungyukshing.github.io/archives/Simulated-Annealing.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="Leungyukshing">
+      <meta itemprop="description" content="A blog for code, programme sharing.">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Halo">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          模拟退火算法
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2018-10-08 07:59:35" itemprop="dateCreated datePublished" datetime="2018-10-08T07:59:35-04:00">2018-10-08</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2021-06-22 14:33:08" itemprop="dateModified" datetime="2021-06-22T14:33:08-04:00">2021-06-22</time>
+              </span>
+
+          
+            <span class="post-meta-item" title="Views" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">Views: </span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine: </span>
+    
+    <a title="valine" href="/archives/Simulated-Annealing.html#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/archives/Simulated-Annealing.html" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="算法背景介绍"><a href="#算法背景介绍" class="headerlink" title="算法背景介绍"></a>算法背景介绍</h2><p>&emsp;&emsp;模拟退火算法（Simulated Annealing Algorithm）是<strong>元启发式搜索</strong>算法的其中一种。相比起效率低下的随即搜索算法，元启发式搜索算法借助了演化思想和集群智能思想，对解的分布有规律的复杂问题有良好的效果。</p>
+<a id="more"></a>
+
+<h2 id="模拟退火算法"><a href="#模拟退火算法" class="headerlink" title="模拟退火算法"></a>模拟退火算法</h2><p>&emsp;&emsp;模拟退火法（Simulated Annealing）是克服爬山法缺点的有效方法，所谓<strong>退火</strong>是冶金专家为了达到某些特种晶体结构重复将金属加热或冷却的过程，该过程的控制参数为温度T。模拟退火法的基本思想是，在系统朝着能量减小的趋势这样一个变化过程中，偶尔允许系统跳到能量较高的状态，以避开局部极小点，最终稳定到全局最小点。<br>&emsp;&emsp;算法的关键问题是：什么时候允许增加能量？应该增加多少能量？</p>
+<h2 id="基本步骤"><a href="#基本步骤" class="headerlink" title="基本步骤"></a>基本步骤</h2><p>&emsp;&emsp;模拟退火算法步骤如下：</p>
+<ol>
+<li>随机挑选出一单元，并给他一个随机的位移$k$，求出系统因此而产生的能量变化$\Delta E_k$。</li>
+<li>若$\Delta E_k \leq0$，该位移可采纳，而变化后的系统状态可作为下次变化的起点；若$\Delta E_k \gt0$，位移后的状态可采纳的概率为<br>$$<br>P_k = \frac{1}{(1+e^{-\Delta E_k/T})}<br>$$<br>式中T为温度，然后从(0,1)区间均匀分布的随机数中挑选一个数R。若$R \lt P_k$，则将变化后的状态作为下次的起点；否则，将变化前的状态作为下次的起点。</li>
+<li>转第（1）步继续执行，直至达到平衡状态为止。</li>
+</ol>
+<h2 id="实用例子"><a href="#实用例子" class="headerlink" title="实用例子"></a>实用例子</h2><p>&emsp;&emsp;使用模拟退火法解决<a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Travelling_salesman_problem">TSP问题</a>。代码如下：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;cstdlib&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;ctime&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;cmath&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> <span class="built_in">std</span>;</span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> T0 50000.0 <span class="comment">// 初始温度</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> T_end (1e-8) <span class="comment">//</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> q 0.98 <span class="comment">// 退火系数</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> L 1000 <span class="comment">// 每个温度时的迭代次数</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> N 31 <span class="comment">// 城市数量</span></span></span><br><span class="line"><span class="keyword">int</span> city_list[N]; <span class="comment">// 存放一个解</span></span><br><span class="line"><span class="keyword">double</span> city_pos[N][<span class="number">2</span>] = &#123;&#123;<span class="number">1304</span>,<span class="number">2312</span>&#125;,&#123;<span class="number">3639</span>,<span class="number">1315</span>&#125;,&#123;<span class="number">4177</span>,<span class="number">2244</span>&#125;,&#123;<span class="number">3712</span>,<span class="number">1399</span>&#125;,&#123;<span class="number">3488</span>,<span class="number">1535</span>&#125;,&#123;<span class="number">3326</span>,<span class="number">1556</span>&#125;,&#123;<span class="number">3238</span>,<span class="number">1229</span>&#125;,&#123;<span class="number">4196</span>,<span class="number">1004</span>&#125;,&#123;<span class="number">4312</span>,<span class="number">790</span>&#125;,</span><br><span class="line">    &#123;<span class="number">4386</span>,<span class="number">570</span>&#125;,&#123;<span class="number">3007</span>,<span class="number">1970</span>&#125;,&#123;<span class="number">2562</span>,<span class="number">1756</span>&#125;,&#123;<span class="number">2788</span>,<span class="number">1491</span>&#125;,&#123;<span class="number">2381</span>,<span class="number">1676</span>&#125;,&#123;<span class="number">1332</span>,<span class="number">695</span>&#125;,&#123;<span class="number">3715</span>,<span class="number">1678</span>&#125;,&#123;<span class="number">3918</span>,<span class="number">2179</span>&#125;,&#123;<span class="number">4061</span>,<span class="number">2370</span>&#125;,&#123;<span class="number">3780</span>,<span class="number">2212</span>&#125;,&#123;<span class="number">3676</span>,<span class="number">2578</span>&#125;,&#123;<span class="number">4029</span>,<span class="number">2838</span>&#125;,</span><br><span class="line">    &#123;<span class="number">4263</span>,<span class="number">2931</span>&#125;,&#123;<span class="number">3429</span>,<span class="number">1908</span>&#125;,&#123;<span class="number">3507</span>,<span class="number">2367</span>&#125;,&#123;<span class="number">3394</span>,<span class="number">2643</span>&#125;,&#123;<span class="number">3439</span>,<span class="number">3201</span>&#125;,&#123;<span class="number">2935</span>,<span class="number">3240</span>&#125;,&#123;<span class="number">3140</span>,<span class="number">3550</span>&#125;,&#123;<span class="number">2545</span>,<span class="number">2357</span>&#125;,&#123;<span class="number">2778</span>,<span class="number">2826</span>&#125;,&#123;<span class="number">2370</span>,<span class="number">2975</span>&#125;&#125;;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 函数</span></span><br><span class="line"><span class="function"><span class="keyword">double</span> <span class="title">distance</span><span class="params">(<span class="keyword">double</span> *, <span class="keyword">double</span> *)</span></span>; <span class="comment">// 计算两个城市之间的距离</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">double</span> <span class="title">path_len</span><span class="params">(<span class="keyword">int</span> *)</span></span>; <span class="comment">// 计算路径长度</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">init</span><span class="params">()</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">create_new</span><span class="params">()</span></span>; <span class="comment">// 产生新解</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">double</span> <span class="title">distance</span><span class="params">(<span class="keyword">double</span> *city1, <span class="keyword">double</span> *city2)</span> </span>&#123;</span><br><span class="line">  <span class="keyword">double</span> x1 = *city1;</span><br><span class="line">  <span class="keyword">double</span> y1 = *(city1 + <span class="number">1</span>);</span><br><span class="line">  <span class="keyword">double</span> x2 = *(city2);</span><br><span class="line">  <span class="keyword">double</span> y2 = *(city2 + <span class="number">1</span>);</span><br><span class="line"></span><br><span class="line">  <span class="keyword">double</span> dis = <span class="built_in">sqrt</span>((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2));</span><br><span class="line">  <span class="keyword">return</span> dis;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">double</span> <span class="title">path_len</span><span class="params">(<span class="keyword">int</span> *arr)</span> </span>&#123;</span><br><span class="line">  <span class="keyword">double</span> path = <span class="number">0</span>;</span><br><span class="line">  <span class="keyword">int</span> index = *arr; <span class="comment">// 城市序号</span></span><br><span class="line">  <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; N - <span class="number">1</span>; i++) &#123;</span><br><span class="line">    <span class="keyword">int</span> index1 = *(arr + i); <span class="comment">// 起点</span></span><br><span class="line">    <span class="keyword">int</span> index2 = *(arr + <span class="number">1</span> + i); <span class="comment">// 终点</span></span><br><span class="line">    <span class="keyword">double</span> dis = distance(city_pos[index1 - <span class="number">1</span>], city_pos[index2 - <span class="number">1</span>]);</span><br><span class="line">    path += dis;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="comment">// 计算回路</span></span><br><span class="line">  <span class="keyword">int</span> last_index = *(arr + N - <span class="number">1</span>); <span class="comment">// 最后一个城市序号</span></span><br><span class="line">  <span class="keyword">int</span> first_index = *arr; <span class="comment">// 第一个城市序号</span></span><br><span class="line">  <span class="keyword">double</span> last_dis = distance(city_pos[last_index - <span class="number">1</span>], city_pos[first_index - <span class="number">1</span>]);</span><br><span class="line">  path += last_dis;</span><br><span class="line">  <span class="keyword">return</span> path;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">init</span><span class="params">()</span> </span>&#123;</span><br><span class="line">  <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; N; i++) &#123;</span><br><span class="line">    city_list[i] = i+<span class="number">1</span>; <span class="comment">// 初始化一个解</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 随机交叉两个位置的方式产生新的解</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">create_new</span><span class="params">()</span> </span>&#123;</span><br><span class="line">  <span class="keyword">double</span> r1 = ((<span class="keyword">double</span>)rand()) / (RAND_MAX + <span class="number">1.0</span>);</span><br><span class="line">  <span class="keyword">double</span> r2 = ((<span class="keyword">double</span>)rand()) / (RAND_MAX + <span class="number">1.0</span>);</span><br><span class="line">  <span class="keyword">int</span> pos1 = (<span class="keyword">int</span>)(N * r1); <span class="comment">// 第一个交叉点位置</span></span><br><span class="line">  <span class="keyword">int</span> pos2 = (<span class="keyword">int</span>)(N * r2); <span class="comment">// 第二个交叉点位置</span></span><br><span class="line">  <span class="keyword">int</span> temp = city_list[pos1];</span><br><span class="line">  city_list[pos1] = city_list[pos2];</span><br><span class="line">  city_list[pos2] = temp;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">  srand((<span class="keyword">unsigned</span>)time(<span class="literal">NULL</span>)); <span class="comment">// 初始化随机数种子</span></span><br><span class="line">  <span class="keyword">time_t</span> start, finish;</span><br><span class="line">  start = clock(); <span class="comment">// 开始计时</span></span><br><span class="line">  <span class="keyword">double</span> T;</span><br><span class="line">  <span class="keyword">int</span> count = <span class="number">0</span>; <span class="comment">// 记录降温次数</span></span><br><span class="line">  T = T0;</span><br><span class="line">  init();</span><br><span class="line">  <span class="keyword">int</span> city_list_copy[N]; <span class="comment">// 用于保存原始解</span></span><br><span class="line">  <span class="keyword">double</span> f1, f2, df; <span class="comment">// f1为初始解目标函数值, f2为新解目标函数值,df为二者差值</span></span><br><span class="line">  <span class="keyword">double</span> r; <span class="comment">// 0-1之间随机数，用来决定是否接受新解</span></span><br><span class="line"></span><br><span class="line">  <span class="comment">// 当温度低于结束温度时，退火结束</span></span><br><span class="line">  <span class="keyword">while</span> (T &gt; T_end) &#123;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; L; i++) &#123;</span><br><span class="line">      <span class="built_in">memcpy</span>(city_list_copy, city_list, N * <span class="keyword">sizeof</span>(<span class="keyword">int</span>)); <span class="comment">// 复制数组</span></span><br><span class="line">      create_new(); <span class="comment">// 产生新解</span></span><br><span class="line">      f1 = path_len(city_list_copy);</span><br><span class="line">      f2 = path_len(city_list);</span><br><span class="line">      df = f2 - f1;</span><br><span class="line"></span><br><span class="line">      <span class="comment">// 退火准则</span></span><br><span class="line">      <span class="keyword">if</span> (df &gt;= <span class="number">0</span>) &#123;</span><br><span class="line">        r = ((<span class="keyword">double</span>)rand()) / (RAND_MAX);</span><br><span class="line">        <span class="comment">// 保留原来的解</span></span><br><span class="line">        <span class="keyword">if</span> (<span class="built_in">exp</span>(-df / T) &lt;= r) &#123;</span><br><span class="line">          <span class="built_in">memcpy</span>(city_list, city_list_copy, N * <span class="keyword">sizeof</span>(<span class="keyword">int</span>));</span><br><span class="line">        &#125;</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    T *= q; <span class="comment">// 降温</span></span><br><span class="line">    count++;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  finish = clock(); <span class="comment">// 退火结束</span></span><br><span class="line">  <span class="keyword">double</span> duration = ((<span class="keyword">double</span>)(finish - start)) / CLOCKS_PER_SEC;</span><br><span class="line">  <span class="built_in">cout</span> &lt;&lt; <span class="string">&quot;Simulated Annealing: &quot;</span> &lt;&lt; <span class="built_in">endl</span>;</span><br><span class="line">  <span class="built_in">cout</span> &lt;&lt; <span class="string">&quot;Initial Temperature T0 = &quot;</span> &lt;&lt; T0 &lt;&lt; <span class="string">&quot;, Cooling Coefficient q = &quot;</span> &lt;&lt; q &lt;&lt; <span class="string">&quot;, Loops per Temperature: &quot;</span> &lt;&lt; L &lt;&lt; <span class="string">&quot;, Total Cooling: &quot;</span> &lt;&lt;  count &lt;&lt; <span class="string">&quot;times&quot;</span> &lt;&lt; <span class="built_in">endl</span>;</span><br><span class="line"></span><br><span class="line">  <span class="built_in">cout</span> &lt;&lt; <span class="string">&quot;Best Path: &quot;</span> &lt;&lt; <span class="built_in">endl</span>;</span><br><span class="line">  <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; N - <span class="number">1</span>; i++) &#123;</span><br><span class="line">    <span class="built_in">cout</span> &lt;&lt; city_list[i] &lt;&lt;  <span class="string">&quot;--&gt;&quot;</span>;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="built_in">cout</span> &lt;&lt; city_list[N - <span class="number">1</span>];</span><br><span class="line"></span><br><span class="line">  <span class="built_in">cout</span> &lt;&lt; <span class="string">&quot;\nBest Path Length: &quot;</span> &lt;&lt; path_len(city_list) &lt;&lt; <span class="built_in">endl</span>;</span><br><span class="line"></span><br><span class="line">  <span class="built_in">cout</span> &lt;&lt; <span class="string">&quot;Time for Algorithm: &quot;</span> &lt;&lt; duration &lt;&lt; <span class="string">&quot;sec&quot;</span> &lt;&lt; <span class="built_in">endl</span>;</span><br><span class="line">  <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>运行结果：<br><img src="/images/SA.png" alt="模拟退火法"></p>
+<h2 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h2><p>&emsp;&emsp;理解模拟退火法的核心思想是<strong>以一定概率接受比当前解更差的解</strong>。对于每一个新生成的解，我们都需要有一个概率去接受更差的解。相比起启发式搜索，元启发式搜索更通用，在解决某些问题有一定的优势。希望这篇博客能够帮助到你，谢谢！</p>
+
+    </div>
+
+    
+    
+    
+        <div class="reward-container">
+  <div></div>
+  <button onclick="var qr = document.getElementById('qr'); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    Donate
+  </button>
+  <div id="qr" style="display: none;">
+      
+      <div style="display: inline-block;">
+        <img src="/images/wechat_reward.png" alt="Leungyukshing WeChat Pay">
+        <p>WeChat Pay</p>
+      </div>
+      
+      <div style="display: inline-block;">
+        <img src="/images/alipay_reward.png" alt="Leungyukshing Alipay">
+        <p>Alipay</p>
+      </div>
+
+  </div>
+</div>
+
+        
+
+  <div class="followme">
+    <p>Welcome to my other publishing channels</p>
+
+    <div class="social-list">
+
+        <div class="social-item">
+          <a target="_blank" class="social-link" href="/atom.xml">
+            <span class="icon">
+              <i class="fa fa-rss"></i>
+            </span>
+
+            <span class="label">RSS</span>
+          </a>
+        </div>
+    </div>
+  </div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/AI-Algorithm/" rel="tag"># AI Algorithm</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/archives/LeetCode%E8%A7%A3%E9%A2%98%E6%8A%A5%E5%91%8A%EF%BC%88%E5%8D%81%E5%85%AB%EF%BC%89--%2076.%20Minimum%20Window%20Substring.html" rel="prev" title="LeetCode解题报告（十八）-- 76. Minimum Window Substring">
+      <i class="fa fa-chevron-left"></i> LeetCode解题报告（十八）-- 76. Minimum Window Substring
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/archives/LeetCode%E8%A7%A3%E9%A2%98%E6%8A%A5%E5%91%8A%EF%BC%88%E5%8D%81%E4%B9%9D%EF%BC%89--%20856.%20Score%20of%20Parentheses.html" rel="next" title="LeetCode解题报告（十九）-- 856. Score of Parentheses">
+      LeetCode解题报告（十九）-- 856. Score of Parentheses <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%AE%97%E6%B3%95%E8%83%8C%E6%99%AF%E4%BB%8B%E7%BB%8D"><span class="nav-number">1.</span> <span class="nav-text">算法背景介绍</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%A8%A1%E6%8B%9F%E9%80%80%E7%81%AB%E7%AE%97%E6%B3%95"><span class="nav-number">2.</span> <span class="nav-text">模拟退火算法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9F%BA%E6%9C%AC%E6%AD%A5%E9%AA%A4"><span class="nav-number">3.</span> <span class="nav-text">基本步骤</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%9E%E7%94%A8%E4%BE%8B%E5%AD%90"><span class="nav-number">4.</span> <span class="nav-text">实用例子</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B0%8F%E7%BB%93"><span class="nav-number">5.</span> <span class="nav-text">小结</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Leungyukshing"
+      src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">Leungyukshing</p>
+  <div class="site-description" itemprop="description">A blog for code, programme sharing.</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">688</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">27</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/leungyukshing" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;leungyukshing" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:jacky14.liang@gmail.com" title="E-Mail → mailto:jacky14.liang@gmail.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="/atom.xml" title="RSS → &#x2F;atom.xml"><i class="fa fa-rss fa-fw"></i>RSS</a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll motion-element">
+    <div class="links-of-blogroll-title"><i class="fa fa-link fa-fw"></i>
+      Friends
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="http://www.liangjh45.com/" title="http:&#x2F;&#x2F;www.liangjh45.com&#x2F;" rel="noopener" target="_blank">Alva's blog</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="https://sysucarey.github.io/" title="https:&#x2F;&#x2F;sysucarey.github.io&#x2F;" rel="noopener" target="_blank">Carey's blog</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="https://blog.csdn.net/dickdick111/" title="https:&#x2F;&#x2F;blog.csdn.net&#x2F;dickdick111&#x2F;" rel="noopener" target="_blank">Dick's blog</a>
+        </li>
+    </ul>
+  </div>
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2017 – 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Leungyukshing</span>
+</div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="Total Visitors">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="Total Views">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+      
+
+<script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      loader: {
+        source: {
+          '[tex]/amsCd': '[tex]/amscd',
+          '[tex]/AMScd': '[tex]/amscd'
+        }
+      },
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              let target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    (function () {
+      var script = document.createElement('script');
+      script.src = '//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+      script.defer = true;
+      document.head.appendChild(script);
+    })();
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : true,
+      appId      : 'AaLog29QcUdQKTboD6cY2dNP-gzGzoHsz',
+      appKey     : 'dUWNHLnTY9qG1jJwPnTtfMm8',
+      placeholder: "Just go go",
+      avatar     : 'mm',
+      meta       : guest,
+      pageSize   : '10' || 10,
+      visitor    : false,
+      lang       : '' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : false,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+
+</body>
+</html>

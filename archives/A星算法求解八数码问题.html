@@ -1,0 +1,715 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <meta name="google-site-verification" content="FHjCzDi7nry9Mvf4EFOY5cYoco-ZXq9tKjvXZK0nKr4">
+  <meta name="baidu-site-verification" content="code-gpMFPewYUF" />
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="/lib/pace/pace-theme-minimal.min.css">
+  <script src="/lib/pace/pace.min.js"></script>
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"leungyukshing.github.io","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"right","display":"hide","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"appID":"52USYSYESX","apiKey":"20b904c66f55b874f05edea4aca57780","indexName":"blog","hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="问题介绍&amp;emsp;&amp;emsp;八数码问题也称为九宫问题。在3x3的棋盘，摆有八个棋子，每个棋子上标有1至8的某一数字，不同棋子上标的数字不相同。棋盘上还有一个空格，与空格相邻的棋子可以移到空格中。要求解决的问题是：给出一个初始状态和一个目标状态，找出一种从初始状态转变成目标状态的移动棋子步数最少的移动步骤。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="A*算法求解八数码问题">
+<meta property="og:url" content="https://leungyukshing.github.io/archives/A%E6%98%9F%E7%AE%97%E6%B3%95%E6%B1%82%E8%A7%A3%E5%85%AB%E6%95%B0%E7%A0%81%E9%97%AE%E9%A2%98.html">
+<meta property="og:site_name" content="Halo">
+<meta property="og:description" content="问题介绍&amp;emsp;&amp;emsp;八数码问题也称为九宫问题。在3x3的棋盘，摆有八个棋子，每个棋子上标有1至8的某一数字，不同棋子上标的数字不相同。棋盘上还有一个空格，与空格相邻的棋子可以移到空格中。要求解决的问题是：给出一个初始状态和一个目标状态，找出一种从初始状态转变成目标状态的移动棋子步数最少的移动步骤。">
+<meta property="og:locale">
+<meta property="article:published_time" content="2018-12-25T16:10:38.000Z">
+<meta property="article:modified_time" content="2021-06-22T18:33:07.014Z">
+<meta property="article:author" content="Leungyukshing">
+<meta property="article:tag" content="AI Algorithm">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://leungyukshing.github.io/archives/A%E6%98%9F%E7%AE%97%E6%B3%95%E6%B1%82%E8%A7%A3%E5%85%AB%E6%95%B0%E7%A0%81%E9%97%AE%E9%A2%98.html">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-Hans'
+  };
+</script>
+
+  <title>A*算法求解八数码问题 | Halo</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+<!-- hexo injector head_end end --><link rel="alternate" href="/atom.xml" title="Halo" type="application/atom+xml"><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Halo</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">A magic place for coding</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>About</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>Tags</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>Search
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="Searching..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+  <a href="https://github.com/leungyukshing" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="https://leungyukshing.github.io/archives/A%E6%98%9F%E7%AE%97%E6%B3%95%E6%B1%82%E8%A7%A3%E5%85%AB%E6%95%B0%E7%A0%81%E9%97%AE%E9%A2%98.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="Leungyukshing">
+      <meta itemprop="description" content="A blog for code, programme sharing.">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Halo">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          A*算法求解八数码问题
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2018-12-25 11:10:38" itemprop="dateCreated datePublished" datetime="2018-12-25T11:10:38-05:00">2018-12-25</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2021-06-22 14:33:07" itemprop="dateModified" datetime="2021-06-22T14:33:07-04:00">2021-06-22</time>
+              </span>
+
+          
+            <span class="post-meta-item" title="Views" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">Views: </span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine: </span>
+    
+    <a title="valine" href="/archives/A%E6%98%9F%E7%AE%97%E6%B3%95%E6%B1%82%E8%A7%A3%E5%85%AB%E6%95%B0%E7%A0%81%E9%97%AE%E9%A2%98.html#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/archives/A%E6%98%9F%E7%AE%97%E6%B3%95%E6%B1%82%E8%A7%A3%E5%85%AB%E6%95%B0%E7%A0%81%E9%97%AE%E9%A2%98.html" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h3 id="问题介绍"><a href="#问题介绍" class="headerlink" title="问题介绍"></a>问题介绍</h3><p>&emsp;&emsp;八数码问题也称为九宫问题。在3x3的棋盘，摆有八个棋子，每个棋子上标有1至8的某一数字，不同棋子上标的数字不相同。棋盘上还有一个空格，与空格相邻的棋子可以移到空格中。要求解决的问题是：给出一个初始状态和一个目标状态，找出一种从初始状态转变成目标状态的移动棋子步数最少的移动步骤。</p>
+<a id="more"></a>
+<hr>
+<h3 id="算法介绍"><a href="#算法介绍" class="headerlink" title="算法介绍"></a>算法介绍</h3><p>&emsp;&emsp;A星算法，是一种在图形平面上，有多个节点的路径，求出最低通过成本的算法。该算法综合了最良优先搜索和Dijkstra算法的优点：在进行启发式搜索提高算法效率的同时，可以保证找到一条最优路径（基于评估函数）。</p>
+<p>&emsp;&emsp;算法的核心在于估值函数。以$g(n)$表示从起点到任意顶点$n$的实际距离，$h(n)$表示任意顶点$n$到目标顶点的估算距离（根据所采用的评估函数的不同而变化），那么A*算法的估值函数为：<br>$$<br>f(n) = g(n) + h(n)<br>$$<br>&emsp;&emsp;这个公式有如下特点：</p>
+<ul>
+<li>如果$g(n)=0$，即只计算任意顶点n到目标的评估函数$h(n)$，而不计算起点到顶点n的距离，则算法转化为使用贪心策略的最良优先搜索，速度最快，但不一定能够得到最优解。</li>
+<li>如果$h(n)$不大于顶点n到目标顶点的实际距离，则一定可以求出最优解，而且$h(n)$越小，需要计算的节点越多，算法效率越低，常见的评估函数有——欧几里得距离、曼哈顿距离等。</li>
+<li>如果$h(n)=0$，即只需求出起点到任意顶点$n$的最短路径$g(n)$，而不计算任何评估函数$h(n)$，则转化为Dijkstra算法，此时需要计算最多的顶点。</li>
+</ul>
+<hr>
+<h3 id="算法实现"><a href="#算法实现" class="headerlink" title="算法实现"></a>算法实现</h3><h4 id="八数码"><a href="#八数码" class="headerlink" title="八数码"></a>八数码</h4><p>&emsp;&emsp;本实验是用A*算法求解八数码问题，首先确定一些前提条件。我们使用矩阵的形式存储数据，然后定义一个struct，名为state，用于记录每一个状态的信息，包括棋盘状态、搜索深度、parent等属性，其中parent属性是用于构成最佳路径的链表。</p>
+<p>&emsp;&emsp;然后实现估值函数，这是A*算法的关键。这里我们使用三种估值函数：</p>
+<ul>
+<li>曼哈顿距离：x、y下标与目标对应x、y之差的和</li>
+<li>欧几里得距离：与目标状态的直线距离</li>
+<li>错误放置的个数</li>
+</ul>
+<p>&emsp;&emsp;接着我们就可以实现A*算法了。算法的步骤如下：我们维护两个表，open表和close表，每次从open表中选出估值最低的节点进行扩展。open表可以理解为一个存放<strong>未搜索节点</strong>的表。close表可以理解为一个存放<strong>已完成搜索的节点</strong>的表。但是这两个表中的元素在一定情况下可以相互转化。算法规则如下：</p>
+<ul>
+<li>规则1：对于新添加的节点S（open表和close表中均没有这个状态），将S添加到open表中</li>
+<li>规则2：对于已经添加的节点S（S在open表中或在close表中）。若S在open表中，与原来的状态$S_0$的$f(n)$比较，取较小的一个。若S在close表中，分两种情况讨论。第一，close表中的原来状态$S_0$的$f(n)$小于S，不做修改；第二，$S_0$的$f(n)$大于S，需要将close表中的$S_0$的$f(n)$更新，然后将该状态移入到open表中。</li>
+<li>规则3：下一个搜索节点，选择open表中$f(n)$最小的状态作为下一个要扩展的节点。</li>
+<li>规则4：每一次要生成将待扩展的节点的所有子状态，并按照规则1或规则2更新open表和close表。扩展完该节点后，将该节点放入close表中。</li>
+</ul>
+<p>&emsp;&emsp;然后是<strong>是否可求解问题</strong>。我们要注意到一点，不是随机生成一个八数码就可以求解的，我们需要判断其是否有解，这里用到了逆序数的方法。将矩阵写成一维形式，以0代替空格位置。这里直接给出一个判断的结论：<strong>一个状态表示为一维的形式，求出除0之外所有数字的逆序数之和，也就是每个数字前面比它大的数字的个数的和，成为这个状态的逆序。若两个状态的逆序奇偶性相同，则可互相到达，否则不可互相到达</strong>。我们给出规定的八数码问题终止状态，其逆序数为7，因此只需要<strong>判断起始状态的逆序数是否为奇数</strong>即可。</p>
+<h4 id="九数码"><a href="#九数码" class="headerlink" title="九数码"></a>九数码</h4><p>&emsp;&emsp;九数码问题是基于八数码问题拓展而来的，总体的算法基本一样，只需要微调几个地方就可以了。从估值函数的角度看，两个问题是不同的，因为八数码问题在考虑估值的时候是不讨论空格的，而九数码问题则将0看成是一般元素，估值的时候需要考虑在内，因此他们的估值一般是不同的（当然也要看估值的方式）。</p>
+<hr>
+<h3 id="关键代码分析"><a href="#关键代码分析" class="headerlink" title="关键代码分析"></a>关键代码分析</h3><h4 id="八数码-1"><a href="#八数码-1" class="headerlink" title="八数码"></a>八数码</h4><p>估值函数H（曼哈顿距离）：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// H: Manhattan Distance</span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">computeH</span><span class="params">(state &amp;p)</span> </span>&#123;</span><br><span class="line">  <span class="keyword">int</span> h = <span class="number">0</span>;</span><br><span class="line">  <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; GRID; i++) &#123;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> j = <span class="number">0</span>; j &lt; GRID; j++) &#123;</span><br><span class="line">      <span class="keyword">if</span> (p.panel[i][j] != <span class="number">0</span>) &#123;</span><br><span class="line">        h += <span class="built_in">abs</span>(rightPos[p.panel[i][j]] / GRID - i);</span><br><span class="line">        h += <span class="built_in">abs</span>(rightPos[p.panel[i][j]] % GRID - j);</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> h;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>估值函数H1（欧几里得距离）：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// H1: Euclidean Distance</span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">computeH1</span><span class="params">(state &amp;p)</span> </span>&#123;</span><br><span class="line">  <span class="keyword">int</span> h = <span class="number">0</span>;</span><br><span class="line">  <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; GRID; i++) &#123;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> j = <span class="number">0</span>; j &lt; GRID; j++) &#123;</span><br><span class="line">      <span class="keyword">if</span> (p.panel[i][j] != <span class="number">0</span>) &#123;</span><br><span class="line">        <span class="keyword">int</span> distance = (rightPos[p.panel[i][j]] / GRID - i) * (rightPos[p.panel[i][j]] / GRID - i)</span><br><span class="line">                        + (rightPos[p.panel[i][j]] % GRID - j) * (rightPos[p.panel[i][j]] % GRID - j);</span><br><span class="line">        distance = <span class="built_in">pow</span>(distance, <span class="number">0.5</span>);</span><br><span class="line">        h += distance;</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> h;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>估值函数H2（错误放置的个数）：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// H2: number of wrong position</span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">computeH2</span><span class="params">(state &amp;p)</span> </span>&#123;</span><br><span class="line">  <span class="keyword">int</span> h = <span class="number">0</span>;</span><br><span class="line">  <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; GRID; i++) &#123;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> j = <span class="number">0</span>; j &lt; GRID; j++) &#123;</span><br><span class="line">      <span class="keyword">if</span> (p.panel[i][j] != <span class="number">0</span>) &#123;</span><br><span class="line">        <span class="keyword">if</span> ((<span class="number">3</span> * i + j) != rightPos[p.panel[i][j]]) &#123;</span><br><span class="line">          h++;</span><br><span class="line">        &#125;</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> h;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>使用逆序数判断状态间是否可到达：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">bool</span> <span class="title">isCanSolve</span><span class="params">(state &amp;start)</span> </span>&#123;</span><br><span class="line">  <span class="keyword">int</span> temp[<span class="number">9</span>]= &#123;<span class="number">0</span>&#125;;</span><br><span class="line">  <span class="keyword">int</span> k = <span class="number">0</span>;</span><br><span class="line">  <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; GRID; i++) &#123;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> j = <span class="number">0</span>; j &lt; GRID; j++) &#123;</span><br><span class="line">      temp[k++] = start.panel[i][j];</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">int</span> inverseNum = <span class="number">0</span>;</span><br><span class="line">  <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">9</span>; i++) &#123;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> j = i + <span class="number">1</span>; j &lt; <span class="number">9</span>; j++) &#123;</span><br><span class="line">      <span class="keyword">if</span> (temp[i] != <span class="number">0</span> &amp;&amp; temp[j] != <span class="number">0</span> &amp;&amp; temp[i] &gt; temp[j]) &#123;</span><br><span class="line">        inverseNum++;</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> (inverseNum % <span class="number">2</span> != <span class="number">0</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>A*算法：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// apply AStar Algorithm</span></span><br><span class="line"><span class="function">state* <span class="title">AStar</span><span class="params">(state &amp;start)</span> </span>&#123;</span><br><span class="line">  <span class="keyword">int</span> level = <span class="number">0</span>;</span><br><span class="line">  openTable.push_back(&amp;start);</span><br><span class="line">  <span class="keyword">int</span> count = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">while</span> (!openTable.empty()) &#123;</span><br><span class="line">    <span class="built_in">cout</span> &lt;&lt; <span class="string">&quot;OpenTable Size: &quot;</span> &lt;&lt; openTable.size() &lt;&lt; <span class="built_in">endl</span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Find the highest f value</span></span><br><span class="line">    sort(openTable.begin(), openTable.end(), compareState);</span><br><span class="line"></span><br><span class="line">    state *p = openTable.back();</span><br><span class="line"></span><br><span class="line">    openTable.pop_back();</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Reach target state</span></span><br><span class="line">    <span class="keyword">if</span> (computeH2(*p) == <span class="number">0</span>) &#123;</span><br><span class="line">      <span class="keyword">return</span> p;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    level = p-&gt;level + <span class="number">1</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">int</span> zeroPos = findZero(*p);</span><br><span class="line">    <span class="keyword">int</span> zeroX = zeroPos / <span class="number">3</span>;</span><br><span class="line">    <span class="keyword">int</span> zeroY = zeroPos % <span class="number">3</span>;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">4</span>; i++) &#123;</span><br><span class="line">      <span class="keyword">int</span> x_offset = <span class="number">0</span>, y_offset = <span class="number">0</span>;</span><br><span class="line">      <span class="keyword">switch</span> (i) &#123;</span><br><span class="line">        <span class="keyword">case</span> <span class="number">0</span>:</span><br><span class="line">          <span class="comment">// right</span></span><br><span class="line">          x_offset = <span class="number">0</span>;</span><br><span class="line">          y_offset = <span class="number">1</span>;</span><br><span class="line">          <span class="keyword">break</span>;</span><br><span class="line">        <span class="keyword">case</span> <span class="number">1</span>:</span><br><span class="line">          <span class="comment">// left</span></span><br><span class="line">          x_offset = <span class="number">0</span>;</span><br><span class="line">          y_offset = <span class="number">-1</span>;</span><br><span class="line">          <span class="keyword">break</span>;</span><br><span class="line">        <span class="keyword">case</span> <span class="number">2</span>:</span><br><span class="line">          <span class="comment">// down</span></span><br><span class="line">          x_offset = <span class="number">1</span>;</span><br><span class="line">          y_offset = <span class="number">0</span>;</span><br><span class="line">          <span class="keyword">break</span>;</span><br><span class="line">        <span class="keyword">case</span> <span class="number">3</span>:</span><br><span class="line">          <span class="comment">// up</span></span><br><span class="line">          x_offset = <span class="number">-1</span>;</span><br><span class="line">          y_offset = <span class="number">0</span>;</span><br><span class="line">          <span class="keyword">break</span>;</span><br><span class="line">        <span class="keyword">default</span>:</span><br><span class="line">          <span class="keyword">break</span>;</span><br><span class="line">      &#125;</span><br><span class="line"></span><br><span class="line">      <span class="comment">// out of bound</span></span><br><span class="line">      <span class="keyword">if</span> (zeroX + x_offset &lt; <span class="number">0</span> || zeroX + x_offset &gt;= GRID || zeroY + y_offset &lt; <span class="number">0</span> || zeroY + y_offset &gt;= GRID) &#123;</span><br><span class="line">        <span class="keyword">continue</span>;</span><br><span class="line">      &#125;</span><br><span class="line">      state *q = <span class="keyword">new</span> state(level); <span class="comment">// Initial a new state</span></span><br><span class="line">      q-&gt;parent = p;</span><br><span class="line">      *q = *p;</span><br><span class="line">      <span class="comment">// move zero to the new position</span></span><br><span class="line">      q-&gt;panel[zeroX][zeroY] = q-&gt;panel[zeroX + x_offset][zeroY + y_offset];</span><br><span class="line">      q-&gt;panel[zeroX + x_offset][zeroY + y_offset] = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">      <span class="keyword">bool</span> isSkip = <span class="literal">false</span>;</span><br><span class="line">      <span class="built_in">vector</span>&lt;state*&gt;::iterator duplicate = findDuplicate(openTable, q);</span><br><span class="line">      <span class="comment">// If q is in OpenTable, update it</span></span><br><span class="line">      <span class="keyword">if</span> (duplicate != openTable.end()) &#123;</span><br><span class="line">        <span class="keyword">if</span> (computeF(q) &lt; computeF(*duplicate)) &#123;</span><br><span class="line">          (*duplicate)-&gt;level = q-&gt;level;</span><br><span class="line">          (*duplicate)-&gt;parent = q-&gt;parent;</span><br><span class="line">        &#125;</span><br><span class="line">        isSkip = <span class="literal">true</span>;</span><br><span class="line">      &#125;</span><br><span class="line">      <span class="comment">// If q is in CloseTable, update it</span></span><br><span class="line">      duplicate = findDuplicate(closeTable, q);</span><br><span class="line">      <span class="keyword">if</span> (duplicate != closeTable.end()) &#123;</span><br><span class="line">        <span class="keyword">if</span> (computeF(q) &lt; computeF(*duplicate)) &#123;</span><br><span class="line">          <span class="keyword">delete</span> *duplicate;</span><br><span class="line">          closeTable.erase(duplicate);</span><br><span class="line">          <span class="comment">//cout &lt;&lt; &quot;Test: &quot; &lt;&lt; q-&gt;panel[1][1] &lt;&lt; endl;</span></span><br><span class="line">          openTable.push_back(q);</span><br><span class="line">          isSkip = <span class="literal">true</span>;</span><br><span class="line">        &#125;</span><br><span class="line">      &#125;</span><br><span class="line"></span><br><span class="line">      <span class="keyword">if</span> (!isSkip) &#123;</span><br><span class="line">        openTable.push_back(q);</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    closeTable.push_back(p);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="九数码-1"><a href="#九数码-1" class="headerlink" title="九数码"></a>九数码</h4><p>在八数码的基础上做了修改：</p>
+<p>估值函数把0也计算，这里以H2为例：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// H2: number of wrong position</span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">computeH2</span><span class="params">(state &amp;p)</span> </span>&#123;</span><br><span class="line">  <span class="keyword">int</span> h = <span class="number">0</span>;</span><br><span class="line">  <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; GRID; i++) &#123;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> j = <span class="number">0</span>; j &lt; GRID; j++) &#123;</span><br><span class="line">        <span class="keyword">if</span> ((<span class="number">3</span> * i + j) != rightPos[p.panel[i][j]]) &#123;</span><br><span class="line">          h++;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> h;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>A*中生成子状态：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Expand sub nodes</span></span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> e = <span class="number">0</span>; e &lt; <span class="number">9</span>; e++) &#123;</span><br><span class="line">      <span class="keyword">int</span> x = e / <span class="number">3</span>;</span><br><span class="line">      <span class="keyword">int</span> y = e % <span class="number">3</span>;</span><br><span class="line"></span><br><span class="line">      <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">4</span>; i++) &#123;</span><br><span class="line">        <span class="keyword">int</span> x_offset = <span class="number">0</span>, y_offset = <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">switch</span> (i) &#123;</span><br><span class="line">          <span class="keyword">case</span> <span class="number">0</span>:</span><br><span class="line">            <span class="comment">// right</span></span><br><span class="line">            x_offset = <span class="number">0</span>;</span><br><span class="line">            y_offset = <span class="number">1</span>;</span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line">          <span class="keyword">case</span> <span class="number">1</span>:</span><br><span class="line">            <span class="comment">// left</span></span><br><span class="line">            x_offset = <span class="number">0</span>;</span><br><span class="line">            y_offset = <span class="number">-1</span>;</span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line">          <span class="keyword">case</span> <span class="number">2</span>:</span><br><span class="line">            <span class="comment">// down</span></span><br><span class="line">            x_offset = <span class="number">1</span>;</span><br><span class="line">            y_offset = <span class="number">0</span>;</span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line">          <span class="keyword">case</span> <span class="number">3</span>:</span><br><span class="line">            <span class="comment">// up</span></span><br><span class="line">            x_offset = <span class="number">-1</span>;</span><br><span class="line">            y_offset = <span class="number">0</span>;</span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line">          <span class="keyword">default</span>:</span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// out of bound</span></span><br><span class="line">        <span class="keyword">if</span> (x + x_offset &lt; <span class="number">0</span> || x + x_offset &gt;= GRID || y + y_offset &lt; <span class="number">0</span> || y + y_offset &gt;= GRID) &#123;</span><br><span class="line">          <span class="keyword">continue</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        state *q = <span class="keyword">new</span> state(level); <span class="comment">// Initial a new state</span></span><br><span class="line">        q-&gt;parent = p;</span><br><span class="line">        *q = *p;</span><br><span class="line">        <span class="comment">// switch two position</span></span><br><span class="line">        <span class="keyword">int</span> temp = q-&gt;panel[x][y];</span><br><span class="line">        q-&gt;panel[x][y] = q-&gt;panel[x + x_offset][y + y_offset];</span><br><span class="line">        q-&gt;panel[x + x_offset][y + y_offset] = temp;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">bool</span> isSkip = <span class="literal">false</span>;</span><br><span class="line">        <span class="built_in">vector</span>&lt;state*&gt;::iterator duplicate = findDuplicate(openTable, q);</span><br><span class="line">        <span class="comment">// If q is in OpenTable, update it</span></span><br><span class="line">        <span class="keyword">if</span> (duplicate != openTable.end()) &#123;</span><br><span class="line">          <span class="keyword">if</span> (computeF(q) &lt; computeF(*duplicate)) &#123;</span><br><span class="line">            (*duplicate)-&gt;level = q-&gt;level;</span><br><span class="line">            (*duplicate)-&gt;parent = q-&gt;parent;</span><br><span class="line">          &#125;</span><br><span class="line">          isSkip = <span class="literal">true</span>;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        duplicate = findDuplicate(closeTable, q);</span><br><span class="line">        <span class="keyword">if</span> (duplicate != closeTable.end()) &#123;</span><br><span class="line">          <span class="keyword">if</span> (computeF(q) &lt; computeF(*duplicate)) &#123;</span><br><span class="line">            <span class="keyword">delete</span> *duplicate;</span><br><span class="line">            closeTable.erase(duplicate);</span><br><span class="line">            <span class="comment">//cout &lt;&lt; &quot;Test: &quot; &lt;&lt; q-&gt;panel[1][1] &lt;&lt; endl;</span></span><br><span class="line">            openTable.push_back(q);</span><br><span class="line">            isSkip = <span class="literal">true</span>;</span><br><span class="line">          &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (!isSkip) &#123;</span><br><span class="line">          openTable.push_back(q);</span><br><span class="line">        &#125;</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h3 id="测试与分析"><a href="#测试与分析" class="headerlink" title="测试与分析"></a>测试与分析</h3><p>程序运行的结果包括每一次从open表中选出估值最小的节点时open表的大小，以及从初始状态到目标状态的最优路径（每个状态对应的h、g、f值）。为了更好地比较八数码和九数码问题，我们对于同一个数据进行测试，数据共有五组。篇幅有限，这里只展示两组数据，且报告中只展示最优路径，其余信息可在<code>result</code>文件夹中找到。</p>
+<h4 id="Data1（对比不同估值函数-h-和-h-2-）："><a href="#Data1（对比不同估值函数-h-和-h-2-）：" class="headerlink" title="Data1（对比不同估值函数$h$和$h_2$）："></a>Data1（对比不同估值函数$h$和$h_2$）：</h4><p>输入：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">0 1 7</span><br><span class="line">6 5 2</span><br><span class="line">3 8 4</span><br></pre></td></tr></table></figure>
+
+<p>输出：</p>
+<p>使用$h$（曼哈顿距离）：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br></pre></td><td class="code"><pre><span class="line">OpenTable Size: 188</span><br><span class="line"></span><br><span class="line">Total Run Time: 36 ms.</span><br><span class="line">Step: 0</span><br><span class="line">0 1 7</span><br><span class="line">6 5 2</span><br><span class="line">3 8 4</span><br><span class="line">h: 18	g: 0	f: 18</span><br><span class="line"></span><br><span class="line">Step: 1</span><br><span class="line">6 1 7</span><br><span class="line">0 5 2</span><br><span class="line">3 8 4</span><br><span class="line">h: 19	g: 1	f: 20</span><br><span class="line"></span><br><span class="line">Step: 2</span><br><span class="line">6 1 7</span><br><span class="line">3 5 2</span><br><span class="line">0 8 4</span><br><span class="line">h: 18	g: 2	f: 20</span><br><span class="line"></span><br><span class="line">Step: 3</span><br><span class="line">6 1 7</span><br><span class="line">3 5 2</span><br><span class="line">8 0 4</span><br><span class="line">h: 17	g: 3	f: 20</span><br><span class="line"></span><br><span class="line">Step: 4</span><br><span class="line">6 1 7</span><br><span class="line">3 0 2</span><br><span class="line">8 5 4</span><br><span class="line">h: 16	g: 4	f: 20</span><br><span class="line"></span><br><span class="line">Step: 5</span><br><span class="line">6 1 7</span><br><span class="line">0 3 2</span><br><span class="line">8 5 4</span><br><span class="line">h: 15	g: 5	f: 20</span><br><span class="line"></span><br><span class="line">Step: 6</span><br><span class="line">0 1 7</span><br><span class="line">6 3 2</span><br><span class="line">8 5 4</span><br><span class="line">h: 14	g: 6	f: 20</span><br><span class="line"></span><br><span class="line">Step: 7</span><br><span class="line">1 0 7</span><br><span class="line">6 3 2</span><br><span class="line">8 5 4</span><br><span class="line">h: 13	g: 7	f: 20</span><br><span class="line"></span><br><span class="line">Step: 8</span><br><span class="line">1 3 7</span><br><span class="line">6 0 2</span><br><span class="line">8 5 4</span><br><span class="line">h: 12	g: 8	f: 20</span><br><span class="line"></span><br><span class="line">Step: 9</span><br><span class="line">1 3 7</span><br><span class="line">6 2 0</span><br><span class="line">8 5 4</span><br><span class="line">h: 11	g: 9	f: 20</span><br><span class="line"></span><br><span class="line">Step: 10</span><br><span class="line">1 3 0</span><br><span class="line">6 2 7</span><br><span class="line">8 5 4</span><br><span class="line">h: 10	g: 10	f: 20</span><br><span class="line"></span><br><span class="line">Step: 11</span><br><span class="line">1 0 3</span><br><span class="line">6 2 7</span><br><span class="line">8 5 4</span><br><span class="line">h: 9	g: 11	f: 20</span><br><span class="line"></span><br><span class="line">Step: 12</span><br><span class="line">1 2 3</span><br><span class="line">6 0 7</span><br><span class="line">8 5 4</span><br><span class="line">h: 8	g: 12	f: 20</span><br><span class="line"></span><br><span class="line">Step: 13</span><br><span class="line">1 2 3</span><br><span class="line">6 7 0</span><br><span class="line">8 5 4</span><br><span class="line">h: 7	g: 13	f: 20</span><br><span class="line"></span><br><span class="line">Step: 14</span><br><span class="line">1 2 3</span><br><span class="line">6 7 4</span><br><span class="line">8 5 0</span><br><span class="line">h: 6	g: 14	f: 20</span><br><span class="line"></span><br><span class="line">Step: 15</span><br><span class="line">1 2 3</span><br><span class="line">6 7 4</span><br><span class="line">8 0 5</span><br><span class="line">h: 5	g: 15	f: 20</span><br><span class="line"></span><br><span class="line">Step: 16</span><br><span class="line">1 2 3</span><br><span class="line">6 0 4</span><br><span class="line">8 7 5</span><br><span class="line">h: 4	g: 16	f: 20</span><br><span class="line"></span><br><span class="line">Step: 17</span><br><span class="line">1 2 3</span><br><span class="line">0 6 4</span><br><span class="line">8 7 5</span><br><span class="line">h: 3	g: 17	f: 20</span><br><span class="line"></span><br><span class="line">Step: 18</span><br><span class="line">1 2 3</span><br><span class="line">8 6 4</span><br><span class="line">0 7 5</span><br><span class="line">h: 2	g: 18	f: 20</span><br><span class="line"></span><br><span class="line">Step: 19</span><br><span class="line">1 2 3</span><br><span class="line">8 6 4</span><br><span class="line">7 0 5</span><br><span class="line">h: 1	g: 19	f: 20</span><br><span class="line"></span><br><span class="line">Step: 20</span><br><span class="line">1 2 3</span><br><span class="line">8 0 4</span><br><span class="line">7 6 5</span><br><span class="line">h: 0	g: 20	f: 20</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>使用$h_2$（错误放置个数）：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br></pre></td><td class="code"><pre><span class="line">OpenTable Size: 3198</span><br><span class="line"></span><br><span class="line">Total Run Time: 13700 ms.</span><br><span class="line">Step: 0</span><br><span class="line">0 1 7</span><br><span class="line">6 5 2</span><br><span class="line">3 8 4</span><br><span class="line">h: 8	g: 0	f: 8</span><br><span class="line"></span><br><span class="line">Step: 1</span><br><span class="line">6 1 7</span><br><span class="line">0 5 2</span><br><span class="line">3 8 4</span><br><span class="line">h: 8	g: 1	f: 9</span><br><span class="line"></span><br><span class="line">Step: 2</span><br><span class="line">6 1 7</span><br><span class="line">3 5 2</span><br><span class="line">0 8 4</span><br><span class="line">h: 8	g: 2	f: 10</span><br><span class="line"></span><br><span class="line">Step: 3</span><br><span class="line">6 1 7</span><br><span class="line">3 5 2</span><br><span class="line">8 0 4</span><br><span class="line">h: 8	g: 3	f: 11</span><br><span class="line"></span><br><span class="line">Step: 4</span><br><span class="line">6 1 7</span><br><span class="line">3 0 2</span><br><span class="line">8 5 4</span><br><span class="line">h: 8	g: 4	f: 12</span><br><span class="line"></span><br><span class="line">Step: 5</span><br><span class="line">6 1 7</span><br><span class="line">0 3 2</span><br><span class="line">8 5 4</span><br><span class="line">h: 8	g: 5	f: 13</span><br><span class="line"></span><br><span class="line">Step: 6</span><br><span class="line">0 1 7</span><br><span class="line">6 3 2</span><br><span class="line">8 5 4</span><br><span class="line">h: 8	g: 6	f: 14</span><br><span class="line"></span><br><span class="line">Step: 7</span><br><span class="line">1 0 7</span><br><span class="line">6 3 2</span><br><span class="line">8 5 4</span><br><span class="line">h: 7	g: 7	f: 14</span><br><span class="line"></span><br><span class="line">Step: 8</span><br><span class="line">1 3 7</span><br><span class="line">6 0 2</span><br><span class="line">8 5 4</span><br><span class="line">h: 7	g: 8	f: 15</span><br><span class="line"></span><br><span class="line">Step: 9</span><br><span class="line">1 3 7</span><br><span class="line">6 2 0</span><br><span class="line">8 5 4</span><br><span class="line">h: 7	g: 9	f: 16</span><br><span class="line"></span><br><span class="line">Step: 10</span><br><span class="line">1 3 0</span><br><span class="line">6 2 7</span><br><span class="line">8 5 4</span><br><span class="line">h: 7	g: 10	f: 17</span><br><span class="line"></span><br><span class="line">Step: 11</span><br><span class="line">1 0 3</span><br><span class="line">6 2 7</span><br><span class="line">8 5 4</span><br><span class="line">h: 6	g: 11	f: 17</span><br><span class="line"></span><br><span class="line">Step: 12</span><br><span class="line">1 2 3</span><br><span class="line">6 0 7</span><br><span class="line">8 5 4</span><br><span class="line">h: 5	g: 12	f: 17</span><br><span class="line"></span><br><span class="line">Step: 13</span><br><span class="line">1 2 3</span><br><span class="line">6 7 0</span><br><span class="line">8 5 4</span><br><span class="line">h: 5	g: 13	f: 18</span><br><span class="line"></span><br><span class="line">Step: 14</span><br><span class="line">1 2 3</span><br><span class="line">6 7 4</span><br><span class="line">8 5 0</span><br><span class="line">h: 4	g: 14	f: 18</span><br><span class="line"></span><br><span class="line">Step: 15</span><br><span class="line">1 2 3</span><br><span class="line">6 7 4</span><br><span class="line">8 0 5</span><br><span class="line">h: 3	g: 15	f: 18</span><br><span class="line"></span><br><span class="line">Step: 16</span><br><span class="line">1 2 3</span><br><span class="line">6 0 4</span><br><span class="line">8 7 5</span><br><span class="line">h: 3	g: 16	f: 19</span><br><span class="line"></span><br><span class="line">Step: 17</span><br><span class="line">1 2 3</span><br><span class="line">0 6 4</span><br><span class="line">8 7 5</span><br><span class="line">h: 3	g: 17	f: 20</span><br><span class="line"></span><br><span class="line">Step: 18</span><br><span class="line">1 2 3</span><br><span class="line">8 6 4</span><br><span class="line">0 7 5</span><br><span class="line">h: 2	g: 18	f: 20</span><br><span class="line"></span><br><span class="line">Step: 19</span><br><span class="line">1 2 3</span><br><span class="line">8 6 4</span><br><span class="line">7 0 5</span><br><span class="line">h: 1	g: 19	f: 20</span><br><span class="line"></span><br><span class="line">Step: 20</span><br><span class="line">1 2 3</span><br><span class="line">8 0 4</span><br><span class="line">7 6 5</span><br><span class="line">h: 0	g: 20	f: 20</span><br></pre></td></tr></table></figure>
+
+<p><strong>分析</strong>：通过同一个输入，不同估值函数的搜索效率差别是很大的。从这个例子可以看出，使用$h$的效率更高，其搜索的点更少。这是因为，相比起$h_2$，$h$更符合移动棋子实际所消耗的代价，因而更适合作为估值函数。</p>
+<h4 id="Data2（对比八数码和九数码）："><a href="#Data2（对比八数码和九数码）：" class="headerlink" title="Data2（对比八数码和九数码）："></a>Data2（对比八数码和九数码）：</h4><p>输入：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">0 1 7</span><br><span class="line">6 5 2</span><br><span class="line">3 8 4</span><br></pre></td></tr></table></figure>
+
+<p>输出：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;&#x2F; 八数码</span><br><span class="line">OpenTable Size: 188</span><br><span class="line"></span><br><span class="line">Total Run Time: 36 ms.</span><br><span class="line">Step: 0</span><br><span class="line">0 1 7</span><br><span class="line">6 5 2</span><br><span class="line">3 8 4</span><br><span class="line">h: 18	g: 0	f: 18</span><br><span class="line"></span><br><span class="line">Step: 1</span><br><span class="line">6 1 7</span><br><span class="line">0 5 2</span><br><span class="line">3 8 4</span><br><span class="line">h: 19	g: 1	f: 20</span><br><span class="line"></span><br><span class="line">Step: 2</span><br><span class="line">6 1 7</span><br><span class="line">3 5 2</span><br><span class="line">0 8 4</span><br><span class="line">h: 18	g: 2	f: 20</span><br><span class="line"></span><br><span class="line">Step: 3</span><br><span class="line">6 1 7</span><br><span class="line">3 5 2</span><br><span class="line">8 0 4</span><br><span class="line">h: 17	g: 3	f: 20</span><br><span class="line"></span><br><span class="line">Step: 4</span><br><span class="line">6 1 7</span><br><span class="line">3 0 2</span><br><span class="line">8 5 4</span><br><span class="line">h: 16	g: 4	f: 20</span><br><span class="line"></span><br><span class="line">Step: 5</span><br><span class="line">6 1 7</span><br><span class="line">0 3 2</span><br><span class="line">8 5 4</span><br><span class="line">h: 15	g: 5	f: 20</span><br><span class="line"></span><br><span class="line">Step: 6</span><br><span class="line">0 1 7</span><br><span class="line">6 3 2</span><br><span class="line">8 5 4</span><br><span class="line">h: 14	g: 6	f: 20</span><br><span class="line"></span><br><span class="line">Step: 7</span><br><span class="line">1 0 7</span><br><span class="line">6 3 2</span><br><span class="line">8 5 4</span><br><span class="line">h: 13	g: 7	f: 20</span><br><span class="line"></span><br><span class="line">Step: 8</span><br><span class="line">1 3 7</span><br><span class="line">6 0 2</span><br><span class="line">8 5 4</span><br><span class="line">h: 12	g: 8	f: 20</span><br><span class="line"></span><br><span class="line">Step: 9</span><br><span class="line">1 3 7</span><br><span class="line">6 2 0</span><br><span class="line">8 5 4</span><br><span class="line">h: 11	g: 9	f: 20</span><br><span class="line"></span><br><span class="line">Step: 10</span><br><span class="line">1 3 0</span><br><span class="line">6 2 7</span><br><span class="line">8 5 4</span><br><span class="line">h: 10	g: 10	f: 20</span><br><span class="line"></span><br><span class="line">Step: 11</span><br><span class="line">1 0 3</span><br><span class="line">6 2 7</span><br><span class="line">8 5 4</span><br><span class="line">h: 9	g: 11	f: 20</span><br><span class="line"></span><br><span class="line">Step: 12</span><br><span class="line">1 2 3</span><br><span class="line">6 0 7</span><br><span class="line">8 5 4</span><br><span class="line">h: 8	g: 12	f: 20</span><br><span class="line"></span><br><span class="line">Step: 13</span><br><span class="line">1 2 3</span><br><span class="line">6 7 0</span><br><span class="line">8 5 4</span><br><span class="line">h: 7	g: 13	f: 20</span><br><span class="line"></span><br><span class="line">Step: 14</span><br><span class="line">1 2 3</span><br><span class="line">6 7 4</span><br><span class="line">8 5 0</span><br><span class="line">h: 6	g: 14	f: 20</span><br><span class="line"></span><br><span class="line">Step: 15</span><br><span class="line">1 2 3</span><br><span class="line">6 7 4</span><br><span class="line">8 0 5</span><br><span class="line">h: 5	g: 15	f: 20</span><br><span class="line"></span><br><span class="line">Step: 16</span><br><span class="line">1 2 3</span><br><span class="line">6 0 4</span><br><span class="line">8 7 5</span><br><span class="line">h: 4	g: 16	f: 20</span><br><span class="line"></span><br><span class="line">Step: 17</span><br><span class="line">1 2 3</span><br><span class="line">0 6 4</span><br><span class="line">8 7 5</span><br><span class="line">h: 3	g: 17	f: 20</span><br><span class="line"></span><br><span class="line">Step: 18</span><br><span class="line">1 2 3</span><br><span class="line">8 6 4</span><br><span class="line">0 7 5</span><br><span class="line">h: 2	g: 18	f: 20</span><br><span class="line"></span><br><span class="line">Step: 19</span><br><span class="line">1 2 3</span><br><span class="line">8 6 4</span><br><span class="line">7 0 5</span><br><span class="line">h: 1	g: 19	f: 20</span><br><span class="line"></span><br><span class="line">Step: 20</span><br><span class="line">1 2 3</span><br><span class="line">8 0 4</span><br><span class="line">7 6 5</span><br><span class="line">h: 0	g: 20	f: 20</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;&#x2F; 九数码</span><br><span class="line">OpenTable Size: 222</span><br><span class="line"></span><br><span class="line">Total Run Time: 55 ms.</span><br><span class="line">Step: 0</span><br><span class="line">0 1 7</span><br><span class="line">6 5 2</span><br><span class="line">3 8 4</span><br><span class="line">h: 20	g: 0	f: 20</span><br><span class="line"></span><br><span class="line">Step: 1</span><br><span class="line">6 1 7</span><br><span class="line">0 5 2</span><br><span class="line">3 8 4</span><br><span class="line">h: 20	g: 1	f: 21</span><br><span class="line"></span><br><span class="line">Step: 2</span><br><span class="line">6 1 7</span><br><span class="line">3 5 2</span><br><span class="line">0 8 4</span><br><span class="line">h: 20	g: 2	f: 22</span><br><span class="line"></span><br><span class="line">Step: 3</span><br><span class="line">6 1 7</span><br><span class="line">3 5 2</span><br><span class="line">8 0 4</span><br><span class="line">h: 18	g: 3	f: 21</span><br><span class="line"></span><br><span class="line">Step: 4</span><br><span class="line">6 1 7</span><br><span class="line">3 0 2</span><br><span class="line">8 5 4</span><br><span class="line">h: 16	g: 4	f: 20</span><br><span class="line"></span><br><span class="line">Step: 5</span><br><span class="line">6 1 7</span><br><span class="line">0 3 2</span><br><span class="line">8 5 4</span><br><span class="line">h: 16	g: 5	f: 21</span><br><span class="line"></span><br><span class="line">Step: 6</span><br><span class="line">0 1 7</span><br><span class="line">6 3 2</span><br><span class="line">8 5 4</span><br><span class="line">h: 16	g: 6	f: 22</span><br><span class="line"></span><br><span class="line">Step: 7</span><br><span class="line">1 0 7</span><br><span class="line">6 3 2</span><br><span class="line">8 5 4</span><br><span class="line">h: 14	g: 7	f: 21</span><br><span class="line"></span><br><span class="line">Step: 8</span><br><span class="line">1 3 7</span><br><span class="line">6 0 2</span><br><span class="line">8 5 4</span><br><span class="line">h: 12	g: 8	f: 20</span><br><span class="line"></span><br><span class="line">Step: 9</span><br><span class="line">1 3 7</span><br><span class="line">6 2 0</span><br><span class="line">8 5 4</span><br><span class="line">h: 12	g: 9	f: 21</span><br><span class="line"></span><br><span class="line">Step: 10</span><br><span class="line">1 3 0</span><br><span class="line">6 2 7</span><br><span class="line">8 5 4</span><br><span class="line">h: 12	g: 10	f: 22</span><br><span class="line"></span><br><span class="line">Step: 11</span><br><span class="line">1 0 3</span><br><span class="line">6 2 7</span><br><span class="line">8 5 4</span><br><span class="line">h: 10	g: 11	f: 21</span><br><span class="line"></span><br><span class="line">Step: 12</span><br><span class="line">1 2 3</span><br><span class="line">6 0 7</span><br><span class="line">8 5 4</span><br><span class="line">h: 8	g: 12	f: 20</span><br><span class="line"></span><br><span class="line">Step: 13</span><br><span class="line">1 2 3</span><br><span class="line">6 7 0</span><br><span class="line">8 5 4</span><br><span class="line">h: 8	g: 13	f: 21</span><br><span class="line"></span><br><span class="line">Step: 14</span><br><span class="line">1 2 3</span><br><span class="line">6 7 4</span><br><span class="line">8 5 0</span><br><span class="line">h: 8	g: 14	f: 22</span><br><span class="line"></span><br><span class="line">Step: 15</span><br><span class="line">1 2 3</span><br><span class="line">6 7 4</span><br><span class="line">8 0 5</span><br><span class="line">h: 6	g: 15	f: 21</span><br><span class="line"></span><br><span class="line">Step: 16</span><br><span class="line">1 2 3</span><br><span class="line">6 0 4</span><br><span class="line">8 7 5</span><br><span class="line">h: 4	g: 16	f: 20</span><br><span class="line"></span><br><span class="line">Step: 17</span><br><span class="line">1 2 3</span><br><span class="line">0 6 4</span><br><span class="line">8 7 5</span><br><span class="line">h: 4	g: 17	f: 21</span><br><span class="line"></span><br><span class="line">Step: 18</span><br><span class="line">1 2 3</span><br><span class="line">8 6 4</span><br><span class="line">0 7 5</span><br><span class="line">h: 4	g: 18	f: 22</span><br><span class="line"></span><br><span class="line">Step: 19</span><br><span class="line">1 2 3</span><br><span class="line">8 6 4</span><br><span class="line">7 0 5</span><br><span class="line">h: 2	g: 19	f: 21</span><br><span class="line"></span><br><span class="line">Step: 20</span><br><span class="line">1 2 3</span><br><span class="line">8 0 4</span><br><span class="line">7 6 5</span><br><span class="line">h: 0	g: 20	f: 20</span><br></pre></td></tr></table></figure>
+
+<p>&emsp;&emsp;可以看出，对于同一个例子，使用相同的估值函数，八数码和九数码的搜索图是不同的，因为他们的估值不同，所以选的点可能会不一样，因此整个搜索的路径也是不一样的。</p>
+<p>&emsp;&emsp;证明部分的内容也写在这里（注意这里讨论的例子都是八数码问题）。首先证明由A*算法挑选出来的点$n$必定满足<br>$$<br>f(n) \le f^{*}(S_0)<br>$$。<br>&emsp;&emsp;在结果中我们看到，每个状态都有$f(n)$，最后的Step就是$f^{*}(S_0)$，可以看出他们都满足这个条件。这是因为，A*算法挑选出来的点$n$位于最优路径上，而这个点对最优路径的估值总是<strong>比实际更加乐观</strong>，因此这个不等式满足。</p>
+<p>&emsp;&emsp;然后证明凡通过A*算法挑选出来的点$n_i$扩展的一个子节点$n_j$，均满足$h_2(n_i) \le 1 + h_2(n_j)$。在上面的例子也可以看到，每一个状态的$h$都满足上述公式。这是因为，对于估值函数$h_2$来说，每走一步，最乐观的情况就是将一个错误放置的棋子移动到正确的位置，即相邻两个状态之间的费用相差最多为1。</p>
+<p>&emsp;&emsp;对比八数码和九数码。他们最本质的区别是，虽然算法大致一样，但是九数码问题中的算法已经不是A*算法了。举个例子，对于如下输入：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">1 2 3</span><br><span class="line">0 8 4</span><br><span class="line">7 6 5</span><br></pre></td></tr></table></figure>
+
+<p>$h(n) = 2$，但是$h^{*}(n)=1$，不满足$h(n) \le h^{*}(n)$。</p>
+<hr>
+<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p>&emsp;&emsp;这个项目我们实现了使用A*算法求解八数码问题，可以看出，A*算法作为一种启发式搜索方法，充分利用了评估函数，挑选评估值最优的点来搜索。我认为，算法的关键是选取合适的估值函数。过于乐观的估值将会降低搜索效率。以本实验为例，使用错误放置的个数作为估值函数显然过于乐观，因为需要走的步数肯定比错误放置的个数要多得多；相反，使用曼哈顿距离则好很多，因为曼哈顿距离考虑了横纵坐标之差，这也恰恰是我们移动棋子时所要走的步数，因此估值函数并不是越乐观越好，估计过于乐观有时会显出很高的复杂性。然后我还思考了一下，可以对估值函数做一个组合优化，因为如果只用一种估值函数可能没办法达到很好的搜索路径，我们可以组合多种估值方法，为他们分配不同的权重，来优化估值函数。</p>
+<p>&emsp;从算法的角度看，A*算法的优点是，相比起DFS和BFS，它不是盲目搜索，而是有提示的启发式搜索。但是它需要大量的存储空间来存放已经搜索过的状态节点，以防止重复搜素。而有一种IDA*算法（Interative deepening A*，迭代加深A*算法），它设置最大深度<code>depth</code>，若没有到达目标状态则加深<code>depth</code>。迭代过程中剪掉$f(n)\gt depth$的路径。它的优点是节省空间，不需要保存大量的中间状态。如果以后有时间，可以将IDA*实现后与A*作比较。</p>
+
+    </div>
+
+    
+    
+    
+        <div class="reward-container">
+  <div></div>
+  <button onclick="var qr = document.getElementById('qr'); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    Donate
+  </button>
+  <div id="qr" style="display: none;">
+      
+      <div style="display: inline-block;">
+        <img src="/images/wechat_reward.png" alt="Leungyukshing WeChat Pay">
+        <p>WeChat Pay</p>
+      </div>
+      
+      <div style="display: inline-block;">
+        <img src="/images/alipay_reward.png" alt="Leungyukshing Alipay">
+        <p>Alipay</p>
+      </div>
+
+  </div>
+</div>
+
+        
+
+  <div class="followme">
+    <p>Welcome to my other publishing channels</p>
+
+    <div class="social-list">
+
+        <div class="social-item">
+          <a target="_blank" class="social-link" href="/atom.xml">
+            <span class="icon">
+              <i class="fa fa-rss"></i>
+            </span>
+
+            <span class="label">RSS</span>
+          </a>
+        </div>
+    </div>
+  </div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/AI-Algorithm/" rel="tag"># AI Algorithm</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/archives/%E6%89%B9%E5%A4%84%E7%90%86.html" rel="prev" title="批处理命令测试">
+      <i class="fa fa-chevron-left"></i> 批处理命令测试
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/archives/Alpha-Beta-Pruning.html" rel="next" title="alpha-beta剪枝算法实现中国象棋人机对战">
+      alpha-beta剪枝算法实现中国象棋人机对战 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%97%AE%E9%A2%98%E4%BB%8B%E7%BB%8D"><span class="nav-number">1.</span> <span class="nav-text">问题介绍</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%AE%97%E6%B3%95%E4%BB%8B%E7%BB%8D"><span class="nav-number">2.</span> <span class="nav-text">算法介绍</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%AE%97%E6%B3%95%E5%AE%9E%E7%8E%B0"><span class="nav-number">3.</span> <span class="nav-text">算法实现</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%85%AB%E6%95%B0%E7%A0%81"><span class="nav-number">3.1.</span> <span class="nav-text">八数码</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%B9%9D%E6%95%B0%E7%A0%81"><span class="nav-number">3.2.</span> <span class="nav-text">九数码</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%B3%E9%94%AE%E4%BB%A3%E7%A0%81%E5%88%86%E6%9E%90"><span class="nav-number">4.</span> <span class="nav-text">关键代码分析</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%85%AB%E6%95%B0%E7%A0%81-1"><span class="nav-number">4.1.</span> <span class="nav-text">八数码</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%B9%9D%E6%95%B0%E7%A0%81-1"><span class="nav-number">4.2.</span> <span class="nav-text">九数码</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%B5%8B%E8%AF%95%E4%B8%8E%E5%88%86%E6%9E%90"><span class="nav-number">5.</span> <span class="nav-text">测试与分析</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Data1%EF%BC%88%E5%AF%B9%E6%AF%94%E4%B8%8D%E5%90%8C%E4%BC%B0%E5%80%BC%E5%87%BD%E6%95%B0-h-%E5%92%8C-h-2-%EF%BC%89%EF%BC%9A"><span class="nav-number">5.1.</span> <span class="nav-text">Data1（对比不同估值函数$h$和$h_2$）：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Data2%EF%BC%88%E5%AF%B9%E6%AF%94%E5%85%AB%E6%95%B0%E7%A0%81%E5%92%8C%E4%B9%9D%E6%95%B0%E7%A0%81%EF%BC%89%EF%BC%9A"><span class="nav-number">5.2.</span> <span class="nav-text">Data2（对比八数码和九数码）：</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-number">6.</span> <span class="nav-text">总结</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Leungyukshing"
+      src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">Leungyukshing</p>
+  <div class="site-description" itemprop="description">A blog for code, programme sharing.</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">688</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">27</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/leungyukshing" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;leungyukshing" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:jacky14.liang@gmail.com" title="E-Mail → mailto:jacky14.liang@gmail.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="/atom.xml" title="RSS → &#x2F;atom.xml"><i class="fa fa-rss fa-fw"></i>RSS</a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll motion-element">
+    <div class="links-of-blogroll-title"><i class="fa fa-link fa-fw"></i>
+      Friends
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="http://www.liangjh45.com/" title="http:&#x2F;&#x2F;www.liangjh45.com&#x2F;" rel="noopener" target="_blank">Alva's blog</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="https://sysucarey.github.io/" title="https:&#x2F;&#x2F;sysucarey.github.io&#x2F;" rel="noopener" target="_blank">Carey's blog</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="https://blog.csdn.net/dickdick111/" title="https:&#x2F;&#x2F;blog.csdn.net&#x2F;dickdick111&#x2F;" rel="noopener" target="_blank">Dick's blog</a>
+        </li>
+    </ul>
+  </div>
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2017 – 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Leungyukshing</span>
+</div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="Total Visitors">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="Total Views">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+      
+
+<script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      loader: {
+        source: {
+          '[tex]/amsCd': '[tex]/amscd',
+          '[tex]/AMScd': '[tex]/amscd'
+        }
+      },
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              let target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    (function () {
+      var script = document.createElement('script');
+      script.src = '//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+      script.defer = true;
+      document.head.appendChild(script);
+    })();
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : true,
+      appId      : 'AaLog29QcUdQKTboD6cY2dNP-gzGzoHsz',
+      appKey     : 'dUWNHLnTY9qG1jJwPnTtfMm8',
+      placeholder: "Just go go",
+      avatar     : 'mm',
+      meta       : guest,
+      pageSize   : '10' || 10,
+      visitor    : false,
+      lang       : '' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : false,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+
+</body>
+</html>

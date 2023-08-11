@@ -1,0 +1,758 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <meta name="google-site-verification" content="FHjCzDi7nry9Mvf4EFOY5cYoco-ZXq9tKjvXZK0nKr4">
+  <meta name="baidu-site-verification" content="code-gpMFPewYUF" />
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="/lib/pace/pace-theme-minimal.min.css">
+  <script src="/lib/pace/pace.min.js"></script>
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"leungyukshing.github.io","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"right","display":"hide","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"appID":"52USYSYESX","apiKey":"20b904c66f55b874f05edea4aca57780","indexName":"blog","hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="问题介绍&amp;emsp;&amp;emsp;本实验要求编写一个中国象棋博弈程序，使用alpha-beta剪枝算法，实现人机对弈。因为是人机博弈，因此我们需要使得电脑比较聪明，而方法就是要电脑选择走比较好的步骤。机器是基于搜索来下棋的，我们需要让机器考虑比较长远的情况，然后做出比较好的选择，而为了提高搜索效率，就应用到了alpha-beta剪枝算法。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="alpha-beta剪枝算法实现中国象棋人机对战">
+<meta property="og:url" content="https://leungyukshing.github.io/archives/Alpha-Beta-Pruning.html">
+<meta property="og:site_name" content="Halo">
+<meta property="og:description" content="问题介绍&amp;emsp;&amp;emsp;本实验要求编写一个中国象棋博弈程序，使用alpha-beta剪枝算法，实现人机对弈。因为是人机博弈，因此我们需要使得电脑比较聪明，而方法就是要电脑选择走比较好的步骤。机器是基于搜索来下棋的，我们需要让机器考虑比较长远的情况，然后做出比较好的选择，而为了提高搜索效率，就应用到了alpha-beta剪枝算法。">
+<meta property="og:locale">
+<meta property="og:image" content="https://raw.githubusercontent.com/leungyukshing/Artificial-Intelligence/master/AIChess/images/1.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/leungyukshing/Artificial-Intelligence/master/AIChess/images/2.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/leungyukshing/Artificial-Intelligence/master/AIChess/images/3.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/leungyukshing/Artificial-Intelligence/master/AIChess/images/4.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/leungyukshing/Artificial-Intelligence/master/AIChess/images/5.png">
+<meta property="article:published_time" content="2018-12-25T16:32:23.000Z">
+<meta property="article:modified_time" content="2021-06-22T18:33:07.004Z">
+<meta property="article:author" content="Leungyukshing">
+<meta property="article:tag" content="AI Algorithm">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/leungyukshing/Artificial-Intelligence/master/AIChess/images/1.png">
+
+<link rel="canonical" href="https://leungyukshing.github.io/archives/Alpha-Beta-Pruning.html">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-Hans'
+  };
+</script>
+
+  <title>alpha-beta剪枝算法实现中国象棋人机对战 | Halo</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+<!-- hexo injector head_end end --><link rel="alternate" href="/atom.xml" title="Halo" type="application/atom+xml"><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Halo</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">A magic place for coding</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>About</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>Tags</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>Search
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="Searching..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+  <a href="https://github.com/leungyukshing" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="https://leungyukshing.github.io/archives/Alpha-Beta-Pruning.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="Leungyukshing">
+      <meta itemprop="description" content="A blog for code, programme sharing.">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Halo">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          alpha-beta剪枝算法实现中国象棋人机对战
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2018-12-25 11:32:23" itemprop="dateCreated datePublished" datetime="2018-12-25T11:32:23-05:00">2018-12-25</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2021-06-22 14:33:07" itemprop="dateModified" datetime="2021-06-22T14:33:07-04:00">2021-06-22</time>
+              </span>
+
+          
+            <span class="post-meta-item" title="Views" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">Views: </span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine: </span>
+    
+    <a title="valine" href="/archives/Alpha-Beta-Pruning.html#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/archives/Alpha-Beta-Pruning.html" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h3 id="问题介绍"><a href="#问题介绍" class="headerlink" title="问题介绍"></a>问题介绍</h3><p>&emsp;&emsp;本实验要求编写一个中国象棋博弈程序，使用alpha-beta剪枝算法，实现人机对弈。因为是人机博弈，因此我们需要使得电脑比较聪明，而方法就是要电脑选择走比较好的步骤。机器是基于搜索来下棋的，我们需要让机器考虑比较长远的情况，然后做出比较好的选择，而为了提高搜索效率，就应用到了alpha-beta剪枝算法。</p>
+<a id="more"></a>
+
+<hr>
+<h3 id="算法介绍"><a href="#算法介绍" class="headerlink" title="算法介绍"></a>算法介绍</h3><p>&emsp;&emsp;对于博弈问题，我们首先考虑的是<strong>极小极大搜索算法</strong>。我们规定：MAX代表程序方，MIN代表对手方，P代表一个棋局（即一个状态）。有利于MAX的势态，$f(P)$取正值；有利于MIN的势态，$f(P)$取负值；势态均衡，$f(P)$取零。$f(P)$的大小由棋局势态的优劣来决定。评估棋局的静态函数要考虑两个方面的因素：</p>
+<ul>
+<li>双方都知道自己走到了什么程度</li>
+<li>双方都知道下一步能够做什么</li>
+</ul>
+<p>&emsp;&emsp;基于这个前提，博弈双方要考虑的问题是：如何产生一个最好的走步，能尽快获胜。因此，就引出来<strong>极小极大搜索算法</strong>。</p>
+<p>&emsp;&emsp;<strong>极小极大搜索的基本思想是：</strong></p>
+<ol>
+<li>当轮到MIN走步的节点时，MAX应考虑最坏的情况（因此，$f(P)$取极小值）。</li>
+<li>当轮到MAX走步的节点时，MAX应考虑最好额情况（因此，$f(P)$取极大值）。</li>
+<li>当评价往回倒退时，相应于两位棋手的对抗策略，不同层上交替地使用1、2两种方法向上传递倒推值。</li>
+</ol>
+<p>&emsp;&emsp;MIN、MAX过程将生成后继节点与估计格局两个过程分开考虑，即需要先生成全部搜索树，然后再进行每个节点的静态估计和倒推值计算。实际上，这种方法效率极低。而alpha-beta基于这个过程，给了我们一个高效的算法。在极大层中定义下界值$\alpha$，它表明该MAX节点向上的倒推值不会小于$\alpha$；在极小层中定义上界值$\beta$，它表明该MIN节点向上的倒推值不会大于$\beta$。</p>
+<p>&emsp;&emsp;剪枝规则如下：</p>
+<ol>
+<li>$\alpha$剪枝。若任一极小层节点的$\beta$值不大于它任一前驱极大层节点的$\alpha$值，即$\alpha$（前驱层）$\ge \beta$（后继层），则可以中止该极小层中这个MIN节点以下的搜索过程。这个MIN节点最终的倒推值就确定为这个$\beta$值。</li>
+<li>$\beta$剪枝。若任一极大层节点的$\alpha$值不小于它任一前驱极小层节点的$\beta$值，即$\alpha$（后继层）$\ge \beta$（前驱层），则可以中止该极大层中这个MAX节点以下的搜索过程。这个MAX节点最终的倒推值就确定为这个$\alpha$值。</li>
+</ol>
+<hr>
+<h3 id="算法实现"><a href="#算法实现" class="headerlink" title="算法实现"></a>算法实现</h3><p>&emsp;&emsp;本次项目的UI是参考了网上的代码，使用Java实现。重点分析alpha-beta剪枝算法，关于UI部分就不详细分析了。</p>
+<p>&emsp;&emsp;首先我们来看棋局的评估，能否对棋局有一个好的评估是这个算法很关键的一环。我们需要对棋局做出合适的评估，以确定最好的走步。评估的方面有三个，一个是下一步的棋力，第二个是下一步能做什么，第三个是棋子的价值。先看棋力，棋力的评估主要是根据棋子所在的位置来分析。这里我们写好了每个棋子在不同位置的棋力，这是参考了一些论文得出来的。第二个是下一步能做什么，我们可以根据下一步能做什么来判断这个走步的好坏。在象棋游戏中，一个好的走步我们期望是能够吃掉对方的棋，而且吃掉的棋子价值越大，这个走步越好。当然，如果下一步能够将军，那么这个走步很有可能就是我们想要的。于是我们对下一步能做什么做一个估值：如果下一步能将军，那么它的估值将大大增加（+9999）；如果下一步能吃掉对方的棋子，那么它的估值将会有一定的增加（车：+500，马或炮：+100）；如果下一步只能吃掉对方的卒，那么它的估值就会下降（-20），因为多数情况下吃掉对方的卒都没什么好处。最后是棋子的价值，这是比较固定的因素，因为我们普遍认为某些棋子的价值是比其他棋子大的（比如车的价值一般来说都比卒要大）。</p>
+<p>&emsp;&emsp;每次估值都需要分开两方的棋子来进行估值。即算出程序方棋局的总体价值和对手方棋局的整体价值。用<strong>程序方估值-对手方估值</strong>作为这个状态下的估值。如果这个估值大于0，说明程序方占优势；反之，说明对手方占优势。</p>
+<p>&emsp;&emsp;完成好估值后，就可以开始alpha-beta的剪枝算法了。首先确定博弈树的深度，通俗来说就是要让程序往后推演几步。当然推演的步数越多，越能找到一个好的走步，但是所需的时间也就越多。然后我们需要使用一个标记来表示当前是极大层还是在极小层，根据标记来计算当前节点的$\alpha$或$\beta$。如果在极大层，我们需要获得它下面所有极小层的倒推值的极大值（实际上不是所有）；如果在极小层，就需要获得它下面所有极大层的倒推层的极小值（实际上不是所有）。这里就牵涉到了<strong>剪枝</strong>。以在极大层为例，如果当前MAX节点提供的倒推值$\alpha$大于其前驱极小层MIN节点的$\beta$，那么说明这个MAX节点以下搜索提供的值不可能小于$\alpha$，也就没有继续搜索的意义了，所以就可以直接结束这个MAX节点的搜索，这就是剪枝。</p>
+<hr>
+<h3 id="关键代码分析"><a href="#关键代码分析" class="headerlink" title="关键代码分析"></a>关键代码分析</h3><ol>
+<li><p>棋子本身的价值评估：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span>[] BasicValue = &#123; <span class="number">80</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">300</span>, <span class="number">500</span>, <span class="number">300</span>, <span class="number">100</span>&#125;;</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<ul>
+<li>将军：80</li>
+<li>士：0</li>
+<li>象：0</li>
+<li>马：300</li>
+<li>车：500</li>
+<li>炮：300</li>
+<li>卒：100</li>
+</ul>
+<ol>
+<li>棋子位置的价值评估：</li>
+</ol>
+<ul>
+<li><p>将军</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span>[][] JiangPosition = <span class="keyword">new</span> <span class="keyword">int</span>[][] &#123;</span><br><span class="line">		&#123;<span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">1</span>, <span class="number">5</span>, <span class="number">1</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>&#125;,</span><br><span class="line">		&#123;<span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, -<span class="number">8</span>, -<span class="number">8</span>, -<span class="number">8</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>&#125;,</span><br><span class="line">		&#123;<span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, -<span class="number">9</span>, -<span class="number">9</span>, -<span class="number">9</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>&#125;,</span><br><span class="line">		&#123;<span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>&#125;,</span><br><span class="line">		&#123;<span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>&#125;,</span><br><span class="line">		&#123;<span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>&#125;,</span><br><span class="line">		&#123;<span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>&#125;,</span><br><span class="line">		&#123;<span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>&#125;,</span><br><span class="line">		&#123;<span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>&#125;,</span><br><span class="line">		&#123;<span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>&#125;</span><br><span class="line">	&#125;;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>士</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span>[][] ShiPosition = <span class="keyword">new</span> <span class="keyword">int</span>[][] &#123;</span><br><span class="line">		&#123;<span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>&#125;,</span><br><span class="line">		&#123;<span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">3</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>&#125;,</span><br><span class="line">		&#123;<span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>&#125;,</span><br><span class="line">		&#123;<span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>&#125;,</span><br><span class="line">		&#123;<span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>&#125;,</span><br><span class="line">		&#123;<span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>&#125;,</span><br><span class="line">		&#123;<span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>&#125;,</span><br><span class="line">		&#123;<span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>&#125;,</span><br><span class="line">		&#123;<span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>&#125;,</span><br><span class="line">		&#123;<span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>&#125;</span><br><span class="line">	&#125;;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>象</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span>[][] XiangPosition = <span class="keyword">new</span> <span class="keyword">int</span>[][] &#123;</span><br><span class="line">		&#123;<span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>&#125;,</span><br><span class="line">		&#123;<span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>&#125;,</span><br><span class="line">		&#123;-<span class="number">2</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">3</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, -<span class="number">2</span>&#125;,</span><br><span class="line">		&#123;<span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>&#125;,</span><br><span class="line">		&#123;<span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>&#125;,</span><br><span class="line">		&#123;<span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>&#125;,</span><br><span class="line">		&#123;<span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>&#125;,</span><br><span class="line">		&#123;<span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>&#125;,</span><br><span class="line">		&#123;<span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>&#125;,</span><br><span class="line">		&#123;<span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>&#125;</span><br><span class="line">	&#125;;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>马</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span>[][] MaPosition = <span class="keyword">new</span> <span class="keyword">int</span>[][] &#123;</span><br><span class="line">		&#123;<span class="number">0</span>, -<span class="number">3</span>, <span class="number">2</span>, <span class="number">0</span>, <span class="number">2</span>, <span class="number">0</span>, <span class="number">2</span>, -<span class="number">3</span>, <span class="number">0</span>&#125;,</span><br><span class="line">		&#123;-<span class="number">3</span>, <span class="number">2</span>, <span class="number">4</span>, <span class="number">5</span>, -<span class="number">10</span>, <span class="number">5</span>, <span class="number">4</span>, <span class="number">2</span>, -<span class="number">3</span>&#125;,</span><br><span class="line">		&#123;<span class="number">5</span>, <span class="number">4</span>, <span class="number">6</span>, <span class="number">7</span>, <span class="number">4</span>, <span class="number">7</span>, <span class="number">6</span>, <span class="number">4</span>, <span class="number">5</span>&#125;,</span><br><span class="line">		&#123;<span class="number">4</span>, <span class="number">6</span>, <span class="number">10</span>, <span class="number">7</span>, <span class="number">10</span>, <span class="number">7</span>, <span class="number">10</span>, <span class="number">6</span>, <span class="number">4</span>&#125;,</span><br><span class="line">		&#123;<span class="number">2</span>, <span class="number">10</span>, <span class="number">13</span>, <span class="number">14</span>, <span class="number">15</span>, <span class="number">14</span>, <span class="number">13</span>, <span class="number">10</span>, <span class="number">2</span>&#125;,</span><br><span class="line">		&#123;<span class="number">2</span>, <span class="number">10</span>, <span class="number">13</span>, <span class="number">14</span>, <span class="number">15</span>, <span class="number">14</span>, <span class="number">13</span>, <span class="number">10</span>, <span class="number">2</span>&#125;,</span><br><span class="line">		&#123;<span class="number">2</span>, <span class="number">12</span>, <span class="number">11</span>, <span class="number">15</span>, <span class="number">16</span>, <span class="number">15</span>, <span class="number">11</span>, <span class="number">12</span>, <span class="number">2</span>&#125;,</span><br><span class="line">		&#123;<span class="number">5</span>, <span class="number">20</span>, <span class="number">12</span>, <span class="number">19</span>, <span class="number">12</span>, <span class="number">19</span>, <span class="number">12</span>, <span class="number">20</span>, <span class="number">5</span>&#125;,</span><br><span class="line">		&#123;<span class="number">4</span>, <span class="number">10</span>, <span class="number">11</span>, <span class="number">15</span>, <span class="number">11</span>, <span class="number">15</span>, <span class="number">11</span>, <span class="number">10</span>, <span class="number">4</span>&#125;,</span><br><span class="line">		&#123;<span class="number">2</span>, <span class="number">8</span>, <span class="number">15</span>, <span class="number">9</span>, <span class="number">6</span>, <span class="number">9</span>, <span class="number">15</span>, <span class="number">8</span>, <span class="number">2</span>&#125;,</span><br><span class="line">		&#123;<span class="number">2</span>, <span class="number">2</span>, <span class="number">2</span>, <span class="number">8</span>, <span class="number">2</span>, <span class="number">8</span>, <span class="number">2</span>, <span class="number">2</span>, <span class="number">2</span>&#125;</span><br><span class="line">	&#125;;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>车</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span>[][] JuPosition = <span class="keyword">new</span> <span class="keyword">int</span>[][] &#123;</span><br><span class="line">		&#123;-<span class="number">6</span>, <span class="number">6</span>, <span class="number">4</span>, <span class="number">12</span>, <span class="number">0</span>, <span class="number">12</span>, <span class="number">4</span>, <span class="number">6</span>, -<span class="number">6</span>&#125;,</span><br><span class="line">		&#123;<span class="number">5</span>, <span class="number">8</span>, <span class="number">6</span>, <span class="number">12</span>, <span class="number">0</span>, <span class="number">12</span>, <span class="number">6</span>, <span class="number">8</span>, <span class="number">5</span>&#125;,</span><br><span class="line">		&#123;-<span class="number">2</span>, <span class="number">8</span>, <span class="number">4</span>, <span class="number">12</span>, <span class="number">12</span>, <span class="number">12</span>, <span class="number">4</span>, <span class="number">8</span>, -<span class="number">2</span>&#125;,</span><br><span class="line">		&#123;<span class="number">4</span>, <span class="number">9</span>, <span class="number">4</span>, <span class="number">12</span>, <span class="number">14</span>, <span class="number">12</span>, <span class="number">4</span>, <span class="number">9</span>, <span class="number">4</span>&#125;,</span><br><span class="line">		&#123;<span class="number">8</span>, <span class="number">12</span>, <span class="number">12</span>, <span class="number">14</span>, <span class="number">15</span>, <span class="number">14</span>, <span class="number">12</span>, <span class="number">12</span>, <span class="number">8</span>&#125;,</span><br><span class="line">		&#123;<span class="number">8</span>, <span class="number">11</span>, <span class="number">11</span>, <span class="number">14</span>, <span class="number">15</span>, <span class="number">14</span>, <span class="number">11</span>, <span class="number">11</span>, <span class="number">8</span>&#125;,</span><br><span class="line">		&#123;<span class="number">6</span>, <span class="number">13</span>, <span class="number">13</span>, <span class="number">16</span>, <span class="number">16</span>, <span class="number">16</span>, <span class="number">13</span>, <span class="number">13</span>, <span class="number">6</span>&#125;,</span><br><span class="line">		&#123;<span class="number">6</span>, <span class="number">8</span>, <span class="number">7</span>, <span class="number">14</span>, <span class="number">16</span>, <span class="number">14</span>, <span class="number">7</span>, <span class="number">8</span>, <span class="number">6</span>&#125;,</span><br><span class="line">		&#123;<span class="number">6</span>, <span class="number">12</span>, <span class="number">9</span>, <span class="number">16</span>, <span class="number">33</span>, <span class="number">16</span>, <span class="number">9</span>, <span class="number">12</span>, <span class="number">6</span>&#125;,</span><br><span class="line">		&#123;<span class="number">6</span>, <span class="number">8</span>, <span class="number">7</span>, <span class="number">13</span>, <span class="number">14</span>, <span class="number">13</span>, <span class="number">7</span>, <span class="number">8</span>, <span class="number">6</span>&#125;</span><br><span class="line">	&#125;;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>炮</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span>[][] PaoPosition = <span class="keyword">new</span> <span class="keyword">int</span>[][] &#123;</span><br><span class="line">		&#123;<span class="number">0</span>, <span class="number">0</span>, <span class="number">1</span>, <span class="number">3</span>, <span class="number">3</span>, <span class="number">3</span>, <span class="number">1</span>, <span class="number">0</span>, <span class="number">0</span>&#125;,</span><br><span class="line">		&#123;<span class="number">0</span>, <span class="number">1</span>, <span class="number">2</span>, <span class="number">2</span>, <span class="number">2</span>, <span class="number">2</span>, <span class="number">2</span>, <span class="number">1</span>, <span class="number">0</span>&#125;,</span><br><span class="line">		&#123;<span class="number">1</span>, <span class="number">0</span>, <span class="number">4</span>, <span class="number">3</span>, <span class="number">5</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">0</span>, <span class="number">1</span>&#125;,</span><br><span class="line">		&#123;<span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>&#125;,</span><br><span class="line">		&#123;-<span class="number">2</span>, <span class="number">0</span>, -<span class="number">2</span>, <span class="number">0</span>, <span class="number">6</span>, <span class="number">0</span>, -<span class="number">2</span>, <span class="number">0</span>, -<span class="number">2</span>&#125;,</span><br><span class="line">		&#123;<span class="number">3</span>, <span class="number">0</span>, <span class="number">4</span>, <span class="number">0</span>, <span class="number">7</span>, <span class="number">0</span>, <span class="number">4</span>, <span class="number">0</span>, <span class="number">3</span>&#125;,</span><br><span class="line">		&#123;<span class="number">10</span>, <span class="number">18</span>, <span class="number">22</span>, <span class="number">35</span>, <span class="number">40</span>, <span class="number">35</span>, <span class="number">22</span>, <span class="number">18</span>, <span class="number">10</span>&#125;,</span><br><span class="line">		&#123;<span class="number">20</span>, <span class="number">27</span>, <span class="number">30</span>, <span class="number">40</span>, <span class="number">42</span>, <span class="number">40</span>, <span class="number">30</span>, <span class="number">27</span>, <span class="number">20</span>&#125;,</span><br><span class="line">		&#123;<span class="number">20</span>, <span class="number">30</span>, <span class="number">45</span>, <span class="number">55</span>, <span class="number">55</span>, <span class="number">55</span>, <span class="number">45</span>, <span class="number">30</span>, <span class="number">20</span>&#125;,</span><br><span class="line">		&#123;<span class="number">20</span>, <span class="number">30</span>, <span class="number">50</span>, <span class="number">65</span>, <span class="number">70</span>, <span class="number">65</span>, <span class="number">50</span>, <span class="number">30</span>, <span class="number">20</span>&#125;,</span><br><span class="line">		&#123;<span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">2</span>, <span class="number">4</span>, <span class="number">2</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>&#125;</span><br><span class="line">	&#125;;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>卒</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span>[][] BingPosition = <span class="keyword">new</span> <span class="keyword">int</span>[][] &#123;</span><br><span class="line">		&#123;<span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>&#125;,</span><br><span class="line">		&#123;<span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>&#125;,</span><br><span class="line">		&#123;<span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>&#125;,</span><br><span class="line">		&#123;-<span class="number">2</span>, <span class="number">0</span>, -<span class="number">2</span>, <span class="number">0</span>, <span class="number">6</span>, <span class="number">0</span>, -<span class="number">2</span>, <span class="number">0</span>, -<span class="number">2</span>&#125;,</span><br><span class="line">		&#123;<span class="number">3</span>, <span class="number">0</span>, <span class="number">4</span>, <span class="number">0</span>, <span class="number">7</span>, <span class="number">0</span>, <span class="number">4</span>, <span class="number">0</span>, <span class="number">3</span>&#125;,</span><br><span class="line">		&#123;<span class="number">10</span>, <span class="number">18</span>, <span class="number">22</span>, <span class="number">35</span>, <span class="number">40</span>, <span class="number">35</span>, <span class="number">22</span>, <span class="number">18</span>, <span class="number">10</span>&#125;,</span><br><span class="line">		&#123;<span class="number">20</span>, <span class="number">27</span>, <span class="number">30</span>, <span class="number">40</span>, <span class="number">42</span>, <span class="number">40</span>, <span class="number">30</span>, <span class="number">27</span>, <span class="number">20</span>&#125;,</span><br><span class="line">		&#123;<span class="number">20</span>, <span class="number">30</span>, <span class="number">50</span>, <span class="number">65</span>, <span class="number">70</span>, <span class="number">65</span>, <span class="number">50</span>, <span class="number">30</span>, <span class="number">20</span>&#125;,</span><br><span class="line">		&#123;<span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">2</span>, <span class="number">4</span>, <span class="number">2</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>&#125;</span><br><span class="line">	&#125;;</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<ol>
+<li><p>对下一步吃子进行估值：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">int</span> <span class="title">estimate_myself</span><span class="params">(Piece piece)</span> </span>&#123;</span><br><span class="line">		<span class="comment">// System.out.println(piece.Info);</span></span><br><span class="line">		<span class="keyword">if</span> (piece.Info == <span class="string">&quot;bb0&quot;</span> || piece.Info == <span class="string">&quot;rb0&quot;</span>) <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">		<span class="keyword">int</span> totalValue = <span class="number">0</span>;</span><br><span class="line">		ArrayList&lt;<span class="keyword">int</span>[]&gt; next = Rule.getNextMove(piece.Info, piece.pos, Board);</span><br><span class="line">		<span class="keyword">for</span> (<span class="keyword">int</span>[] n : next) &#123;</span><br><span class="line">			Piece p = Board.getPiece(n);</span><br><span class="line">			<span class="keyword">if</span> (p != <span class="keyword">null</span> &amp;&amp; Board.getPiece(n).character == <span class="string">&#x27;b&#x27;</span>) &#123;</span><br><span class="line">				totalValue += <span class="number">9999</span>;</span><br><span class="line">				<span class="keyword">break</span>;</span><br><span class="line">			&#125;</span><br><span class="line">			<span class="keyword">if</span> (p != <span class="keyword">null</span> &amp;&amp; Board.getPiece(n).character == <span class="string">&#x27;j&#x27;</span>) &#123;</span><br><span class="line">				totalValue += <span class="number">500</span>;</span><br><span class="line">				<span class="keyword">break</span>;</span><br><span class="line">			&#125;</span><br><span class="line">			<span class="keyword">if</span> (p != <span class="keyword">null</span> &amp;&amp; Board.getPiece(n).character == <span class="string">&#x27;m&#x27;</span> &amp;&amp;  Board.getPiece(n).character == <span class="string">&#x27;p&#x27;</span>) &#123;</span><br><span class="line">				totalValue += <span class="number">100</span>;</span><br><span class="line">			&#125;</span><br><span class="line">			<span class="keyword">if</span> (p != <span class="keyword">null</span> &amp;&amp; Board.getPiece(n).character == <span class="string">&#x27;z&#x27;</span>) &#123;</span><br><span class="line">				totalValue -= <span class="number">20</span>;</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">return</span> totalValue;</span><br><span class="line">	&#125;</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<ul>
+<li>下一步能将军，估值+9999（相当于直接选择这个值了）</li>
+<li>下一步能吃【车】，估值+500</li>
+<li>下一步能吃【马】或【炮】，估值+100</li>
+<li>下一步能吃【卒】，估值-20</li>
+</ul>
+<ol>
+<li><p>对每个状态的估值</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">estimate</span><span class="params">(ChessBoard Board)</span> </span>&#123;</span><br><span class="line">		<span class="keyword">int</span>[][] totalValue = <span class="keyword">new</span> <span class="keyword">int</span>[<span class="number">2</span>][<span class="number">3</span>];</span><br><span class="line">		<span class="keyword">for</span> (Map.Entry&lt;String, Piece&gt; pieceEntry : Board.pieces.entrySet()) &#123;</span><br><span class="line">			Piece piece = pieceEntry.getValue();</span><br><span class="line">			<span class="keyword">switch</span> (piece.character) &#123;</span><br><span class="line">				<span class="keyword">case</span> <span class="string">&#x27;b&#x27;</span>:</span><br><span class="line">					<span class="keyword">if</span> (piece.color == <span class="string">&#x27;b&#x27;</span>) &#123;</span><br><span class="line">						totalValue[<span class="number">0</span>][<span class="number">0</span>] += estimate_value(<span class="number">0</span>);</span><br><span class="line">						totalValue[<span class="number">0</span>][<span class="number">1</span>] += estimate_position(<span class="number">0</span>, piece.pos);</span><br><span class="line">					&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">						totalValue[<span class="number">1</span>][<span class="number">0</span>] += estimate_value(<span class="number">0</span>);</span><br><span class="line">						totalValue[<span class="number">1</span>][<span class="number">1</span>] += estimate_position(<span class="number">0</span>, getOppositePos(piece.pos));</span><br><span class="line">					&#125;</span><br><span class="line">					<span class="keyword">break</span>;</span><br><span class="line">				<span class="keyword">case</span> <span class="string">&#x27;s&#x27;</span>:</span><br><span class="line">					<span class="keyword">if</span> (piece.color == <span class="string">&#x27;b&#x27;</span>) &#123;</span><br><span class="line">						totalValue[<span class="number">0</span>][<span class="number">0</span>] += estimate_value(<span class="number">1</span>);</span><br><span class="line">						totalValue[<span class="number">0</span>][<span class="number">1</span>] += estimate_position(<span class="number">1</span>, piece.pos);</span><br><span class="line">					&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">						totalValue[<span class="number">1</span>][<span class="number">0</span>] += estimate_value(<span class="number">1</span>);</span><br><span class="line">						totalValue[<span class="number">1</span>][<span class="number">1</span>] += estimate_position(<span class="number">1</span>, getOppositePos(piece.pos));</span><br><span class="line">					&#125;</span><br><span class="line">					<span class="keyword">break</span>;</span><br><span class="line">				<span class="keyword">case</span> <span class="string">&#x27;x&#x27;</span>:</span><br><span class="line">					<span class="keyword">if</span> (piece.color == <span class="string">&#x27;b&#x27;</span>) &#123;</span><br><span class="line">						totalValue[<span class="number">0</span>][<span class="number">0</span>] += estimate_value(<span class="number">2</span>);</span><br><span class="line">						totalValue[<span class="number">0</span>][<span class="number">1</span>] += estimate_position(<span class="number">2</span>, piece.pos);</span><br><span class="line">					&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">						totalValue[<span class="number">1</span>][<span class="number">0</span>] += estimate_value(<span class="number">2</span>);</span><br><span class="line">						totalValue[<span class="number">1</span>][<span class="number">1</span>] += estimate_position(<span class="number">2</span>, getOppositePos(piece.pos));</span><br><span class="line">					&#125;</span><br><span class="line">					<span class="keyword">break</span>;</span><br><span class="line">				<span class="keyword">case</span> <span class="string">&#x27;m&#x27;</span>:</span><br><span class="line">					<span class="keyword">if</span> (piece.color == <span class="string">&#x27;b&#x27;</span>) &#123;</span><br><span class="line">						totalValue[<span class="number">0</span>][<span class="number">0</span>] += estimate_value(<span class="number">3</span>);</span><br><span class="line">						totalValue[<span class="number">0</span>][<span class="number">1</span>] += estimate_position(<span class="number">3</span>, piece.pos);</span><br><span class="line">					&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">						totalValue[<span class="number">1</span>][<span class="number">0</span>] += estimate_value(<span class="number">3</span>);</span><br><span class="line">						totalValue[<span class="number">1</span>][<span class="number">1</span>] += estimate_position(<span class="number">3</span>, getOppositePos(piece.pos));</span><br><span class="line">					&#125;</span><br><span class="line">					<span class="keyword">break</span>;</span><br><span class="line">				<span class="keyword">case</span> <span class="string">&#x27;j&#x27;</span>:</span><br><span class="line">					<span class="keyword">if</span> (piece.color == <span class="string">&#x27;b&#x27;</span>) &#123;</span><br><span class="line">						totalValue[<span class="number">0</span>][<span class="number">0</span>] += estimate_value(<span class="number">4</span>);</span><br><span class="line">						totalValue[<span class="number">0</span>][<span class="number">1</span>] += estimate_position(<span class="number">4</span>, piece.pos);</span><br><span class="line">					&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">						totalValue[<span class="number">1</span>][<span class="number">0</span>] += estimate_value(<span class="number">4</span>);</span><br><span class="line">						totalValue[<span class="number">1</span>][<span class="number">1</span>] += estimate_position(<span class="number">4</span>, getOppositePos(piece.pos));</span><br><span class="line">					&#125;</span><br><span class="line">					<span class="keyword">break</span>;</span><br><span class="line">				<span class="keyword">case</span> <span class="string">&#x27;p&#x27;</span>:</span><br><span class="line">					<span class="keyword">if</span> (piece.color == <span class="string">&#x27;b&#x27;</span>) &#123;</span><br><span class="line">						totalValue[<span class="number">0</span>][<span class="number">0</span>] += estimate_value(<span class="number">5</span>);</span><br><span class="line">						totalValue[<span class="number">0</span>][<span class="number">1</span>] += estimate_position(<span class="number">5</span>, piece.pos);</span><br><span class="line">					&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">						totalValue[<span class="number">1</span>][<span class="number">0</span>] += estimate_value(<span class="number">5</span>);</span><br><span class="line">						totalValue[<span class="number">1</span>][<span class="number">1</span>] += estimate_position(<span class="number">5</span>, getOppositePos(piece.pos));</span><br><span class="line">					&#125;</span><br><span class="line">					<span class="keyword">break</span>;</span><br><span class="line">				<span class="keyword">case</span> <span class="string">&#x27;z&#x27;</span>:</span><br><span class="line">					<span class="keyword">if</span> (piece.color == <span class="string">&#x27;b&#x27;</span>) &#123;</span><br><span class="line">						totalValue[<span class="number">0</span>][<span class="number">0</span>] += estimate_value(<span class="number">6</span>);</span><br><span class="line">						totalValue[<span class="number">0</span>][<span class="number">1</span>] += estimate_position(<span class="number">6</span>, piece.pos);</span><br><span class="line">					&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">						totalValue[<span class="number">1</span>][<span class="number">0</span>] += estimate_value(<span class="number">6</span>);</span><br><span class="line">						totalValue[<span class="number">1</span>][<span class="number">1</span>] += estimate_position(<span class="number">6</span>, getOppositePos(piece.pos));</span><br><span class="line">					&#125;</span><br><span class="line">					<span class="keyword">break</span>;</span><br><span class="line">			&#125;</span><br><span class="line">			totalValue[<span class="number">0</span>][<span class="number">2</span>] += estimate_myself(piece);</span><br><span class="line">			totalValue[<span class="number">1</span>][<span class="number">2</span>] += estimate_myself(piece);</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">int</span> red = totalValue[<span class="number">1</span>][<span class="number">0</span>] + totalValue[<span class="number">1</span>][<span class="number">1</span>] + totalValue[<span class="number">1</span>][<span class="number">2</span>];</span><br><span class="line">		<span class="keyword">int</span> black = totalValue[<span class="number">0</span>][<span class="number">0</span>] + totalValue[<span class="number">0</span>][<span class="number">1</span>] + totalValue[<span class="number">0</span>][<span class="number">2</span>];</span><br><span class="line">		<span class="keyword">int</span> result_value = black - red;</span><br><span class="line">		<span class="keyword">return</span> result_value;</span><br><span class="line">	&#125;</span><br></pre></td></tr></table></figure>
+
+<p>对每个状态的估值包含了上面三种估值，然后用程序方估值-对手方估值得出最终结果。</p>
+</li>
+<li><p>alpha-beta剪枝算法。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// alpha-beta algorithm.</span></span><br><span class="line">	<span class="function"><span class="keyword">private</span> <span class="keyword">int</span> <span class="title">alpha_beta_search</span><span class="params">(<span class="keyword">int</span> depth, <span class="keyword">int</span> alpha, <span class="keyword">int</span> beta, <span class="keyword">boolean</span> isMax)</span> </span>&#123;</span><br><span class="line">		<span class="comment">// Recursion end: if the depth is 0 or Gameover.</span></span><br><span class="line">		<span class="keyword">if</span> (depth == <span class="number">0</span> || controller.hasWin(Board) != <span class="string">&#x27;x&#x27;</span>) &#123;</span><br><span class="line">			<span class="keyword">return</span> estimate(Board);</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		<span class="comment">// Generate all the situation the current position will go.</span></span><br><span class="line">		<span class="comment">// 只有在极大值层的时候才会生成</span></span><br><span class="line">		ArrayList&lt;AlphaBetaNode&gt; allNextStep = <span class="keyword">new</span> ArrayList&lt;AlphaBetaNode&gt;();</span><br><span class="line">		<span class="keyword">for</span> (Map.Entry&lt;String, Piece&gt; entry : Board.pieces.entrySet()) &#123;</span><br><span class="line">			Piece piece = entry.getValue();</span><br><span class="line">			<span class="keyword">if</span> ((piece.color == <span class="string">&#x27;b&#x27;</span> &amp;&amp; isMax) || (piece.color == <span class="string">&#x27;r&#x27;</span> &amp;&amp; !isMax)) &#123;</span><br><span class="line">				<span class="keyword">for</span> (<span class="keyword">int</span>[] next : Rule.getNextMove(piece.Info, piece.pos, Board)) &#123;</span><br><span class="line">					AlphaBetaNode newNode = <span class="keyword">new</span> AlphaBetaNode(piece.Info, piece.pos, next);</span><br><span class="line">					allNextStep.add(newNode);</span><br><span class="line">				&#125;</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		<span class="keyword">for</span> (AlphaBetaNode n : allNextStep) &#123;</span><br><span class="line">			Piece Eaten_piece = Board.updatePiece(n.piece_key, n.to);</span><br><span class="line">			<span class="keyword">if</span> (isMax) &#123;</span><br><span class="line">				alpha = Math.max(alpha, alpha_beta_search(depth-<span class="number">1</span>, alpha, beta, <span class="keyword">false</span>));</span><br><span class="line">			&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">				beta = Math.min(beta, alpha_beta_search(depth-<span class="number">1</span>, alpha, beta, <span class="keyword">true</span>));</span><br><span class="line">			&#125;</span><br><span class="line">			Board.updatePiece(n.piece_key, n.from);</span><br><span class="line">			<span class="keyword">if</span> (Eaten_piece != <span class="keyword">null</span>) &#123;</span><br><span class="line">				Board.pieces.put(Eaten_piece.Info, Eaten_piece);</span><br><span class="line">				Board.backPiece(Eaten_piece.Info);</span><br><span class="line">			&#125;</span><br><span class="line"></span><br><span class="line">			<span class="comment">// 剪枝过程</span></span><br><span class="line">			<span class="keyword">if</span> (beta &lt;= alpha) <span class="keyword">break</span>;</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">return</span> isMax ? alpha : beta;</span><br><span class="line">	&#125;</span><br></pre></td></tr></table></figure>
+
+<p>整个剪枝算法是自顶向下的，所以要判断层数，当<code>depth=0</code>时，说明已经到叶子节点，直接返回当前节点的估值。使用一个<code>isMax</code>布尔变量标记当前是极大层还是极小层，在当前节点下生成所有可能的后继节点，对每个节点进行极小极大搜索。每个子节点倒推$\alpha$或$\beta$，然后根据<code>isMax</code>去求极大或极小。每完成一个节点，就试图去做剪枝。极大层返回<code>alpha</code>，极小层返回<code>beta</code>。</p>
+</li>
+<li><p>然后封装一个函数给外部调用。这个函数向外部返回的是估值最好的一个走步。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> AlphaBetaNode <span class="title">search</span><span class="params">(ChessBoard board)</span> </span>&#123;</span><br><span class="line">		<span class="keyword">this</span>.Board = board;</span><br><span class="line">		ArrayList&lt;AlphaBetaNode&gt; allNextStep = <span class="keyword">new</span> ArrayList&lt;AlphaBetaNode&gt;();</span><br><span class="line">		<span class="keyword">for</span> (Map.Entry&lt;String, Piece&gt; entry : Board.pieces.entrySet()) &#123;</span><br><span class="line">			Piece piece = entry.getValue();</span><br><span class="line">			<span class="keyword">if</span> (piece.color == <span class="string">&#x27;b&#x27;</span>) &#123;</span><br><span class="line">				<span class="keyword">for</span> (<span class="keyword">int</span>[] next : Rule.getNextMove(piece.Info, piece.pos, Board)) &#123;</span><br><span class="line">					AlphaBetaNode newNode = <span class="keyword">new</span> AlphaBetaNode(piece.Info, piece.pos, next);</span><br><span class="line">					allNextStep.add(newNode);</span><br><span class="line">				&#125;</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		AlphaBetaNode best = <span class="keyword">null</span>;</span><br><span class="line">		<span class="keyword">for</span> (AlphaBetaNode n : allNextStep) &#123;</span><br><span class="line">			Piece p = Board.getPiece(n.to);</span><br><span class="line">			<span class="keyword">if</span> (p != <span class="keyword">null</span> &amp;&amp; p.character == <span class="string">&#x27;b&#x27;</span>) &#123;</span><br><span class="line">				<span class="keyword">return</span> n;</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		<span class="keyword">long</span> start = System.currentTimeMillis();</span><br><span class="line">		<span class="keyword">for</span> (AlphaBetaNode n : allNextStep) &#123;</span><br><span class="line">			Piece eaten = Board.updatePiece(n.piece_key, n.to);</span><br><span class="line">			<span class="keyword">if</span> (eaten != <span class="keyword">null</span>) n.value += <span class="number">100</span>;</span><br><span class="line">			n.value = alpha_beta_search(depth, Integer.MIN_VALUE, Integer.MAX_VALUE, <span class="keyword">false</span>);</span><br><span class="line">			<span class="keyword">if</span> (best == <span class="keyword">null</span> || n.value &gt;= best.value) &#123;</span><br><span class="line">				best = n;</span><br><span class="line">			&#125;</span><br><span class="line">			Board.updatePiece(n.piece_key, n.from);</span><br><span class="line">			<span class="keyword">if</span> (eaten != <span class="keyword">null</span>) &#123;</span><br><span class="line">				board.pieces.put(eaten.Info, eaten);</span><br><span class="line">				board.backPiece(eaten.Info);</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">long</span> finish = System.currentTimeMillis();</span><br><span class="line"></span><br><span class="line">		System.out.println(<span class="string">&quot;Calculate Time: &quot;</span> + (finish-start) + <span class="string">&quot;ms&quot;</span>);</span><br><span class="line">		System.out.println(<span class="string">&quot;From: (&quot;</span> + best.from[<span class="number">0</span>] + <span class="string">&quot;, &quot;</span> + best.from[<span class="number">1</span>] + <span class="string">&quot;) to (&quot;</span> + best.to[<span class="number">0</span>] + <span class="string">&quot;, &quot;</span> + best.to[<span class="number">1</span>] + <span class="string">&quot;)&quot;</span>);</span><br><span class="line">		<span class="keyword">return</span> best;</span><br><span class="line">	&#125;</span><br></pre></td></tr></table></figure>
+
+<p>对于每一个棋局，将所有的走步都变成一个节点，然后对每一个走步使用alpha-beta剪枝算法进行极小极大搜索。注意，如果下一步有将军的走步，直接作为最优节点返回。</p>
+</li>
+</ol>
+<hr>
+<h3 id="测试与分析"><a href="#测试与分析" class="headerlink" title="测试与分析"></a>测试与分析</h3><p>初始界面</p>
+<p><img src="https://raw.githubusercontent.com/leungyukshing/Artificial-Intelligence/master/AIChess/images/1.png" alt="初始界面"></p>
+<p>走了第一步，红方中炮，黑方上马：</p>
+<p><img src="https://raw.githubusercontent.com/leungyukshing/Artificial-Intelligence/master/AIChess/images/2.png" alt="第一步"></p>
+<p>第二步，红方用炮吃掉黑方的卒后，黑方的马会吃掉炮：</p>
+<p><img src="https://raw.githubusercontent.com/leungyukshing/Artificial-Intelligence/master/AIChess/images/3.png" alt="第二步"></p>
+<p>若干步后，黑方炮处于将军状态：</p>
+<p><img src="https://raw.githubusercontent.com/leungyukshing/Artificial-Intelligence/master/AIChess/images/4.png" alt="将军状态"></p>
+<p>如果红方不做出回应，黑方会直接将军，游戏获胜：</p>
+<p><img src="https://raw.githubusercontent.com/leungyukshing/Artificial-Intelligence/master/AIChess/images/5.png" alt="黑方获胜"></p>
+<p>测试过程中需要不断调整棋局估算的参数，经过多次测试，当前的这个参数是比较智能的一个状态了。</p>
+<p><strong>分析</strong>：从一些运行结果来看，程序方还是具有一定的智能的。因为时间效率问题，这里只实现了两层的博弈树，如果玩家水平比较不错的话，程序方一般是比较难获胜的。</p>
+<hr>
+<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p>&emsp;&emsp;相比起极小极大搜索法，alpha-beta剪枝算法得到的结果是完全相同的，它并没有在搜索解上有更加好的结果，但是，MIN、MAX要将整个图都搜索完毕，而alpha-beata剪枝算法只需要搜索其中的部分节点，所以它具有更高的效率。因此，给定相同的时间，alpha-beta能够搜索更深的深度，因而能够获得更好的走步。</p>
+<p>&emsp;&emsp;这里再给出一些日后优化的思路。一个是可以加深博弈树的层数，两层显然还是比较简单，基本不能战胜玩家。而四层却会需要大量的时间。一个比较好的方法是，对于那些明显比较有优势的走步，我们不需要看其它的走步，直接就选择这一步。比方说，如果当前走步是能够吃掉对方的车，那么很大概率上这都是一个很好的走步，因此我就不需要管后面的事情了，也相当于是一个基于启发式函数的剪枝。当然，具体的实现还要经过大量的测试才行。希望假期能有时间，继续把这个项目完善。</p>
+<hr>
+<h3 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h3><ol>
+<li>象棋局面评估：<a target="_blank" rel="noopener" href="https://blog.csdn.net/jb80400812/article/details/4174410">https://blog.csdn.net/jb80400812/article/details/4174410</a></li>
+<li>调整评价函数：<a target="_blank" rel="noopener" href="http://www.xqbase.com/computer/evalue_intro2.htm">http://www.xqbase.com/computer/evalue_intro2.htm</a></li>
+<li>UI参考：<a target="_blank" rel="noopener" href="https://github.com/geeeeeeeeek/IntelligentChinese">https://github.com/geeeeeeeeek/IntelligentChinese</a></li>
+</ol>
+
+    </div>
+
+    
+    
+    
+        <div class="reward-container">
+  <div></div>
+  <button onclick="var qr = document.getElementById('qr'); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    Donate
+  </button>
+  <div id="qr" style="display: none;">
+      
+      <div style="display: inline-block;">
+        <img src="/images/wechat_reward.png" alt="Leungyukshing WeChat Pay">
+        <p>WeChat Pay</p>
+      </div>
+      
+      <div style="display: inline-block;">
+        <img src="/images/alipay_reward.png" alt="Leungyukshing Alipay">
+        <p>Alipay</p>
+      </div>
+
+  </div>
+</div>
+
+        
+
+  <div class="followme">
+    <p>Welcome to my other publishing channels</p>
+
+    <div class="social-list">
+
+        <div class="social-item">
+          <a target="_blank" class="social-link" href="/atom.xml">
+            <span class="icon">
+              <i class="fa fa-rss"></i>
+            </span>
+
+            <span class="label">RSS</span>
+          </a>
+        </div>
+    </div>
+  </div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/AI-Algorithm/" rel="tag"># AI Algorithm</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/archives/A%E6%98%9F%E7%AE%97%E6%B3%95%E6%B1%82%E8%A7%A3%E5%85%AB%E6%95%B0%E7%A0%81%E9%97%AE%E9%A2%98.html" rel="prev" title="A*算法求解八数码问题">
+      <i class="fa fa-chevron-left"></i> A*算法求解八数码问题
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/archives/DES%E7%AE%97%E6%B3%95%E8%AE%BE%E8%AE%A1%E5%8F%8AC++%E5%AE%9E%E7%8E%B0.html" rel="next" title="DES算法实现及C++实现">
+      DES算法实现及C++实现 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%97%AE%E9%A2%98%E4%BB%8B%E7%BB%8D"><span class="nav-number">1.</span> <span class="nav-text">问题介绍</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%AE%97%E6%B3%95%E4%BB%8B%E7%BB%8D"><span class="nav-number">2.</span> <span class="nav-text">算法介绍</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%AE%97%E6%B3%95%E5%AE%9E%E7%8E%B0"><span class="nav-number">3.</span> <span class="nav-text">算法实现</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%B3%E9%94%AE%E4%BB%A3%E7%A0%81%E5%88%86%E6%9E%90"><span class="nav-number">4.</span> <span class="nav-text">关键代码分析</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%B5%8B%E8%AF%95%E4%B8%8E%E5%88%86%E6%9E%90"><span class="nav-number">5.</span> <span class="nav-text">测试与分析</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-number">6.</span> <span class="nav-text">总结</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8F%82%E8%80%83%E8%B5%84%E6%96%99"><span class="nav-number">7.</span> <span class="nav-text">参考资料</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Leungyukshing"
+      src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">Leungyukshing</p>
+  <div class="site-description" itemprop="description">A blog for code, programme sharing.</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">688</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">27</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/leungyukshing" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;leungyukshing" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:jacky14.liang@gmail.com" title="E-Mail → mailto:jacky14.liang@gmail.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="/atom.xml" title="RSS → &#x2F;atom.xml"><i class="fa fa-rss fa-fw"></i>RSS</a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll motion-element">
+    <div class="links-of-blogroll-title"><i class="fa fa-link fa-fw"></i>
+      Friends
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="http://www.liangjh45.com/" title="http:&#x2F;&#x2F;www.liangjh45.com&#x2F;" rel="noopener" target="_blank">Alva's blog</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="https://sysucarey.github.io/" title="https:&#x2F;&#x2F;sysucarey.github.io&#x2F;" rel="noopener" target="_blank">Carey's blog</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="https://blog.csdn.net/dickdick111/" title="https:&#x2F;&#x2F;blog.csdn.net&#x2F;dickdick111&#x2F;" rel="noopener" target="_blank">Dick's blog</a>
+        </li>
+    </ul>
+  </div>
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2017 – 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Leungyukshing</span>
+</div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="Total Visitors">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="Total Views">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+      
+
+<script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      loader: {
+        source: {
+          '[tex]/amsCd': '[tex]/amscd',
+          '[tex]/AMScd': '[tex]/amscd'
+        }
+      },
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              let target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    (function () {
+      var script = document.createElement('script');
+      script.src = '//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+      script.defer = true;
+      document.head.appendChild(script);
+    })();
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : true,
+      appId      : 'AaLog29QcUdQKTboD6cY2dNP-gzGzoHsz',
+      appKey     : 'dUWNHLnTY9qG1jJwPnTtfMm8',
+      placeholder: "Just go go",
+      avatar     : 'mm',
+      meta       : guest,
+      pageSize   : '10' || 10,
+      visitor    : false,
+      lang       : '' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : false,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+
+</body>
+</html>
