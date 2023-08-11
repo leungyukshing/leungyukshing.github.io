@@ -1,4 +1,4 @@
-![ci badge](https://travis-ci.org/leungyukshing/leungyukshing.github.io.svg?branch=hexo)
+[![Hexo CI/CD](https://github.com/leungyukshing/leungyukshing.github.io/actions/workflows/ci.yml/badge.svg)](https://github.com/leungyukshing/leungyukshing.github.io/actions/workflows/ci.yml)
 ## 更新日志
 ### 2018.1.25
   + 更换了next主题
