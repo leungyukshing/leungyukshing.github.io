@@ -35,7 +35,7 @@
     "npm": "^6.14.4",
     "nth-check": "^2.0.1",
     "path-parse": "^1.0.7",
-    "prismjs": "^1.25.0",
+    "prismjs": "^1.27.0",
     "striptags": "^3.2.0",
     "underscore": "^1.12.1"
   }
